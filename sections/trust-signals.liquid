@@ -1,0 +1,180 @@
+{% liquid
+  if section.settings.background_color != blank
+    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+%}
+
+<section
+  class="trust-signals section-wrapper{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  style="
+    --trust-signals-padding-top: {{ section.settings.padding-block-start }}px;
+    --trust-signals-padding-bottom: {{ section.settings.padding-block-end }}px;
+    --trust-signals-gap: {{ section.settings.gap_between_items }}px;
+    {%- if section.settings.background_color != blank -%}--trust-signals-background: {{ section.settings.background_color }};{%- endif -%}
+  "
+>
+  <div class="trust-signals__page-width">
+    <div class="trust-signals__inner">
+      {% content_for 'blocks' %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .trust-signals {
+    --trust-signals-background: rgb(var(--color-background-rgb));
+
+    padding-block: var(--trust-signals-padding-top) var(--trust-signals-padding-bottom);
+    background: var(--trust-signals-background);
+  }
+
+  .trust-signals__page-width {
+    width: min(var(--page-width, 120rem), calc(100% - 2rem));
+    margin-inline: auto;
+  }
+
+  .trust-signals__inner {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--trust-signals-gap);
+    padding: clamp(1.4rem, 2.2vw, 1.9rem) clamp(1.1rem, 2vw, 1.5rem);
+    border: 1px solid rgb(226 217 207 / 0.95);
+    background: rgb(250 248 245);
+    box-shadow:
+      0 -1px 0 rgb(255 255 255 / 0.72) inset,
+      0 20px 40px rgb(62 51 45 / 0.08);
+  }
+
+  .trust-signals__inner > :is(.text, .text-block, .shopify-block, rte-formatter) {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 1rem;
+    align-items: start;
+    min-width: 0;
+  }
+
+  .trust-signals__inner > :is(.text, .text-block, .shopify-block, rte-formatter)::before {
+    content: '';
+    width: 2.7rem;
+    height: 2.7rem;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 2rem 2rem;
+  }
+
+  .trust-signals__inner > :nth-child(1)::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none'%3E%3Cpath d='M24 9c-4.5 0-8 4.5-8 10.5 0 3.7 1.6 7 4.2 9.4-4.6-.5-9.8-3.7-12.7-9.1C5.2 27.7 8.9 36.5 17.6 39c1.4.4 3 .6 4.4.6V30.8' stroke='%23B49A84' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M24 9c4.5 0 8 4.5 8 10.5 0 3.7-1.6 7-4.2 9.4 4.6-.5 9.8-3.7 12.7-9.1 2.3 7.9-1.4 16.7-10.1 19.2-1.4.4-3 .6-4.4.6V30.8' stroke='%23B49A84' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M24 30.8v8.4' stroke='%23B49A84' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+
+  .trust-signals__inner > :nth-child(2)::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none'%3E%3Cpath d='M37 11c-8.5 1.1-16.2 5.3-21.8 11A30.3 30.3 0 0 0 8 34.5' stroke='%23B49A84' stroke-width='1.8' stroke-linecap='round'/%3E%3Cpath d='M15.5 23.5c3.7 1.8 7.7 2.7 11.7 2.7 3.1 0 6.2-.6 9.1-1.8' stroke='%23B49A84' stroke-width='1.8' stroke-linecap='round'/%3E%3Cpath d='M24 9.5c-1.7 4.6-2.6 9.5-2.6 14.4 0 5.2 1 10.5 3 15.4' stroke='%23B49A84' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+
+  .trust-signals__inner > :nth-child(3)::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none'%3E%3Cpath d='M24 9l12 4.8v10.6c0 7.2-4.6 11.8-12 14.6-7.4-2.8-12-7.4-12-14.6V13.8L24 9Z' stroke='%23B49A84' stroke-width='1.8' stroke-linejoin='round'/%3E%3Cpath d='m18.5 24.3 4 4 7-8' stroke='%23B49A84' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+
+  .trust-signals__inner > :nth-child(4)::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none'%3E%3Cpath d='M24 8 36 14v19L24 39 12 33V14l12-6Z' stroke='%23B49A84' stroke-width='1.8' stroke-linejoin='round'/%3E%3Cpath d='M12 14l12 7 12-7M24 21v18' stroke='%23B49A84' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+
+  .trust-signals__inner .text-block > * {
+    color: rgb(117 101 90);
+    font-size: 0.98rem;
+    line-height: 1.5;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .trust-signals__inner .text-block strong {
+    display: block;
+    margin-bottom: 0.16rem;
+    color: rgb(62 51 45);
+    font-size: 1.14rem;
+    font-weight: 600;
+  }
+
+  @media screen and (max-width: 989px) {
+    .trust-signals__inner {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .trust-signals__inner {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      padding: 1.15rem 1rem 1.25rem;
+    }
+
+    .trust-signals__inner > :is(.text, .text-block, .shopify-block, rte-formatter) {
+      column-gap: 0.85rem;
+    }
+
+    .trust-signals__inner > :is(.text, .text-block, .shopify-block, rte-formatter)::before {
+      width: 2.35rem;
+      height: 2.35rem;
+      background-size: 1.75rem 1.75rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Trust signals",
+  "tag": "section",
+  "class": "trust-signals-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "blocks": [
+    {
+      "type": "text"
+    }
+  ],
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FAF8F5"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "gap_between_items",
+      "label": "Gap",
+      "min": 8,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust signals",
+      "category": "Text"
+    }
+  ]
+}
+{% endschema %}

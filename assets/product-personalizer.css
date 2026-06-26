@@ -1,0 +1,131 @@
+.product-personalizer {
+  display: grid;
+  gap: 2rem;
+  margin-block: 2rem;
+}
+
+.product-personalizer__controls {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.personalizer-group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.personalizer-group__legend {
+  margin-bottom: 0.75rem;
+  font-weight: 700;
+}
+
+.personalizer-group__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.personalizer-option {
+  position: relative;
+}
+
+.personalizer-option__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.personalizer-option__label {
+  display: grid;
+  width: 4.5rem;
+  height: 4.5rem;
+  overflow: hidden;
+  place-items: center;
+  border: 1px solid #d5d5d5;
+  border-radius: 0.25rem;
+  background: #fff;
+  cursor: pointer;
+}
+
+.personalizer-option__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.personalizer-option__input:checked
+  + .personalizer-option__label {
+  border-color: #111;
+  box-shadow: 0 0 0 2px #111;
+}
+
+.personalizer-option__input:focus-visible
+  + .personalizer-option__label {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+.product-personalizer__summary {
+  display: grid;
+  gap: 0.4rem;
+}
+
+/* Media chính bên trái */
+.product-media[data-personalizer-preview] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.product-media[data-personalizer-preview] > .product-media__image {
+  position: relative;
+  z-index: 1;
+}
+
+.product-media__personalization-layers {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.product-media__personalization-layer {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  pointer-events: none;
+}
+
+/* Tùy chỉnh riêng cho layer "skin" của Túi Xách (Product ID: 10380106727746) */
+/* Bạn có thể tăng giảm các giá trị % dưới đây để hình đè khớp hoàn hảo với túi */
+.product-media[data-personalizer-preview="10380106727746"] .product-media__personalization-layer[data-preview-layer="skin"] {
+  inset: auto; /* Hủy bỏ bao phủ toàn bộ */
+  top: 52%;    /* Vị trí dọc trên túi */
+  left: 47%;   /* Vị trí ngang trên túi */
+  transform: translate(-50%, -50%);
+  width: 44%;  /* Kích thước chiều rộng */
+  height: 44%; /* Kích thước chiều cao */
+}
+
+.product-media__personalization-layer[hidden] {
+  display: none;
+}
+
+@media screen and (min-width: 750px) {
+  .personalizer-option__label {
+    width: 5rem;
+    height: 5rem;
+  }
+}

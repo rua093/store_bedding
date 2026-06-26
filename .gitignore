@@ -1,0 +1,29 @@
+# Dependencies
+/node_modules/
+
+# Test outputs
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+# Local temp
+/tmp/
+*.tmp
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Shopify local files
+.shopify/
+# Merchant/store-specific theme data
+/config/settings_data.json

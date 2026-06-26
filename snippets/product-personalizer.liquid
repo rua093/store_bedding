@@ -1,0 +1,122 @@
+{%- assign personalization_groups = product.metafields.custom.personalization_groups.value -%}
+
+{%- if personalization_groups != blank -%}
+  <div
+    class="product-personalizer"
+    data-product-personalizer
+    data-product-id="{{ product.id }}">
+
+    <div class="product-personalizer__controls">
+      {%- for group in personalization_groups -%}
+        {%- assign group_id = group.group_id.value -%}
+        {%- assign group_name = group.name.value -%}
+        {%- assign layer_key = group.layer_key.value -%}
+        {%- assign group_options = group.options.value -%}
+        {%- assign group_required = group.required.value -%}
+
+        {%- if group_id != blank and group_options != blank -%}
+          <fieldset
+            class="personalizer-group"
+            data-personalizer-group
+            data-group-id="{{ group_id | escape }}"
+            data-group-name="{{ group_name | escape }}"
+            data-layer-key="{{ layer_key | escape }}"
+            {% if group_required %}
+            data-required="true"
+            {% endif %}>
+            <legend class="personalizer-group__legend">
+              {{ group_name | escape }}
+
+              {%- if group_required -%}
+                <span aria-hidden="true">*</span>
+              {%- endif -%}
+            </legend>
+
+            <div class="personalizer-group__options">
+              {%- for option in group_options -%}
+                {%- assign option_id = option.option_id.value -%}
+                {%- assign option_label = option.label.value -%}
+                {%- assign option_thumbnail = option.thumbnail.value -%}
+                {%- assign option_layer_image = option.layer_image.value -%}
+                {%- assign option_accessible_label = option.accessible_label.value -%}
+                {%- assign option_is_default = option.is_default.value -%}
+
+                {%- if option_accessible_label == blank -%}
+                  {%- assign option_accessible_label = option_label -%}
+                {%- endif -%}
+
+                {%- assign option_layer_image_url = blank -%}
+
+                {%- if option_layer_image != blank -%}
+                  {%- assign option_layer_image_url = option_layer_image | image_url: width: 1200 -%}
+                {%- endif -%}
+
+                {%- capture input_id -%}
+                  Personalizer-{{ section.id }}-{{ group_id }}-{{ option_id }}
+                {%- endcapture -%}
+
+                {%- assign input_id = input_id | strip -%}
+
+                {%- if option_id != blank -%}
+                  <div class="personalizer-option">
+                    <input
+                      class="personalizer-option__input"
+                      id="{{ input_id | escape }}"
+                      type="radio"
+                      name="personalizer-{{ section.id }}-{{ group_id | escape }}"
+                      value="{{ option_id | escape }}"
+                      data-option-label="{{ option_label | escape }}"
+                      data-layer-image="{{ option_layer_image_url | escape }}"
+                      {% if option_is_default %}
+                      checked
+                      {% endif %}
+                      {% if group_required %}
+                      required
+                      {% endif %}>
+
+                    <label
+                      class="personalizer-option__label"
+                      for="{{ input_id | escape }}"
+                      title="{{ option_accessible_label | escape }}">
+                      {%- if option_thumbnail != blank -%}
+                        <img
+                          class="personalizer-option__image"
+                          src="{{ option_thumbnail | image_url: width: 160 }}"
+                          width="80"
+                          height="80"
+                          loading="lazy"
+                          alt="{{ option_accessible_label | escape }}">
+                      {%- else -%}
+                        <span class="personalizer-option__text">
+                          {{ option_label | escape }}
+                        </span>
+                      {%- endif -%}
+                    </label>
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </fieldset>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    <input
+      type="hidden"
+      name="properties[_personalization_id]"
+      value=""
+      data-personalization-id-input>
+
+    <input
+      type="hidden"
+      name="properties[_personalization_json]"
+      value=""
+      data-personalization-json-input>
+
+    <div class="product-personalizer__summary" data-personalization-properties></div>
+  </div>
+
+  {{ 'product-personalizer.css' | asset_url | stylesheet_tag }}
+
+  <script src="{{ 'product-personalizer.js' | asset_url }}" defer></script>
+{%- endif -%}

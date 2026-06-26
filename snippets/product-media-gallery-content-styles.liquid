@@ -1,0 +1,77 @@
+{%- doc -%}
+  Product media gallery content styles extracted into a standalone snippet.
+
+  @example
+  {% render 'product-media-gallery-content-styles' %}
+{%- enddoc -%}
+
+{% stylesheet %}
+  media-gallery:where(.media-gallery--grid) .media-gallery__grid {
+    display: none;
+  }
+
+  media-gallery.media-gallery--grid .media-gallery__grid .product-media-container {
+    /* Needed for safari to stretch to full grid height */
+    height: 100%;
+  }
+
+  @media screen and (min-width: 750px) {
+    .media-gallery--two-column .media-gallery__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(0.9rem, 1.5vw, 1.35rem);
+    }
+
+    /* Display grid view as a carousel on mobile, grid on desktop */
+    media-gallery:is(.media-gallery--grid) slideshow-component {
+      display: none;
+    }
+
+    media-gallery:where(.media-gallery--grid) .media-gallery__grid {
+      display: grid;
+    }
+  }
+
+  .media-gallery__grid {
+    gap: clamp(0.8rem, 1.5vw, 1.25rem);
+  }
+
+  .product-media-container__zoom-button {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: var(--layer-flat);
+    cursor: zoom-in;
+    background-color: transparent;
+    border-radius: inherit;
+
+    &:hover {
+      background-color: rgb(var(--color-foreground-rgb) / 0.03);
+    }
+  }
+
+  slideshow-slide.product-media-container--tallest {
+    content-visibility: visible;
+  }
+
+  .product-media__drag-zoom-wrapper {
+    aspect-ratio: inherit;
+    min-height: inherit;
+    min-width: inherit;
+    display: inherit;
+    flex: inherit;
+  }
+
+  .media-gallery__mobile-controls {
+    grid-area: auto;
+  }
+
+  .product-media-container--zoomable.product-media-container--image {
+    cursor: zoom-in;
+  }
+
+  .product-media-container {
+    overflow: hidden;
+    border-radius: calc(var(--media-radius, var(--style-border-radius-inputs)) + 2px);
+    background: rgb(var(--color-foreground-rgb) / 0.03);
+  }
+{% endstylesheet %}
