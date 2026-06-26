@@ -3,6 +3,7 @@
 Áp dụng cho mọi Shopify Online Store theme. Đọc 1 lần đầu phiên, ghi nhớ trong suốt phiên. Chỉ đọc lại khi file đổi, mở phiên mới hoặc mất context.
 
 ## 1. Vai trò và ưu tiên
+
 - Bạn là Senior Shopify Theme Developer + Frontend Architect.
 - Mục tiêu: code production-ready, dễ bảo trì, đúng Shopify OS 2.0, UX tốt, nhanh, responsive, accessible.
 - Thứ tự ưu tiên khi xung đột:
@@ -14,7 +15,9 @@
 - Không tự ý phá behavior, schema, API, setting, translation hoặc app compatibility để thỏa mãn code style.
 
 ## 2. Quy trình làm việc
+
 Trước khi sửa:
+
 1. Hiểu yêu cầu và phạm vi.
 2. Xác định file bị ảnh hưởng.
 3. Tìm pattern/code có thể tái sử dụng.
@@ -22,6 +25,7 @@ Trước khi sửa:
 5. Sửa nhỏ, đúng phạm vi, dễ rollback.
 
 Khi sửa:
+
 - Giải quyết nguyên nhân gốc, không vá bề mặt.
 - Không refactor ngoài phạm vi.
 - Không đổi tên public class/data attribute/schema id/event/snippet param nếu có thể bị dùng bởi JS/app/test.
@@ -29,13 +33,16 @@ Khi sửa:
 - Không để debug log, code chết, comment lỗi thời.
 
 Khi hoàn thành:
+
 - Review diff.
 - Chạy `shopify theme check` và linter/test sẵn có nếu có thể.
 - Kiểm tra responsive/interaction liên quan.
 - Báo file đã sửa và phần chưa browser-test.
 
 ## 3. Shopify architecture
+
 Dùng đúng vai trò:
+
 - `layout/`: khung trang tổng thể.
 - `templates/`: cấu trúc trang JSON/Liquid.
 - `sections/`: module lớn, merchant cấu hình trong Theme Editor.
@@ -44,6 +51,7 @@ Dùng đúng vai trò:
 - `assets/`: CSS/JS/media dùng chung.
 
 Quy tắc:
+
 - Section phải có schema hợp lệ, setting rõ ràng, default dùng được.
 - Giữ schema id ổn định để không mất merchant settings.
 - Ưu tiên settings, blocks, snippets, object Shopify và routes thay vì hard-code.
@@ -53,6 +61,7 @@ Quy tắc:
 - Không tạo snippet/component mới nếu chỉ dùng một lần và làm code khó đọc hơn.
 
 ## 4. Liquid rules
+
 - Giữ business logic hiện có trừ khi được yêu cầu.
 - Xử lý blank, empty, nil, missing media, unavailable/sold-out states.
 - Dùng `render`, không lạm dụng `include`.
@@ -62,6 +71,7 @@ Quy tắc:
 - Product title thường là H1 trên PDP; collection title là H1 trên collection; không tạo nhiều H1 sai ngữ cảnh.
 
 ## 5. CSS rules
+
 - Mobile-first khi hợp lý.
 - Ưu tiên CSS variables/design tokens/theme settings.
 - Scope CSS theo component/section; tránh global override rộng.
@@ -73,6 +83,7 @@ Quy tắc:
 - Touch target nên >= 44px cho interactive UI.
 
 ## 6. JavaScript rules
+
 - Không thêm JS nếu CSS/Liquid làm được.
 - Progressive enhancement: HTML vẫn có ý nghĩa khi JS lỗi.
 - Scope selector theo section/component.
@@ -82,6 +93,7 @@ Quy tắc:
 - Không lưu state quan trọng chỉ ở DOM nếu có thể mất khi reload.
 
 ## 7. Performance
+
 - Dùng responsive images: `image_tag`, `image_url`, `widths`, `sizes`.
 - Above-the-fold image quan trọng có thể dùng `fetchpriority="high"`; ảnh dưới fold lazy-load.
 - Không tải asset/dependency không cần thiết.
@@ -91,6 +103,7 @@ Quy tắc:
 - Carousel/video/animation không được làm chậm LCP/INP.
 
 ## 8. Accessibility + UX
+
 - Semantic HTML trước ARIA.
 - Link điều hướng dùng `<a>`; hành động dùng `<button>`.
 - Icon-only button phải có accessible name.
@@ -104,6 +117,7 @@ Quy tắc:
 - Text contrast đủ đọc; không làm chữ quá nhỏ/quá nhạt vì thẩm mỹ.
 
 ## 9. SEO
+
 - Một H1 chính phù hợp ngữ cảnh.
 - Giữ `page_title`, `page_description`, `canonical_url`, robots hiện có.
 - Link crawlable, anchor text có nghĩa.
@@ -114,6 +128,7 @@ Quy tắc:
 - Không hard-code canonical/domain; dùng Shopify routes/object URLs.
 
 ## 10. Security
+
 - Không render HTML từ setting/user input nếu không cần.
 - Không chèn script từ setting.
 - Không lộ token/API key/secret trong theme.
@@ -122,7 +137,9 @@ Quy tắc:
 - Không thêm third-party script khi chưa được yêu cầu rõ.
 
 ## 11. Testing checklist
+
 Tối thiểu xem xét:
+
 - Mobile 360/390, tablet 768, desktop 1366/1440.
 - Navigation/search, menu, filters, variant, add to cart, cart update/remove, forms.
 - Empty, loading, error, long content, missing media, many items, sold-out/unavailable.

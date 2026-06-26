@@ -4,6 +4,7 @@ import { MegaMenuHoverEvent } from '@theme/events';
 
 /** Skim filter: pointer must dwell this long before MegaMenuHoverEvent fires. */
 const HOVER_COMMIT_DELAY_MS = 150;
+const CLOSE_INTENT_DELAY_MS = 120;
 
 /**
  * A custom element that manages a header menu.
@@ -28,6 +29,9 @@ class HeaderMenu extends Component {
   /** @type {ReturnType<typeof setTimeout> | undefined} */
   #hoverDispatchTimer;
 
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
+  #closeIntentTimer;
+
   connectedCallback() {
     super.connectedCallback();
 
@@ -47,6 +51,8 @@ class HeaderMenu extends Component {
     this.#cleanupMutationObserver();
     clearTimeout(this.#hoverDispatchTimer);
     this.#hoverDispatchTimer = undefined;
+    clearTimeout(this.#closeIntentTimer);
+    this.#closeIntentTimer = undefined;
   }
 
   /**
@@ -57,7 +63,7 @@ class HeaderMenu extends Component {
   }, 100);
 
   #overflowSubmenuListener = () => {
-    this.#deactivate();
+    this.#queueCloseIntent();
   };
 
   /**
@@ -150,6 +156,46 @@ class HeaderMenu extends Component {
     delete item.dataset.safetyBox;
   }
 
+  #clearCloseIntentTimer() {
+    clearTimeout(this.#closeIntentTimer);
+    this.#closeIntentTimer = undefined;
+  }
+
+  #shouldKeepMenuOpen(item = this.#state.activeItem) {
+    if (!item) return false;
+
+    const submenu = findSubmenu(item);
+    const listItem = item.closest('.menu-list__list-item');
+    const activeElement = document.activeElement;
+
+    const stillHoveringActiveItem = item.matches(':hover') || listItem?.matches(':hover');
+    const stillHoveringSubmenu = submenu?.matches(':hover');
+    const stillHoveringOverflow = this.overflowListHovered || this.overflowMenu?.matches(':hover');
+    const focusInsideSubmenu = activeElement instanceof Node && submenu?.contains(activeElement);
+    const focusInsideOverflow = activeElement instanceof Node && this.overflowMenu?.contains(activeElement);
+
+    return Boolean(
+      stillHoveringActiveItem ||
+        stillHoveringSubmenu ||
+        stillHoveringOverflow ||
+        focusInsideSubmenu ||
+        focusInsideOverflow
+    );
+  }
+
+  #queueCloseIntent() {
+    this.#clearCloseIntentTimer();
+
+    this.#closeIntentTimer = setTimeout(() => {
+      this.#closeIntentTimer = undefined;
+
+      const activeItem = this.#state.activeItem;
+      if (!activeItem || this.#shouldKeepMenuOpen(activeItem)) return;
+
+      this.#deactivate(activeItem);
+    }, CLOSE_INTENT_DELAY_MS);
+  }
+
   /**
    * Get the overflow menu
    */
@@ -175,6 +221,8 @@ class HeaderMenu extends Component {
    */
   activate = (event) => {
     if (!(event.target instanceof Element) || !this.headerComponent) return;
+
+    this.#clearCloseIntentTimer();
 
     let item = findMenuItem(event.target);
 
@@ -277,17 +325,26 @@ class HeaderMenu extends Component {
   deactivate(event) {
     if (!(event.target instanceof Element)) return;
 
-    const menu = findSubmenu(this.#state.activeItem);
-    const isMovingWithinMenu = event.relatedTarget instanceof Node && menu?.contains(document.activeElement);
+    const activeItem = this.#state.activeItem;
+    const menu = findSubmenu(activeItem);
+    const relatedTarget = event.relatedTarget instanceof Node ? event.relatedTarget : null;
+    const isPointerLeave = event instanceof PointerEvent || event.type === 'pointerleave';
+    const isMovingWithinMenu = document.activeElement instanceof Node && menu?.contains(document.activeElement);
     const isMovingToSubmenu =
-      event.relatedTarget instanceof Node && event.type === 'blur' && menu?.contains(event.relatedTarget);
+      relatedTarget instanceof Node && event.type === 'blur' && menu?.contains(relatedTarget);
     const isMovingToOverflowMenu =
-      event.relatedTarget instanceof Node && event.relatedTarget.parentElement?.matches('[slot="overflow"]');
+      relatedTarget instanceof Node &&
+      (relatedTarget.parentElement?.matches('[slot="overflow"]') || this.overflowMenu?.contains(relatedTarget));
 
     if (isMovingWithinMenu || isMovingToOverflowMenu || isMovingToSubmenu) {
-      if (this.#state.activeItem) {
-        this.#stopPointerTracking(this.#state.activeItem);
+      if (activeItem) {
+        this.#stopPointerTracking(activeItem);
       }
+      return;
+    }
+
+    if (isPointerLeave) {
+      this.#queueCloseIntent();
       return;
     }
 
@@ -300,6 +357,8 @@ class HeaderMenu extends Component {
    */
   #deactivate = (item = this.#state.activeItem) => {
     if (!item || item != this.#state.activeItem) return;
+
+    this.#clearCloseIntentTimer();
 
     // Don't deactivate if the overflow menu or overflow list is still being hovered
     if (this.overflowListHovered || this.overflowMenu?.matches(':hover')) return;

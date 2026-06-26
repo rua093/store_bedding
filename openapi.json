@@ -1,0 +1,1040 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Agent Workspace API",
+    "version": "2.0.0",
+    "description": "Controlled local project workspace API for AI coding assistants. Replace the server URL with the current Cloudflare Tunnel Public URL before importing this schema into ChatGPT Actions."
+  },
+  "servers": [
+    {
+      "url": "https://increase-enrollment-provides-commodity.trycloudflare.com",
+      "description": "Replace this with the Public URL printed by agent_api_server.py"
+    }
+  ],
+  "security": [
+    {
+      "AgentToken": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "AgentToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Agent-Token",
+        "description": "Session token printed by agent_api_server.py when it starts."
+      }
+    },
+    "schemas": {
+      "ApiError": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "const": false
+          },
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": ["ok", "error"]
+      },
+      "FileInfo": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["file", "directory"]
+          },
+          "size": {
+            "type": "integer"
+          },
+          "modified": {
+            "type": "number"
+          },
+          "sha256": {
+            "type": "string"
+          }
+        },
+        "required": ["path", "name", "type", "size", "modified"]
+      },
+      "GitResult": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "exitCode": {
+            "type": "integer"
+          },
+          "stdout": {
+            "type": "string"
+          },
+          "stderr": {
+            "type": "string"
+          }
+        },
+        "required": ["command", "exitCode", "stdout", "stderr"]
+      }
+    },
+    "responses": {
+      "ApiError": {
+        "description": "API error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Check API health",
+        "description": "Returns server status, root path, and timestamp.",
+        "responses": {
+          "200": {
+            "description": "Health response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "root": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "number"
+                    }
+                  },
+                  "required": ["ok", "root", "time"]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/manifest": {
+      "get": {
+        "operationId": "getManifest",
+        "summary": "Get API capabilities and policy",
+        "description": "Call this first. Returns server capabilities, auth policy, safety policy, config summary, and endpoint list.",
+        "responses": {
+          "200": {
+            "description": "Manifest response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "root": {
+                      "type": "string"
+                    },
+                    "publicUrl": {
+                      "type": ["string", "null"]
+                    }
+                  },
+                  "required": ["ok", "name", "version", "root"]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/root": {
+      "get": {
+        "operationId": "getRoot",
+        "summary": "Get locked project root",
+        "responses": {
+          "200": {
+            "description": "Root response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "root": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "root"]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/files/list": {
+      "get": {
+        "operationId": "listFiles",
+        "summary": "List files and directories",
+        "description": "List files under a relative directory path. Listing skips configured excluded directories and protected bridge files.",
+        "parameters": [
+          {
+            "name": "path",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "."
+            }
+          },
+          {
+            "name": "recursive",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "exclude",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional comma-separated extra directory names to exclude."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/FileInfo"
+                      }
+                    }
+                  },
+                  "required": ["ok", "items"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/files/read": {
+      "post": {
+        "operationId": "readFile",
+        "summary": "Read a text file",
+        "description": "Reads a UTF-8 text file and returns content plus sha256. Use sha256 as expectedSha256 when editing.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "encoding": {
+                    "type": "string",
+                    "default": "utf-8"
+                  }
+                },
+                "required": ["path"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Read response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "sha256": {
+                      "type": "string"
+                    },
+                    "content": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "path", "sha256", "content"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "413": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/files/read_range": {
+      "post": {
+        "operationId": "readFileRange",
+        "summary": "Read selected lines from a text file",
+        "description": "Reads a selected line range and returns sha256 for stale edit protection.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "startLine": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "default": 1
+                  },
+                  "endLine": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "default": 200
+                  },
+                  "encoding": {
+                    "type": "string",
+                    "default": "utf-8"
+                  }
+                },
+                "required": ["path"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Range read response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "sha256": {
+                      "type": "string"
+                    },
+                    "startLine": {
+                      "type": "integer"
+                    },
+                    "endLine": {
+                      "type": "integer"
+                    },
+                    "totalLines": {
+                      "type": "integer"
+                    },
+                    "content": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "path", "sha256", "startLine", "endLine", "totalLines", "content"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "413": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/files/write": {
+      "post": {
+        "operationId": "writeFile",
+        "summary": "Write a full text file",
+        "description": "Writes full file content. Existing files are overwritten. For existing files, include expectedSha256 from the latest read.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  },
+                  "encoding": {
+                    "type": "string",
+                    "default": "utf-8"
+                  },
+                  "createDirs": {
+                    "type": "boolean",
+                    "default": true
+                  },
+                  "expectedSha256": {
+                    "type": "string"
+                  },
+                  "dryRun": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                },
+                "required": ["path", "content"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Write response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "dryRun": {
+                      "type": "boolean"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "newSha256": {
+                      "type": "string"
+                    },
+                    "file": {
+                      "$ref": "#/components/schemas/FileInfo"
+                    }
+                  },
+                  "required": ["ok"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "413": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/files/replace": {
+      "post": {
+        "operationId": "replaceInFile",
+        "summary": "Replace exact text in a file",
+        "description": "Preferred for small targeted edits. If old text appears more than once, request is rejected unless allowMultiple is true.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "old": {
+                    "type": "string"
+                  },
+                  "new": {
+                    "type": "string"
+                  },
+                  "encoding": {
+                    "type": "string",
+                    "default": "utf-8"
+                  },
+                  "expectedSha256": {
+                    "type": "string"
+                  },
+                  "allowMultiple": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "dryRun": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                },
+                "required": ["path", "old", "new"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replace response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "dryRun": {
+                      "type": "boolean"
+                    },
+                    "replacements": {
+                      "type": "integer"
+                    },
+                    "newSha256": {
+                      "type": "string"
+                    },
+                    "file": {
+                      "$ref": "#/components/schemas/FileInfo"
+                    }
+                  },
+                  "required": ["ok"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/files/mkdir": {
+      "post": {
+        "operationId": "makeDirectory",
+        "summary": "Create a directory",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "parents": {
+                    "type": "boolean",
+                    "default": true
+                  },
+                  "existOk": {
+                    "type": "boolean",
+                    "default": true
+                  },
+                  "dryRun": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                },
+                "required": ["path"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Mkdir response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "dryRun": {
+                      "type": "boolean"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "directory": {
+                      "$ref": "#/components/schemas/FileInfo"
+                    }
+                  },
+                  "required": ["ok"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/files/delete": {
+      "post": {
+        "operationId": "deleteFileOrDirectory",
+        "summary": "Delete a file or directory",
+        "description": "Delete defaults to trash mode. Use dryRun for risky deletes. Permanent delete should only be used when explicitly requested.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "recursive": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "permanent": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "dryRun": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                },
+                "required": ["path"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Delete response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "permanent": {
+                      "type": "boolean"
+                    },
+                    "dryRun": {
+                      "type": "boolean"
+                    },
+                    "trashPath": {
+                      "type": ["string", "null"]
+                    }
+                  },
+                  "required": ["ok", "path", "permanent", "dryRun"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/files/stat": {
+      "post": {
+        "operationId": "statFile",
+        "summary": "Get file or directory metadata",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "sha256": {
+                    "type": "boolean",
+                    "default": true
+                  }
+                },
+                "required": ["path"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Stat response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "item": {
+                      "$ref": "#/components/schemas/FileInfo"
+                    }
+                  },
+                  "required": ["ok", "item"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/files/search": {
+      "post": {
+        "operationId": "searchFiles",
+        "summary": "Search text in files",
+        "description": "Searches UTF-8 text files under a directory. Binary or non-UTF-8 files are skipped.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "default": "."
+                  },
+                  "pattern": {
+                    "type": "string"
+                  },
+                  "regex": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "include": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    ],
+                    "default": "*"
+                  },
+                  "exclude": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    ]
+                  },
+                  "glob": {
+                    "type": "string",
+                    "description": "Backward-compatible alias for include."
+                  },
+                  "caseSensitive": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "maxResults": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "default": 200
+                  }
+                },
+                "required": ["pattern"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string"
+                          },
+                          "line": {
+                            "type": "integer"
+                          },
+                          "text": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["path", "line", "text"]
+                      }
+                    },
+                    "truncated": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["ok", "results", "truncated"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "401": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/git/status": {
+      "post": {
+        "operationId": "getGitStatus",
+        "summary": "Run git status --short",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Git status response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "result": {
+                      "$ref": "#/components/schemas/GitResult"
+                    }
+                  },
+                  "required": ["ok", "result"]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/git/diff": {
+      "post": {
+        "operationId": "getGitDiff",
+        "summary": "Run git diff",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Git diff response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "result": {
+                      "$ref": "#/components/schemas/GitResult"
+                    }
+                  },
+                  "required": ["ok", "result"]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "403": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "409": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    }
+  }
+}

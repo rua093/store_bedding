@@ -579,7 +579,55 @@
       --color-background-rgb: inherit;
       --color-border: inherit;
       --color-border-rgb: inherit;
+      --closed-underlay-height: 100%;
       --header-content-transition-timing: var(--submenu-animation-speed) var(--ease-out-cubic);
+    }
+  }
+
+  .header[transparent]:not([data-sticky-state='active']):not(
+      :has(.menu-list__link:is(:hover, [aria-expanded='true']))
+    ) {
+    .header-actions__action,
+    .header__icon--menu,
+    .dropdown-localization__button,
+    .account-button__icon,
+    .account-button__text {
+      color: #fff8ee;
+      text-shadow: 0 1px 10px rgb(0 0 0 / 0.18);
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .header__column--center .menu-list__link {
+      font-size: 1.125rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+
+    .header-actions__action:not(.account-button) .svg-wrapper,
+    .header__icon--menu .svg-wrapper {
+      width: 22px;
+      height: 22px;
+    }
+
+    .header-actions__action:not(.account-button) svg,
+    .account-button__icon {
+      width: 22px;
+      height: 22px;
+    }
+
+    .header[transparent]:not([data-sticky-state='active']):not(
+        :has(.menu-list__link:is(:hover, [aria-expanded='true']))
+      ) {
+      .header__column--center .menu-list__link {
+        color: #fff8ee;
+        text-shadow: 0 1px 10px rgb(0 0 0 / 0.25);
+      }
+
+      .header__column--right .header-actions__action,
+      .header__column--right .dropdown-localization__button {
+        color: #fff8ee;
+      }
     }
   }
 

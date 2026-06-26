@@ -1,197 +1,235 @@
-# PROJECT_RULES.md — Bedding Store Design Rules
+# PROJECT_RULES.md — Bedding Store Direction
 
-Áp dụng riêng cho project bedding hiện tại. Khi đổi project, chỉ thay file này; giữ CORE_RULES.md.
+Áp dụng riêng cho Shopify bedding store hiện tại.
 
-## 1. Brand direction
-Phong cách:
+File này chỉ mô tả định hướng tổng thể về brand, visual, UX và content tone.
+Không dùng file này để tự suy diễn chi tiết cho từng section. Khi sửa Hero, Header, Collection, PDP, Cart hoặc section cụ thể khác, phải làm theo prompt task riêng của user.
+
+Technical implementation, Shopify architecture, Liquid, CSS, JavaScript, accessibility, SEO, performance, security và testing phải theo `CORE_RULES.md`.
+
+---
+
+## 1. Project direction
+
+Store bán bedding/home comfort products như blankets, quilts, comforters và các sản phẩm liên quan.
+
+Mục tiêu website:
+
+- Tạo cảm giác ấm áp, sạch, cao cấp và đáng tin.
+- Giúp khách hiểu nhanh store bán gì.
+- Làm nổi bật comfort, texture, warmth và lifestyle.
+- Trải nghiệm mua hàng rõ ràng, nhẹ nhàng, không gây áp lực.
+- Desktop và mobile đều phải đẹp, dễ đọc, dễ mua.
+
+---
+
+## 2. Brand style
+
+Phong cách tổng thể:
+
 - Scandinavian Luxury
 - Minimal
 - Cozy
 - Warm
 - Premium
 - Modern
+- Clean and breathable
 
 Cảm giác cần tạo:
+
 - Sạch, thoáng, mềm mại, tự nhiên.
 - Cao cấp nhưng thân thiện.
-- Tập trung vào comfort, sleep quality, bedding texture.
-- Không rối, không quá nhiều màu, không hiệu ứng mạnh, không shadow nặng.
-
-## 2. Design tokens
-Ưu tiên CSS variables/theme settings. Không hard-code lặp lại.
-
-```css
-:root {
-  --color-bg-main: #FAF8F5;
-  --color-bg-soft: #F5F1EA;
-  --color-border: #E8E2DB;
-  --color-text-main: #3E332D;
-  --color-text-muted: #6F625A;
-  --color-accent: #B87A5A;
-  --color-accent-hover: #A9684C;
-  --color-success: #4F7C59;
-
-  --font-heading: 'Playfair Display', serif;
-  --font-body: 'Inter', system-ui, sans-serif;
-
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 18px;
-
-  --shadow-soft: 0 8px 24px rgb(62 51 45 / 0.08);
-  --space-section-desktop: clamp(80px, 8vw, 120px);
-  --space-section-mobile: clamp(48px, 12vw, 72px);
-}
-```
-
-## 3. Typography
-- Heading: Playfair Display hoặc Cormorant Garamond.
-- Body/UI: Inter, Manrope hoặc Plus Jakarta Sans.
-- Desktop: Hero 56–64px, H1 48px, H2 36–40px, H3 24–28px, Body 16px, Small 14px.
-- Mobile: Hero 34–40px, H1 32px, H2 26–28px, Body 16px.
-- Heading hierarchy phải đúng SEO; không dùng heading chỉ để đổi size.
-- Tránh chữ quá mảnh/nhạt trên nền cream/beige.
-
-## 4. Layout and spacing
-- Nhiều whitespace, content thoáng, không nhồi section.
-- Section desktop: 80–120px; mobile: 48–72px.
-- Container tối đa khoảng 1440px; text line-length vừa phải.
-- Product/category image ưu tiên 1:1 hoặc 4:5.
-- Border mảnh, radius mềm 8–18px.
-- Shadow rất nhẹ hoặc không shadow.
-- Tránh glassmorphism nặng, gradient gắt, border dày.
-
-## 5. Imagery
-Ảnh nên:
-- Natural light, warm neutral bedroom.
-- Linen/cotton texture rõ.
-- Màu white/cream/beige/brown nhẹ.
-- Ít đạo cụ, sạch, cao cấp.
-- Lifestyle + product texture.
+- Ấm áp nhưng không tối nặng.
+- Tinh tế nhưng không lạnh hoặc xa cách.
+- Tập trung vào nghỉ ngơi, thư giãn, chất liệu và sự thoải mái.
 
 Tránh:
-- Ảnh tối, quá saturated, background lộn xộn, mockup rẻ tiền.
-- Overlay quá trắng làm mất texture chăn ga.
-- Dùng ảnh text embedded nếu text nên là HTML.
 
-Tên file SEO:
-- lowercase, dấu `-`, không dấu tiếng Việt.
-- Ví dụ: `premium-bedding-hero-banner.webp`, `luxury-comforter-bedroom.webp`.
+- Layout rối, chật hoặc nhồi quá nhiều thông tin.
+- Quá nhiều màu hoặc CTA cạnh tranh nhau.
+- Cảm giác sale/discount rẻ tiền.
+- Shadow nặng, gradient gắt, glassmorphism nặng.
+- Animation mạnh hoặc gây mất tập trung.
+- Mockup rẻ tiền, ảnh blur, ảnh méo hoặc low-res.
 
-Alt text:
-- Tự nhiên, mô tả ảnh; không keyword stuffing.
-- Ảnh trang trí dùng alt rỗng.
+---
 
-## 6. Components
+## 3. Color direction
+
+Bảng màu nên xoay quanh:
+
+- Ivory
+- Cream
+- Warm white
+- Beige
+- Taupe
+- Soft brown
+- Warm terracotta/accent brown
+- Dark brown/charcoal
+
+Nguyên tắc:
+
+- Nền nên ấm, sạch, không trắng gắt.
+- Text phải đủ contrast theo ngữ cảnh.
+- Text chính thường dùng dark brown/charcoal trên nền sáng.
+- Với nền tối hoặc ảnh nền, dùng màu chữ đủ contrast, không ép text tối.
+- Accent dùng tiết chế cho CTA, badge hoặc điểm nhấn.
+- Tránh màu neon, quá saturated hoặc quá lạnh nếu không có lý do rõ ràng.
+
+---
+
+## 4. Typography direction
+
+Heading:
+
+- Ưu tiên serif cao cấp như Playfair Display, Cormorant Garamond hoặc tương đương.
+- Cảm giác premium, mềm mại, editorial.
+
+Body/UI:
+
+- Ưu tiên sans-serif sạch như Inter, Manrope, Plus Jakarta Sans hoặc tương đương.
+- Dễ đọc, hiện đại, phù hợp navigation, button, form và product information.
+
+Nguyên tắc:
+
+- Typography phải rõ ràng, dễ đọc trên mobile.
+- Không dùng chữ quá mảnh trên nền ảnh hoặc nền sáng.
+- Line-height thoáng, không nén chữ.
+- Không dùng quá nhiều font weight/style gây rối.
+
+---
+
+## 5. Layout direction
+
+Layout nên:
+
+- Có nhiều whitespace.
+- Thoáng, sạch, dễ scan.
+- Container rõ ràng.
+- Grid/card có nhịp thở.
+- Mobile được thiết kế cẩn thận, không chỉ thu nhỏ desktop.
+
+Tham khảo cảm giác:
+
+- Section spacing rộng vừa phải.
+- Border mảnh.
+- Radius mềm.
+- Shadow rất nhẹ hoặc không shadow.
+- Không có box lồng nhau không cần thiết.
+
+Tránh:
+
+- Layout sát mép.
+- Khoảng cách thiếu nhất quán.
+- Border dày.
+- Shadow đậm kiểu template rẻ tiền.
+- Section quá nhiều nội dung cạnh tranh nhau.
+
+---
+
+## 6. Imagery direction
+
+Ảnh nên thể hiện:
+
+- Warm neutral bedroom.
+- Natural light hoặc ánh sáng ấm mềm.
+- Linen/cotton texture rõ.
+- Bedding mềm, sạch, cao cấp.
+- Không gian sống thật, thư giãn.
+- Màu white, ivory, cream, beige, taupe, brown nhẹ.
+
+Ảnh có thể sáng hoặc tối tùy ngữ cảnh, nhưng phải đạt mục tiêu:
+
+- Bedding nhìn rõ texture.
+- Không mất cảm giác mềm mại.
+- Không quá u ám.
+- Không quá trắng gắt.
+- Không quá saturated.
+- Background không lộn xộn.
+- Overlay không làm mất texture sản phẩm.
+
+Ảnh không nên có text embedded nếu text đó nên là HTML.
+
+Alt text và tên file ảnh phải tự nhiên, mô tả đúng nội dung, không keyword stuffing.
+
+---
+
+## 7. UI and ecommerce direction
+
 Button:
-- Primary: accent hoặc dark brown, text trắng.
-- Height khoảng 48px, radius 8–10px, padding 20–28px.
-- Hover nhẹ, 200–300ms.
-- Secondary nên là outline/text link tinh tế, không cạnh tranh CTA chính.
 
-Product card:
-- Ảnh lớn, sạch.
-- Tên, giá, sale, rating nếu có dữ liệu thật.
-- Không tạo rating/review giả.
-- Không viền/shadow nặng.
-- Add-to-cart/quick-view không phá trải nghiệm mobile.
+- Primary CTA rõ, dễ thấy.
+- Màu accent warm brown/terracotta hoặc dark brown.
+- Text trắng.
+- Radius mềm.
+- Hover nhẹ, không quá hiệu ứng.
 
-Badges/trust:
+Secondary CTA:
+
+- Tinh tế hơn primary.
+- Có thể là text link, underline link hoặc outline nhẹ.
+- Không cạnh tranh quá mạnh với primary CTA.
+- Vẫn phải đủ contrast và dễ nhận ra.
+
+Product/card UI:
+
+- Ảnh sạch, lớn, nhất quán tỷ lệ.
+- Nội dung ngắn, dễ scan.
+- Không shadow nặng.
+- Không nhồi quá nhiều thông tin.
+
+Trust/CRO:
+
+- CRO phải đến từ clarity, trust, visual quality, product information tốt, navigation dễ hiểu và layout sạch.
 - Chỉ dùng claim có thật.
-- Ví dụ hợp lý: Free Shipping, Easy Returns, Secure Payment, Machine Washable, OEKO-TEX nếu có chứng nhận thật.
+- Không tạo fake urgency, countdown, stock, rating, review, certification hoặc discount giả.
 
-Forms:
-- Label rõ, lỗi dễ hiểu, CTA rõ.
-- Newsletter ngắn, không popup gây phiền.
+---
 
-## 7. Hero rules
-Hero nên:
-- Large lifestyle image, natural light.
-- Text bên trái hoặc trong vùng dễ đọc.
-- Overlay nhẹ để text readable nhưng vẫn giữ texture.
-- Một CTA chính rõ ràng; CTA phụ nếu cần.
-- Responsive art direction: desktop wide, mobile crop riêng nếu cần.
-- Không dùng đốm sáng lệch khó kiểm soát; ưu tiên gradient overlay hoặc content panel ổn định.
-- Không để text phụ thuộc vào vị trí ảnh quá mong manh.
+## 8. Content tone
 
-Hero content gợi ý:
-- Eyebrow: Scandinavian Comfort / Premium Bedding
-- Heading: Sleep Better Every Night
-- Body: Premium blankets, quilts and comforters crafted for everyday comfort.
-- CTA: Shop Bedding / Explore Collection
+Tone copy:
 
-## 8. Homepage structure
-Ưu tiên:
-1. Hero
-2. USP/trust bar
-3. Shop by category: Blankets, Quilts, Comforters
-4. Featured/best sellers
-5. Image with text: comfort/material story
-6. Reviews/testimonials nếu có thật
-7. Bedroom inspiration/UGC nếu có ảnh thật
-8. Newsletter
-9. Footer
+- Warm
+- Clear
+- Calm
+- Premium but friendly
+- Không quá hype
+- Không quá generic
+- Không keyword stuffing
 
-Không nhồi quá nhiều banner sale hoặc competing CTAs.
+Nội dung nên giúp khách hiểu:
 
-## 9. Collection page / PLP
-- Collection title là H1.
-- Filter/sort rõ, mobile drawer dễ dùng.
-- Product grid thoáng, ảnh nhất quán.
-- Empty state hữu ích.
-- Pagination/load more không phá SEO.
-- Breadcrumb/collection description nếu có nên tự nhiên, không keyword stuffing.
+- Sản phẩm là gì.
+- Phù hợp dùng khi nào.
+- Chất liệu/cảm giác/comfort ra sao.
+- Lý do đáng tin và đáng mua.
 
-## 10. Product page / PDP
-Mục tiêu: tăng tin tưởng và chuyển đổi.
-- Gallery lớn, responsive, ảnh không méo.
-- Product title H1, price rõ, variant rõ.
-- CTA nổi bật, sticky buy box nếu phù hợp.
-- Shipping/returns/payment/trust info gần CTA.
-- Accordion/tabs cho description, material, care, size guide, FAQ.
-- Related products hợp lý.
-- Reviews/rating chỉ render khi có dữ liệu thật.
-- Sold-out/unavailable state rõ, không đánh lừa.
-- Personalization/custom fields nếu có phải dễ hiểu và validate rõ.
+---
 
-## 11. Cart / drawer
-- Cart drawer nhanh, dễ đóng, keyboard accessible.
-- Update/remove quantity rõ.
-- Hiển thị subtotal, discount, shipping note đúng dữ liệu Shopify.
-- Cross-sell nhẹ, không che CTA checkout.
-- Empty cart có CTA quay lại collection.
-- Không tính giá giả ở client.
+## 9. Task priority
 
-## 12. Header / mobile menu / footer
-Header:
-- Logo rõ, navigation đơn giản.
-- Mega menu nếu dùng phải crawlable và không quá rối.
-- Search/account/cart dễ thấy.
-- Mobile menu tap target lớn, close rõ, không trap focus sai.
+File này là project-level direction, không phải section spec.
 
-Footer:
-- Customer service, policies, about, newsletter, social, payment.
-- Copy ngắn, tin cậy.
-- Không quá nhiều link gây rối.
+Khi có prompt task cụ thể từ user:
 
-## 13. Motion
-- Subtle only: fade, slight translate, hover zoom rất nhẹ.
-- Duration 200–300ms, easing mềm.
-- Không animation bay nhảy, parallax nặng, autoplay gây khó chịu.
-- Tôn trọng reduced motion.
+1. Làm theo prompt task cụ thể trước.
+2. Dùng file này để giữ đúng brand direction và quality bar.
+3. Nếu prompt task mâu thuẫn lớn với file này, báo lại ngắn gọn trước khi sửa.
+4. Không tự suy diễn yêu cầu chi tiết cho section nếu user chưa yêu cầu.
+5. Không tự thêm layout, section, fake badges, fake reviews, fake claims hoặc thay đổi ngoài phạm vi task.
 
-## 14. E-commerce ethics and CRO
-- CRO bằng clarity, trust, layout tốt; không dùng fake urgency.
-- Không fake stock, countdown, rating, review, certification.
-- Sale/discount phải lấy từ dữ liệu thật.
-- CTA rõ nhưng không spam.
-- Luôn tối ưu cho đọc nhanh, mua dễ, tin tưởng cao.
+---
 
-## 15. Definition of done for this project
-Một thay đổi UI chỉ xong khi:
-- Đúng Scandinavian Luxury + Minimal + Cozy.
-- Không làm mất texture ảnh/bedding.
-- Desktop/tablet/mobile ổn.
-- Không hard-code giá trị đáng ra là token/setting.
-- Không phá Theme Editor/schema.
-- Không giảm accessibility/performance/SEO.
+## 10. Definition of done
+
+Một thay đổi chỉ được xem là xong khi:
+
+- Đúng hướng Scandinavian Luxury + Minimal + Cozy + Warm + Premium.
+- UI sạch, thoáng, dễ đọc.
+- Desktop và mobile đều ổn.
+- Không làm mất texture/quality của ảnh bedding.
+- Không tạo cảm giác rẻ tiền hoặc quá sale-heavy.
+- Không tạo dữ liệu/claim giả.
+- Không đi ngoài phạm vi prompt task.
+- Technical quality phải theo `CORE_RULES.md`.

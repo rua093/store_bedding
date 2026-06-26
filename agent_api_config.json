@@ -1,0 +1,40 @@
+{
+  "port": 8765,
+  "allowDelete": true,
+  "allowGit": true,
+  "requireAuth": true,
+  "tokenHeader": "X-Agent-Token",
+  "enableCloudflareTunnel": true,
+  "cloudflaredCommand": "cloudflared",
+  "deleteMode": "trash",
+  "maxBodyMb": 25,
+  "maxReadBytes": 10485760,
+  "maxSearchResults": 500,
+  "excludeDirs": [
+    ".agent-api",
+    "AGENTS.md",
+    "agent_api_server.py",
+    "agent_api_config.json",
+    "openapi.json",
+    ".git",
+    "node_modules",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "dist",
+    "build"
+  ],
+  "denyWriteGlobs": [
+    "AGENTS.md",
+    "agent_api_server.py",
+    "agent_api_config.json",
+    "openapi.json",
+    ".env",
+    ".env.*",
+    "*.pem",
+    "*.key",
+    "id_rsa",
+    "id_rsa.pub",
+    ".agent-api/*"
+  ]
+}

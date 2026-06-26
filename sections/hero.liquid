@@ -6,9 +6,16 @@
   assign hero_has_visual_preview = request.visual_preview_mode
   assign hero_is_auto_height = false
   assign hero_text_align = 'left'
-  assign hero_slot_align = 'flex-start'
   assign desktop_widths = '832, 1200, 1600, 1920, 2560, 3840'
   assign mobile_widths = '416, 600, 800, 1200, 1600'
+  assign mobile_widths_array = mobile_widths | split: ', '
+  assign hero_eyebrow = section.settings.eyebrow | strip
+  assign hero_heading = section.settings.heading | strip
+  assign hero_description = section.settings.description | strip
+  assign hero_primary_label = section.settings.primary_label | strip
+  assign hero_primary_link = section.settings.primary_link
+  assign hero_secondary_label = section.settings.secondary_label | strip
+  assign hero_secondary_link = section.settings.secondary_link
 
   if section.settings.image_1 != blank and section.settings.media_type_1 == 'image'
     assign desktop_media = 'image'
@@ -46,10 +53,8 @@
   case section.settings.horizontal_alignment_flex_direction_column
     when 'center'
       assign hero_text_align = 'center'
-      assign hero_slot_align = 'center'
     when 'flex-end'
       assign hero_text_align = 'right'
-      assign hero_slot_align = 'flex-end'
   endcase
 
   if section.settings.background_color != blank
@@ -66,7 +71,7 @@
       <source
         media="(max-width: 749px)"
         srcset="
-          {%- for mobile_width in mobile_widths -%}
+          {%- for mobile_width in mobile_widths_array -%}
             {{ section.settings.image_1_mobile | image_url: width: mobile_width }} {{ mobile_width }}w{% unless forloop.last %},{% endunless %}
           {%- endfor -%}
         "
@@ -157,75 +162,23 @@
   {% endif %}
 {% endcapture %}
 
-{% assign hero_eyebrow = '' %}
-{% assign hero_heading = '' %}
-{% assign hero_description = '' %}
-{% assign hero_actions = '' %}
-
-{% for block in section.blocks %}
-  {% capture block_markup %}
-    {% case block.type %}
-      {% when 'text' %}
-        {% render 'text', block: block %}
-      {% when 'button' %}
-        {% render 'button', link: block.settings.link, block: block %}
-      {% when 'jumbo-text' %}
-        {% render 'jumbo-text', block: block %}
-    {% endcase %}
-  {% endcapture %}
-
-  {% if block_markup != blank %}
-    {% liquid
-      assign block_preset = block.settings.type_preset | default: ''
-      assign block_font_size = block.settings.font_size | downcase | default: ''
-      assign block_text = block.settings.text | strip_html | strip
-      assign is_heading_text = false
-      assign is_eyebrow_text = false
-
-      if block_preset == 'h1' or block_preset == 'h2' or block_preset == 'h3' or block_preset == 'h4' or block_preset == 'h5'
-        assign is_heading_text = true
-      endif
-      if block_font_size contains 'heading'
-        assign is_heading_text = true
-      endif
-      if block_preset == 'h6' or block_preset == 'custom'
-        assign is_eyebrow_text = true
-      endif
-    %}
-
-    {% case block.type %}
-      {% when 'button' %}
-        {% capture hero_actions %}{{ hero_actions }}{{ block_markup }}{% endcapture %}
-      {% when 'jumbo-text' %}
-        {% if hero_heading == blank %}
-          {% assign hero_heading = block_markup %}
-        {% else %}
-          {% capture hero_description %}{{ hero_description }}{{ block_markup }}{% endcapture %}
-        {% endif %}
-      {% when 'text' %}
-        {% if block_text != blank %}
-          {% if hero_eyebrow == blank and hero_heading == blank and is_eyebrow_text and is_heading_text == false %}
-            {% assign hero_eyebrow = block_markup %}
-          {% elsif hero_heading == blank %}
-            {% assign hero_heading = block_markup %}
-          {% else %}
-            {% capture hero_description %}{{ hero_description }}{{ block_markup }}{% endcapture %}
-          {% endif %}
-        {% endif %}
-    {% endcase %}
-  {% endif %}
-{% endfor %}
-
 <div
   id="Hero-{{ section.id }}"
-  class="hero{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}{% if hero_is_auto_height %} hero--height-auto{% endif %}"
+  class="hero{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}{% if hero_is_auto_height %} hero--height-auto{% endif %}{% unless section.settings.toggle_overlay %} hero--readability-scrim{% endunless %}"
   style="
     --hero-content-x: {{ section.settings.horizontal_alignment_flex_direction_column }};
     --hero-content-y: {{ section.settings.vertical_alignment_flex_direction_column }};
     --hero-content-y-mobile: {{ section.settings.vertical_alignment_flex_direction_column }};
-    --hero-content-width: min(100%, 42rem);
-    --hero-slot-align: {{ hero_slot_align }};
+    --hero-content-width: min(100%, 38rem);
+    --hero-copy-max-width: 31rem;
     --hero-text-align: {{ hero_text_align }};
+    --hero-eyebrow-color: rgb(240 199 161 / 0.96);
+    --hero-heading-color: #fff8ef;
+    --hero-description-color: rgb(255 248 239 / 0.86);
+    --hero-secondary-cta-color: rgb(255 248 239 / 0.92);
+    --hero-secondary-cta-hover: #ffffff;
+    --hero-text-shadow: 0 1px 2px rgb(31 22 16 / 0.2), 0 10px 30px rgb(31 22 16 / 0.16);
+    --hero-eyebrow-shadow: 0 1px 2px rgb(31 22 16 / 0.26), 0 8px 24px rgb(31 22 16 / 0.18);
     {% if primary_image != blank %}--hero-media-aspect-ratio: {{ primary_image.aspect_ratio }};{% endif %}
     {% if section.settings.section_height == 'custom' %}
       --hero-min-height: {{ section.settings.section_height_custom }}svh;
@@ -257,23 +210,42 @@
     <div class="hero__content-shell hero__content-shell--{{ section.settings.section_width }}">
       <div class="hero__content">
         {% if hero_eyebrow != blank %}
-          <div class="hero__slot hero__eyebrow">
-            {{ hero_eyebrow }}
-          </div>
+          <p class="hero__eyebrow">{{ hero_eyebrow | escape }}</p>
         {% endif %}
         {% if hero_heading != blank %}
-          <div class="hero__slot hero__heading">
-            {{ hero_heading }}
-          </div>
+          <h1 class="hero__heading">{{ hero_heading | escape }}</h1>
         {% endif %}
         {% if hero_description != blank %}
-          <div class="hero__slot hero__description">
-            {{ hero_description }}
-          </div>
+          <p class="hero__description">{{ hero_description | escape }}</p>
         {% endif %}
-        {% if hero_actions != blank %}
-          <div class="hero__slot hero__actions">
-            {{ hero_actions }}
+        {% if hero_primary_label != blank or hero_secondary_label != blank %}
+          <div class="hero__actions">
+            {% if hero_primary_label != blank %}
+              <a
+                {% if hero_primary_link == blank %}
+                  role="link"
+                  aria-disabled="true"
+                {% else %}
+                  href="{{ hero_primary_link }}"
+                {% endif %}
+                class="hero__cta hero__cta--primary"
+              >
+                {{ hero_primary_label | escape }}
+              </a>
+            {% endif %}
+            {% if hero_secondary_label != blank %}
+              <a
+                {% if hero_secondary_link == blank %}
+                  role="link"
+                  aria-disabled="true"
+                {% else %}
+                  href="{{ hero_secondary_link }}"
+                {% endif %}
+                class="hero__cta hero__cta--secondary"
+              >
+                {{ hero_secondary_label | escape }}
+              </a>
+            {% endif %}
           </div>
         {% endif %}
       </div>
@@ -314,6 +286,17 @@
     background: var(--color-background);
   }
 
+  .hero--readability-scrim .hero__background::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, rgb(26 19 14 / 0.3) 0%, rgb(26 19 14 / 0.14) 18%, transparent 35%),
+      radial-gradient(88% 74% at 16% 54%, rgb(26 19 14 / 0.3) 0%, rgb(26 19 14 / 0.16) 36%, transparent 70%);
+  }
+
   .hero__media-grid {
     position: absolute;
     inset: 0;
@@ -347,17 +330,19 @@
     min-height: inherit;
     display: grid;
     align-items: var(--hero-content-y-mobile);
-    padding-block: clamp(1.5rem, 5vw, 3rem);
+    padding-block-start: clamp(1.75rem, 4vw, 3rem);
+    padding-block-end: clamp(2.75rem, 7vw, 4.5rem);
     pointer-events: none;
   }
 
   .hero__content-shell--page-width {
     grid-column: 2;
+    padding-inline: clamp(1rem, 2vw, 1.5rem);
   }
 
   .hero__content-shell--full-width {
     grid-column: 1 / -1;
-    padding-inline: var(--page-margin);
+    padding-inline: max(var(--page-margin), clamp(1.5rem, 4vw, 4.5rem));
   }
 
   .hero__content {
@@ -366,60 +351,46 @@
     justify-self: var(--hero-content-x);
     display: flex;
     flex-direction: column;
-    gap: clamp(1rem, 2vw, 1.5rem);
+    gap: clamp(1rem, 1.8vw, 1.65rem);
     text-align: var(--hero-text-align);
+    padding-inline-start: clamp(0rem, 1.2vw, 0.75rem);
     pointer-events: auto;
   }
 
-  .hero__slot,
-  .hero__slot > * {
-    min-width: 0;
-    max-width: 100%;
-  }
-
-  .hero__slot :is(.text-block, jumbo-text) {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .hero__slot .text-block {
-    align-items: var(--hero-slot-align);
-  }
-
-  .hero__eyebrow :is(.text-block > *, jumbo-text) {
-    color: var(--color-primary-button-background);
+  .hero__eyebrow {
+    margin: 0;
+    color: var(--hero-eyebrow-color);
+    font-family: var(--font-body--family);
+    font-weight: 600;
     font-size: clamp(0.82rem, 1vw, 0.96rem);
     line-height: 1.2;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.16em;
+    text-shadow: var(--hero-eyebrow-shadow);
     text-transform: uppercase;
   }
 
-  .hero__heading :is(.text-block > *, jumbo-text) {
-    color: var(--color-foreground);
-    line-height: 0.95;
-    letter-spacing: -0.045em;
-    max-inline-size: min(12ch, 100%);
+  .hero__heading {
+    margin: 0;
+    color: var(--hero-heading-color);
+    font-family: var(--font-heading--family);
+    font-style: var(--font-heading--style);
+    font-weight: var(--font-heading--weight);
+    font-size: clamp(2.8rem, 5.3vw, 4.75rem);
+    line-height: 1.02;
+    letter-spacing: -0.038em;
+    max-inline-size: min(11ch, 100%);
+    text-shadow: var(--hero-text-shadow);
     text-wrap: balance;
   }
 
-  .hero__heading .text-block > * {
-    font-size: clamp(2.5rem, 7vw, 4.5rem);
-  }
-
-  .hero__heading jumbo-text {
-    max-width: min(12ch, 100%);
-  }
-
   .hero__description {
-    max-width: min(100%, 38rem);
-  }
-
-  .hero__description .text-block > *,
-  .hero__description rte-formatter,
-  .hero__description rte-formatter > * {
-    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
-    font-size: clamp(1rem, 1.2vw, 1.08rem);
-    line-height: 1.6;
+    margin: 0;
+    max-width: min(100%, var(--hero-copy-max-width));
+    color: var(--hero-description-color);
+    font-family: var(--font-body--family);
+    font-size: clamp(1rem, 1.15vw, 1.12rem);
+    line-height: 1.68;
+    text-shadow: var(--hero-text-shadow);
     text-wrap: pretty;
   }
 
@@ -427,21 +398,85 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.875rem 1rem;
+    gap: 0.85rem 1rem;
+    padding-top: 0.25rem;
   }
 
   .hero__actions > * {
     flex: 0 0 auto;
   }
 
-  .hero__actions :is(.button, .button-secondary, .button-custom) {
+  .hero__cta {
     min-height: max(48px, var(--minimum-touch-target));
-    box-shadow: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-body--family);
+    font-weight: 500;
+    line-height: 1;
+    padding: 0.95rem 1.6rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition:
+      background-color 0.24s ease,
+      color 0.24s ease,
+      border-color 0.24s ease,
+      box-shadow 0.24s ease;
   }
 
-  .hero__actions .button-unstyled {
-    min-height: auto;
+  .hero__cta--primary {
+    min-height: max(48px, var(--minimum-touch-target));
+    background: var(--color-primary-button-background);
+    border: 1px solid var(--color-primary-button-background);
+    color: var(--color-primary-button-text);
+    box-shadow: 0 14px 30px rgb(58 39 29 / 0.16);
+  }
+
+  .hero__cta--primary:hover {
+    background: var(--color-primary-button-background-hover, var(--color-primary-button-background));
+    border-color: var(--color-primary-button-background-hover, var(--color-primary-button-background));
+    box-shadow: 0 16px 32px rgb(58 39 29 / 0.2);
+  }
+
+  .hero__cta--secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
     padding-inline: 0;
+    padding-block: 0.25rem;
+    min-height: auto;
+    border-radius: 0;
+    color: var(--hero-secondary-cta-color);
+    font-weight: 500;
+    text-decoration: none;
+    text-shadow: var(--hero-text-shadow);
+    box-shadow: inset 0 -1px 0 rgb(255 248 239 / 0.42);
+  }
+
+  .hero__cta--secondary::after {
+    content: '\2192';
+    font-size: 0.88em;
+    line-height: 1;
+    opacity: 0.74;
+    transition:
+      opacity 0.24s ease,
+      transform 0.24s ease,
+      color 0.24s ease;
+  }
+
+  .hero__cta--secondary:hover {
+    color: var(--hero-secondary-cta-hover);
+    box-shadow: inset 0 -1px 0 rgb(255 255 255 / 0.7);
+  }
+
+  .hero__cta--secondary:hover::after {
+    opacity: 1;
+    transform: translateX(2px);
+  }
+
+  .hero__cta[aria-disabled='true'] {
+    opacity: 0.55;
+    pointer-events: none;
   }
 
   .hero--height-auto {
@@ -478,11 +513,18 @@
   @media screen and (min-width: 750px) {
     .hero__content-shell {
       align-items: var(--hero-content-y);
-      padding-block: clamp(2rem, 5vw, 4rem);
+      padding-block-start: clamp(2.25rem, 4vw, 3.75rem);
+      padding-block-end: clamp(4rem, 8vw, 6rem);
     }
   }
 
   @media screen and (max-width: 749px) {
+    .hero--readability-scrim .hero__background::after {
+      background:
+        linear-gradient(180deg, rgb(26 19 14 / 0.28) 0%, rgb(26 19 14 / 0.12) 20%, transparent 38%),
+        radial-gradient(100% 78% at 28% 70%, rgb(26 19 14 / 0.36) 0%, rgb(26 19 14 / 0.2) 42%, transparent 75%);
+    }
+
     .hero__media-item--desktop {
       display: none;
     }
@@ -493,35 +535,47 @@
     }
 
     .hero__content-shell {
-      padding-block: clamp(1rem, 4vw, 2rem);
+      padding-block-start: clamp(1.15rem, 4vw, 1.75rem);
+      padding-block-end: clamp(2rem, 8vw, 3rem);
     }
 
     .hero__content {
-      width: min(100%, 32rem);
+      width: min(100%, 28rem);
       gap: 1rem;
+      padding-inline-start: 0;
     }
 
-    .hero__heading .text-block > * {
-      font-size: clamp(2.2rem, 9vw, 3.25rem);
+    .hero__heading {
+      font-size: clamp(2.2rem, 7.8vw, 3.15rem);
+      line-height: 1.03;
+      letter-spacing: -0.032em;
       max-inline-size: 11ch;
     }
 
     .hero__description {
       max-width: 100%;
+      font-size: clamp(0.98rem, 3.8vw, 1.04rem);
+      line-height: 1.62;
     }
 
     .hero__actions {
       flex-direction: column;
       align-items: stretch;
+      gap: 0.9rem;
     }
 
     .hero__actions > * {
       width: 100%;
     }
 
-    .hero__actions :is(.button, .button-secondary, .button-custom) {
+    .hero__cta--primary {
       width: 100%;
-      justify-content: center;
+      padding-inline: 1.4rem;
+    }
+
+    .hero__cta--secondary {
+      width: fit-content;
+      padding-block: 0.15rem;
     }
   }
 {% endstylesheet %}
@@ -531,17 +585,6 @@
   "name": "t:names.hero",
   "tag": "section",
   "class": "hero-wrapper section-wrapper",
-  "blocks": [
-    {
-      "type": "text"
-    },
-    {
-      "type": "button"
-    },
-    {
-      "type": "jumbo-text"
-    }
-  ],
   "disabled_on": {
     "groups": ["header"]
   },
@@ -621,6 +664,50 @@
       "id": "video_1_mobile",
       "label": "t:settings.video",
       "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_1_mobile == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Premium Bedding"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Sleep Better Every Night"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Soft blankets, quilts and comforters made for warmer, calmer nights."
+    },
+    {
+      "type": "text",
+      "id": "primary_label",
+      "label": "Primary CTA Label",
+      "default": "Shop Bedding"
+    },
+    {
+      "type": "url",
+      "id": "primary_link",
+      "label": "Primary CTA Link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_label",
+      "label": "Secondary CTA Label",
+      "default": "Explore Collection"
+    },
+    {
+      "type": "url",
+      "id": "secondary_link",
+      "label": "Secondary CTA Link"
     },
     {
       "type": "header",
@@ -811,40 +898,18 @@
     {
       "name": "t:names.hero",
       "category": "t:categories.banners",
-      "blocks": {
-        "text_1": {
-          "type": "text",
-          "settings": {
-            "text": "t:html_defaults.new_arrivals_h2",
-            "type_preset": "h1",
-            "max_width": "narrow"
-          }
-        },
-        "text_2": {
-          "type": "text",
-          "settings": {
-            "text": "t:html_defaults.made_with_care",
-            "max_width": "narrow",
-            "padding-block-end": 32
-          }
-        },
-        "button": {
-          "type": "button",
-          "name": "t:names.button",
-          "settings": {
-            "label": "t:text_defaults.shop_now_button_label",
-            "link": "shopify://collections/all"
-          }
-        }
-      },
-      "block_order": ["text_1", "text_2", "button"],
       "settings": {
         "horizontal_alignment_flex_direction_column": "center",
         "section_height": "large",
         "padding-block-start": 40,
         "padding-block-end": 40,
         "toggle_overlay": true,
-        "overlay_style": "gradient"
+        "overlay_style": "gradient",
+        "eyebrow": "Premium Bedding",
+        "heading": "Sleep Better Every Night",
+        "description": "Soft blankets, quilts and comforters made for warmer, calmer nights.",
+        "primary_label": "Shop Bedding",
+        "secondary_label": "Explore Collection"
       }
     }
   ]
