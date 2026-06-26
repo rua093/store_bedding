@@ -724,10 +724,14 @@
     }
 
     .menu-list .menu-list__list-item:where(:hover, :focus-within) .menu-list__link-title::after,
-    .menu-list__link--active .menu-list__link-title::after,
     .menu-list__list-item[slot='overflow'] .menu-list__link[aria-expanded='true'] .menu-list__link-title::after {
       opacity: 1;
       transform: scaleX(1);
+    }
+
+    .menu-list__link--active {
+      color: #3e332d;
+      font-weight: 600;
     }
 
     .menu-list__submenu-inner {
