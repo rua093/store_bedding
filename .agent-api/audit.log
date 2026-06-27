@@ -15,3 +15,4 @@
 {"time":"2026-06-26T18:12:39.242705+00:00","action":"replace","detail":{"ok":true,"path":"sections/collection-list.liquid","replacements":1,"newSha256":"24a4d45d5f72e19f73f89912ddde9ffd7f85bacefaf721b0d3d52b073cf088cf"}}
 {"time":"2026-06-26T18:12:58.516315+00:00","action":"replace","detail":{"ok":true,"path":"sections/collection-list.liquid","replacements":1,"newSha256":"6d3b88d65093ab2286b1cb7194435520d62542af1e7f09c3d8a8392251f553cc"}}
 {"time":"2026-06-26T18:13:23.580940+00:00","action":"replace","detail":{"ok":true,"path":"sections/collection-list.liquid","replacements":1,"newSha256":"d48d44a56a1556a0222b2420d174c50a91c4b709c5292ed133f3c6dc57485eae"}}
+{"time":"2026-06-27T06:52:25.003136+00:00","action":"replace","detail":{"ok":true,"path":"sections/product-list.liquid","replacements":1,"newSha256":"fc28eccb72fe92996ce3f47b7924e4ef2e368ba658a12c4bd8caed0740a66a6d"}}
