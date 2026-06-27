@@ -1,11 +1,17 @@
 {% liquid
+  assign is_trust_signals_hero = false
+  assign first_trust_text = section.blocks.first.settings.text | default: ''
+  if section.id == 'trust_signals_P6hero' or section.id contains 'trust_signals_P6hero' or first_trust_text contains 'Premium Materials'
+    assign is_trust_signals_hero = true
+  endif
+
   if section.settings.background_color != blank
     render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
   endif
 %}
 
 <section
-  class="trust-signals section-wrapper{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  class="trust-signals section-wrapper{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}{% if is_trust_signals_hero %} trust-signals--hero{% endif %}"
   style="
     --trust-signals-padding-top: {{ section.settings.padding-block-start }}px;
     --trust-signals-padding-bottom: {{ section.settings.padding-block-end }}px;
@@ -15,8 +21,80 @@
 >
   <div class="trust-signals__page-width">
     <div class="trust-signals__inner" data-homepage-reveal-children=":scope > *">
-      {% content_for 'blocks' %}
+      {% if is_trust_signals_hero %}
+        <div class="trust-signals__hero-grid" data-homepage-reveal-children=":scope > *">
+          {% for block in section.blocks limit: 4 %}
+            {% liquid
+              assign block_html = block.settings.text | default: ''
+              assign trust_title = block_html | split: '<strong>' | last | split: '</strong>' | first | strip_html | strip
+              assign trust_body = block_html | split: '</strong>' | last | strip_html | strip
+
+              if trust_title == blank
+                case forloop.index
+                  when 1
+                    assign trust_title = 'Premium Materials'
+                  when 2
+                    assign trust_title = 'Breathable & Cozy'
+                  when 3
+                    assign trust_title = 'Made to Last'
+                  when 4
+                    assign trust_title = 'Free Shipping'
+                endcase
+              endif
+
+              if trust_body == blank
+                case forloop.index
+                  when 1
+                    assign trust_body = 'Carefully selected for lasting comfort'
+                  when 2
+                    assign trust_body = 'Lightweight warmth all year round'
+                  when 3
+                    assign trust_body = 'Quality you can feel, night after night'
+                  when 4
+                    assign trust_body = 'On orders over $99 across the US'
+                endcase
+              endif
+
+              assign trust_icon_asset = ''
+              case forloop.index
+                when 1
+                  assign trust_icon_asset = 'premium_material.png'
+                when 2
+                  assign trust_icon_asset = 'breathable_coldzy.png'
+                when 3
+                  assign trust_icon_asset = 'shiled.png'
+                when 4
+                  assign trust_icon_asset = 'ready_shipping.png'
+              endcase
+            %}
+            <div class="trust-signals__hero-item trust-signals__hero-item--{{ forloop.index }}" {{ block.shopify_attributes }}>
+              <div class="trust-signals__hero-icon trust-signals__hero-icon--{{ forloop.index }}" aria-hidden="true">
+                <img
+                  class="trust-signals__hero-icon-image"
+                  src="{{ trust_icon_asset | asset_url }}"
+                  alt=""
+                  width="512"
+                  height="512"
+                  loading="lazy"
+                >
+              </div>
+              <div class="trust-signals__hero-copy">
+                <h3 class="trust-signals__hero-title">{{ trust_title }}</h3>
+                <span class="trust-signals__hero-divider" aria-hidden="true"></span>
+                <p class="trust-signals__hero-body">{{ trust_body }}</p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        {% content_for 'blocks' %}
+      {% endif %}
     </div>
+    {% if is_trust_signals_hero %}
+      <div class="trust-signals__hero-signoff" aria-hidden="true">
+        <span>Made with love for you and your furry friend</span>
+      </div>
+    {% endif %}
   </div>
 </section>
 
@@ -106,9 +184,208 @@
     font-weight: 650;
   }
 
+  .trust-signals--hero {
+    --trust-signals-background: #faf8f5;
+    padding-block: clamp(3rem, 4.6vw, 4rem);
+    background:
+      radial-gradient(circle at 18% 8%, rgba(247, 236, 224, 0.46) 0%, rgba(247, 236, 224, 0) 26%),
+      radial-gradient(circle at 82% 10%, rgba(247, 236, 224, 0.4) 0%, rgba(247, 236, 224, 0) 24%),
+      #faf8f5;
+  }
+
+  .trust-signals--hero .trust-signals__page-width {
+    width: min(calc(100% - 3rem), 112rem);
+    position: relative;
+    border-radius: 1.6rem;
+    border: 1px solid rgba(220, 193, 169, 0.72);
+    background: #fffaf5;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.82) inset,
+      0 22px 54px rgba(62, 51, 45, 0.11);
+    overflow: hidden;
+  }
+
+  .trust-signals--hero .trust-signals__page-width::before {
+    content: '';
+    position: absolute;
+    inset: 0.55rem;
+    border: 1px dashed rgba(220, 193, 169, 0.38);
+    border-radius: 1.15rem;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .trust-signals--hero .trust-signals__inner {
+    display: block;
+    padding: clamp(2.8rem, 4vw, 4rem) clamp(1.8rem, 2.6vw, 2.6rem) clamp(2.4rem, 3vw, 3rem);
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+    position: relative;
+    z-index: 2;
+  }
+
+  .trust-signals--hero .trust-signals__inner::before {
+    display: none;
+  }
+
+  .trust-signals--hero .trust-signals__hero-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+  }
+
+  .trust-signals--hero .trust-signals__hero-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    padding: 0 clamp(1rem, 2vw, 2rem);
+    text-align: center;
+    background: transparent;
+    border: 0;
+  }
+
+  .trust-signals--hero .trust-signals__hero-item::after {
+    content: '';
+    position: absolute;
+    top: 0.8rem;
+    right: 0;
+    width: 1px;
+    height: calc(100% - 1.6rem);
+    background: linear-gradient(180deg, rgba(220, 193, 169, 0) 0%, rgba(220, 193, 169, 0.75) 14%, rgba(220, 193, 169, 0.75) 86%, rgba(220, 193, 169, 0) 100%);
+  }
+
+  .trust-signals--hero .trust-signals__hero-item:last-child::after {
+    display: none;
+  }
+
+  .trust-signals--hero .trust-signals__hero-icon {
+    width: clamp(11rem, 13vw, 15rem);
+    height: clamp(11rem, 13vw, 15rem);
+    margin-bottom: 0.15rem;
+    display: grid;
+    place-items: center;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .trust-signals--hero .trust-signals__hero-icon-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .trust-signals--hero .trust-signals__hero-copy {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative;
+    z-index: 5;
+    min-width: 0;
+    text-align: center;
+  }
+
+  .trust-signals--hero .trust-signals__hero-title {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    margin: 0;
+    font-family: var(--font-heading--family);
+    font-size: clamp(1.55rem, 1.8vw, 2rem);
+    font-weight: 650;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    color: rgb(62 51 45) !important;
+  }
+
+  .trust-signals--hero .trust-signals__hero-divider {
+    display: block !important;
+    width: 3.8rem;
+    height: 0.23rem;
+    margin: 0.95rem auto 1rem;
+    border-radius: 999px;
+    background: rgb(180 124 97);
+  }
+
+  .trust-signals--hero .trust-signals__hero-divider::before,
+  .trust-signals--hero .trust-signals__hero-divider::after {
+    display: none !important;
+  }
+
+  .trust-signals--hero .trust-signals__hero-body {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    max-width: 15rem;
+    margin: 0 auto;
+    color: rgb(73 63 56) !important;
+    font-size: clamp(1rem, 1.08vw, 1.16rem);
+    line-height: 1.48;
+    text-wrap: balance;
+  }
+
+  .trust-signals--hero .trust-signals__hero-signoff {
+    position: relative;
+    z-index: 2;
+    margin-top: 0;
+    padding: clamp(1.1rem, 1.5vw, 1.45rem) 2rem;
+    text-align: center;
+    background: linear-gradient(90deg, rgba(246, 236, 224, 0.9), rgba(252, 246, 238, 0.98), rgba(246, 236, 224, 0.9));
+    border-top: 1px solid rgba(226, 204, 183, 0.62);
+    color: rgb(154 107 70);
+    font-size: clamp(1.35rem, 1.8vw, 2rem);
+    line-height: 1.15;
+    opacity: 1;
+    font-family: "Snell Roundhand", "Segoe Script", "Apple Chancery", cursive;
+    font-weight: 500;
+  }
+
+  .trust-signals--hero .trust-signals__hero-signoff::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 8rem;
+    height: 2.4rem;
+    opacity: 0.34;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 50' fill='none'%3E%3Cpath d='M8 38C38 12 75 9 116 23C130 28 141 27 152 20' stroke='%23B78962' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M42 31C29 25 22 15 20 5C34 7 44 15 50 27M65 25C58 15 57 5 61 0C70 8 75 18 74 30M91 24C93 12 100 4 111 0C114 12 111 22 101 31' stroke='%23B78962' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+    left: 4.5rem;
+    transform: translateY(-50%);
+  }
+
+  .trust-signals--hero .trust-signals__hero-signoff::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 8rem;
+    height: 2.4rem;
+    opacity: 0.34;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 50' fill='none'%3E%3Cpath d='M8 38C38 12 75 9 116 23C130 28 141 27 152 20' stroke='%23B78962' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M42 31C29 25 22 15 20 5C34 7 44 15 50 27M65 25C58 15 57 5 61 0C70 8 75 18 74 30M91 24C93 12 100 4 111 0C114 12 111 22 101 31' stroke='%23B78962' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+    right: 4.5rem;
+    transform: translateY(-50%) scaleX(-1);
+  }
+
   @media screen and (max-width: 989px) {
     .trust-signals__inner {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .trust-signals--hero .trust-signals__hero-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      row-gap: 2.5rem;
+    }
+
+    .trust-signals--hero .trust-signals__hero-signoff {
+      font-size: clamp(1.2rem, 3.6vw, 1.55rem);
+    }
+
+    .trust-signals--hero .trust-signals__hero-item:nth-child(2)::after {
+      display: none;
     }
   }
 
@@ -139,6 +416,56 @@
 
     .trust-signals__inner .text-block strong {
       font-size: 1.04rem;
+    }
+
+    .trust-signals--hero {
+      padding-block: 2rem 2.75rem;
+    }
+
+    .trust-signals--hero .trust-signals__page-width {
+      width: min(calc(100% - 1.25rem), 42rem);
+      border-radius: 1.2rem;
+    }
+
+    .trust-signals--hero .trust-signals__hero-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .trust-signals--hero .trust-signals__hero-item {
+      padding-inline: 0.5rem;
+    }
+
+    .trust-signals--hero .trust-signals__hero-item::after {
+      display: none;
+    }
+
+    .trust-signals--hero .trust-signals__inner {
+      padding: 1.8rem 1rem 2rem;
+    }
+
+    .trust-signals--hero .trust-signals__hero-icon {
+      width: clamp(11rem, 13vw, 15rem);
+      height: clamp(11rem, 13vw, 15rem);
+      margin-bottom: 0.8rem;
+    }
+
+    .trust-signals--hero .trust-signals__hero-title {
+      font-size: 1.45rem;
+    }
+
+    .trust-signals--hero .trust-signals__hero-body {
+      font-size: 0.96rem;
+    }
+
+    .trust-signals--hero .trust-signals__hero-signoff {
+      padding: 1rem 1.25rem;
+      font-size: 1.2rem;
+    }
+
+    .trust-signals--hero .trust-signals__hero-signoff::before,
+    .trust-signals--hero .trust-signals__hero-signoff::after {
+      display: none;
     }
   }
 {% endstylesheet %}
