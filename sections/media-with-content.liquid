@@ -687,7 +687,7 @@
   .media-with-content--brand-intro .brand-intro-card__media {
     position: absolute;
     inset: 0 0 0 auto;
-    width: 64%;
+    width: 56%;
     z-index: 1;
     overflow: hidden;
   }
@@ -707,29 +707,29 @@
     inset: 0;
     z-index: 2;
     pointer-events: none;
-    background: linear-gradient(
-      90deg,
-      #3e332d 0%,
-      #3e332d 34%,
-      rgba(62, 51, 45, 0.92) 40%,
-      rgba(62, 51, 45, 0.48) 48%,
-      rgba(62, 51, 45, 0.14) 55%,
-      rgba(62, 51, 45, 0) 62%
-    );
+    background: none;
   }
 
   .media-with-content--brand-intro .brand-intro-card__overlay-gradient::before {
     content: '';
     position: absolute;
-    top: -8%;
-    bottom: -8%;
-    left: 34%;
+    inset: 0;
+    background: #3e332d;
+    clip-path: polygon(0 0, 56% 0, 49% 100%, 0 100%);
+  }
+
+  .media-with-content--brand-intro .brand-intro-card__overlay-gradient::after {
+    content: '';
+    position: absolute;
+    top: -12%;
+    bottom: -12%;
+    left: 48%;
     width: 30%;
     background: linear-gradient(
       90deg,
-      rgba(62, 51, 45, 0.96) 0%,
-      rgba(62, 51, 45, 0.62) 42%,
-      rgba(62, 51, 45, 0.24) 70%,
+      rgba(62, 51, 45, 0.78) 0%,
+      rgba(62, 51, 45, 0.46) 42%,
+      rgba(62, 51, 45, 0.16) 74%,
       rgba(62, 51, 45, 0) 100%
     );
     transform: skewX(-12deg);
@@ -738,9 +738,9 @@
 
   .media-with-content--brand-intro .brand-intro-card__content {
     position: relative;
-    width: 48%;
+    width: 52%;
     z-index: 5;
-    padding: clamp(3.5rem, 5vw, 5.5rem) clamp(2.25rem, 4.5vw, 5rem) clamp(3rem, 5vw, 5rem);
+    padding: clamp(3.75rem, 5vw, 5.75rem) clamp(2rem, 3vw, 3.25rem) clamp(3rem, 5vw, 5rem) clamp(3rem, 5.5vw, 6rem);
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -772,7 +772,8 @@
     margin: 0;
     color: #fff8ef;
     font-family: var(--font-heading--family);
-    font-size: clamp(4rem, 6vw, 7rem);
+    font-size: clamp(4rem, 6.4vw, 7.4rem);
+    max-width: 12ch;
     font-weight: 560;
     line-height: 0.9;
     letter-spacing: -0.04em;
@@ -799,7 +800,7 @@
     padding: 1.2rem 1.7rem;
     display: flex;
     flex-direction: column;
-    max-width: 36rem;
+    max-width: 35rem;
     background: rgba(62, 51, 45, 0.14);
     backdrop-filter: blur(2px);
   }
@@ -910,11 +911,11 @@
       background: linear-gradient(
         90deg,
         #3e332d 0%,
-        #3e332d 38%,
-        rgba(62, 51, 45, 0.92) 45%,
-        rgba(62, 51, 45, 0.48) 54%,
-        rgba(62, 51, 45, 0.14) 62%,
-        rgba(62, 51, 45, 0) 70%
+        #3e332d 50%,
+        rgba(62, 51, 45, 0.92) 56%,
+        rgba(62, 51, 45, 0.48) 64%,
+        rgba(62, 51, 45, 0.14) 72%,
+        rgba(62, 51, 45, 0) 80%
       );
     }
 
@@ -986,6 +987,10 @@
       background: linear-gradient(180deg, rgba(62, 51, 45, 0) 0%, rgba(62, 51, 45, 0.96) 100%);
       transform: none;
       clip-path: none;
+    }
+
+    .media-with-content--brand-intro .brand-intro-card__overlay-gradient::after {
+      display: none;
     }
 
     .media-with-content--brand-intro .brand-intro-card__content {
