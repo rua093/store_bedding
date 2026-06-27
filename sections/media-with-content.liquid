@@ -18,6 +18,10 @@
   if section.settings.background_color == '#3E332D' or section.settings.background_color == '#3e332d'
     assign media_class_modifier = media_class_modifier | append: ' media-with-content--dark-surface'
   endif
+
+  if section.id contains 'media_with_content_RqxiU3'
+    assign media_class_modifier = media_class_modifier | append: ' media-with-content--footer-newsletter'
+  endif
 %}
 
 {% liquid
@@ -656,6 +660,16 @@
     min-height: 500px;
   }
 
+  .media-with-content--footer-newsletter .media-block {
+    overflow: hidden;
+  }
+
+  .media-with-content--footer-newsletter .media-block,
+  .media-with-content--footer-newsletter .media-block :is(img, video, .placeholder-svg, .resource-image__image) {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
   /* Brand Intro Section Custom styling */
   .media-with-content--brand-intro {
     display: block !important;
@@ -939,6 +953,12 @@
   }
 
   @media screen and (max-width: 749px) {
+    .media-with-content--footer-newsletter .media-block,
+    .media-with-content--footer-newsletter .media-block :is(img, video, .placeholder-svg, .resource-image__image) {
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+
     .media-with-content--brand-intro {
       width: min(calc(100% - 16px), 100%) !important;
       border-radius: 24px !important;
