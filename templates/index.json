@@ -209,10 +209,10 @@
       "name": "Collection list",
       "settings": {
         "collection_list": [
-          "animal-comforter",
-          "baby-blankets",
-          "baptism",
-          "baseball"
+          "book-lover",
+          "cactus",
+          "christian",
+          "christmas"
         ],
         "layout_type": "bento",
         "carousel_on_mobile": true,
