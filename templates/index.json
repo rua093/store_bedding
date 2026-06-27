@@ -209,10 +209,10 @@
       "name": "Collection list",
       "settings": {
         "collection_list": [
-          "book-lover",
+          "baseball",
+          "best-selling",
           "cactus",
-          "christian",
-          "christmas"
+          "cardinal"
         ],
         "layout_type": "bento",
         "carousel_on_mobile": true,
