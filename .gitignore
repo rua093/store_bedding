@@ -26,4 +26,3 @@ Thumbs.db
 # Shopify local files
 .shopify/
 # Merchant/store-specific theme data
-/config/settings_data.json

@@ -659,7 +659,8 @@
   /* Brand Intro Section Custom styling */
   .media-with-content--brand-intro {
     display: block !important;
-    width: min(calc(100% - 32px), 1600px) !important;
+    width: 100% !important;
+    max-width: none !important;
     min-height: 0 !important;
     padding-block: 0 !important;
     background: transparent !important;
@@ -667,8 +668,7 @@
     border-radius: 0 !important;
     overflow: visible !important;
     box-shadow: none !important;
-    margin-inline: auto !important;
-    margin-block: 16px !important;
+    margin: 0 !important;
   }
 
   .media-with-content--brand-intro .brand-intro-card {
@@ -680,7 +680,7 @@
     background: #3e332d;
     color: #fff8ef;
     overflow: hidden;
-    border-radius: 32px;
+    border-radius: 0;
     box-shadow: 0 24px 64px rgba(43, 33, 27, 0.14);
   }
 
