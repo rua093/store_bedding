@@ -401,6 +401,7 @@ export class ProductCard extends ProductCardLink {
    */
   previewImage(event) {
     if (event.pointerType !== 'mouse') return;
+    if (this.closest('.ui-test-product-list') && this.closest('[data-testid="product-list"]')) return;
 
     const { slideshow } = this.refs;
 
@@ -411,7 +412,7 @@ export class ProductCard extends ProductCardLink {
     if (this.#previousSlideIndex != null && this.#previousSlideIndex > 0) {
       slideshow.select(this.#previousSlideIndex, undefined, { animate: false });
     } else {
-      slideshow.next(undefined, { animate: false });
+      slideshow.next(undefined, { animate: true });
       setTimeout(() => this.#preloadNextPreviewImage());
     }
   }
@@ -422,6 +423,7 @@ export class ProductCard extends ProductCardLink {
    */
   resetImage(event) {
     if (event.pointerType !== 'mouse') return;
+    if (this.closest('.ui-test-product-list') && this.closest('[data-testid="product-list"]')) return;
 
     const { slideshow } = this.refs;
 

@@ -581,6 +581,13 @@
                 "padding-inline-end": 24
               },
               "blocks": {
+                "custom_liquid_product_badges": {
+                  "type": "custom-liquid",
+                  "settings": {
+                    "custom_liquid": "{% assign normalized_tags = closest.product.tags | join: ',' | downcase %}\n\n{% capture product_card_labels %}\n  {% if normalized_tags contains 'custom' or normalized_tags contains 'personalized' %}\n    <span class=\"product-card-meta-tag product-card-meta-tag--custom\">Personalized</span>\n  {% endif %}\n\n  {% if normalized_tags contains 'best-seller' or normalized_tags contains 'bestseller' %}\n    <span class=\"product-card-meta-tag product-card-meta-tag--best\">Best seller</span>\n  {% endif %}\n\n  {% if normalized_tags contains 'new-arrival' or normalized_tags contains 'new' %}\n    <span class=\"product-card-meta-tag product-card-meta-tag--new\">New</span>\n  {% endif %}\n\n  {% if normalized_tags contains 'made-to-order' %}\n    <span class=\"product-card-meta-tag product-card-meta-tag--made\">Made to order</span>\n  {% endif %}\n{% endcapture %}\n\n{% if product_card_labels != blank %}\n  <div class=\"product-card-meta-tags\">\n    {{ product_card_labels }}\n  </div>\n{% endif %}"
+                  },
+                  "blocks": {}
+                },
                 "product_title_gH3cpy": {
                   "type": "product-title",
                   "name": "t:names.product_title",
@@ -645,6 +652,7 @@
                 }
               },
               "block_order": [
+                "custom_liquid_product_badges",
                 "product_title_gH3cpy",
                 "price_anAima",
                 "swatches_eYcKAz"

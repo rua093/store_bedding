@@ -12,6 +12,10 @@
   assign product = closest.product
   assign block_settings = block.settings
   assign image_sizes = '(min-width: 750px) 50vw, 100vw'
+  assign disable_pointer_preview = false
+  if section and section.type == 'product-list'
+    assign disable_pointer_preview = true
+  endif
 
   # Check if product has badges and determine position
   assign has_badges = false
@@ -72,7 +76,7 @@
     --gallery-aspect-ratio: {{ ratio }};
   "
   data-product-id="{{ product.id }}"
-  {% if settings.show_second_image_on_hover %}
+  {% if settings.show_second_image_on_hover and disable_pointer_preview == false %}
     on:pointerenter="/previewImage"
     on:pointerleave="/resetImage"
   {% endif %}
@@ -93,6 +97,7 @@
 
       assign other_media = product.media | reject: 'src', product.featured_media
       assign media_list_to_show = product.featured_media | concat: other_media
+      assign hover_media = media_list_to_show[1]
 
       if product.media.size > 2 and generic_media_size > 0
         assign show_arrows = true
@@ -172,6 +177,16 @@
         attributes: slideshow_attributes
       %}
     </a>
+    {% if hover_media != blank and settings.show_second_image_on_hover %}
+      <div class="card-gallery__fade-hover-media" aria-hidden="true">
+        {% render 'product-media',
+          media: hover_media,
+          sizes: image_sizes,
+          loading: 'lazy',
+          preview_image_only: true
+        %}
+      </div>
+    {% endif %}
   {% elsif product != blank and product.media.size == 0 %}
     <div class="product-card-gallery__title-placeholder">
       <a
