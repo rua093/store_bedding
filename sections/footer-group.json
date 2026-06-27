@@ -19,7 +19,7 @@
           "static": true,
           "settings": {
             "media_type": "image",
-            "image": "shopify://shop_images/bedroom-decor-with-cactus-wallpaper.jpg",
+            "image": "shopify://shop_images/blossoms-books.jpg",
             "link": "",
             "video_loop": true,
             "video_autoplay": false,
@@ -34,7 +34,7 @@
           "settings": {
             "horizontal_alignment_flex_direction_column": "flex-start",
             "vertical_alignment_flex_direction_column": "center",
-            "gap": 24
+            "gap": 0
           },
           "blocks": {
             "text_tPnNpR": {
@@ -107,11 +107,11 @@
       "settings": {
         "media_position": "left",
         "media_width": "medium",
-        "media_height": "auto",
+        "media_height": "50svh",
         "section_width": "full-width",
         "extend_media": true,
-        "background_color": "#faf8f5",
-        "padding-block-start": 64,
+        "background_color": "#D0CEC3",
+        "padding-block-start": 0,
         "padding-block-end": 0
       }
     },

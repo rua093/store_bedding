@@ -844,9 +844,9 @@
         "text_A4"
       ],
       "settings": {
-        "background_color": "#faf8f5",
-        "padding-block-start": 36,
-        "padding-block-end": 40,
+        "background_color": "#D8C1B9",
+        "padding-block-start": 20,
+        "padding-block-end": 20,
         "gap_between_items": 20
       }
     }
