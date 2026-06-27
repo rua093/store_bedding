@@ -1,0 +1,344 @@
+{% liquid
+  assign hero_image = collection.metafields.custom.banner_img.value
+  if hero_image == blank
+    assign hero_image = collection.image
+  endif
+
+  assign has_hero_image = false
+  if hero_image != blank
+    assign has_hero_image = true
+  endif
+
+  assign hero_description = collection.description | strip_html | strip
+  assign hero_widths = '750, 1100, 1500, 1800, 2100, 2400, 2880, 3200, 3840'
+%}
+
+<section
+  id="CollectionHero-{{ section.id }}"
+  class="collection-hero-wrapper"
+  aria-labelledby="CollectionHeroTitle-{{ section.id }}"
+>
+  <div class="collection-hero{% unless has_hero_image %} collection-hero--no-media{% endunless %}">
+    {% if has_hero_image %}
+      <div class="collection-hero__media">
+        {{
+          hero_image
+          | image_url: width: 3840
+          | image_tag:
+            width: hero_image.width,
+            height: hero_image.height,
+            widths: hero_widths,
+            sizes: '100vw',
+            loading: 'eager',
+            fetchpriority: 'high',
+            alt: collection.title,
+            class: 'collection-hero__image'
+        }}
+      </div>
+      <div class="collection-hero__overlay"></div>
+    {% else %}
+      <div class="collection-hero__placeholder" aria-hidden="true"></div>
+    {% endif %}
+
+    <div class="collection-hero__content">
+      <div class="collection-hero__content-inner">
+        <p class="collection-hero__eyebrow" aria-hidden="true">Jeminise Collection</p>
+
+        <h1 id="CollectionHeroTitle-{{ section.id }}" class="collection-hero__title">
+          {{ collection.title | escape }}
+        </h1>
+        {% if hero_description != blank %}
+          <div class="collection-hero__description rte">
+            {{ collection.description }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .collection-hero {
+    position: relative;
+    width: 100%;
+    min-height: 520px;
+    max-height: 560px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #f4efe7 0%, #ece3d7 100%);
+  }
+
+  .collection-hero--no-media {
+    background:
+      radial-gradient(circle at top, rgb(255 255 255 / 0.5), transparent 52%),
+      linear-gradient(180deg, #f5efe7 0%, #e8ddcf 100%);
+  }
+
+  .collection-hero__media,
+  .collection-hero__overlay,
+  .collection-hero__placeholder {
+    position: absolute;
+    inset: 0;
+  }
+
+  .collection-hero__image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center center;
+  }
+
+  .collection-hero__overlay {
+    z-index: 1;
+    background: linear-gradient(180deg, rgb(0 0 0 / 0.16), rgb(0 0 0 / 0.34));
+  }
+
+  .collection-hero__placeholder {
+    background:
+      linear-gradient(135deg, rgb(255 255 255 / 0.18), transparent 38%),
+      linear-gradient(180deg, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0));
+  }
+
+  .collection-hero__content {
+    position: relative;
+    z-index: 2;
+    min-height: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 1.5rem;
+    color: #fff;
+  }
+
+  .collection-hero__content-inner {
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 980px);
+  padding: clamp(1.75rem, 3.2vw, 3rem) clamp(1.5rem, 5vw, 5rem);
+  animation: collection-hero-fade-up 450ms ease-out both;
+}
+
+.collection-hero__content-inner::before {
+  content: '';
+  position: absolute;
+  inset: -0.35rem clamp(0.75rem, 4vw, 3rem);
+  z-index: -1;
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgb(18 12 8 / 0.36) 0%,
+      rgb(18 12 8 / 0.24) 38%,
+      rgb(18 12 8 / 0.1) 64%,
+      transparent 80%
+    );
+  backdrop-filter: blur(7px) saturate(108%);
+  -webkit-backdrop-filter: blur(7px) saturate(108%);
+  box-shadow:
+    0 18px 60px rgb(0 0 0 / 0.2),
+    inset 0 1px 0 rgb(255 255 255 / 0.08);
+  opacity: 0.96;
+  pointer-events: none;
+}
+
+.collection-hero--no-media .collection-hero__content {
+  color: #2f241d;
+}
+
+.collection-hero--no-media .collection-hero__content-inner::before {
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgb(255 255 255 / 0.58) 0%,
+      rgb(255 255 255 / 0.28) 56%,
+      transparent 76%
+    );
+  box-shadow: none;
+}
+
+.collection-hero__eyebrow {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-body--family);
+  font-size: clamp(0.68rem, 0.8vw, 0.78rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgb(255 239 211 / 0.9);
+  text-shadow:
+    0 1px 2px rgb(0 0 0 / 0.45),
+    0 8px 24px rgb(0 0 0 / 0.32);
+}
+
+.collection-hero__title {
+  position: relative;
+  margin: 0;
+  max-width: min(12ch, 100%);
+  margin-inline: auto;
+  font-family: var(--font-heading--family), Georgia, serif;
+  font-style: var(--font-heading--style);
+  font-weight: 500;
+  font-size: clamp(58px, 6.3vw, 96px);
+  line-height: 0.94;
+  letter-spacing: 0.012em;
+  color: #fff8ec;
+  -webkit-text-stroke: 0.45px rgb(22 14 9 / 0.62);
+  text-shadow:
+    0 1px 0 rgb(42 27 18 / 0.55),
+    0 3px 10px rgb(0 0 0 / 0.42),
+    0 12px 34px rgb(0 0 0 / 0.34);
+  text-wrap: balance;
+}
+
+.collection-hero__title::after {
+  content: '\2726';
+  width: min(168px, 86%);
+  margin: 1.25rem auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(255 237 205 / 0.86);
+  font-size: 0.78rem;
+  line-height: 1;
+  text-shadow: 0 1px 8px rgb(0 0 0 / 0.38);
+  background-image:
+    linear-gradient(rgb(255 237 205 / 0.7), rgb(255 237 205 / 0.7)),
+    linear-gradient(rgb(255 237 205 / 0.7), rgb(255 237 205 / 0.7));
+  background-repeat: no-repeat;
+  background-position: left center, right center;
+  background-size: calc(50% - 0.9rem) 1px, calc(50% - 0.9rem) 1px;
+}
+
+.collection-hero--no-media .collection-hero__eyebrow {
+  color: rgb(76 58 44 / 0.78);
+  text-shadow: none;
+}
+
+.collection-hero--no-media .collection-hero__title {
+  color: #2f241d;
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+}
+
+.collection-hero--no-media .collection-hero__title::after {
+  color: rgb(47 36 29 / 0.72);
+  text-shadow: none;
+  background-image:
+    linear-gradient(rgb(47 36 29 / 0.45), rgb(47 36 29 / 0.45)),
+    linear-gradient(rgb(47 36 29 / 0.45), rgb(47 36 29 / 0.45));
+}
+
+.collection-hero__description {
+  margin-top: 1.15rem;
+  max-width: 720px;
+  margin-inline: auto;
+  font-family: var(--font-body--family);
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.6;
+  color: rgb(255 250 242 / 0.92);
+  text-shadow:
+    0 1px 2px rgb(0 0 0 / 0.38),
+    0 8px 24px rgb(0 0 0 / 0.26);
+  text-wrap: pretty;
+}
+
+  .collection-hero__description > * {
+    margin: 0;
+  }
+
+  .collection-hero__description > * + * {
+    margin-top: 0.75rem;
+  }
+
+  @keyframes collection-hero-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    .collection-hero,
+    .collection-hero__content {
+      min-height: 420px;
+    }
+
+    .collection-hero__title {
+      font-size: clamp(44px, 5vw, 64px);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .collection-hero,
+    .collection-hero__content {
+      min-height: 340px;
+    }
+
+    .collection-hero__content {
+      padding: 3rem 1.25rem;
+    }
+
+    .collection-hero__content-inner {
+      width: min(100%, 92vw);
+      padding: 1.55rem 1.1rem;
+    }
+
+    .collection-hero__content-inner::before {
+      inset: -0.2rem 0;
+      border-radius: 28px;
+      background:
+        radial-gradient(
+          ellipse at center,
+          rgb(18 12 8 / 0.34) 0%,
+          rgb(18 12 8 / 0.2) 50%,
+          transparent 78%
+        );
+      backdrop-filter: blur(4px) saturate(104%);
+      -webkit-backdrop-filter: blur(4px) saturate(104%);
+    }
+
+    .collection-hero__eyebrow {
+      margin-bottom: 0.65rem;
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+    }
+
+    .collection-hero__title {
+      font-size: clamp(36px, 10vw, 50px);
+      line-height: 0.98;
+      -webkit-text-stroke: 0.28px rgb(22 14 9 / 0.58);
+    }
+
+    .collection-hero__title::after {
+      margin-top: 1.15rem;
+    }
+
+    .collection-hero__description {
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection hero",
+  "tag": "section",
+  "class": "collection-hero-section",
+  "enabled_on": {
+    "templates": ["collection"]
+  },
+  "settings": [],
+  "presets": [
+    {
+      "name": "Collection hero"
+    }
+  ]
+}
+{% endschema %}
