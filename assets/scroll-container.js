@@ -17,6 +17,16 @@ function getScrollContainer() {
 }
 
 /**
+ * Returns the current page navigation type, when supported.
+ *
+ * @returns {string | undefined}
+ */
+function getNavigationType() {
+  const [navigationEntry] = performance.getEntriesByType?.('navigation') ?? [];
+  return navigationEntry?.type;
+}
+
+/**
  * Returns the current scroll position of the page scroll container.
  *
  * @returns {number} The scrollTop value
@@ -48,9 +58,9 @@ function scrollTo(options) {
  * at the moment the user leaves. More accurate than debounced scroll (which can be stale
  * if the user scrolls and immediately clicks a link).
  *
- * Restore: unconditional `pageshow` — Horizon uses cross-document view transitions, so
- * `pageshow` fires on every navigation (both bfcache and fresh loads). `popstate` is not
- * used because it doesn't fire for cross-document back navigation.
+ * Restore: only for back/forward navigation. Reloads intentionally reset to top so a
+ * refresh never clamps an old `scrollTop` against an incomplete page height and jumps to
+ * the first tall section.
  */
 if (SQUEEZE_QUERY.matches) {
   history.scrollRestoration = 'manual';
@@ -90,12 +100,55 @@ function restoreSavedScrollTop(savedScrollTop) {
   container.scrollTo({ top: targetScrollTop, behavior: 'instant' });
 }
 
-window.addEventListener('pageshow', () => {
+/**
+ * Retries scroll restoration briefly so back/forward navigation does not clamp to an
+ * incomplete scrollHeight while images/sections are still settling.
+ *
+ * @param {number} savedScrollTop
+ * @param {number} [attempt]
+ */
+function restoreSavedScrollTopWhenReady(savedScrollTop, attempt = 0) {
+  if (!Number.isFinite(savedScrollTop) || savedScrollTop < 0) return;
+
+  const container = getScrollContainer();
+  const maxScrollTop = Math.max(0, container.scrollHeight - container.clientHeight);
+  const canReachSavedPosition = savedScrollTop <= maxScrollTop;
+  const maxAttempts = 8;
+
+  if (canReachSavedPosition || attempt >= maxAttempts || document.readyState === 'complete') {
+    restoreSavedScrollTop(savedScrollTop);
+    return;
+  }
+
+  requestAnimationFrame(() => restoreSavedScrollTopWhenReady(savedScrollTop, attempt + 1));
+}
+
+/**
+ * Scrolls the active page container back to the top.
+ */
+function resetScrollTop() {
+  getScrollContainer().scrollTo({ top: 0, behavior: 'instant' });
+}
+
+window.addEventListener('pageshow', (event) => {
+  // Let anchor navigation behave natively.
+  if (location.hash) return;
+
+  const navigationType = getNavigationType();
+
+  if (navigationType === 'reload') {
+    requestAnimationFrame(resetScrollTop);
+    return;
+  }
+
+  const shouldRestore = navigationType === 'back_forward' || event.persisted;
+  if (!shouldRestore) return;
+
   const scrollTop = history.state?.scrollTop;
   if (scrollTop == null) return;
 
   requestAnimationFrame(() => {
-    restoreSavedScrollTop(scrollTop);
+    restoreSavedScrollTopWhenReady(scrollTop);
   });
 });
 
@@ -117,7 +170,7 @@ window.addEventListener('popstate', () => {
   if (scrollTop == null) return;
 
   requestAnimationFrame(() => {
-    restoreSavedScrollTop(scrollTop);
+    restoreSavedScrollTopWhenReady(scrollTop);
   });
 });
 

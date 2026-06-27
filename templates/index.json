@@ -29,130 +29,13 @@
         "section_width": "full-width",
         "section_height": "full-screen",
         "section_height_custom": 75,
-        "background_color": "#3e332d",
+        "background_color": "",
         "toggle_overlay": false,
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
         "padding-block-start": 0,
         "padding-block-end": 48
-      }
-    },
-    "trust_signals_P6hero": {
-      "type": "trust-signals",
-      "blocks": {
-        "text_A1": {
-          "type": "text",
-          "settings": {
-            "text": "<p><strong>Premium Materials</strong>Carefully selected for lasting comfort</p>",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "paragraph",
-            "font": "var(--font-body--family)",
-            "font_size": "0.95rem",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "nowrap",
-            "text_color": "{{ settings.color_palette.foreground }}",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "text_A2": {
-          "type": "text",
-          "settings": {
-            "text": "<p><strong>Breathable &amp; Cozy</strong>Lightweight warmth all year round</p>",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "paragraph",
-            "font": "var(--font-body--family)",
-            "font_size": "0.95rem",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "nowrap",
-            "text_color": "{{ settings.color_palette.foreground }}",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "text_A3": {
-          "type": "text",
-          "settings": {
-            "text": "<p><strong>Made to Last</strong>Quality you can feel, night after night</p>",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "paragraph",
-            "font": "var(--font-body--family)",
-            "font_size": "0.95rem",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "nowrap",
-            "text_color": "{{ settings.color_palette.foreground }}",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "text_A4": {
-          "type": "text",
-          "settings": {
-            "text": "<p><strong>Free Shipping</strong>On orders over $99 across the US</p>",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "paragraph",
-            "font": "var(--font-body--family)",
-            "font_size": "0.95rem",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "nowrap",
-            "text_color": "{{ settings.color_palette.foreground }}",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "text_A1",
-        "text_A2",
-        "text_A3",
-        "text_A4"
-      ],
-      "settings": {
-        "background_color": "#ffffff",
-        "padding-block-start": 0,
-        "padding-block-end": 72,
-        "gap_between_items": 20
       }
     },
     "collection_list_xpBxCm": {
@@ -202,7 +85,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<h2>Start with the layer you need most</h2>",
+                "text": "<h2>Shop by collection</h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -227,7 +110,7 @@
             "text_D2vF1x": {
               "type": "text",
               "settings": {
-                "text": "<p>Browse blankets, quilts and comforters by the feeling you want to bring into the room, from airy and minimal to warm and cocooning.</p>",
+                "text": "<p>Browse blankets, quilts and comforters by the kind of comfort you want to bring into the room, from airy and minimal to warm and cocooning.</p>",
                 "width": "fit-content",
                 "max_width": "narrow",
                 "alignment": "left",
@@ -325,7 +208,12 @@
       ],
       "name": "Collection list",
       "settings": {
-        "collection_list": [],
+        "collection_list": [
+          "animal-comforter",
+          "baby-blankets",
+          "baptism",
+          "baseball"
+        ],
         "layout_type": "bento",
         "carousel_on_mobile": true,
         "columns": 4,
@@ -339,9 +227,191 @@
         "icons_shape": "none",
         "section_width": "page-width",
         "gap": 28,
-        "background_color": "{{ settings.color_palette.background }}",
-        "padding-block-start": 72,
-        "padding-block-end": 88
+        "background_color": "#efe4d8",
+        "discovery_layout": "patchwork",
+        "eyebrow_text": "Curated comforts",
+        "show_comfort_chips": false,
+        "comfort_chips": "Soft layers, Warm nights, Baby comfort, Gift-ready picks",
+        "patchwork_heading": "Shop by Collection",
+        "patchwork_subheading": "Browse blankets, quilts and comforters by the kind of comfort you want to bring into the room, from airy and minimal to warm and cocooning.",
+        "patchwork_stat_1_value": "38+",
+        "patchwork_stat_1_label": "Collections",
+        "patchwork_stat_2_value": "1200+",
+        "patchwork_stat_2_label": "Designs",
+        "patchwork_stat_3_value": "Loved by",
+        "patchwork_stat_3_label": "Thousands",
+        "enable_patchwork_motion": true,
+        "enable_patchwork_interaction": false,
+        "show_view_all": true,
+        "view_all_label": "Explore all collections",
+        "view_all_link": "/collections",
+        "padding-block-start": 68,
+        "padding-block-end": 76
+      }
+    },
+    "media_with_content_brand_intro": {
+      "type": "media-with-content",
+      "blocks": {
+        "media": {
+          "type": "_media-without-appearance",
+          "static": true,
+          "settings": {
+            "media_type": "image",
+            "image": "shopify://shop_images/photo-of-a-bedroom-with-black-and-gold-design.jpg",
+            "link": "",
+            "video_loop": true,
+            "video_autoplay": false,
+            "image_position": "cover",
+            "video_position": "cover"
+          },
+          "blocks": {}
+        },
+        "content": {
+          "type": "_content-without-appearance",
+          "static": true,
+          "settings": {
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 20
+          },
+          "blocks": {
+            "text_brand_eyebrow": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Designed for everyday comfort</p>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "h6",
+                "font": "var(--font-primary--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text_brand_heading": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>Made for calmer nights</h2>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "h3",
+                "font": "var(--font-primary--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text_brand_body": {
+              "type": "text",
+              "settings": {
+                "text": "<p>We design soft, breathable bedding layers that bring warmth, texture and ease into everyday sleep.</p>",
+                "width": "fit-content",
+                "max_width": "narrow",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-primary--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text_brand_points": {
+              "type": "text",
+              "settings": {
+                "text": "<ol><li><strong>Softness</strong> — Gentle on skin, perfect for all seasons.</li><li><strong>Crafted</strong> — Thoughtfully designed layers for the perfect rest.</li><li><strong>Lasting</strong> — Premium materials made to stay beautiful over time.</li></ol>",
+                "width": "fit-content",
+                "max_width": "narrow",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-primary--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "button_brand_cta": {
+              "type": "button",
+              "settings": {
+                "label": "Explore our bedding",
+                "link": "shopify://collections/all",
+                "open_in_new_tab": false,
+                "style_class": "button",
+                "custom_button_background": "{{ settings.color_palette.foreground }}",
+                "custom_button_text": "{{ settings.color_palette.background }}",
+                "custom_button_border": "{{ settings.color_palette.background }}",
+                "link_text_color": "",
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fit-content",
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "text_brand_eyebrow",
+            "text_brand_heading",
+            "text_brand_body",
+            "text_brand_points",
+            "button_brand_cta"
+          ]
+        }
+      },
+      "settings": {
+        "media_position": "left",
+        "media_width": "medium",
+        "media_height": "50svh",
+        "section_width": "page-width",
+        "extend_media": false,
+        "background_color": "",
+        "padding-block-start": 0,
+        "padding-block-end": 0
       }
     },
     "product_list_EDUBdR": {
@@ -384,7 +454,7 @@
               "type": "_product-list-text",
               "name": "t:names.collection_title",
               "settings": {
-                "text": "<h3>Start with the bestsellers customers come back for</h3>",
+                "text": "<h3>Bestselling Bedding</h3>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -405,10 +475,36 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
+            },
+            "product_list_text_subtitle": {
+              "type": "_product-list-text",
+              "settings": {
+                "text": "<p>Loved for softness, warmth and everyday comfort.</p>",
+                "width": "fit-content",
+                "max_width": "narrow",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-primary--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
             }
           },
           "block_order": [
-            "product_list_text_qK4EWG"
+            "product_list_text_qK4EWG",
+            "product_list_text_subtitle"
           ]
         },
         "static-product-card": {
@@ -578,8 +674,172 @@
         "horizontal_alignment": "flex-start",
         "gap": 40,
         "background_color": "{{ settings.color_palette.background }}",
-        "padding-block-start": 72,
-        "padding-block-end": 88
+        "show_view_all": true,
+        "view_all_label": "Shop all bedding",
+        "view_all_link": "shopify://collections/all",
+        "padding-block-start": 76,
+        "padding-block-end": 84
+      }
+    },
+    "testimonials_Jh3vNt": {
+      "type": "testimonials",
+      "blocks": {
+        "review_1": {
+          "type": "review",
+          "settings": {
+            "quote": "The quilt feels light but still warm. It made our bedroom feel instantly softer.",
+            "author": "Emily R.",
+            "detail": "Verified customer",
+            "rating": 5
+          }
+        },
+        "review_2": {
+          "type": "review",
+          "settings": {
+            "quote": "Beautiful texture, breathable, and easy to layer through the seasons.",
+            "author": "Sarah M.",
+            "detail": "Verified customer",
+            "rating": 5
+          }
+        },
+        "review_3": {
+          "type": "review",
+          "settings": {
+            "quote": "Exactly the cozy hotel-bed feeling I wanted without feeling too heavy.",
+            "author": "Lauren K.",
+            "detail": "Verified customer",
+            "rating": 5
+          }
+        }
+      },
+      "block_order": [
+        "review_1",
+        "review_2",
+        "review_3"
+      ],
+      "settings": {
+        "heading": "Loved by better sleepers",
+        "subheading": "Real words from customers who made their bed feel softer, warmer and calmer.",
+        "background_color": "#e8ddd0",
+        "padding-block-start": 80,
+        "padding-block-end": 84
+      }
+    },
+    "trust_signals_P6hero": {
+      "type": "trust-signals",
+      "blocks": {
+        "text_A1": {
+          "type": "text",
+          "settings": {
+            "text": "<p><strong>Premium Materials</strong>Carefully selected for lasting comfort</p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "paragraph",
+            "font": "var(--font-body--family)",
+            "font_size": "0.95rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "nowrap",
+            "text_color": "{{ settings.color_palette.foreground }}",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "text_A2": {
+          "type": "text",
+          "settings": {
+            "text": "<p><strong>Breathable &amp; Cozy</strong>Lightweight warmth all year round</p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "paragraph",
+            "font": "var(--font-body--family)",
+            "font_size": "0.95rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "nowrap",
+            "text_color": "{{ settings.color_palette.foreground }}",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "text_A3": {
+          "type": "text",
+          "settings": {
+            "text": "<p><strong>Made to Last</strong>Quality you can feel, night after night</p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "paragraph",
+            "font": "var(--font-body--family)",
+            "font_size": "0.95rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "nowrap",
+            "text_color": "{{ settings.color_palette.foreground }}",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "text_A4": {
+          "type": "text",
+          "settings": {
+            "text": "<p><strong>Free Shipping</strong>On orders over $99 across the US</p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "paragraph",
+            "font": "var(--font-body--family)",
+            "font_size": "0.95rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "nowrap",
+            "text_color": "{{ settings.color_palette.foreground }}",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "text_A1",
+        "text_A2",
+        "text_A3",
+        "text_A4"
+      ],
+      "settings": {
+        "background_color": "#faf8f5",
+        "padding-block-start": 36,
+        "padding-block-end": 40,
+        "gap_between_items": 20
       }
     },
     "media_with_content_LfPdEJ": {
@@ -589,7 +849,8 @@
           "type": "_media-without-appearance",
           "static": true,
           "settings": {
-            "media_type": "video",
+            "media_type": "image",
+            "image": "shopify://shop_images/unmade-dusty-pink-bedding.jpg",
             "link": "",
             "video_loop": true,
             "video_autoplay": true,
@@ -611,6 +872,7 @@
               "type": "image",
               "name": "t:names.image",
               "settings": {
+                "image": "shopify://shop_images/bedroom-with-a-black-wall-and-large-windows.jpg",
                 "link": "",
                 "image_ratio": "adapt",
                 "width": "fill",
@@ -716,16 +978,18 @@
         "section_width": "page-width",
         "extend_media": true,
         "background_color": "#f5f1ea",
-        "padding-block-start": 0,
-        "padding-block-end": 0
+        "padding-block-start": 36,
+        "padding-block-end": 64
       }
     }
   },
   "order": [
     "hero_iLBwPd",
-    "trust_signals_P6hero",
     "collection_list_xpBxCm",
+    "media_with_content_brand_intro",
     "product_list_EDUBdR",
+    "testimonials_Jh3vNt",
+    "trust_signals_P6hero",
     "media_with_content_LfPdEJ"
   ]
 }

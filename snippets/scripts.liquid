@@ -277,6 +277,19 @@
   </script>
 {% endif %}
 
+{% if template.name == 'index' or request.page_type == 'index' %}
+  <script
+    src="{{ 'homepage-reveal.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  <script
+    src="{{ 'collection-discovery.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+{% endif %}
+
 <script
   src="{{ 'auto-close-details.js' | asset_url }}"
   defer="defer"

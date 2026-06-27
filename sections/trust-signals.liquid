@@ -14,7 +14,7 @@
   "
 >
   <div class="trust-signals__page-width">
-    <div class="trust-signals__inner">
+    <div class="trust-signals__inner" data-homepage-reveal-children=":scope > *">
       {% content_for 'blocks' %}
     </div>
   </div>
@@ -37,12 +37,24 @@
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--trust-signals-gap);
-    padding: clamp(1.4rem, 2.2vw, 1.9rem) clamp(1.1rem, 2vw, 1.5rem);
-    border: 1px solid rgb(226 217 207 / 0.95);
+    padding: clamp(1.05rem, 1.8vw, 1.4rem) clamp(0.95rem, 1.8vw, 1.25rem);
+    border: 1px solid rgb(226 217 207 / 0.76);
+    border-radius: 20px;
     background: rgb(250 248 245);
     box-shadow:
-      0 -1px 0 rgb(255 255 255 / 0.72) inset,
-      0 20px 40px rgb(62 51 45 / 0.08);
+      0 1px 0 rgb(255 255 255 / 0.76) inset,
+      0 14px 28px rgb(62 51 45 / 0.045);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .trust-signals__inner::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: linear-gradient(180deg, rgb(180 124 97 / 0.9), rgb(196 151 92 / 0.4));
+    opacity: 0.8;
   }
 
   .trust-signals__inner > :is(.text, .text-block, .shopify-block, rte-formatter) {
@@ -80,18 +92,18 @@
 
   .trust-signals__inner .text-block > * {
     color: rgb(117 101 90);
-    font-size: 0.98rem;
-    line-height: 1.5;
+    font-size: 1rem;
+    line-height: 1.52;
     text-align: left;
     white-space: normal;
   }
 
   .trust-signals__inner .text-block strong {
     display: block;
-    margin-bottom: 0.16rem;
+    margin-bottom: 0.2rem;
     color: rgb(62 51 45);
-    font-size: 1.14rem;
-    font-weight: 600;
+    font-size: 1.12rem;
+    font-weight: 650;
   }
 
   @media screen and (max-width: 989px) {
@@ -101,10 +113,14 @@
   }
 
   @media screen and (max-width: 749px) {
+    .trust-signals {
+      padding-block: clamp(1.75rem, 6vw, 2rem);
+    }
+
     .trust-signals__inner {
       grid-template-columns: 1fr;
-      gap: 1rem;
-      padding: 1.15rem 1rem 1.25rem;
+      gap: 0.9rem;
+      padding: 0.95rem 0.9rem 1rem;
     }
 
     .trust-signals__inner > :is(.text, .text-block, .shopify-block, rte-formatter) {
@@ -115,6 +131,14 @@
       width: 2.35rem;
       height: 2.35rem;
       background-size: 1.75rem 1.75rem;
+    }
+
+    .trust-signals__inner .text-block > * {
+      font-size: 0.98rem;
+    }
+
+    .trust-signals__inner .text-block strong {
+      font-size: 1.04rem;
     }
   }
 {% endstylesheet %}

@@ -16,6 +16,11 @@
   assign hero_primary_link = section.settings.primary_link
   assign hero_secondary_label = section.settings.secondary_label | strip
   assign hero_secondary_link = section.settings.secondary_link
+  assign hero_heading_is_editorial_default = false
+
+  if hero_heading == 'Sleep Better Every Night'
+    assign hero_heading_is_editorial_default = true
+  endif
 
   if section.settings.image_1 != blank and section.settings.media_type_1 == 'image'
     assign desktop_media = 'image'
@@ -213,7 +218,14 @@
           <p class="hero__eyebrow">{{ hero_eyebrow | escape }}</p>
         {% endif %}
         {% if hero_heading != blank %}
-          <h1 class="hero__heading">{{ hero_heading | escape }}</h1>
+          {% if hero_heading_is_editorial_default %}
+            <h1 class="hero__heading hero__heading--editorial">
+              <span class="hero__heading-line">Sleep Better</span>
+              <span class="hero__heading-line hero__heading-line--accent">Every Night</span>
+            </h1>
+          {% else %}
+            <h1 class="hero__heading">{{ hero_heading | escape }}</h1>
+          {% endif %}
         {% endif %}
         {% if hero_description != blank %}
           <p class="hero__description">{{ hero_description | escape }}</p>
@@ -247,6 +259,13 @@
               </a>
             {% endif %}
           </div>
+        {% endif %}
+        {% if hero_heading != blank %}
+          <ul class="hero__trust-list" aria-label="Bedding highlights">
+            <li>Cloud-soft layers</li>
+            <li>Warm textures</li>
+            <li>Calmer nights</li>
+          </ul>
         {% endif %}
       </div>
     </div>
@@ -346,6 +365,7 @@
   }
 
   .hero__content {
+    position: relative;
     width: var(--hero-content-width);
     max-width: 100%;
     justify-self: var(--hero-content-x);
@@ -353,8 +373,19 @@
     flex-direction: column;
     gap: clamp(1rem, 1.8vw, 1.65rem);
     text-align: var(--hero-text-align);
-    padding-inline-start: clamp(0rem, 1.2vw, 0.75rem);
+    padding-inline-start: clamp(1rem, 2vw, 2rem);
     pointer-events: auto;
+  }
+
+  .hero__content::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.35rem;
+    bottom: 0.35rem;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgb(240 199 161 / 0.7), transparent);
+    pointer-events: none;
   }
 
   .hero__eyebrow {
@@ -383,13 +414,39 @@
     text-wrap: balance;
   }
 
+  .hero__heading--editorial {
+    display: grid;
+    gap: 0.05em;
+    max-inline-size: 12ch;
+    line-height: 0.9;
+  }
+
+  .hero__heading-line {
+    display: block;
+    color: #fff8ef;
+    font-family: var(--font-heading--family);
+    font-style: normal;
+    font-weight: var(--font-heading--weight);
+    font-size: clamp(3.5rem, 6vw, 6.2rem);
+    letter-spacing: -0.045em;
+  }
+
+  .hero__heading-line--accent {
+    color: #c9825d;
+    font-style: italic;
+    font-family: var(--font-accent--family, var(--font-heading--family));
+    font-weight: 400;
+    letter-spacing: -0.035em;
+    transform: translateX(0.04em);
+  }
+
   .hero__description {
     margin: 0;
-    max-width: min(100%, var(--hero-copy-max-width));
+    max-width: min(100%, 34rem);
     color: var(--hero-description-color);
     font-family: var(--font-body--family);
     font-size: clamp(1rem, 1.15vw, 1.12rem);
-    line-height: 1.68;
+    line-height: 1.6;
     text-shadow: var(--hero-text-shadow);
     text-wrap: pretty;
   }
@@ -399,7 +456,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 0.85rem 1rem;
-    padding-top: 0.25rem;
+    margin-top: 0.25rem;
   }
 
   .hero__actions > * {
@@ -426,15 +483,17 @@
 
   .hero__cta--primary {
     min-height: max(48px, var(--minimum-touch-target));
-    background: var(--color-primary-button-background);
-    border: 1px solid var(--color-primary-button-background);
+    border-radius: 999px;
+    padding-inline: 1.8rem;
+    background: #c9825d;
+    border: 1px solid #c9825d;
     color: var(--color-primary-button-text);
     box-shadow: 0 14px 30px rgb(58 39 29 / 0.16);
   }
 
   .hero__cta--primary:hover {
-    background: var(--color-primary-button-background-hover, var(--color-primary-button-background));
-    border-color: var(--color-primary-button-background-hover, var(--color-primary-button-background));
+    background: #b87955;
+    border-color: #b87955;
     box-shadow: 0 16px 32px rgb(58 39 29 / 0.2);
   }
 
@@ -477,6 +536,28 @@
   .hero__cta[aria-disabled='true'] {
     opacity: 0.55;
     pointer-events: none;
+  }
+
+  .hero__trust-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 0.8rem;
+    margin: 0.35rem 0 0;
+    padding: 0;
+    list-style: none;
+    color: rgb(255 248 239 / 0.74);
+    font-size: 0.9rem;
+  }
+
+  .hero__trust-list li {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .hero__trust-list li + li::before {
+    content: '•';
+    margin-inline-end: 0.8rem;
+    color: rgb(201 130 93 / 0.9);
   }
 
   .hero--height-auto {
@@ -545,11 +626,19 @@
       padding-inline-start: 0;
     }
 
+    .hero__content::before {
+      display: none;
+    }
+
     .hero__heading {
       font-size: clamp(2.2rem, 7.8vw, 3.15rem);
       line-height: 1.03;
       letter-spacing: -0.032em;
       max-inline-size: 11ch;
+    }
+
+    .hero__heading-line {
+      font-size: clamp(2.55rem, 12vw, 4rem);
     }
 
     .hero__description {
@@ -576,6 +665,11 @@
     .hero__cta--secondary {
       width: fit-content;
       padding-block: 0.15rem;
+    }
+
+    .hero__trust-list {
+      gap: 0.35rem 0.7rem;
+      font-size: 0.82rem;
     }
   }
 {% endstylesheet %}

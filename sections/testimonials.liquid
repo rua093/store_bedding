@@ -1,0 +1,402 @@
+{% liquid
+  if section.settings.background_color != blank
+    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+%}
+
+<section
+  class="testimonials{% if section.settings.background_color == '#3E332D' or section.settings.background_color == '#3e332d' %} testimonials--dark{% endif %} section-wrapper{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  style="
+    --testimonials-padding-top: {{ section.settings.padding-block-start }}px;
+    --testimonials-padding-bottom: {{ section.settings.padding-block-end }}px;
+    --testimonials-background: {{ section.settings.background_color }};
+  "
+>
+  <div class="testimonials__page-width">
+    {% if section.settings.heading != blank or section.settings.subheading != blank %}
+      <div class="testimonials__intro homepage-reveal">
+        {% if section.settings.heading != blank %}
+          <h2 class="testimonials__heading">{{ section.settings.heading | escape }}</h2>
+        {% endif %}
+        {% if section.settings.subheading != blank %}
+          <p class="testimonials__subheading">{{ section.settings.subheading | escape }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="testimonials__grid" data-homepage-reveal-children=".testimonials__card">
+      {% for block in section.blocks %}
+        {% liquid
+          assign rating = block.settings.rating | default: 5
+          assign detail = block.settings.detail | strip
+        %}
+        <article class="testimonials__card" {{ block.shopify_attributes }}>
+          <div class="testimonials__rating" aria-label="{{ rating }} out of 5 stars">
+            <span class="visually-hidden">{{ rating }} out of 5 stars</span>
+            {% for star in (1..5) %}
+              <span class="testimonials__star{% if star <= rating %} testimonials__star--filled{% endif %}" aria-hidden="true">
+                ★
+              </span>
+            {% endfor %}
+          </div>
+
+          {% if block.settings.quote != blank %}
+            <blockquote class="testimonials__quote">
+              <p>{{ block.settings.quote | escape }}</p>
+            </blockquote>
+          {% endif %}
+
+          {% if block.settings.author != blank or detail != blank %}
+            <footer class="testimonials__footer">
+              {% if block.settings.author != blank %}
+                <p class="testimonials__author">{{ block.settings.author | escape }}</p>
+              {% endif %}
+              {% if detail != blank %}
+                <p class="testimonials__detail">{{ detail | escape }}</p>
+              {% endif %}
+            </footer>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .testimonials {
+    padding-block: var(--testimonials-padding-top) var(--testimonials-padding-bottom);
+    background: var(--testimonials-background);
+  }
+
+  .testimonials__page-width {
+    width: min(var(--page-width, 120rem), calc(100% - 2rem));
+    margin-inline: auto;
+  }
+
+  .testimonials__intro {
+    display: grid;
+    gap: 0.85rem;
+    max-width: 42rem;
+    margin-inline: auto;
+    margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
+    text-align: center;
+    justify-items: center;
+  }
+
+  .testimonials__heading {
+    margin: 0;
+    color: rgb(62 51 45);
+    font-family: var(--font-heading--family);
+    font-style: var(--font-heading--style);
+    font-weight: var(--font-heading--weight);
+    font-size: clamp(2.2rem, 3.9vw, 3.4rem);
+    line-height: 1.03;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .testimonials__heading::after {
+    content: '';
+    display: block;
+    width: clamp(3.25rem, 7vw, 4.5rem);
+    height: 2px;
+    margin: 0.95rem auto 0;
+    border-radius: 999px;
+    background: rgb(180 124 97 / 0.72);
+  }
+
+  .testimonials__subheading {
+    margin: 0;
+    max-width: 36rem;
+    color: rgb(98 83 73);
+    font-size: clamp(1.06rem, 1.22vw, 1.14rem);
+    font-weight: 450;
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+
+  .testimonials__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.1rem, 2vw, 1.65rem);
+  }
+
+  .testimonials__card {
+    display: grid;
+    gap: 1.2rem;
+    padding: clamp(1.45rem, 2.5vw, 1.9rem);
+    border: 1px solid rgb(226 217 207 / 0.95);
+    border-radius: 18px;
+    background: rgb(255 255 255 / 0.92);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.85) inset,
+      0 16px 32px rgb(62 51 45 / 0.06);
+    min-height: 100%;
+  }
+
+  @media screen and (min-width: 990px) {
+    .testimonials__card:nth-child(2) {
+      transform: translateY(-0.35rem);
+      border-color: rgb(180 124 97 / 0.28);
+      box-shadow:
+        0 1px 0 rgb(255 255 255 / 0.88) inset,
+        0 24px 42px rgb(62 51 45 / 0.08);
+    }
+  }
+
+  .testimonials__rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    color: rgb(188 134 94);
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .testimonials__star {
+    opacity: 0.28;
+  }
+
+  .testimonials__star--filled {
+    opacity: 1;
+  }
+
+  .testimonials__quote {
+    margin: 0;
+  }
+
+  .testimonials__quote p {
+    margin: 0;
+    max-inline-size: 29ch;
+    color: rgb(62 51 45);
+    font-size: clamp(1.08rem, 1.22vw, 1.16rem);
+    font-weight: 450;
+    line-height: 1.68;
+    letter-spacing: 0.005em;
+    text-wrap: pretty;
+  }
+
+  .testimonials__footer {
+    display: grid;
+    gap: 0.2rem;
+    margin-top: auto;
+  }
+
+  .testimonials__author,
+  .testimonials__detail {
+    margin: 0;
+  }
+
+  .testimonials__author {
+    color: rgb(62 51 45);
+    font-size: 1.02rem;
+    font-weight: 650;
+  }
+
+  .testimonials__detail {
+    color: rgb(117 101 90);
+    font-size: 0.98rem;
+    line-height: 1.48;
+  }
+
+  .testimonials--dark .testimonials__heading {
+    color: #fff8ef;
+  }
+
+  .testimonials--dark .testimonials__heading::after {
+    background: rgb(188 134 94 / 0.9);
+  }
+
+  .testimonials--dark .testimonials__subheading {
+    color: rgb(255 248 239 / 0.8);
+  }
+
+  .testimonials--dark .testimonials__card {
+    border-color: rgb(214 195 179 / 0.22);
+    background: rgb(250 248 245 / 0.97);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.82) inset,
+      0 18px 34px rgb(20 14 11 / 0.18);
+  }
+
+  .testimonials--dark .testimonials__rating {
+    color: rgb(188 134 94);
+  }
+
+  .testimonials--dark .testimonials__quote p,
+  .testimonials--dark .testimonials__author {
+    color: rgb(62 51 45);
+  }
+
+  .testimonials--dark .testimonials__detail {
+    color: rgb(116 98 86);
+  }
+
+  @media screen and (max-width: 989px) {
+    .testimonials__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .testimonials--dark .testimonials__card:nth-child(2) {
+      border-color: rgb(188 134 94 / 0.38);
+      box-shadow:
+        0 1px 0 rgb(255 255 255 / 0.85) inset,
+        0 28px 48px rgb(20 14 11 / 0.22);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .testimonials {
+      padding-block: clamp(3rem, 8vw, 3.5rem) clamp(3.5rem, 9vw, 4rem);
+    }
+
+    .testimonials__page-width {
+      width: min(var(--page-width, 120rem), calc(100% - 1.5rem));
+    }
+
+    .testimonials__intro {
+      gap: 0.75rem;
+      margin-bottom: 1.35rem;
+    }
+
+    .testimonials__grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .testimonials__card {
+      gap: 0.95rem;
+      padding: 1.2rem 1rem 1.15rem;
+    }
+
+    .testimonials__quote p {
+      max-inline-size: none;
+      font-size: 1.03rem;
+      line-height: 1.62;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "tag": "section",
+  "class": "testimonials-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "The quilt feels light but still warm. It made our bedroom feel instantly softer."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author",
+          "default": "Emily R."
+        },
+        {
+          "type": "text",
+          "id": "detail",
+          "label": "Detail",
+          "default": "Verified customer"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Loved by better sleepers"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Real words from customers who made their bed feel softer, warmer and calmer."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#F5F1EA"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top padding",
+      "min": 0,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 88
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 88
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials",
+      "category": "Text",
+      "blocks": {
+        "review_1": {
+          "type": "review",
+          "settings": {
+            "quote": "The quilt feels light but still warm. It made our bedroom feel instantly softer.",
+            "author": "Emily R.",
+            "detail": "Verified customer",
+            "rating": 5
+          }
+        },
+        "review_2": {
+          "type": "review",
+          "settings": {
+            "quote": "Beautiful texture, breathable, and easy to layer through the seasons.",
+            "author": "Sarah M.",
+            "detail": "Verified customer",
+            "rating": 5
+          }
+        },
+        "review_3": {
+          "type": "review",
+          "settings": {
+            "quote": "Exactly the cozy hotel-bed feeling I wanted without feeling too heavy.",
+            "author": "Lauren K.",
+            "detail": "Verified customer",
+            "rating": 5
+          }
+        }
+      },
+      "block_order": ["review_1", "review_2", "review_3"]
+    }
+  ]
+}
+{% endschema %}

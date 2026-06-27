@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://increase-enrollment-provides-commodity.trycloudflare.com",
+      "url": "https://secretary-hebrew-semester-registrar.trycloudflare.com",
       "description": "Replace this with the Public URL printed by agent_api_server.py"
     }
   ],

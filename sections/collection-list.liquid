@@ -1,9 +1,23 @@
 
 
 {% liquid
+  assign is_patchwork_layout = false
+  assign has_selected_collections = false
+
+  if section.settings.discovery_layout == 'patchwork'
+    assign is_patchwork_layout = true
+  endif
+
   if section.settings.collection_list != blank
+    assign has_selected_collections = true
     assign section_collections = section.settings.collection_list
     assign max_items = section.settings.collection_list.count
+    if is_patchwork_layout and max_items > 4
+      assign max_items = 4
+    endif
+    if section.settings.max_collections > 0 and max_items > section.settings.max_collections
+      assign max_items = section.settings.max_collections
+    endif
   elsif section.settings.layout_type == 'editorial'
     assign max_items = section.settings.max_collections
   elsif section.settings.layout_type == 'bento'
@@ -13,11 +27,32 @@
   elsif section.settings.layout_type == 'grid'
     assign max_items = section.settings.columns
   endif
+
+  if is_patchwork_layout
+    assign max_items = 4
+  endif
 %}
 
 {% liquid
   if section.settings.background_color != blank
     render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+
+  assign comfort_chips = section.settings.comfort_chips | default: '' | split: ','
+  assign patchwork_heading = section.settings.patchwork_heading | strip
+  assign patchwork_subheading = section.settings.patchwork_subheading | strip
+  assign patchwork_count = 0
+
+  if has_selected_collections
+    for collection in section_collections limit: max_items
+      if collection != blank
+        assign patchwork_count = patchwork_count | plus: 1
+      endif
+    endfor
+  endif
+
+  if is_patchwork_layout and patchwork_count == 0
+    assign patchwork_count = 4
   endif
 %}
 
@@ -31,6 +66,7 @@
     section--{{ section.settings.section_width }}
     {% if section.settings.background_color != blank %}color-custom-{{ section.id }}{% endif %}
     section-resource-list
+    {% if is_patchwork_layout %} section-resource-list--patchwork{% endif %}
     spacing-style
     gap-style
   "
@@ -39,11 +75,13 @@
     {% render 'gap-style', value: section.settings.gap %}
   "
   data-testid="collection-list"
+  data-collection-layout="{% if is_patchwork_layout %}patchwork{% else %}default{% endif %}"
+  data-patchwork-interaction="{% if section.settings.enable_patchwork_interaction %}true{% else %}false{% endif %}"
+  {% if is_patchwork_layout and section.settings.enable_patchwork_interaction %}
+    data-collection-discovery
+    data-active-chip="1"
+  {% endif %}
 >
-  <div class="section-resource-list__content">
-    {%- content_for 'blocks' -%}
-  </div>
-
   {% if section_collections == null %}
     {% for i in (1..max_items) %}
       {% assign section_collections = section_collections | append: ', ' %}
@@ -52,32 +90,1504 @@
     {% assign section_collections = section_collections | split: ',' %}
   {% endif %}
 
-  {% capture list_items %}
-    {% for collection in section_collections limit: max_items %}
-      <div class="resource-list__item">
-        {% content_for 'block', type: '_collection-card', id: 'static-collection-card', closest.collection: collection %}
+  {% if is_patchwork_layout %}
+    <div class="collection-patchwork collection-patchwork--count-{{ patchwork_count }}">
+      <div class="section-resource-list__content collection-patchwork__editorial{% if section.settings.enable_patchwork_motion %} homepage-reveal{% endif %}">
+        <img
+          class="collection-patchwork__intro-image"
+          src="{{ 'section_collection_list.png' | asset_url }}"
+          alt=""
+          loading="lazy"
+          width="1024"
+          height="1365"
+        >
       </div>
-      {% unless forloop.last %}
-        <!--@list/split-->
-      {% endunless %}
-    {% endfor %}
-  {% endcapture %}
 
-  {% liquid
-    # Create an array from the list items to be used for different layout types
-    assign list_items_array = list_items | strip | split: '<!--@list/split-->'
-  %}
+      {% for collection in section_collections limit: max_items %}
+        {% liquid
+          assign reveal_rotation = '-0.9deg'
+          assign reveal_modulo = forloop.index0 | modulo: 4
+          assign tile_image = blank
+          assign tile_sizes = '(min-width: 990px) 28vw, (min-width: 750px) 50vw, 100vw'
+          assign tile_title = 'Collection coming soon'
+          assign tile_alt = ''
+          assign placeholder_variant = forloop.index0 | modulo: 4 | plus: 1
+          assign placeholder_name = 'collection-apparel-' | append: placeholder_variant
 
-  {% render 'resource-list',
-    list_items: list_items,
-    list_items_array: list_items_array,
-    settings: section.settings,
-    carousel_ref: 'collectionList',
-    slide_count: max_items,
-    content_type: 'collections',
-    test_id: 'collections-list-grid'
-  %}
+          case reveal_modulo
+            when 1
+              assign reveal_rotation = '0.85deg'
+            when 2
+              assign reveal_rotation = '-0.65deg'
+            when 3
+              assign reveal_rotation = '1deg'
+          endcase
+
+          if patchwork_count == 1
+            assign tile_sizes = '(min-width: 990px) 50vw, (min-width: 750px) 50vw, 100vw'
+          elsif forloop.index == 1
+            assign tile_sizes = '(min-width: 990px) 34vw, (min-width: 750px) 50vw, 100vw'
+          elsif patchwork_count == 4 and forloop.index == 2
+            assign tile_sizes = '(min-width: 990px) 20vw, (min-width: 750px) 50vw, 100vw'
+          elsif patchwork_count == 4
+            assign tile_sizes = '(min-width: 990px) 16vw, (min-width: 750px) 50vw, 100vw'
+          elsif patchwork_count == 3
+            assign tile_sizes = '(min-width: 990px) 24vw, (min-width: 750px) 50vw, 100vw'
+          endif
+
+          if collection != blank
+            assign tile_title = collection.title
+            assign tile_image = collection.image
+            if tile_image == blank and collection.products.first.featured_image != blank
+              assign tile_image = collection.products.first.featured_image
+            endif
+            if tile_image != blank and tile_image.alt != blank
+              assign tile_alt = tile_image.alt
+            else
+              assign tile_alt = collection.title
+            endif
+          endif
+        %}
+
+        {% capture patchwork_tile_inner %}
+          <div class="collection-patchwork__media">
+            {% if tile_image != blank %}
+              {{
+                tile_image
+                | image_url: width: 2400
+                | image_tag:
+                  widths: '400, 600, 800, 1200, 1600, 2000, 2400',
+                  sizes: tile_sizes,
+                  loading: 'lazy',
+                  class: 'collection-patchwork__image',
+                  alt: tile_alt
+              }}
+            {% else %}
+              {{ placeholder_name | placeholder_svg_tag: 'collection-patchwork__image collection-patchwork__image--placeholder' }}
+            {% endif %}
+          </div>
+          <div class="collection-patchwork__content">
+            <h3 class="collection-patchwork__title">{{ tile_title | escape }}</h3>
+          </div>
+        {% endcapture %}
+
+        {% if collection != blank %}
+          <a
+            href="{{ collection.url }}"
+            class="collection-patchwork__tile collection-patchwork__tile--{{ forloop.index }}{% if section.settings.enable_patchwork_motion %} homepage-reveal{% endif %}"
+            style="--reveal-delay: {{ forloop.index | times: 55 }}ms; --collection-card-reveal-rotate: {{ reveal_rotation }};"
+            data-patchwork-tile
+            data-patchwork-index="{{ forloop.index }}"
+          >
+            {{ patchwork_tile_inner }}
+          </a>
+        {% else %}
+          <div
+            class="collection-patchwork__tile collection-patchwork__tile--{{ forloop.index }} collection-patchwork__tile--placeholder{% if section.settings.enable_patchwork_motion %} homepage-reveal{% endif %}"
+            style="--reveal-delay: {{ forloop.index | times: 55 }}ms; --collection-card-reveal-rotate: {{ reveal_rotation }};"
+            data-patchwork-index="{{ forloop.index }}"
+          >
+            {{ patchwork_tile_inner }}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="section-resource-list__content homepage-reveal">
+      {% if section.settings.eyebrow_text != blank %}
+        <p class="collection-list__eyebrow">
+          {{ section.settings.eyebrow_text | escape }}
+        </p>
+      {% endif %}
+
+      {%- content_for 'blocks' -%}
+
+      {% if section.settings.show_comfort_chips and section.settings.comfort_chips != blank %}
+        <div class="collection-list__chips" aria-label="Collection highlights">
+          {% for chip in comfort_chips %}
+            {% assign chip_label = chip | strip %}
+            {% if chip_label != blank %}
+              <span class="collection-list__chip collection-list__chip--static">
+                <span class="collection-list__chip-label">{{ chip_label | escape }}</span>
+              </span>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    {% capture list_items %}
+      {% for collection in section_collections limit: max_items %}
+        {% assign reveal_rotation = '-0.9deg' %}
+        {% assign reveal_modulo = forloop.index0 | modulo: 4 %}
+        {% case reveal_modulo %}
+          {% when 1 %}
+            {% assign reveal_rotation = '0.85deg' %}
+          {% when 2 %}
+            {% assign reveal_rotation = '-0.65deg' %}
+          {% when 3 %}
+            {% assign reveal_rotation = '1deg' %}
+        {% endcase %}
+        <div
+          class="resource-list__item homepage-reveal"
+          style="--reveal-delay: {{ forloop.index0 | times: 55 }}ms; --collection-card-reveal-rotate: {{ reveal_rotation }};"
+          data-collection-discovery-card
+        >
+          {% content_for 'block', type: '_collection-card', id: 'static-collection-card', closest.collection: collection %}
+        </div>
+        {% unless forloop.last %}
+          <!--@list/split-->
+        {% endunless %}
+      {% endfor %}
+    {% endcapture %}
+
+    {% liquid
+      assign list_items_array = list_items | strip | split: '<!--@list/split-->'
+    %}
+
+    {% render 'resource-list',
+      list_items: list_items,
+      list_items_array: list_items_array,
+      settings: section.settings,
+      carousel_ref: 'collectionList',
+      slide_count: max_items,
+      content_type: 'collections',
+      test_id: 'collections-list-grid'
+    %}
+  {% endif %}
+
+  {% if is_patchwork_layout == false and section.settings.show_view_all and section.settings.view_all_label != blank and section.settings.view_all_link != blank %}
+    <div class="collection-list__view-all-wrap homepage-reveal" style="--reveal-delay: 140ms;">
+      <a
+        href="{{ section.settings.view_all_link }}"
+        class="collection-list__view-all"
+      >
+        {{ section.settings.view_all_label | escape }}
+      </a>
+    </div>
+  {% endif %}
 </div>
+
+{% stylesheet %}
+  .ui-test-collection-list [data-testid='collection-list'] {
+    padding-block-start: clamp(4rem, 5vw, 4.5rem);
+    padding-block-end: clamp(4.5rem, 6vw, 5rem);
+  }
+
+  [data-testid='collection-list'] .section-resource-list__content {
+    display: grid;
+    justify-items: center;
+    gap: clamp(0.8rem, 1.8vw, 1.15rem);
+    margin-bottom: clamp(1.1rem, 2.2vw, 1.75rem);
+    padding: clamp(1.25rem, 2.5vw, 1.85rem) clamp(1rem, 2.4vw, 1.6rem) clamp(0.6rem, 1vw, 0.85rem);
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+  }
+
+  [data-testid='collection-list'] .section-resource-list__content::before,
+  [data-testid='collection-list'] .section-resource-list__content::after {
+    content: '';
+    position: absolute;
+    inset: auto;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  [data-testid='collection-list'] .section-resource-list__content::before {
+    width: min(34rem, 78vw);
+    height: min(17rem, 36vw);
+    top: 0;
+    left: 50%;
+    translate: -50% -18%;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgb(246 231 216 / 0.82) 0%, rgb(246 231 216 / 0.36) 48%, transparent 74%);
+    filter: blur(6px);
+    transition:
+      opacity 420ms var(--animation-timing-fade-in),
+      translate 520ms var(--animation-timing-fade-in),
+      scale 520ms var(--animation-timing-fade-in);
+  }
+
+  [data-testid='collection-list'] .section-resource-list__content::after {
+    width: min(26rem, 56vw);
+    height: min(9rem, 20vw);
+    bottom: 0.55rem;
+    right: min(3vw, 1.75rem);
+    border-radius: 999px;
+    background: radial-gradient(circle, rgb(255 255 255 / 0.52) 0%, rgb(255 255 255 / 0.12) 54%, transparent 76%);
+    opacity: 0.9;
+    transition:
+      opacity 420ms var(--animation-timing-fade-in),
+      translate 520ms var(--animation-timing-fade-in),
+      scale 520ms var(--animation-timing-fade-in);
+  }
+
+  [data-testid='collection-list'] .section-resource-list__content > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  [data-testid='collection-list'] .section-resource-list__content :is(.group-block, .group-block-content) {
+    width: min(100%, 44rem);
+  }
+
+  [data-testid='collection-list'] .section-resource-list__content .text-block {
+    align-items: center;
+  }
+
+  [data-testid='collection-list'] .section-resource-list__content .text-block > * {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  [data-testid='collection-list'] .collection-list__eyebrow {
+    margin: 0;
+    color: rgb(176 118 90);
+    font-size: clamp(0.82rem, 0.88vw, 0.95rem);
+    font-weight: 650;
+    letter-spacing: 0.16em;
+    line-height: 1.2;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  [data-testid='collection-list'] .section-resource-list__content.homepage-reveal--pending .collection-list__eyebrow {
+    opacity: 0;
+    translate: 0 8px;
+  }
+
+  [data-testid='collection-list'] .section-resource-list__content.homepage-reveal.is-visible .collection-list__eyebrow {
+    opacity: 1;
+    translate: 0 0;
+    transition:
+      opacity 380ms var(--animation-timing-fade-in),
+      translate 380ms var(--animation-timing-fade-in);
+    transition-delay: 40ms;
+  }
+
+  [data-testid='collection-list'] .section-resource-list__content .text-block.h2 > * {
+    max-inline-size: 16ch;
+    color: rgb(62 51 45);
+    font-size: clamp(2.2rem, 4vw, 3.45rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  [data-testid='collection-list'] .section-resource-list__content.homepage-reveal--pending .text-block.h2 > * {
+    opacity: 0;
+    clip-path: inset(0 18% 100% 18%);
+  }
+
+  [data-testid='collection-list'] .section-resource-list__content.homepage-reveal.is-visible .text-block.h2 > * {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transition:
+      opacity 460ms var(--animation-timing-fade-in),
+      clip-path 540ms var(--animation-timing-fade-in);
+    transition-delay: 95ms;
+  }
+
+  [data-testid='collection-list'] .section-resource-list__content .text-block.h2 {
+    position: relative;
+    padding-block-end: 0.7rem;
+  }
+
+  [data-testid='collection-list'] .section-resource-list__content .text-block.h2::after {
+    content: '';
+    width: clamp(3.25rem, 8vw, 4.5rem);
+    height: 2px;
+    border-radius: 999px;
+    background: rgb(180 124 97 / 0.72);
+    margin-top: 0.2rem;
+    transform-origin: center;
+  }
+
+  [data-testid='collection-list'] .section-resource-list__content .text-block.rte > * {
+    max-inline-size: 38rem;
+    color: rgb(96 80 69);
+    font-size: clamp(1.05rem, 1.2vw, 1.14rem);
+    font-weight: 450;
+    line-height: 1.62;
+  }
+
+  [data-testid='collection-list'] .collection-list__chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.7rem 0.8rem;
+    max-width: min(100%, 42rem);
+    margin-top: clamp(0.15rem, 0.4vw, 0.3rem);
+  }
+
+  [data-testid='collection-list'] .collection-list__chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.35rem;
+    padding: 0.55rem 0.9rem;
+    border: 1px solid rgb(198 167 143 / 0.4);
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgb(255 251 246 / 0.72) 0%, rgb(248 239 230 / 0.58) 100%);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.72) inset,
+      0 8px 20px rgb(117 88 68 / 0.05);
+    color: rgb(122 93 76);
+    font-size: clamp(0.92rem, 0.98vw, 0.98rem);
+    font-weight: 500;
+    line-height: 1.3;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition:
+      color 240ms var(--animation-easing),
+      border-color 240ms var(--animation-easing),
+      background-color 240ms var(--animation-easing),
+      box-shadow 240ms var(--animation-easing),
+      translate 240ms var(--animation-easing);
+  }
+
+  [data-testid='collection-list'] .collection-list__chip::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0.2rem;
+    width: 100%;
+    height: 1px;
+    background: rgb(176 118 90 / 0.78);
+    opacity: 0;
+    scale: 0.45 1;
+    transform-origin: center;
+    transition:
+      opacity 220ms var(--animation-easing),
+      scale 220ms var(--animation-easing);
+  }
+
+  [data-testid='collection-list'] .collection-list__chip-label {
+    position: relative;
+    z-index: 1;
+  }
+
+  [data-testid='collection-list'] .collection-list__chip:hover,
+  [data-testid='collection-list'] .collection-list__chip:focus-visible {
+    border-color: rgb(180 124 97 / 0.58);
+    background: linear-gradient(180deg, rgb(255 251 246 / 0.92) 0%, rgb(244 229 214 / 0.82) 100%);
+    color: rgb(103 72 57);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.78) inset,
+      0 10px 22px rgb(117 88 68 / 0.08);
+    translate: 0 -1px;
+  }
+
+  [data-testid='collection-list'] .collection-list__chip:hover::after,
+  [data-testid='collection-list'] .collection-list__chip:focus-visible::after {
+    opacity: 1;
+    scale: 1 1;
+  }
+
+  [data-testid='collection-list'] .collection-list__chip:focus-visible {
+    outline: 2px solid rgb(176 118 90 / 0.45);
+    outline-offset: 2px;
+  }
+
+  [data-testid='collection-list'] .collection-list__chip--static {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  [data-testid='collection-list'][data-patchwork-interaction='true'] .collection-patchwork__tile {
+    transition:
+      transform 240ms var(--animation-easing),
+      opacity 240ms var(--animation-easing),
+      border-color 240ms var(--animation-easing),
+      box-shadow 240ms var(--animation-easing);
+  }
+
+  [data-testid='collection-list'][data-patchwork-interaction='true'] .collection-patchwork__tile:not(.collection-patchwork__tile--placeholder) {
+    opacity: 1;
+  }
+
+  [data-testid='collection-list'][data-patchwork-interaction='true'][data-active-chip='1'] .collection-patchwork__tile--1,
+  [data-testid='collection-list'][data-patchwork-interaction='true'][data-active-chip='2'] .collection-patchwork__tile--2,
+  [data-testid='collection-list'][data-patchwork-interaction='true'][data-active-chip='3'] .collection-patchwork__tile--3,
+  [data-testid='collection-list'][data-patchwork-interaction='true'][data-active-chip='4'] .collection-patchwork__tile--4 {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.01);
+    border-color: rgb(184 158 135 / 0.62);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.84) inset,
+      0 22px 42px rgb(88 67 54 / 0.12);
+  }
+
+  [data-testid='collection-list'][data-patchwork-interaction='true'][data-active-chip='1'] .collection-patchwork__tile--1 .collection-patchwork__media::after,
+  [data-testid='collection-list'][data-patchwork-interaction='true'][data-active-chip='2'] .collection-patchwork__tile--2 .collection-patchwork__media::after,
+  [data-testid='collection-list'][data-patchwork-interaction='true'][data-active-chip='3'] .collection-patchwork__tile--3 .collection-patchwork__media::after,
+  [data-testid='collection-list'][data-patchwork-interaction='true'][data-active-chip='4'] .collection-patchwork__tile--4 .collection-patchwork__media::after {
+    opacity: 0.94;
+  }
+
+
+
+  [data-testid='collection-list'][data-active-chip='1'] .collection-list__chip[data-chip-index='1'],
+  [data-testid='collection-list'][data-active-chip='2'] .collection-list__chip[data-chip-index='2'],
+  [data-testid='collection-list'][data-active-chip='3'] .collection-list__chip[data-chip-index='3'],
+  [data-testid='collection-list'][data-active-chip='4'] .collection-list__chip[data-chip-index='4'] {
+    border-color: rgb(180 124 97 / 0.62);
+    background: linear-gradient(180deg, rgb(255 251 246 / 0.96) 0%, rgb(245 232 218 / 0.9) 100%);
+    color: rgb(96 69 55);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.82) inset,
+      0 12px 24px rgb(117 88 68 / 0.09);
+  }
+
+  [data-testid='collection-list'][data-active-chip='1'] .collection-list__chip[data-chip-index='1']::after,
+  [data-testid='collection-list'][data-active-chip='2'] .collection-list__chip[data-chip-index='2']::after,
+  [data-testid='collection-list'][data-active-chip='3'] .collection-list__chip[data-chip-index='3']::after,
+  [data-testid='collection-list'][data-active-chip='4'] .collection-list__chip[data-chip-index='4']::after {
+    opacity: 1;
+    scale: 1 1;
+  }
+
+  [data-testid='collection-list'][data-active-chip='1'] .section-resource-list__content::before {
+    opacity: 0.96;
+    translate: -50% -20%;
+    scale: 1.02;
+  }
+
+  [data-testid='collection-list'][data-active-chip='2'] .section-resource-list__content::before {
+    opacity: 0.88;
+    translate: -47% -15%;
+    scale: 1.05;
+  }
+
+  [data-testid='collection-list'][data-active-chip='3'] .section-resource-list__content::before {
+    opacity: 0.9;
+    translate: -53% -17%;
+    scale: 1.03;
+  }
+
+  [data-testid='collection-list'][data-active-chip='4'] .section-resource-list__content::before {
+    opacity: 0.86;
+    translate: -50% -13%;
+    scale: 1.06;
+  }
+
+  [data-testid='collection-list'][data-active-chip='2'] .section-resource-list__content::after,
+  [data-testid='collection-list'][data-active-chip='4'] .section-resource-list__content::after {
+    opacity: 1;
+    translate: 0 -4px;
+    scale: 1.05;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork {
+    display: grid;
+    gap: clamp(1rem, 2vw, 1.4rem);
+    align-items: stretch;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__editorial {
+    grid-area: editorial;
+    height: 100%;
+    margin-bottom: 0;
+    padding: 0;
+    border: 1px solid rgb(213 184 160 / 0.74);
+    border-radius: clamp(1.45rem, 2vw, 1.85rem);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.82) inset,
+      0 20px 38px rgb(88 67 54 / 0.08);
+    overflow: hidden;
+    display: block;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__editorial::before,
+  [data-testid='collection-list'] .collection-patchwork__editorial::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  .collection-patchwork__intro-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__botanical {
+    position: absolute;
+    z-index: 0;
+    width: clamp(6.4rem, 9.2vw, 9.6rem);
+    color: rgb(186 134 102 / 0.22);
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__botanical :is(.collection-patchwork__botanical-stem, .collection-patchwork__botanical-leaf, .collection-patchwork__botanical-vein) {
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__botanical-stem {
+    stroke-width: 1.7;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__botanical-leaf {
+    stroke-width: 1.6;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__botanical-vein {
+    stroke-width: 1.15;
+    opacity: 0.72;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__botanical--top {
+    top: -0.25rem;
+    left: -1.35rem;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__botanical--bottom {
+    right: -1.45rem;
+    bottom: -1.15rem;
+    rotate: 180deg;
+    opacity: 0.46;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__eyebrow,
+  [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__patchwork-copy,
+  [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__patchwork-stats,
+  [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__view-all--editorial {
+    width: min(100%, 26.5rem);
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__eyebrow {
+    color: rgb(181 111 78);
+    font-size: clamp(0.78rem, 0.95vw, 0.92rem);
+    font-weight: 760;
+    letter-spacing: 0.17em;
+  }
+
+  [data-testid='collection-list'] .collection-list__patchwork-ornament {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    width: min(100%, 15.5rem);
+    margin-top: clamp(0.75rem, 1.2vw, 0.95rem);
+    color: rgb(188 124 93 / 0.78);
+  }
+
+  [data-testid='collection-list'] .collection-list__patchwork-ornament span {
+    flex: 1;
+    height: 1px;
+    background: rgb(188 124 93 / 0.42);
+  }
+
+  [data-testid='collection-list'] .collection-list__patchwork-ornament svg {
+    width: 1.55rem;
+    height: auto;
+  }
+
+  [data-testid='collection-list'] .collection-list__patchwork-ornament b {
+    display: inline-grid;
+    place-items: center;
+    color: rgb(188 105 82);
+    font-size: 0.78rem;
+    line-height: 1;
+  }
+
+  [data-testid='collection-list'] .collection-list__patchwork-copy {
+    display: grid;
+    justify-items: center;
+    gap: clamp(0.95rem, 1.6vw, 1.25rem);
+    margin-top: clamp(0.9rem, 1.45vw, 1.25rem);
+  }
+
+  [data-testid='collection-list'] .collection-list__patchwork-heading {
+    margin: 0;
+    max-inline-size: 7.6ch;
+    color: rgb(62 51 45);
+    font-family: var(--font-heading--family);
+    font-size: clamp(3.35rem, 5.45vw, 5.55rem);
+    font-weight: 500;
+    letter-spacing: -0.065em;
+    line-height: 0.86;
+    text-align: center;
+    text-wrap: balance;
+    position: relative;
+    padding-block-end: 1.05rem;
+  }
+
+  [data-testid='collection-list'] .collection-list__patchwork-heading::after {
+    content: '';
+    display: block;
+    width: min(80%, 13.8rem);
+    height: 0.28rem;
+    margin: 0.55rem auto 0;
+    border-radius: 999px;
+    background: rgb(178 101 65 / 0.78);
+    clip-path: polygon(0 52%, 10% 36%, 24% 43%, 40% 31%, 58% 42%, 73% 33%, 90% 44%, 100% 39%, 100% 72%, 84% 66%, 63% 76%, 42% 68%, 25% 78%, 8% 66%, 0 75%);
+    transform-origin: center;
+  }
+
+  [data-testid='collection-list'] .collection-list__patchwork-subheading {
+    margin: 0 auto;
+    max-inline-size: 23rem;
+    color: rgb(73 61 53);
+    font-size: clamp(1rem, 1.15vw, 1.1rem);
+    font-weight: 430;
+    line-height: 1.42;
+    text-align: center;
+    text-wrap: pretty;
+  }
+
+  [data-testid='collection-list'] .collection-list__patchwork-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.75rem, 1.4vw, 1.2rem);
+    margin-top: clamp(1.55rem, 2.35vw, 2.15rem);
+  }
+
+  [data-testid='collection-list'] .collection-list__patchwork-stat {
+    display: grid;
+    justify-items: center;
+    gap: 0.45rem;
+    min-width: 0;
+    color: rgb(70 57 50);
+    font-size: clamp(0.78rem, 0.9vw, 0.91rem);
+    line-height: 1.2;
+  }
+
+  [data-testid='collection-list'] .collection-list__patchwork-stat-icon {
+    display: inline-grid;
+    place-items: center;
+    width: clamp(2.55rem, 3.55vw, 3.15rem);
+    height: clamp(2.55rem, 3.55vw, 3.15rem);
+    border: 1px solid rgb(190 128 94 / 0.44);
+    border-radius: 999px;
+    color: rgb(184 116 82);
+    background: rgb(255 250 244 / 0.58);
+  }
+
+  [data-testid='collection-list'] .collection-list__patchwork-stat-icon svg {
+    width: 74%;
+    height: 74%;
+  }
+
+  [data-testid='collection-list'] .collection-list__patchwork-stat strong {
+    display: block;
+    color: rgb(70 57 50);
+    font-size: clamp(1rem, 1.18vw, 1.12rem);
+    font-weight: 760;
+    line-height: 1.05;
+  }
+
+  [data-testid='collection-list'] .collection-list__patchwork-stat span:not(.collection-list__patchwork-stat-icon) {
+    display: block;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__view-all--editorial {
+    position: relative;
+    width: min(100%, 27rem);
+    min-height: clamp(3.25rem, 4vw, 3.75rem);
+    margin-top: clamp(1.45rem, 2.2vw, 1.9rem);
+    padding: 0.75rem 4rem 0.75rem 1.5rem;
+    align-self: center;
+    border: 1px solid rgb(188 112 80 / 0.72);
+    border-radius: 0.62rem;
+    background: rgb(255 251 246 / 0.38);
+    box-shadow: none;
+    color: rgb(70 57 50);
+    font-size: clamp(1rem, 1.08vw, 1.12rem);
+    font-weight: 720;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__view-all--editorial::after {
+    position: absolute;
+    right: 1.55rem;
+    top: 50%;
+    translate: 0 -50%;
+    color: rgb(188 112 80);
+    font-size: 1.85rem;
+    opacity: 1;
+    line-height: 1;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__view-all--editorial:hover {
+    color: rgb(86 62 50);
+    border-color: rgb(188 112 80 / 0.95);
+    background: rgb(255 251 246 / 0.74);
+    box-shadow: none;
+    gap: 0.45rem;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__editorial.homepage-reveal--pending .collection-list__patchwork-heading {
+    opacity: 0;
+    clip-path: inset(0 18% 100% 18%);
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__editorial.homepage-reveal.is-visible .collection-list__patchwork-heading {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transition:
+      opacity 460ms var(--animation-timing-fade-in),
+      clip-path 540ms var(--animation-timing-fade-in);
+    transition-delay: 95ms;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__editorial.homepage-reveal--pending .collection-list__patchwork-subheading {
+    opacity: 0;
+    translate: 0 10px;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__editorial.homepage-reveal.is-visible .collection-list__patchwork-subheading {
+    opacity: 1;
+    translate: 0 0;
+    transition:
+      opacity 420ms var(--animation-timing-fade-in),
+      translate 420ms var(--animation-timing-fade-in);
+    transition-delay: 150ms;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__tile {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    min-height: 16rem;
+    overflow: hidden;
+    border-radius: clamp(1.45rem, 1.9vw, 1.9rem);
+    border: 1px solid rgb(213 184 160 / 0.74);
+    background: rgb(250 247 243);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.84) inset,
+      0 18px 34px rgb(88 67 54 / 0.08);
+    color: inherit;
+    text-decoration: none;
+    isolation: isolate;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__tile.homepage-reveal--pending {
+    rotate: var(--collection-card-reveal-rotate, 0deg);
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__tile.homepage-reveal.is-visible {
+    rotate: 0deg;
+    transition:
+      opacity 480ms var(--animation-timing-fade-in),
+      translate 480ms var(--animation-timing-fade-in),
+      rotate 560ms var(--animation-timing-fade-in);
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__tile--placeholder {
+    background: linear-gradient(180deg, rgb(252 248 243) 0%, rgb(244 236 228) 100%);
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__tile:focus-visible {
+    outline: 2px solid rgb(180 124 97 / 0.72);
+    outline-offset: 3px;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__media,
+  [data-testid='collection-list'] .collection-patchwork__media::after {
+    position: absolute;
+    inset: 0;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__media::after {
+    content: '';
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, rgb(32 24 20 / 0.08) 0%, rgb(32 24 20 / 0.14) 35%, rgb(32 24 20 / 0.52) 100%);
+    transition: opacity 220ms var(--animation-easing);
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__image,
+  [data-testid='collection-list'] .collection-patchwork__image--placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__content {
+    position: relative;
+    z-index: 1;
+    min-height: 100%;
+    display: grid;
+    align-content: end;
+    gap: 0;
+    padding: clamp(1.25rem, 2vw, 1.75rem);
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__title {
+    margin: 0;
+    max-inline-size: 10ch;
+    color: #fff8ef;
+    font-family: var(--font-heading--family);
+    font-size: clamp(1.65rem, 2.2vw, 2.25rem);
+    font-weight: 560;
+    letter-spacing: -0.055em;
+    line-height: 0.92;
+    text-shadow: 0 1px 2px rgb(31 22 16 / 0.22), 0 10px 22px rgb(31 22 16 / 0.24);
+    text-wrap: balance;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__tile--1 .collection-patchwork__title {
+    font-size: clamp(2rem, 2.75vw, 2.75rem);
+  }
+
+
+
+  [data-testid='collection-list'] .collection-patchwork--count-1,
+  [data-testid='collection-list'] .collection-patchwork--count-2,
+  [data-testid='collection-list'] .collection-patchwork--count-3,
+  [data-testid='collection-list'] .collection-patchwork--count-4 {
+    grid-template-columns: 1fr;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__tile--1 {
+    grid-area: tile-1;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__tile--2 {
+    grid-area: tile-2;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__tile--3 {
+    grid-area: tile-3;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__tile--4 {
+    grid-area: tile-4;
+  }
+
+  [data-testid='collection-list'] .resource-list {
+    --resource-list-column-gap-desktop: clamp(1rem, 1.7vw, 1.35rem);
+    --resource-list-row-gap-desktop: clamp(1.15rem, 2vw, 1.55rem);
+  }
+
+  [data-testid='collection-list'] .resource-list__item {
+    min-width: 0;
+    position: relative;
+    overflow: visible;
+  }
+
+  [data-testid='collection-list'] .resource-list__item::after {
+    content: 'Explore collection \2192';
+    position: absolute;
+    left: clamp(1rem, 2vw, 1.2rem);
+    bottom: clamp(1rem, 2vw, 1.2rem);
+    z-index: 3;
+    pointer-events: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.55rem 0.82rem;
+    border-radius: 999px;
+    background: rgb(255 248 239 / 0.9);
+    box-shadow: 0 10px 24px rgb(62 51 45 / 0.12);
+    color: rgb(79 58 47);
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1;
+    opacity: 0;
+    translate: 0 10px;
+    transition:
+      opacity 240ms var(--animation-easing),
+      translate 240ms var(--animation-easing);
+  }
+
+  [data-testid='collection-list'] .resource-list__item.homepage-reveal--pending {
+    rotate: var(--collection-card-reveal-rotate, 0deg);
+  }
+
+  [data-testid='collection-list'] .resource-list__item.homepage-reveal.is-visible {
+    rotate: 0deg;
+    transition:
+      opacity 480ms var(--animation-timing-fade-in),
+      translate 480ms var(--animation-timing-fade-in),
+      rotate 560ms var(--animation-timing-fade-in);
+  }
+
+  [data-testid='collection-list'] .collection-card {
+    border-color: rgb(226 217 207 / 0.9);
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 0.95) 0%, rgb(250 248 245 / 0.96) 100%);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.88) inset,
+      0 16px 34px rgb(62 51 45 / 0.06);
+  }
+
+  [data-testid='collection-list'] .collection-card__image {
+    overflow: hidden;
+    background: rgb(244 239 233);
+    position: relative;
+  }
+
+  [data-testid='collection-list'] .collection-card__image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, transparent 18%, rgb(50 34 26 / 0.06) 52%, rgb(50 34 26 / 0.34) 100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 240ms var(--animation-easing);
+  }
+
+  [data-testid='collection-list'] .collection-card__image .resource-image__image,
+  [data-testid='collection-list'] .collection-card__image .placeholder-svg {
+    transition:
+      transform var(--animation-speed-medium) var(--animation-timing-fade-in),
+      filter var(--animation-speed-medium) var(--animation-timing-fade-in);
+  }
+
+  [data-testid='collection-list'] .collection-card__content {
+    gap: clamp(0.55rem, 1.3vw, 0.85rem);
+  }
+
+  [data-testid='collection-list'] .collection-card__content .text-block > * {
+    color: rgb(62 51 45);
+    font-size: clamp(1.06rem, 1.2vw, 1.18rem);
+    font-weight: 650;
+    line-height: 1.3;
+    text-wrap: balance;
+  }
+
+  [data-testid='collection-list'] .collection-card__content .text-block > p {
+    position: relative;
+    display: inline-block;
+    padding-inline-end: 0.85rem;
+  }
+
+  [data-testid='collection-list'] .collection-card__content .text-block > p::after {
+    content: '\2192';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    font-size: 0.82em;
+    opacity: 0;
+    transform: translate(0, -50%);
+    transition:
+      opacity var(--animation-speed-fast) var(--animation-easing),
+      transform var(--animation-speed-fast) var(--animation-easing);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    [data-testid='collection-list'] .section-resource-list__content.homepage-reveal--pending::before,
+    [data-testid='collection-list'] .section-resource-list__content.homepage-reveal--pending::after {
+      opacity: 0.3;
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__editorial.homepage-reveal.is-visible .collection-list__patchwork-heading::after {
+      animation: collection-list-underline-grow 520ms var(--animation-timing-fade-in) both;
+    }
+
+    [data-testid='collection-list'] .section-resource-list__content.homepage-reveal.is-visible .text-block.h2::after {
+      animation: collection-list-underline-grow 520ms var(--animation-timing-fade-in) both;
+    }
+
+    [data-testid='collection-list'] .section-resource-list__content.homepage-reveal--pending .collection-list__chip {
+      opacity: 0;
+      translate: 0 8px;
+    }
+
+    [data-testid='collection-list'] .section-resource-list__content.homepage-reveal.is-visible .collection-list__chip {
+      opacity: 1;
+      translate: 0 0;
+      transition:
+        opacity 420ms var(--animation-timing-fade-in),
+        translate 420ms var(--animation-timing-fade-in);
+    }
+
+    [data-testid='collection-list'] .section-resource-list__content.homepage-reveal.is-visible .collection-list__chip:nth-child(1) {
+      transition-delay: 80ms;
+    }
+
+    [data-testid='collection-list'] .section-resource-list__content.homepage-reveal.is-visible .collection-list__chip:nth-child(2) {
+      transition-delay: 125ms;
+    }
+
+    [data-testid='collection-list'] .section-resource-list__content.homepage-reveal.is-visible .collection-list__chip:nth-child(3) {
+      transition-delay: 170ms;
+    }
+
+    [data-testid='collection-list'] .section-resource-list__content.homepage-reveal.is-visible .collection-list__chip:nth-child(4) {
+      transition-delay: 215ms;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    [data-testid='collection-list'][data-patchwork-interaction='true'] .collection-patchwork__tile:hover,
+    [data-testid='collection-list'][data-patchwork-interaction='true'] .collection-patchwork__tile:focus-visible,
+    [data-testid='collection-list'][data-patchwork-interaction='true'] .collection-patchwork__tile:focus-within {
+      transform: translateY(-4px);
+      border-color: rgb(184 158 135 / 0.58);
+      box-shadow:
+        0 1px 0 rgb(255 255 255 / 0.84) inset,
+        0 22px 42px rgb(88 67 54 / 0.12);
+    }
+
+    [data-testid='collection-list'][data-patchwork-interaction='true'] .collection-patchwork__tile:hover .collection-patchwork__media::after,
+    [data-testid='collection-list'][data-patchwork-interaction='true'] .collection-patchwork__tile:focus-visible .collection-patchwork__media::after,
+    [data-testid='collection-list'][data-patchwork-interaction='true'] .collection-patchwork__tile:focus-within .collection-patchwork__media::after {
+      opacity: 0.92;
+    }
+
+
+
+    [data-testid='collection-list'] .resource-list__item:hover::after,
+    [data-testid='collection-list'] .resource-list__item:focus-within::after {
+      opacity: 1;
+      translate: 0 0;
+    }
+
+    [data-testid='collection-list'] .collection-card:hover {
+      transform: translateY(-4px);
+      border-color: rgb(180 154 132 / 0.45);
+      box-shadow:
+        0 1px 0 rgb(255 255 255 / 0.88) inset,
+        0 20px 40px rgb(62 51 45 / 0.1);
+    }
+
+    [data-testid='collection-list'] .collection-card:hover .resource-image__image,
+    [data-testid='collection-list'] .collection-card:hover .placeholder-svg {
+      transform: scale(1.03);
+      filter: saturate(1.02);
+    }
+
+    [data-testid='collection-list'] .collection-card:hover .collection-card__image::after,
+    [data-testid='collection-list'] .collection-card:focus-within .collection-card__image::after {
+      opacity: 1;
+    }
+
+    [data-testid='collection-list'] .collection-card:hover .collection-card__content .text-block > * {
+      color: rgb(88 72 62);
+    }
+
+    [data-testid='collection-list'] .collection-card:hover .collection-card__content .text-block > p::after {
+      opacity: 0.75;
+      transform: translate(2px, -50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-testid='collection-list'] .section-resource-list__content::before,
+    [data-testid='collection-list'] .section-resource-list__content::after,
+    [data-testid='collection-list'] .collection-list__chip,
+    [data-testid='collection-list'] .resource-list__item::after,
+    [data-testid='collection-list'] .collection-patchwork__media::after,
+    [data-testid='collection-list'] .collection-patchwork__tile {
+      transition: none;
+      animation: none;
+    }
+  }
+
+  .collection-list__view-all-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: clamp(1.9rem, 4vw, 2.35rem);
+  }
+
+  .collection-list__view-all {
+    min-height: max(44px, var(--minimum-touch-target));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.2rem;
+    color: rgb(117 101 90);
+    font-size: clamp(1rem, 1.05vw, 1.05rem);
+    font-weight: 600;
+    line-height: 1.35;
+    text-decoration: none;
+    box-shadow: inset 0 -1px 0 rgb(180 124 97 / 0.55);
+    transition:
+      color var(--animation-speed-fast) var(--animation-easing),
+      box-shadow var(--animation-speed-fast) var(--animation-easing),
+      gap var(--animation-speed-fast) var(--animation-easing);
+  }
+
+  .collection-list__view-all::after {
+    content: '\2192';
+    font-size: 0.92em;
+    line-height: 1;
+    opacity: 0.78;
+    transition:
+      opacity var(--animation-speed-fast) var(--animation-easing),
+      transform var(--animation-speed-fast) var(--animation-easing);
+  }
+
+  .collection-list__view-all:hover {
+    color: rgb(104 73 56);
+    box-shadow: inset 0 -1px 0 rgb(180 124 97 / 0.82);
+    gap: 0.6rem;
+  }
+
+  .collection-list__view-all:hover::after {
+    opacity: 1;
+    transform: translateX(2px);
+  }
+
+  @media screen and (min-width: 750px) {
+    [data-testid='collection-list'] .collection-patchwork {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-areas:
+        'editorial editorial'
+        'tile-1 tile-2'
+        'tile-3 tile-4';
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__editorial {
+      min-height: 18rem;
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__tile {
+      min-height: clamp(17rem, 25vw, 20rem);
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-1 {
+      grid-template-areas:
+        'editorial editorial'
+        'tile-1 tile-1';
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-2 {
+      grid-template-areas:
+        'editorial editorial'
+        'tile-1 tile-2';
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-3 {
+      grid-template-areas:
+        'editorial editorial'
+        'tile-1 tile-2'
+        'tile-3 tile-3';
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-4 {
+      grid-template-areas:
+        'editorial editorial'
+        'tile-1 tile-2'
+        'tile-3 tile-4';
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    [data-testid='collection-list'] .collection-patchwork {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__editorial {
+      min-height: 100%;
+      padding: 0;
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__eyebrow,
+    [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__patchwork-copy,
+    [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__chips,
+    [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__view-all--editorial {
+      margin-inline: 0;
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__tile--1,
+    [data-testid='collection-list'] .collection-patchwork__tile--2,
+    [data-testid='collection-list'] .collection-patchwork__tile--3,
+    [data-testid='collection-list'] .collection-patchwork__tile--4 {
+      min-height: 100%;
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-1 {
+      grid-template-rows: repeat(2, minmax(12rem, auto));
+      grid-template-areas:
+        'editorial editorial editorial tile-1 tile-1 tile-1'
+        'editorial editorial editorial tile-1 tile-1 tile-1';
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-1 .collection-patchwork__editorial,
+    [data-testid='collection-list'] .collection-patchwork--count-1 .collection-patchwork__tile--1 {
+      min-height: clamp(22rem, 34vw, 28rem);
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-2 {
+      grid-template-rows: repeat(2, minmax(12rem, auto));
+      grid-template-areas:
+        'editorial editorial tile-1 tile-1 tile-2 tile-2'
+        'editorial editorial tile-1 tile-1 tile-2 tile-2';
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-2 .collection-patchwork__editorial,
+    [data-testid='collection-list'] .collection-patchwork--count-2 .collection-patchwork__tile--1,
+    [data-testid='collection-list'] .collection-patchwork--count-2 .collection-patchwork__tile--2 {
+      min-height: clamp(21rem, 32vw, 26rem);
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-3 {
+      grid-template-rows: repeat(2, minmax(12rem, auto));
+      grid-template-areas:
+        'editorial editorial tile-1 tile-1 tile-2 tile-2'
+        'editorial editorial tile-1 tile-1 tile-3 tile-3';
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-3 .collection-patchwork__editorial,
+    [data-testid='collection-list'] .collection-patchwork--count-3 .collection-patchwork__tile--1 {
+      min-height: clamp(24rem, 35vw, 30rem);
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-3 .collection-patchwork__tile--2,
+    [data-testid='collection-list'] .collection-patchwork--count-3 .collection-patchwork__tile--3 {
+      min-height: clamp(11.5rem, 16vw, 14rem);
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-4 {
+      grid-template-rows: repeat(2, minmax(15.25rem, auto));
+      grid-template-areas:
+        'editorial editorial tile-1 tile-1 tile-2 tile-2'
+        'editorial editorial tile-1 tile-1 tile-3 tile-4';
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-4 .collection-patchwork__editorial,
+    [data-testid='collection-list'] .collection-patchwork--count-4 .collection-patchwork__tile--1 {
+      min-height: clamp(32rem, 44vw, 39rem);
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-4 .collection-patchwork__tile--2 {
+      min-height: clamp(15.25rem, 20.5vw, 18.75rem);
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-4 .collection-patchwork__tile--3,
+    [data-testid='collection-list'] .collection-patchwork--count-4 .collection-patchwork__tile--4 {
+      min-height: clamp(15.25rem, 20.5vw, 18.75rem);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ui-test-collection-list [data-testid='collection-list'] {
+      padding-block-start: clamp(2.75rem, 8vw, 3.5rem);
+      padding-block-end: clamp(3rem, 9vw, 3.5rem);
+    }
+
+    [data-testid='collection-list'] .section-resource-list__content {
+      gap: 0.75rem;
+      margin-bottom: 1.2rem;
+      padding: 1rem 0.65rem 0.3rem;
+    }
+
+    [data-testid='collection-list'] .section-resource-list__content::before {
+      width: 112%;
+      height: 10rem;
+      translate: -50% -12%;
+    }
+
+    [data-testid='collection-list'] .section-resource-list__content::after {
+      width: 80%;
+      height: 4.75rem;
+      right: auto;
+      left: 50%;
+      bottom: 0.2rem;
+      translate: -50% 0;
+    }
+
+    [data-testid='collection-list'] .collection-list__eyebrow {
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+    }
+
+    [data-testid='collection-list'] .collection-patchwork {
+      grid-template-columns: 1fr;
+      gap: 0.95rem;
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-1 {
+      grid-template-areas:
+        'editorial'
+        'tile-1';
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-2 {
+      grid-template-areas:
+        'editorial'
+        'tile-1'
+        'tile-2';
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-3 {
+      grid-template-areas:
+        'editorial'
+        'tile-1'
+        'tile-2'
+        'tile-3';
+    }
+
+    [data-testid='collection-list'] .collection-patchwork--count-4 {
+      grid-template-areas:
+        'editorial'
+        'tile-1'
+        'tile-2'
+        'tile-3'
+        'tile-4';
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__editorial {
+      min-height: auto;
+      padding: 0;
+      aspect-ratio: 1024 / 1365;
+      height: auto;
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__intro-image {
+      height: 100%;
+      object-fit: cover;
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__botanical {
+      width: 5.9rem;
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__botanical--top {
+      top: -0.35rem;
+      left: -1.75rem;
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__botanical--bottom {
+      right: -1.75rem;
+      bottom: -1.25rem;
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__eyebrow,
+    [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__patchwork-copy,
+    [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__patchwork-stats,
+    [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__view-all--editorial {
+      width: 100%;
+      margin-inline: auto;
+    }
+
+    [data-testid='collection-list'] .collection-list__patchwork-ornament {
+      width: min(100%, 13rem);
+      margin-top: 0.65rem;
+    }
+
+    [data-testid='collection-list'] .collection-list__patchwork-heading {
+      max-inline-size: 8ch;
+      font-size: clamp(3.05rem, 13vw, 4.15rem);
+      line-height: 0.9;
+      padding-block-end: 0.82rem;
+    }
+
+    [data-testid='collection-list'] .collection-list__patchwork-heading::after {
+      margin-inline: auto;
+      width: min(78%, 10rem);
+      height: 0.22rem;
+    }
+
+    [data-testid='collection-list'] .collection-list__patchwork-subheading {
+      max-inline-size: 21rem;
+      font-size: 0.98rem;
+      line-height: 1.48;
+    }
+
+    [data-testid='collection-list'] .collection-list__patchwork-stats {
+      gap: 0.5rem;
+      margin-top: 1.2rem;
+    }
+
+    [data-testid='collection-list'] .collection-list__patchwork-stat {
+      font-size: 0.78rem;
+    }
+
+    [data-testid='collection-list'] .collection-list__patchwork-stat-icon {
+      width: 2.45rem;
+      height: 2.45rem;
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__tile {
+      min-height: clamp(13.5rem, 62vw, 17rem);
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__content {
+      padding: 1rem;
+      gap: 0;
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__title,
+    [data-testid='collection-list'] .collection-patchwork__tile--1 .collection-patchwork__title {
+      font-size: clamp(1.45rem, 7vw, 1.95rem);
+      line-height: 0.95;
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__view-all--editorial {
+      align-self: center;
+      margin-top: 1rem;
+      padding-inline: 1.25rem 3.7rem;
+    }
+
+    [data-testid='collection-list'] .section-resource-list__content .text-block.h2 > * {
+      max-inline-size: 12ch;
+      font-size: clamp(2.35rem, 8vw, 2.8rem);
+      line-height: 1.03;
+    }
+
+    [data-testid='collection-list'] .section-resource-list__content .text-block.rte > * {
+      font-size: 1rem;
+      line-height: 1.58;
+    }
+
+    [data-testid='collection-list'] .collection-list__chips {
+      gap: 0.55rem 0.6rem;
+      max-width: 100%;
+      margin-top: 0.1rem;
+    }
+
+    [data-testid='collection-list'] .collection-list__chip {
+      min-height: 2.1rem;
+      padding: 0.5rem 0.78rem;
+      font-size: 0.88rem;
+      line-height: 1.25;
+    }
+
+    [data-testid='collection-list'] .resource-list__item::after {
+      opacity: 1;
+      translate: 0 0;
+      left: 0.8rem;
+      bottom: 0.8rem;
+      font-size: 0.84rem;
+      padding: 0.48rem 0.72rem;
+    }
+
+    [data-testid='collection-list'] .collection-card__content {
+      gap: 0.55rem;
+    }
+
+    [data-testid='collection-list'] .collection-card__content .text-block > * {
+      font-size: 1rem;
+      line-height: 1.3;
+    }
+
+    .collection-list__view-all-wrap {
+      margin-top: clamp(1.5rem, 6vw, 2rem);
+    }
+
+    .collection-list__view-all {
+      padding-block: 0.45rem;
+      font-size: 1rem;
+    }
+  }
+
+  @keyframes collection-list-underline-grow {
+    from {
+      opacity: 0.35;
+      scale: 0.72 1;
+    }
+
+    to {
+      opacity: 1;
+      scale: 1 1;
+    }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -338,6 +1848,148 @@
       "placeholder": "t:settings.default"
     },
     {
+      "type": "select",
+      "id": "discovery_layout",
+      "label": "Discovery layout",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "patchwork",
+          "label": "Patchwork"
+        }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "header",
+      "content": "Collection intro"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Eyebrow",
+      "default": "Curated comforts"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_comfort_chips",
+      "label": "Show comfort chips",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "comfort_chips",
+      "label": "Comfort chips",
+      "default": "Soft layers, Warm nights, Baby comfort, Gift-ready picks",
+      "visible_if": "{{ section.settings.show_comfort_chips }}"
+    },
+    {
+      "type": "header",
+      "content": "Patchwork layout",
+      "visible_if": "{{ section.settings.layout_type == 'bento' }}"
+    },
+    {
+      "type": "text",
+      "id": "patchwork_heading",
+      "label": "Patchwork heading",
+      "default": "Shop by collection",
+      "visible_if": "{{ section.settings.discovery_layout == 'patchwork' }}"
+    },
+    {
+      "type": "textarea",
+      "id": "patchwork_subheading",
+      "label": "Patchwork subheading",
+      "default": "Browse blankets, quilts and comforters by the kind of comfort you want to bring into the room, from airy and minimal to warm and cocooning.",
+      "visible_if": "{{ section.settings.discovery_layout == 'patchwork' }}"
+    },
+    {
+      "type": "header",
+      "content": "Patchwork stats",
+      "visible_if": "{{ section.settings.discovery_layout == 'patchwork' }}"
+    },
+    {
+      "type": "text",
+      "id": "patchwork_stat_1_value",
+      "label": "Stat 1 value",
+      "default": "38+",
+      "visible_if": "{{ section.settings.discovery_layout == 'patchwork' }}"
+    },
+    {
+      "type": "text",
+      "id": "patchwork_stat_1_label",
+      "label": "Stat 1 label",
+      "default": "Collections",
+      "visible_if": "{{ section.settings.discovery_layout == 'patchwork' }}"
+    },
+    {
+      "type": "text",
+      "id": "patchwork_stat_2_value",
+      "label": "Stat 2 value",
+      "default": "1200+",
+      "visible_if": "{{ section.settings.discovery_layout == 'patchwork' }}"
+    },
+    {
+      "type": "text",
+      "id": "patchwork_stat_2_label",
+      "label": "Stat 2 label",
+      "default": "Designs",
+      "visible_if": "{{ section.settings.discovery_layout == 'patchwork' }}"
+    },
+    {
+      "type": "text",
+      "id": "patchwork_stat_3_value",
+      "label": "Stat 3 value",
+      "default": "Loved by",
+      "visible_if": "{{ section.settings.discovery_layout == 'patchwork' }}"
+    },
+    {
+      "type": "text",
+      "id": "patchwork_stat_3_label",
+      "label": "Stat 3 label",
+      "default": "Thousands",
+      "visible_if": "{{ section.settings.discovery_layout == 'patchwork' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_patchwork_motion",
+      "label": "Enable patchwork motion",
+      "default": true,
+      "visible_if": "{{ section.settings.discovery_layout == 'patchwork' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_patchwork_interaction",
+      "label": "Enable patchwork interaction",
+      "default": true,
+      "visible_if": "{{ section.settings.discovery_layout == 'patchwork' }}"
+    },
+    {
+      "type": "header",
+      "content": "View all CTA"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show view all CTA",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "CTA label",
+      "default": "Explore all collections",
+      "visible_if": "{{ section.settings.show_view_all }}"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "CTA link",
+      "visible_if": "{{ section.settings.show_view_all }}"
+    },
+    {
       "type": "header",
       "content": "t:content.padding"
     },
@@ -367,10 +2019,15 @@
       "name": "t:names.collections_bento",
       "category": "t:categories.collections",
       "settings": {
+        "discovery_layout": "default",
         "layout_type": "bento",
         "bento_gap": 8,
         "section_width": "page-width",
         "carousel_on_mobile": false,
+        "patchwork_heading": "Shop by collection",
+        "patchwork_subheading": "Browse blankets, quilts and comforters by the kind of comfort you want to bring into the room, from airy and minimal to warm and cocooning.",
+        "enable_patchwork_motion": true,
+        "enable_patchwork_interaction": true,
         "padding-block-start": 24,
         "padding-block-end": 24
       },

@@ -4254,3 +4254,30 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
     margin-top: calc(var(--header-height) * var(--transparent-header-offset-boolean) * -1);
   }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  main[data-template*='index'].homepage-motion-ready .homepage-reveal--pending {
+    opacity: 0;
+    translate: 0 10px;
+    transition:
+      opacity 480ms var(--animation-timing-fade-in),
+      translate 480ms var(--animation-timing-fade-in);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, translate;
+  }
+
+  main[data-template*='index'].homepage-motion-ready .homepage-reveal--pending.is-visible {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main[data-template*='index'] .homepage-reveal,
+  main[data-template*='index'] .homepage-reveal--pending {
+    opacity: 1;
+    translate: 0 0;
+    transition: none;
+    will-change: auto;
+  }
+}
