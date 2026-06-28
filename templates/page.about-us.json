@@ -1,24 +1,22 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "about_us_page": {
       "type": "about-us",
-      "settings": {
-        "hero_title": "About JEMINISE",
-        "hero_subtitle": "At JEMINISE, we believe comfort should feel personal.\nFrom cozy blankets to meaningful quilts and comforters, every piece is designed to bring warmth, personality, and a sense of home into everyday living.",
-        "hero_overlay_color": "#2F241D",
-        "hero_overlay_opacity": 0.3,
-        "page_background": "#FBF6EF",
-        "card_background": "#FFFDF9",
-        "text_color": "#2F241D",
-        "muted_text_color": "#716052",
-        "accent_color": "#B87345",
-        "button_background": "#2F241D",
-        "button_text_color": "#FFF8EF"
-      },
       "blocks": {
         "mission": {
           "type": "content_row",
           "settings": {
+            "image": "shopify://shop_images/anh_2.png",
+            "image_alt": "",
             "image_position": "left",
             "kicker": "OUR MISSION",
             "heading": "Our Mission",
@@ -30,6 +28,8 @@
         "story": {
           "type": "content_row",
           "settings": {
+            "image": "shopify://shop_images/anh_3.png",
+            "image_alt": "",
             "image_position": "right",
             "kicker": "OUR STORY",
             "heading": "Our Story",
@@ -41,6 +41,8 @@
         "approach": {
           "type": "content_row",
           "settings": {
+            "image": "shopify://shop_images/anh_4.png",
+            "image_alt": "",
             "image_position": "left",
             "kicker": "OUR APPROACH",
             "heading": "Our Approach",
@@ -54,7 +56,28 @@
         "mission",
         "story",
         "approach"
-      ]
+      ],
+      "settings": {
+        "hero_image": "shopify://shop_images/anh_1.png",
+        "hero_image_alt": "",
+        "hero_title": "About JEMINISE",
+        "hero_subtitle": "At JEMINISE, we believe comfort should feel personal.\nFrom cozy blankets to meaningful quilts and comforters, every piece is designed to bring warmth, personality, and a sense of home into everyday living.",
+        "hero_overlay_color": "#2f241d",
+        "hero_overlay_opacity": 0.3,
+        "page_background": "#fbf6ef",
+        "card_background": "#fffdf9",
+        "text_color": "#2f241d",
+        "muted_text_color": "#716052",
+        "accent_color": "#b87345",
+        "button_background": "#2f241d",
+        "button_text_color": "#fff8ef",
+        "enable_cta": true,
+        "cta_heading": "Find a piece that feels like home",
+        "cta_text": "Explore printed blankets, quilts, and comforters designed for meaningful gifts and cozy everyday living.",
+        "blanket_link": "",
+        "quilt_link": "",
+        "comforter_link": ""
+      }
     }
   },
   "order": [
