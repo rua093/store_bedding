@@ -283,8 +283,8 @@
 
 {% stylesheet %}
   .ui-test-collection-list [data-testid='collection-list'] {
-    padding-block-start: clamp(4rem, 5vw, 4.5rem);
-    padding-block-end: clamp(4.5rem, 6vw, 5rem);
+    padding-block-start: var(--padding-block-start);
+    padding-block-end: var(--padding-block-end);
   }
 
   [data-testid='collection-list'] .section-resource-list__content {
@@ -596,13 +596,15 @@
 
   [data-testid='collection-list'] .collection-patchwork {
     display: grid;
-    gap: clamp(1rem, 2vw, 1.4rem);
+    gap: clamp(0.55rem, 1vw, 0.75rem);
     align-items: stretch;
   }
 
   [data-testid='collection-list'] .collection-patchwork__editorial {
     grid-area: editorial;
-    height: 100%;
+    position: relative;
+    height: auto;
+    min-height: clamp(16rem, 22vw, 19rem);
     margin-bottom: 0;
     padding: 0;
     border: 1px solid rgb(213 184 160 / 0.74);
@@ -621,6 +623,8 @@
   }
 
   .collection-patchwork__intro-image {
+    position: absolute;
+    inset: 0;
     display: block;
     width: 100%;
     height: 100%;
@@ -715,8 +719,8 @@
   [data-testid='collection-list'] .collection-list__patchwork-copy {
     display: grid;
     justify-items: center;
-    gap: clamp(0.95rem, 1.6vw, 1.25rem);
-    margin-top: clamp(0.9rem, 1.45vw, 1.25rem);
+    gap: clamp(0.65rem, 1vw, 0.9rem);
+    margin-top: clamp(0.55rem, 1vw, 0.85rem);
   }
 
   [data-testid='collection-list'] .collection-list__patchwork-heading {
@@ -724,14 +728,14 @@
     max-inline-size: 7.6ch;
     color: rgb(62 51 45);
     font-family: var(--font-heading--family);
-    font-size: clamp(3.35rem, 5.45vw, 5.55rem);
+    font-size: clamp(2.55rem, 4vw, 4.25rem);
     font-weight: 500;
     letter-spacing: -0.065em;
     line-height: 0.86;
     text-align: center;
     text-wrap: balance;
     position: relative;
-    padding-block-end: 1.05rem;
+    padding-block-end: 0.65rem;
   }
 
   [data-testid='collection-list'] .collection-list__patchwork-heading::after {
@@ -752,7 +756,7 @@
     color: rgb(73 61 53);
     font-size: clamp(1rem, 1.15vw, 1.1rem);
     font-weight: 430;
-    line-height: 1.42;
+    line-height: 1.32;
     text-align: center;
     text-wrap: pretty;
   }
@@ -761,7 +765,7 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: clamp(0.75rem, 1.4vw, 1.2rem);
-    margin-top: clamp(1.55rem, 2.35vw, 2.15rem);
+    margin-top: clamp(0.65rem, 1vw, 0.9rem);
   }
 
   [data-testid='collection-list'] .collection-list__patchwork-stat {
@@ -777,8 +781,8 @@
   [data-testid='collection-list'] .collection-list__patchwork-stat-icon {
     display: inline-grid;
     place-items: center;
-    width: clamp(2.55rem, 3.55vw, 3.15rem);
-    height: clamp(2.55rem, 3.55vw, 3.15rem);
+    width: clamp(2.2rem, 3vw, 2.75rem);
+    height: clamp(2.2rem, 3vw, 2.75rem);
     border: 1px solid rgb(190 128 94 / 0.44);
     border-radius: 999px;
     color: rgb(184 116 82);
@@ -1356,7 +1360,7 @@
     }
 
     [data-testid='collection-list'] .collection-patchwork--count-4 {
-      grid-template-rows: repeat(2, minmax(15.25rem, auto));
+      grid-template-rows: repeat(2, minmax(8.5rem, auto));
       grid-template-areas:
         'editorial editorial tile-1 tile-1 tile-2 tile-2'
         'editorial editorial tile-1 tile-1 tile-3 tile-4';
@@ -1364,23 +1368,23 @@
 
     [data-testid='collection-list'] .collection-patchwork--count-4 .collection-patchwork__editorial,
     [data-testid='collection-list'] .collection-patchwork--count-4 .collection-patchwork__tile--1 {
-      min-height: clamp(32rem, 44vw, 39rem);
+      min-height: clamp(16rem, 22vw, 19rem);
     }
 
     [data-testid='collection-list'] .collection-patchwork--count-4 .collection-patchwork__tile--2 {
-      min-height: clamp(15.25rem, 20.5vw, 18.75rem);
+      min-height: clamp(8.5rem, 10.5vw, 9.5rem);
     }
 
     [data-testid='collection-list'] .collection-patchwork--count-4 .collection-patchwork__tile--3,
     [data-testid='collection-list'] .collection-patchwork--count-4 .collection-patchwork__tile--4 {
-      min-height: clamp(15.25rem, 20.5vw, 18.75rem);
+      min-height: clamp(8.5rem, 10.5vw, 9.5rem);
     }
   }
 
   @media screen and (max-width: 749px) {
     .ui-test-collection-list [data-testid='collection-list'] {
-      padding-block-start: clamp(2.75rem, 8vw, 3.5rem);
-      padding-block-end: clamp(3rem, 9vw, 3.5rem);
+      padding-block-start: var(--padding-block-start);
+      padding-block-end: var(--padding-block-end);
     }
 
     [data-testid='collection-list'] .section-resource-list__content {

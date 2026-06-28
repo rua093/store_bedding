@@ -75,8 +75,8 @@
             "link": "",
             "open_in_new_tab": false,
             "placeholder": "",
-            "padding-block-start": 0,
-            "padding-block-end": 16,
+            "padding-block-start": 36,
+            "padding-block-end": 36,
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
@@ -245,8 +245,8 @@
         "show_view_all": true,
         "view_all_label": "Explore all collections",
         "view_all_link": "/collections",
-        "padding-block-start": 68,
-        "padding-block-end": 76
+        "padding-block-start": 36,
+        "padding-block-end": 36
       }
     },
     "media_with_content_brand_intro": {
