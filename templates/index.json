@@ -681,7 +681,7 @@
         "section_width": "page-width",
         "horizontal_alignment": "flex-start",
         "gap": 40,
-        "background_color": "#e7d8c8",
+        "background_color": "#f2e5db",
         "show_view_all": true,
         "view_all_label": "Shop all bedding",
         "view_all_link": "shopify://collections/all",
@@ -728,7 +728,7 @@
       "settings": {
         "heading": "Loved by better sleepers",
         "subheading": "Real words from customers who made their bed feel softer, warmer and calmer.",
-        "background_color": "#e8ddd0",
+        "background_color": "#f2e5db",
         "padding-block-start": 40,
         "padding-block-end": 40
       }
@@ -844,7 +844,7 @@
         "text_A4"
       ],
       "settings": {
-        "background_color": "#d8c1b9",
+        "background_color": "#f2e5db",
         "padding-block-start": 40,
         "padding-block-end": 40,
         "gap_between_items": 20

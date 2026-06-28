@@ -4345,3 +4345,37 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
     will-change: auto;
   }
 }
+
+/* Homepage Scoped: Sync backgrounds from Best Selling down to Trust Signal to match the Footer top section color (#f2e5db) */
+main[data-template*='index'] .ui-test-product-list .section-background,
+main[data-template*='index'] .ui-test-product-list [data-testid='product-list'] {
+  background: linear-gradient(180deg, #f5eae1 0%, #f2e5db 100%) !important;
+}
+
+main[data-template*='index'] .ui-test-product-list [data-testid='product-list']::before,
+main[data-template*='index'] .ui-test-product-list [data-testid='product-list']::after {
+  display: none !important;
+}
+
+main[data-template*='index'] .testimonials {
+  background: #f2e5db !important;
+}
+
+main[data-template*='index'] .testimonials::before,
+main[data-template*='index'] .testimonials::after {
+  display: none !important;
+}
+
+main[data-template*='index'] .trust-signals--hero {
+  background: #f2e5db !important;
+}
+
+main[data-template*='index'] .trust-signals--hero::before,
+main[data-template*='index'] .trust-signals--hero::after {
+  display: none !important;
+}
+
+/* Eliminate the visual seam between Trust Signals and Footer on homepage */
+body:has(main[data-template*='index']) .footer-wrapper {
+  margin-top: 0 !important;
+}
