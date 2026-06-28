@@ -20,10 +20,26 @@
   "
 >
   <div class="trust-signals__page-width">
-    <div class="trust-signals__inner" data-homepage-reveal-children="{% if is_trust_signals_hero %}.trust-signals__hero-grid{% else %}:scope > *{% endif %}">
+    <div
+      class="trust-signals__inner"
+      data-homepage-reveal-children="{% if is_trust_signals_hero %}.trust-signals__hero-grid{% else %}:scope > *{% endif %}"
+      {% unless is_trust_signals_hero %}
+        data-homepage-reveal-preset="card-cascade-reveal"
+        data-homepage-reveal-base-delay="100"
+        data-homepage-reveal-stagger="100"
+      {% else %}
+        data-homepage-reveal-preset="section-soft-reveal"
+      {% endunless %}
+    >
       {% if is_trust_signals_hero %}
         <h2 class="visually-hidden">Why shop with us</h2>
-        <div class="trust-signals__hero-grid" data-homepage-reveal-children=":scope > *">
+        <div
+          class="trust-signals__hero-grid"
+          data-homepage-reveal-children=":scope > *"
+          data-homepage-reveal-preset="card-cascade-reveal"
+          data-homepage-reveal-base-delay="100"
+          data-homepage-reveal-stagger="120"
+        >
           {% for block in section.blocks limit: 4 %}
             {% liquid
               assign block_html = block.settings.text | default: ''
@@ -92,7 +108,12 @@
       {% endif %}
     </div>
     {% if is_trust_signals_hero %}
-      <div class="trust-signals__hero-signoff" aria-hidden="true">
+      <div
+        class="trust-signals__hero-signoff homepage-reveal"
+        data-reveal-preset="section-soft-reveal"
+        style="--reveal-delay: 350ms;"
+        aria-hidden="true"
+      >
         <span>Made with love for you and your furry friend</span>
       </div>
     {% endif %}

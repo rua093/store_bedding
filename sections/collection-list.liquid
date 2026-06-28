@@ -92,7 +92,10 @@
 
   {% if is_patchwork_layout %}
     <div class="collection-patchwork collection-patchwork--count-{{ patchwork_count }}">
-      <div class="section-resource-list__content collection-patchwork__editorial{% if section.settings.enable_patchwork_motion %} homepage-reveal{% endif %}">
+      <div
+        class="section-resource-list__content collection-patchwork__editorial{% if section.settings.enable_patchwork_motion %} homepage-reveal{% endif %}"
+        data-reveal-preset="section-soft-reveal"
+      >
         <img
           class="collection-patchwork__intro-image"
           src="{{ 'section_collection_list.png' | asset_url }}"
@@ -175,7 +178,8 @@
           <a
             href="{{ collection.url }}"
             class="collection-patchwork__tile collection-patchwork__tile--{{ forloop.index }}{% if section.settings.enable_patchwork_motion %} homepage-reveal{% endif %}"
-            style="--reveal-delay: {{ forloop.index | times: 55 }}ms; --collection-card-reveal-rotate: {{ reveal_rotation }};"
+            data-reveal-preset="card-cascade-reveal"
+            style="--reveal-delay: {{ forloop.index | times: 110 }}ms; --collection-card-reveal-rotate: {{ reveal_rotation }};"
             data-patchwork-tile
             data-patchwork-index="{{ forloop.index }}"
           >
@@ -184,7 +188,8 @@
         {% else %}
           <div
             class="collection-patchwork__tile collection-patchwork__tile--{{ forloop.index }} collection-patchwork__tile--placeholder{% if section.settings.enable_patchwork_motion %} homepage-reveal{% endif %}"
-            style="--reveal-delay: {{ forloop.index | times: 55 }}ms; --collection-card-reveal-rotate: {{ reveal_rotation }};"
+            data-reveal-preset="card-cascade-reveal"
+            style="--reveal-delay: {{ forloop.index | times: 110 }}ms; --collection-card-reveal-rotate: {{ reveal_rotation }};"
             data-patchwork-index="{{ forloop.index }}"
           >
             {{ patchwork_tile_inner }}
@@ -193,7 +198,10 @@
       {% endfor %}
     </div>
   {% else %}
-    <div class="section-resource-list__content homepage-reveal">
+    <div
+      class="section-resource-list__content homepage-reveal"
+      data-reveal-preset="section-soft-reveal"
+    >
       {% if section.settings.eyebrow_text != blank %}
         <p class="collection-list__eyebrow">
           {{ section.settings.eyebrow_text | escape }}
@@ -230,7 +238,8 @@
         {% endcase %}
         <div
           class="resource-list__item homepage-reveal"
-          style="--reveal-delay: {{ forloop.index0 | times: 55 }}ms; --collection-card-reveal-rotate: {{ reveal_rotation }};"
+          data-reveal-preset="card-cascade-reveal"
+          style="--reveal-delay: {{ forloop.index0 | times: 110 }}ms; --collection-card-reveal-rotate: {{ reveal_rotation }};"
           data-collection-discovery-card
         >
           {% content_for 'block', type: '_collection-card', id: 'static-collection-card', closest.collection: collection %}
@@ -257,7 +266,11 @@
   {% endif %}
 
   {% if is_patchwork_layout == false and section.settings.show_view_all and section.settings.view_all_label != blank and section.settings.view_all_link != blank %}
-    <div class="collection-list__view-all-wrap homepage-reveal" style="--reveal-delay: 140ms;">
+    <div
+      class="collection-list__view-all-wrap homepage-reveal"
+      data-reveal-preset="section-soft-reveal"
+      style="--reveal-delay: 140ms;"
+    >
       <a
         href="{{ section.settings.view_all_link }}"
         class="collection-list__view-all"
@@ -876,9 +889,9 @@
   [data-testid='collection-list'] .collection-patchwork__tile.homepage-reveal.is-visible {
     rotate: 0deg;
     transition:
-      opacity 480ms var(--animation-timing-fade-in),
-      translate 480ms var(--animation-timing-fade-in),
-      rotate 560ms var(--animation-timing-fade-in);
+      opacity 780ms cubic-bezier(0.22, 1, 0.36, 1),
+      translate 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+      rotate 1100ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   [data-testid='collection-list'] .collection-patchwork__tile--placeholder {
@@ -1007,9 +1020,9 @@
   [data-testid='collection-list'] .resource-list__item.homepage-reveal.is-visible {
     rotate: 0deg;
     transition:
-      opacity 480ms var(--animation-timing-fade-in),
-      translate 480ms var(--animation-timing-fade-in),
-      rotate 560ms var(--animation-timing-fade-in);
+      opacity 780ms cubic-bezier(0.22, 1, 0.36, 1),
+      translate 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+      rotate 1100ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   [data-testid='collection-list'] .collection-card {

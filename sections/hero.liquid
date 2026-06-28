@@ -215,23 +215,23 @@
     <div class="hero__content-shell hero__content-shell--{{ section.settings.section_width }}">
       <div class="hero__content">
         {% if hero_eyebrow != blank %}
-          <p class="hero__eyebrow">{{ hero_eyebrow | escape }}</p>
+          <p class="hero__eyebrow homepage-reveal" data-reveal-preset="premium-hero-reveal" style="--reveal-delay: 150ms;">{{ hero_eyebrow | escape }}</p>
         {% endif %}
         {% if hero_heading != blank %}
           {% if hero_heading_is_editorial_default %}
             <h1 class="hero__heading hero__heading--editorial">
-              <span class="hero__heading-line">Sleep Better</span>
-              <span class="hero__heading-line hero__heading-line--accent">Every Night</span>
+              <span class="hero__heading-line homepage-reveal" data-reveal-preset="premium-hero-reveal" style="--reveal-delay: 300ms;">Sleep Better</span>
+              <span class="hero__heading-line hero__heading-line--accent homepage-reveal" data-reveal-preset="premium-hero-reveal" style="--reveal-delay: 450ms;">Every Night</span>
             </h1>
           {% else %}
-            <h1 class="hero__heading">{{ hero_heading | escape }}</h1>
+            <h1 class="hero__heading homepage-reveal" data-reveal-preset="premium-hero-reveal" style="--reveal-delay: 300ms;">{{ hero_heading | escape }}</h1>
           {% endif %}
         {% endif %}
         {% if hero_description != blank %}
-          <p class="hero__description">{{ hero_description | escape }}</p>
+          <p class="hero__description homepage-reveal" data-reveal-preset="premium-hero-reveal" style="--reveal-delay: 650ms;">{{ hero_description | escape }}</p>
         {% endif %}
         {% if hero_primary_label != blank or hero_secondary_label != blank %}
-          <div class="hero__actions">
+          <div class="hero__actions homepage-reveal" data-reveal-preset="premium-hero-reveal" style="--reveal-delay: 850ms;">
             {% if hero_primary_label != blank %}
               <a
                 {% if hero_primary_link == blank %}
@@ -261,7 +261,14 @@
           </div>
         {% endif %}
         {% if hero_heading != blank %}
-          <ul class="hero__trust-list" aria-label="Bedding highlights">
+          <ul
+            class="hero__trust-list"
+            aria-label="Bedding highlights"
+            data-homepage-reveal-children="li"
+            data-homepage-reveal-preset="premium-hero-reveal"
+            data-homepage-reveal-base-delay="1050"
+            data-homepage-reveal-stagger="90"
+          >
             <li>Cloud-soft layers</li>
             <li>Warm textures</li>
             <li>Calmer nights</li>

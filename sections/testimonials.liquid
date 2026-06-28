@@ -14,7 +14,10 @@
 >
   <div class="testimonials__page-width">
     {% if section.settings.heading != blank or section.settings.subheading != blank %}
-      <div class="testimonials__intro homepage-reveal">
+      <div
+        class="testimonials__intro homepage-reveal"
+        data-reveal-preset="section-soft-reveal"
+      >
         {% if section.settings.heading != blank %}
           <h2 class="testimonials__heading">{{ section.settings.heading | escape }}</h2>
         {% endif %}
@@ -24,7 +27,13 @@
       </div>
     {% endif %}
 
-    <div class="testimonials__grid" data-homepage-reveal-children=".testimonials__card">
+    <div
+      class="testimonials__grid"
+      data-homepage-reveal-children=".testimonials__card"
+      data-homepage-reveal-preset="card-cascade-reveal"
+      data-homepage-reveal-base-delay="100"
+      data-homepage-reveal-stagger="120"
+    >
       {% for block in section.blocks %}
         {% liquid
           assign rating = block.settings.rating | default: 5

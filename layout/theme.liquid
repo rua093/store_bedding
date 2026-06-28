@@ -6,6 +6,18 @@
   lang="{{ request.locale.iso_code }}"
 >
   <head>
+    {%- if template == 'index' -%}
+      <script>
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.documentElement.classList.add('homepage-motion-booting');
+          // Fallback to remove the class if JS fails to run/load
+          setTimeout(function() {
+            document.documentElement.classList.remove('homepage-motion-booting');
+          }, 1500);
+        }
+      </script>
+    {%- endif -%}
+
     {%- if settings.favicon != blank -%}
       <link
         rel="icon"

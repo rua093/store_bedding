@@ -29,7 +29,10 @@
     {% render 'gap-style', value: section.settings.gap %}
   "
 >
-  <div class="section-resource-list__header homepage-reveal{% if is_bestselling_bedding %} product-list__header--bestselling{% endif %}">
+  <div
+    class="section-resource-list__header homepage-reveal{% if is_bestselling_bedding %} product-list__header--bestselling{% endif %}"
+    data-reveal-preset="section-soft-reveal"
+  >
     {% if is_bestselling_bedding %}
       <div class="product-list__bestselling-shell">
         <div class="product-list__bestselling-copy">
@@ -118,7 +121,8 @@
         {% for product in section.settings.collection.products limit: max_items %}
         <div
           class="resource-list__item homepage-reveal"
-          style="--reveal-delay: {{ forloop.index0 | times: 55 }}ms;"
+          data-reveal-preset="card-cascade-reveal"
+          style="--reveal-delay: {{ forloop.index0 | times: 100 }}ms;"
         >
             {% content_for 'block',
               type: '_product-card',
@@ -137,7 +141,8 @@
       {% for i in (1..max_items) %}
         <div
           class="resource-list__item homepage-reveal"
-          style="--reveal-delay: {{ forloop.index0 | times: 55 }}ms;"
+          data-reveal-preset="card-cascade-reveal"
+          style="--reveal-delay: {{ forloop.index0 | times: 100 }}ms;"
         >
             {% content_for 'block', type: '_product-card', id: 'static-product-card', closest.product: null %}
         </div>
@@ -165,7 +170,8 @@
 
   <div
     class="section-resource-list__content homepage-reveal"
-    style="--horizontal-alignment: {{ section.settings.horizontal_alignment }};"
+    data-reveal-preset="section-soft-reveal"
+    style="--horizontal-alignment: {{ section.settings.horizontal_alignment }}; --reveal-delay: 150ms;"
   >
     {% if is_bestselling_bedding == false and section.settings.show_view_all and section.settings.view_all_label != blank and section.settings.view_all_link != blank %}
       <div class="product-list__view-all-wrap">

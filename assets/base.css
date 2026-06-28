@@ -4270,6 +4270,69 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
     opacity: 1;
     translate: 0 0;
   }
+
+  /* ── Preset: premium-hero-reveal ────────────────────────────────
+     Soft zoom-up text reveal for hero elements.                    */
+  main[data-template*='index'].homepage-motion-ready .homepage-reveal--pending[data-reveal-preset='premium-hero-reveal'] {
+    opacity: 0.05;
+    transform: translateY(15px) scale(0.97);
+    translate: none;
+    transition:
+      opacity 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  main[data-template*='index'].homepage-motion-ready .homepage-reveal--pending[data-reveal-preset='premium-hero-reveal'].is-visible,
+  main[data-template*='index'].homepage-motion-ready .homepage-reveal.is-visible[data-reveal-preset='premium-hero-reveal'] {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    translate: none;
+  }
+
+  /* ── Preset: section-soft-reveal ────────────────────────────────
+     Slower, deeper translation for text/content sections.           */
+  main[data-template*='index'].homepage-motion-ready .homepage-reveal--pending[data-reveal-preset='section-soft-reveal'] {
+    opacity: 0;
+    translate: 0 16px;
+    transition:
+      opacity 780ms cubic-bezier(0.22, 1, 0.36, 1),
+      translate 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, translate;
+  }
+
+  main[data-template*='index'].homepage-motion-ready .homepage-reveal--pending[data-reveal-preset='section-soft-reveal'].is-visible,
+  main[data-template*='index'].homepage-motion-ready .homepage-reveal.is-visible[data-reveal-preset='section-soft-reveal'] {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  /* ── Preset: card-cascade-reveal ────────────────────────────────
+     High-impact, sequential cascade for card-based layouts.         */
+  main[data-template*='index'].homepage-motion-ready .homepage-reveal--pending[data-reveal-preset='card-cascade-reveal'] {
+    opacity: 0;
+    translate: 0 20px;
+    transition:
+      opacity 780ms cubic-bezier(0.22, 1, 0.36, 1),
+      translate 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+      rotate 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, translate, rotate;
+  }
+
+  main[data-template*='index'].homepage-motion-ready .homepage-reveal--pending[data-reveal-preset='card-cascade-reveal'].is-visible,
+  main[data-template*='index'].homepage-motion-ready .homepage-reveal.is-visible[data-reveal-preset='card-cascade-reveal'] {
+    opacity: 1;
+    translate: 0 0;
+    rotate: 0deg;
+  }
+
+
+  html.homepage-motion-booting main[data-template*='index'] .homepage-reveal {
+    opacity: 0.05;
+    transform: translateY(15px) scale(0.97);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4277,6 +4340,7 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
   main[data-template*='index'] .homepage-reveal--pending {
     opacity: 1;
     translate: 0 0;
+    transform: none;
     transition: none;
     will-change: auto;
   }
