@@ -61,13 +61,13 @@ html[scroll-lock] .page-wrapper {
     scrollbar-color: rgb(var(--color-foreground-rgb) / var(--opacity-40)) var(--color-background);
   }
 
-  .page-wrapper--drawer-open shopify-account::part(dialog) {
-    translate: calc(-1 * var(--theme-drawer-width, var(--sidebar-width)));
+.page-wrapper--drawer-open shopify-account::part(dialog) {
+    translate: 0;
   }
 }
 
 .page-wrapper--drawer-open {
-  margin-right: var(--theme-drawer-width, var(--sidebar-width));
+  margin-right: 0;
   transition-timing-function: var(--animation-timing-fade-in);
 }
 

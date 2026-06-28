@@ -20,8 +20,9 @@
   "
 >
   <div class="trust-signals__page-width">
-    <div class="trust-signals__inner" data-homepage-reveal-children=":scope > *">
+    <div class="trust-signals__inner" data-homepage-reveal-children="{% if is_trust_signals_hero %}.trust-signals__hero-grid{% else %}:scope > *{% endif %}">
       {% if is_trust_signals_hero %}
+        <h2 class="visually-hidden">Why shop with us</h2>
         <div class="trust-signals__hero-grid" data-homepage-reveal-children=":scope > *">
           {% for block in section.blocks limit: 4 %}
             {% liquid
@@ -185,23 +186,49 @@
   }
 
   .trust-signals--hero {
-    --trust-signals-background: #faf8f5;
+    --trust-signals-background: #ead9ca;
     padding-block: clamp(3rem, 4.6vw, 4rem);
+    position: relative;
+    isolation: isolate;
     background:
-      radial-gradient(circle at 18% 8%, rgba(247, 236, 224, 0.46) 0%, rgba(247, 236, 224, 0) 26%),
-      radial-gradient(circle at 82% 10%, rgba(247, 236, 224, 0.4) 0%, rgba(247, 236, 224, 0) 24%),
-      #faf8f5;
+      linear-gradient(180deg, #f3e6d7 0%, #ead9ca 100%),
+      radial-gradient(circle at 18% 8%, rgba(255, 249, 242, 0.42) 0%, rgba(255, 249, 242, 0) 26%),
+      radial-gradient(circle at 82% 10%, rgba(255, 249, 242, 0.34) 0%, rgba(255, 249, 242, 0) 24%);
+  }
+
+  .trust-signals--hero::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    right: 0;
+    left: 0;
+    height: clamp(2.5rem, 6vw, 4.5rem);
+    background: linear-gradient(180deg, rgba(243, 230, 215, 0.92) 0%, rgba(243, 230, 215, 0) 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .trust-signals--hero::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+    height: clamp(2.75rem, 6vw, 4.75rem);
+    background: linear-gradient(180deg, rgba(234, 217, 202, 0) 0%, rgba(234, 217, 202, 0.92) 100%);
+    pointer-events: none;
+    z-index: 0;
   }
 
   .trust-signals--hero .trust-signals__page-width {
     width: min(calc(100% - 3rem), 112rem);
     position: relative;
     border-radius: 1.6rem;
-    border: 1px solid rgba(220, 193, 169, 0.72);
-    background: #fffaf5;
+    border: 1px solid rgba(92, 61, 42, 0.14);
+    background: linear-gradient(180deg, #fffaf4 0%, #fff9f2 100%);
     box-shadow:
       0 1px 0 rgba(255, 255, 255, 0.82) inset,
-      0 22px 54px rgba(62, 51, 45, 0.11);
+      0 22px 52px rgba(92, 61, 42, 0.1);
     overflow: hidden;
   }
 
@@ -209,7 +236,7 @@
     content: '';
     position: absolute;
     inset: 0.55rem;
-    border: 1px dashed rgba(220, 193, 169, 0.38);
+    border: 1px dashed rgba(184, 115, 69, 0.22);
     border-radius: 1.15rem;
     pointer-events: none;
     z-index: 1;
@@ -256,7 +283,7 @@
     right: 0;
     width: 1px;
     height: calc(100% - 1.6rem);
-    background: linear-gradient(180deg, rgba(220, 193, 169, 0) 0%, rgba(220, 193, 169, 0.75) 14%, rgba(220, 193, 169, 0.75) 86%, rgba(220, 193, 169, 0) 100%);
+    background: linear-gradient(180deg, rgba(184, 115, 69, 0) 0%, rgba(184, 115, 69, 0.34) 14%, rgba(184, 115, 69, 0.34) 86%, rgba(184, 115, 69, 0) 100%);
   }
 
   .trust-signals--hero .trust-signals__hero-item:last-child::after {
@@ -301,7 +328,7 @@
     font-weight: 650;
     line-height: 1.08;
     letter-spacing: -0.025em;
-    color: rgb(62 51 45) !important;
+    color: #2f241d !important;
   }
 
   .trust-signals--hero .trust-signals__hero-divider {
@@ -310,7 +337,7 @@
     height: 0.23rem;
     margin: 0.95rem auto 1rem;
     border-radius: 999px;
-    background: rgb(180 124 97);
+    background: #b87345;
   }
 
   .trust-signals--hero .trust-signals__hero-divider::before,
@@ -324,7 +351,7 @@
     opacity: 1 !important;
     max-width: 15rem;
     margin: 0 auto;
-    color: rgb(73 63 56) !important;
+    color: #7b6657 !important;
     font-size: clamp(1rem, 1.08vw, 1.16rem);
     line-height: 1.48;
     text-wrap: balance;
@@ -336,9 +363,9 @@
     margin-top: 0;
     padding: clamp(1.1rem, 1.5vw, 1.45rem) 2rem;
     text-align: center;
-    background: linear-gradient(90deg, rgba(246, 236, 224, 0.9), rgba(252, 246, 238, 0.98), rgba(246, 236, 224, 0.9));
-    border-top: 1px solid rgba(226, 204, 183, 0.62);
-    color: rgb(154 107 70);
+    background: linear-gradient(90deg, rgba(243, 230, 215, 0.94), rgba(255, 249, 242, 0.98), rgba(243, 230, 215, 0.94));
+    border-top: 1px solid rgba(92, 61, 42, 0.1);
+    color: #7a4a2d;
     font-size: clamp(1.35rem, 1.8vw, 2rem);
     line-height: 1.15;
     opacity: 1;
@@ -429,7 +456,7 @@
 
     .trust-signals--hero .trust-signals__hero-grid {
       grid-template-columns: 1fr;
-      gap: 2rem;
+      gap: 1.35rem;
     }
 
     .trust-signals--hero .trust-signals__hero-item {
@@ -445,17 +472,19 @@
     }
 
     .trust-signals--hero .trust-signals__hero-icon {
-      width: clamp(11rem, 13vw, 15rem);
-      height: clamp(11rem, 13vw, 15rem);
-      margin-bottom: 0.8rem;
+      width: clamp(5.25rem, 28vw, 7.5rem);
+      height: clamp(5.25rem, 28vw, 7.5rem);
+      margin-bottom: 0.5rem;
     }
 
     .trust-signals--hero .trust-signals__hero-title {
       font-size: 1.45rem;
+      overflow-wrap: anywhere;
     }
 
     .trust-signals--hero .trust-signals__hero-body {
       font-size: 0.96rem;
+      overflow-wrap: anywhere;
     }
 
     .trust-signals--hero .trust-signals__hero-signoff {

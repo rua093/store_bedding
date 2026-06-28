@@ -55,33 +55,81 @@
 </div>
 
 {% stylesheet %}
+  .section-background + .section:has(.footer-content) {
+    position: relative;
+    isolation: isolate;
+    background: #2f241d;
+    color: #fff9f2;
+  }
+
+  .section-background + .section:has(.footer-content)::before {
+    content: '';
+    position: absolute;
+    top: -4.5rem;
+    right: 0;
+    left: 0;
+    height: 4.5rem;
+    background: linear-gradient(180deg, rgba(216, 202, 186, 0) 0%, rgba(47, 36, 29, 0.72) 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
   .footer-content {
+    position: relative;
+    z-index: 1;
     contain: content;
     content-visibility: auto;
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--footer-gap);
     align-items: start;
-    padding: clamp(1.5rem, 3vw, 2.5rem);
-    border: 1px solid rgb(var(--color-foreground-rgb) / 0.08);
-    border-radius: calc(var(--style-border-radius-inputs) + 12px);
-    background: rgb(var(--color-background-rgb) / 0.45);
+    padding: clamp(2rem, 3vw, 3rem);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-inline: 0;
+    border-bottom: 0;
+    border-radius: 0;
+    background: transparent;
+    color: #fff9f2;
+  }
+
+  .footer-content::before {
+    content: '';
+    position: absolute;
+    top: -3.5rem;
+    right: 0;
+    left: 0;
+    height: 3.5rem;
+    background: linear-gradient(180deg, rgba(47, 36, 29, 0) 0%, rgba(47, 36, 29, 0.62) 100%);
+    pointer-events: none;
   }
 
   .footer-content .menu__heading__default {
     font-weight: var(--font-heading--weight);
     margin-block-end: var(--margin-xs);
+    color: #fff9f2;
   }
 
   .footer-content > * {
     min-width: 0;
   }
 
+  .footer-content :is(a, button, .text-block > *, .menu a, .menu summary, .social-links a) {
+    color: rgba(255, 249, 242, 0.7);
+    transition: color var(--animation-speed) var(--animation-easing);
+  }
+
+  .footer-content :is(a:hover, button:hover, .menu a:hover, .menu summary:hover, .social-links a:hover) {
+    color: #d9a06f;
+  }
+
+  .footer-content :is(.text-block.h3 > *, .text-block.h2 > *, h2, h3, h4) {
+    color: #fff9f2;
+  }
+
   @media screen and (max-width: 749px) {
     .footer-content {
-      padding: 1.15rem;
+      padding: 1.5rem 0;
       gap: max(var(--footer-gap), 1rem);
-      border-radius: 20px;
     }
   }
 

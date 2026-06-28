@@ -41,11 +41,11 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<p>Join our Newsletter for cozy styling ideas, new arrivals and private offers.</p>",
+                "text": "<h2>Join our Newsletter</h2><p>Cozy styling ideas, new arrivals and private offers.</p>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
-                "type_preset": "h3",
+                "type_preset": "rte",
                 "font": "var(--font-body--family)",
                 "font_size": "1rem",
                 "line_height": "normal",

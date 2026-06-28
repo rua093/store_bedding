@@ -761,7 +761,9 @@ export function setHeaderMenuStyle() {
     window.requestAnimationFrame(() => {
       const overflowList = headerComponent?.querySelector('overflow-list');
       const hasReachedMinimum = overflowList && overflowList.hasAttribute('minimum-reached');
-      headerComponent.dataset.menuStyle = isTouchDevice() || hasReachedMinimum ? 'drawer' : 'menu';
+      const useDrawerBreakpoint = window.matchMedia('(max-width: 989px)').matches;
+      headerComponent.dataset.menuStyle =
+        isTouchDevice() || useDrawerBreakpoint || hasReachedMinimum ? 'drawer' : 'menu';
     });
   }
 }

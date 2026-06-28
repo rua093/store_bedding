@@ -1440,7 +1440,8 @@
 
     [data-testid='collection-list'] .collection-patchwork__intro-image {
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
+      background: #fff8ef;
     }
 
     [data-testid='collection-list'] .collection-patchwork__botanical {
@@ -1504,7 +1505,7 @@
     }
 
     [data-testid='collection-list'] .collection-patchwork__tile {
-      min-height: clamp(13.5rem, 62vw, 17rem);
+      min-height: clamp(10.5rem, 46vw, 13rem);
     }
 
     [data-testid='collection-list'] .collection-patchwork__content {
@@ -1516,6 +1517,7 @@
     [data-testid='collection-list'] .collection-patchwork__tile--1 .collection-patchwork__title {
       font-size: clamp(1.45rem, 7vw, 1.95rem);
       line-height: 0.95;
+      overflow-wrap: anywhere;
     }
 
     [data-testid='collection-list'] .collection-patchwork__editorial .collection-list__view-all--editorial {
@@ -1553,8 +1555,11 @@
       translate: 0 0;
       left: 0.8rem;
       bottom: 0.8rem;
+      max-width: calc(100% - 1.6rem);
       font-size: 0.84rem;
       padding: 0.48rem 0.72rem;
+      white-space: normal;
+      overflow-wrap: anywhere;
     }
 
     [data-testid='collection-list'] .collection-card__content {
@@ -1585,6 +1590,33 @@
     to {
       opacity: 1;
       scale: 1 1;
+    }
+  }
+
+  @media screen and (min-width: 390px) and (max-width: 749px) {
+    [data-testid='collection-list'] .collection-patchwork--count-4 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-areas:
+        'editorial editorial'
+        'tile-1 tile-2'
+        'tile-3 tile-4';
+      gap: 0.75rem;
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__tile {
+      min-height: clamp(9.5rem, 36vw, 12rem);
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__content {
+      min-width: 0;
+      padding: 0.8rem;
+    }
+
+    [data-testid='collection-list'] .collection-patchwork__title,
+    [data-testid='collection-list'] .collection-patchwork__tile--1 .collection-patchwork__title {
+      max-inline-size: 9ch;
+      font-size: clamp(1.12rem, 4.8vw, 1.45rem);
+      overflow-wrap: anywhere;
     }
   }
 {% endstylesheet %}

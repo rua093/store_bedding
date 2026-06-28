@@ -1,22 +1,12 @@
 import { Component } from '@theme/component';
-import { trapFocus, removeTrapFocus } from '@theme/focus';
 import { isClickedOutside, lockScroll, onAnimationEnd, unlockScroll } from '@theme/utilities';
-
-/** Viewport width below which the drawer opens as a modal overlay (no squeeze). */
-const MODAL_BREAKPOINT = 990;
 
 /**
  * A drawer that opens from the right side.
  *
- * On wide viewports (≥ 990px) the drawer squeezes page content alongside it.
- * The panel is a non-modal dialog (`show()`); we install a focus trap via
- * `trapFocus()` so Tab cycles within the drawer, mirroring the modal-mode
- * a11y contract. Focus moves to the close button on open and returns to
- * the trigger on close.
- *
- * On narrow viewports (< 990px) the drawer overlays with a backdrop. The
- * panel is a modal dialog (`showModal()`) — native focus trap, scroll-lock,
- * and ARIA semantics. Same focus-on-close-button + restore-on-close UX.
+ * The panel always opens as a modal overlay dialog (`showModal()`), regardless
+ * of viewport size. This keeps the page visually fixed behind the drawer while
+ * preserving the slide-in / slide-out animation, backdrop, and focus restore UX.
  *
  * Dispatches {@link DrawerOpenEvent} and {@link DrawerCloseEvent}.
  *
@@ -42,9 +32,6 @@ export class ThemeDrawer extends Component {
   /** @type {HTMLElement | null} */
   #previouslyFocused = null;
 
-  /** @type {MediaQueryList} */
-  #modalQuery = window.matchMedia(`(max-width: ${MODAL_BREAKPOINT - 1}px)`);
-
   /**
    * @returns {boolean} Whether the drawer is currently open.
    */
@@ -54,7 +41,6 @@ export class ThemeDrawer extends Component {
 
   connectedCallback() {
     super.connectedCallback();
-    this.#modalQuery.addEventListener('change', this.#onModalBreakpointChange);
 
     // Sync the static stack counter with any --drawer-stack-order set by the
     // synchronous restore script (which runs before this module loads).
@@ -70,16 +56,27 @@ export class ThemeDrawer extends Component {
 
   /**
    * Restore path: the inline script in theme-drawer.liquid set [open] on
-   * <theme-drawer> + <dialog> before this module loaded. The dialog is
-   * already visible — we just wire close listeners. We deliberately skip
-   * trapFocus and focus moves: the user is loading a fresh page and
-   * expects focus on main content, not inside a drawer left over from
-   * the previous session.
+   * <theme-drawer> + <dialog> before this module loaded. Re-open the dialog
+   * as a modal overlay so native backdrop + top-layer behavior are restored
+   * consistently on every viewport. We deliberately skip focus moves: the
+   * user is loading a fresh page and expects focus on main content, not
+   * inside a drawer left over from the previous session.
    */
   #onRestore() {
     const { panel } = this.refs;
-    if (this.#modalQuery.matches) {
+    const wasOpen = panel.hasAttribute('open') || panel.open;
+
+    if (wasOpen) {
+      try {
+        panel.close();
+      } catch {
+        // Ignore invalid-state transitions from the parser restore path.
+      }
+
       lockScroll(panel);
+      if (!panel.open) {
+        panel.showModal();
+      }
     }
 
     document.addEventListener('keydown', this.#onKeyDown);
@@ -89,9 +86,7 @@ export class ThemeDrawer extends Component {
   disconnectedCallback() {
     super.disconnectedCallback();
     unlockScroll(this.refs.panel);
-    this.#modalQuery.removeEventListener('change', this.#onModalBreakpointChange);
     this.#removeEventListeners();
-    removeTrapFocus();
     this.#deferredOpen = false;
   }
 
@@ -125,48 +120,6 @@ export class ThemeDrawer extends Component {
   #getOpenNestedDialog() {
     return /** @type {HTMLDialogElement | null} */ (this.refs.panel.querySelector('dialog[open]'));
   }
-
-  /**
-   * Switches the dialog between modal and non-modal when the viewport
-   * crosses the modal breakpoint while the drawer is open.
-   */
-  #onModalBreakpointChange = () => {
-    if (!this.isOpen) return;
-
-    const { panel } = this.refs;
-    const nestedDialog = this.#getOpenNestedDialog();
-    const nestedActiveElement =
-      nestedDialog?.contains(document.activeElement) && document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null;
-
-    // Close the current dialog mode and immediately reopen in the new mode.
-    // No animation — the drawer stays visually in place.
-    panel.close();
-    removeTrapFocus();
-
-    if (this.#modalQuery.matches) {
-      lockScroll(panel);
-      panel.showModal();
-    } else {
-      unlockScroll(panel);
-      panel.show();
-      trapFocus(panel);
-    }
-
-    if (nestedDialog?.open) {
-      this.#bringNestedDialogToFront(nestedDialog, nestedActiveElement);
-    } else {
-      this.#focusInitialElement();
-    }
-
-    // Ensure keydown and click listeners are registered. The sessionStorage
-    // restore path bypasses open(), so these may not have been added yet.
-    // addEventListener deduplicates identical listeners, so this is safe
-    // even if they were already registered.
-    document.addEventListener('keydown', this.#onKeyDown);
-    panel.addEventListener('click', this.#onBackdropClick);
-  };
 
   /**
    * Closes the drawer when the user presses Escape.
@@ -215,12 +168,9 @@ export class ThemeDrawer extends Component {
 
     this.#previouslyFocused = /** @type {HTMLElement | null} */ (document.activeElement);
 
-    if (this.#modalQuery.matches) {
-      lockScroll(panel);
+    lockScroll(panel);
+    if (!panel.open) {
       panel.showModal();
-    } else {
-      panel.show();
-      trapFocus(panel);
     }
 
     this.#focusInitialElement();
@@ -248,10 +198,10 @@ export class ThemeDrawer extends Component {
     ThemeDrawer.#stackOrder += 1;
     this.style.setProperty('--drawer-stack-order', String(ThemeDrawer.#stackOrder));
 
-    // In modal mode, dialogs live in the browser's top layer where z-index
-    // is ignored — stacking follows showModal() call order. Re-calling
-    // showModal() moves this dialog to the top of the stack.
-    if (this.#modalQuery.matches && panel.open) {
+    // Dialogs live in the browser's top layer where z-index is ignored —
+    // stacking follows showModal() call order. Re-calling showModal() moves
+    // this dialog to the top of the stack.
+    if (panel.open) {
       lockScroll(panel);
       panel.close();
       panel.showModal();
@@ -310,7 +260,6 @@ export class ThemeDrawer extends Component {
     this.#isClosing = true;
 
     this.#removeEventListeners();
-    removeTrapFocus();
 
     const { panel } = this.refs;
 

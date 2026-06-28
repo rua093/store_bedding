@@ -16,3 +16,8 @@
 {"time":"2026-06-26T18:12:58.516315+00:00","action":"replace","detail":{"ok":true,"path":"sections/collection-list.liquid","replacements":1,"newSha256":"6d3b88d65093ab2286b1cb7194435520d62542af1e7f09c3d8a8392251f553cc"}}
 {"time":"2026-06-26T18:13:23.580940+00:00","action":"replace","detail":{"ok":true,"path":"sections/collection-list.liquid","replacements":1,"newSha256":"d48d44a56a1556a0222b2420d174c50a91c4b709c5292ed133f3c6dc57485eae"}}
 {"time":"2026-06-27T06:52:25.003136+00:00","action":"replace","detail":{"ok":true,"path":"sections/product-list.liquid","replacements":1,"newSha256":"fc28eccb72fe92996ce3f47b7924e4ef2e368ba658a12c4bd8caed0740a66a6d"}}
+{"time":"2026-06-27T15:59:34.590315+00:00","action":"replace","detail":{"ok":true,"path":"sections/collection-list.liquid","replacements":1,"newSha256":"a2665533c2dac1490bd7b153fa423f2a6f43f991a3268ea259f06281536a6892"}}
+{"time":"2026-06-27T15:59:39.400843+00:00","action":"replace","detail":{"ok":true,"path":"sections/product-list.liquid","replacements":1,"newSha256":"b621f918c0740e7f5c4bb18444133f62285c523d9230272f697af97cdf0d74d7"}}
+{"time":"2026-06-27T15:59:43.493321+00:00","action":"replace","detail":{"ok":true,"path":"sections/trust-signals.liquid","replacements":1,"newSha256":"39a02cc344cd67df6a1b41c8fbae73577b1850ace90c711619403aa918a8a66c"}}
+{"time":"2026-06-27T15:59:51.121964+00:00","action":"replace","detail":{"ok":true,"path":"sections/media-with-content.liquid","replacements":1,"newSha256":"b6f4c40e99bd466b2299e980077a7e73adeec26dce75e2145fb0912cc3004504"}}
+{"time":"2026-06-27T15:59:55.752939+00:00","action":"replace","detail":{"ok":true,"path":"sections/media-with-content.liquid","replacements":1,"newSha256":"2fafca00dbea29b36c87b7012bb4d7c858f6c19b89b911d7db0291f976beefff"}}
