@@ -151,9 +151,9 @@
                 "input_style": "custom",
                 "border_width": 1,
                 "border_radius": 4,
-                "input_background_color": "transparent",
+                "input_background_color": "rgba(0,0,0,0)",
                 "input_text_color": "#fff9f2",
-                "input_border_color": "rgba(255, 255, 255, 0.15)",
+                "input_border_color": "#ffffff26",
                 "input_type_preset": "paragraph",
                 "style_class": "button",
                 "custom_button_background": "#d9a06f",
@@ -211,7 +211,7 @@
         "section_width": "page-width",
         "gap": 12,
         "background_color": "#faf8f5",
-        "padding-block-start": 48,
+        "padding-block-start": 30,
         "padding-block-end": 24
       }
     },
