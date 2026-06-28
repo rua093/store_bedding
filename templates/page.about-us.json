@@ -1,0 +1,63 @@
+{
+  "sections": {
+    "about_us_page": {
+      "type": "about-us",
+      "settings": {
+        "hero_title": "About JEMINISE",
+        "hero_subtitle": "At JEMINISE, we believe comfort should feel personal.\nFrom cozy blankets to meaningful quilts and comforters, every piece is designed to bring warmth, personality, and a sense of home into everyday living.",
+        "hero_overlay_color": "#2F241D",
+        "hero_overlay_opacity": 0.3,
+        "page_background": "#FBF6EF",
+        "card_background": "#FFFDF9",
+        "text_color": "#2F241D",
+        "muted_text_color": "#716052",
+        "accent_color": "#B87345",
+        "button_background": "#2F241D",
+        "button_text_color": "#FFF8EF"
+      },
+      "blocks": {
+        "mission": {
+          "type": "content_row",
+          "settings": {
+            "image_position": "left",
+            "kicker": "OUR MISSION",
+            "heading": "Our Mission",
+            "text": "<p>JEMINISE was created with a simple mission: to make bedding feel more meaningful.</p><p>We design printed blankets, quilts, and comforters that are not only soft and comfortable, but also expressive. Whether it is a gift for someone you love, a seasonal refresh for your bedroom, or a design that reflects your personality, our products are made to turn ordinary spaces into warm, memorable places.</p><p>Every collection is thoughtfully created around comfort, emotion, and everyday use - helping you wrap yourself and your home in something that feels truly yours.</p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        },
+        "story": {
+          "type": "content_row",
+          "settings": {
+            "image_position": "right",
+            "kicker": "OUR STORY",
+            "heading": "Our Story",
+            "text": "<p>The idea behind JEMINISE began with one belief: a home feels warmer when the things inside it carry meaning.</p><p>Bedding is more than something we use at night. It is part of our routines, our memories, and the moments we share with family, friends, and even ourselves. A blanket can become a favorite gift. A quilt can bring personality to a room. A comforter can make the end of a long day feel softer.</p><p>That is why JEMINISE focuses on printed bedding designs that combine comfort with self-expression. From family-inspired pieces and faith-based designs to fantasy, floral, wildlife, sports, holiday, and book-lover collections, we create products for different stories, styles, and seasons of life.</p><p>Our goal is simple: to help every customer find a piece that feels personal, thoughtful, and comforting.</p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        },
+        "approach": {
+          "type": "content_row",
+          "settings": {
+            "image_position": "left",
+            "kicker": "OUR APPROACH",
+            "heading": "Our Approach",
+            "text": "<p>At JEMINISE, every design starts with the feeling we want it to bring.</p><p>Some pieces are made to feel calm and cozy. Some are playful, nostalgic, or meaningful. Others are designed to become thoughtful gifts for birthdays, holidays, memorial moments, family celebrations, or personal milestones.</p><p>We focus on creating bedding that is easy to love and easy to live with - soft textures, expressive artwork, and designs that fit naturally into bedrooms, dorm rooms, reading corners, guest spaces, and cozy nights at home.</p><p>JEMINISE is for anyone who believes comfort should be beautiful, personal, and full of feeling.</p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "mission",
+        "story",
+        "approach"
+      ]
+    }
+  },
+  "order": [
+    "about_us_page"
+  ]
+}
