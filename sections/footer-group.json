@@ -75,7 +75,7 @@
           },
           "blocks": {}
         },
-        "group_hAzkCn": {
+        "brand_group": {
           "type": "group",
           "settings": {
             "content_direction": "column",
@@ -85,9 +85,9 @@
             "align_baseline": false,
             "horizontal_alignment_flex_direction_column": "flex-start",
             "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 24,
+            "gap": 16,
             "width": "fill",
-            "custom_width": 35,
+            "custom_width": 28,
             "width_mobile": "fill",
             "custom_width_mobile": 100,
             "height": "fill",
@@ -109,19 +109,44 @@
             "open_in_new_tab": false,
             "placeholder": "",
             "padding-block-start": 0,
-            "padding-block-end": 4,
+            "padding-block-end": 0,
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
           "blocks": {
-            "text_jBr8nr": {
+            "brand_title": {
               "type": "text",
               "settings": {
-                "text": "<p>Stay Connected</p>",
+                "text": "<p>JEMINISE</p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
                 "type_preset": "h3",
+                "font": "var(--font-primary--family)",
+                "font_size": "1.2rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "brand_description": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Soft bedding made for warmer nights, calmer rooms, and thoughtful gifting.</p>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "paragraph",
                 "font": "var(--font-primary--family)",
                 "font_size": "1rem",
                 "line_height": "normal",
@@ -132,38 +157,6 @@
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
-                "padding-block-start": 10,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "email_signup_zxrhUw": {
-              "type": "email-signup",
-              "settings": {
-                "width": "fill",
-                "custom_width": 100,
-                "heading": "",
-                "heading_text_color": "",
-                "heading_preset": "h3",
-                "border_style": "all",
-                "input_style": "custom",
-                "border_width": 1,
-                "border_radius": 4,
-                "input_background_color": "rgba(0,0,0,0)",
-                "input_text_color": "#fff9f2",
-                "input_border_color": "#ffffff26",
-                "input_type_preset": "paragraph",
-                "style_class": "button",
-                "custom_button_background": "#d9a06f",
-                "custom_button_text": "#2f241d",
-                "custom_button_border": "#d9a06f",
-                "link_text_color": "",
-                "display_type": "arrow",
-                "label": "Subscribe",
-                "integrated_button": false,
-                "button_type_preset": "paragraph",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -171,7 +164,7 @@
               },
               "blocks": {}
             },
-            "social_links_JBkCiP": {
+            "brand_socials": {
               "type": "social-links",
               "name": "t:names.social_media_links",
               "settings": {
@@ -194,25 +187,25 @@
             }
           },
           "block_order": [
-            "text_jBr8nr",
-            "email_signup_zxrhUw",
-            "social_links_JBkCiP"
+            "brand_title",
+            "brand_description",
+            "brand_socials"
           ]
         }
       },
       "block_order": [
+        "brand_group",
         "menu_8tJbUk",
         "menu_jRmAQi",
-        "menu_6jWwP4",
-        "group_hAzkCn"
+        "menu_6jWwP4"
       ],
       "name": "Footer",
       "settings": {
         "section_width": "page-width",
-        "gap": 12,
-        "background_color": "#faf8f5",
-        "padding-block-start": 30,
-        "padding-block-end": 24
+        "gap": 48,
+        "background_color": "#f6eee5",
+        "padding-block-start": 56,
+        "padding-block-end": 48
       }
     },
     "utilities": {
@@ -246,7 +239,7 @@
       "settings": {
         "section_width": "page-width",
         "gap": 24,
-        "background_color": "#faf8f5",
+        "background_color": "#2f261f",
         "divider_thickness": 1,
         "divider_color": "",
         "padding-block-start": 20,

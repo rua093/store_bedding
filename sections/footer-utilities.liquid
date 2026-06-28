@@ -25,19 +25,19 @@
 {% stylesheet %}
   .section-background + .section:has(.utilities) {
     position: relative;
-    background: #2f241d;
-    color: rgba(255, 249, 242, 0.7);
+    background: #2f261f !important;
+    color: #f6eee5 !important;
+    border-top: none !important;
+    padding-block-start: 16px !important;
+    padding-block-end: 16px !important;
+    min-height: 56px !important;
+    display: flex !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
   }
 
   .section-background + .section:has(.utilities)::before {
-    content: '';
-    position: absolute;
-    top: -1px;
-    right: 0;
-    left: 0;
-    height: 1px;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.14) 50%, rgba(255, 255, 255, 0) 100%);
-    pointer-events: none;
+    display: none !important;
   }
 
   .utilities {
@@ -46,10 +46,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--gap);
-    border-top: var(--border-width) solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 249, 242, 0.7);
-    padding-block-start: var(--padding-sm);
+    gap: 16px;
+    border-top: none !important;
+    color: #f6eee5 !important;
+    padding-block-start: 0 !important;
+    max-width: var(--page-width, 1400px) !important;
+    margin-inline: auto !important;
 
     @media screen and (min-width: 750px) {
       display: grid;
@@ -64,23 +66,30 @@
   @media screen and (max-width: 749px) {
     .utilities {
       text-wrap: balance;
-      gap: calc(var(--gap) * 0.75);
+      gap: 12px;
+      text-align: center !important;
     }
 
     .utilities > * {
       width: 100%;
+      text-align: center !important;
     }
   }
 
   .utilities a,
-  .utilities button {
-    color: rgba(255, 249, 242, 0.7);
-    transition: color var(--animation-speed) var(--animation-easing);
+  .utilities button,
+  .utilities p,
+  .utilities span,
+  .utilities small {
+    color: #f6eee5 !important;
+    font-size: 14px !important;
+    text-decoration: none !important;
+    transition: color 0.25s ease !important;
   }
 
   .utilities a:hover,
   .utilities button:hover {
-    color: #d9a06f;
+    color: #c9855a !important;
   }
 
   .utilities > * {

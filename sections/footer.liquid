@@ -35,6 +35,39 @@
       assign has_isolated_grid_item_tablet = true
     endif
   %}
+
+  <!-- Premium Newsletter Card -->
+  <div class="footer-newsletter-card">
+    <div class="footer-newsletter-card__content">
+      <h2 class="footer-newsletter-card__heading">Stay wrapped in comfort</h2>
+      <p class="footer-newsletter-card__text">Get cozy updates, new arrivals, and thoughtful gift ideas.</p>
+    </div>
+    <div class="footer-newsletter-card__form">
+      {% form 'customer', class: 'footer-newsletter-card__form-inner' %}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <div class="footer-newsletter-card__pill">
+          <input
+            type="email"
+            name="contact[email]"
+            class="footer-newsletter-card__input"
+            value="{{ form.email }}"
+            placeholder="Email address"
+            autocorrect="off"
+            autocapitalize="off"
+            autocomplete="email"
+            required
+          >
+          <button type="submit" class="footer-newsletter-card__submit" aria-label="Subscribe">
+            <span>Subscribe</span>
+            <svg viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg" class="arrow-icon">
+              <path d="M9 1L13 5M13 5L9 9M13 5H1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      {% endform %}
+    </div>
+  </div>
+
   <div
     class="
       footer-content
@@ -52,100 +85,250 @@
   >
     {% content_for 'blocks' %}
   </div>
+
+  <!-- Trust Line -->
+  <div class="footer-trust-line">
+    <span>Premium Materials</span>
+    <span class="divider">·</span>
+    <span>Secure Checkout</span>
+    <span class="divider">·</span>
+    <span>Free Shipping Over $89</span>
+    <span class="divider">·</span>
+    <span>Made to Last</span>
+  </div>
 </div>
 
 {% stylesheet %}
   .section:has(.footer-content),
-  .section:has(.footer-content) .section-background,
-  .section:has(.utilities),
-  .section:has(.utilities) .section-background {
-    background-color: #2f241d !important;
-    color: #fff9f2 !important;
+  .section:has(.footer-content) .section-background {
+    background-color: #f6eee5 !important;
+    background-image: none !important;
+    color: #2f261f !important;
+    position: relative;
   }
 
+  /* Transition connection to the section above */
   .section-background + .section:has(.footer-content)::before {
-    content: '';
-    position: absolute;
-    top: -4.5rem;
-    right: 0;
-    left: 0;
-    height: 4.5rem;
-    background: linear-gradient(180deg, rgba(216, 202, 186, 0) 0%, rgba(47, 36, 29, 0.72) 100%);
-    pointer-events: none;
-    z-index: 0;
+    display: none !important; /* Remove the old dark transition */
   }
 
+  /* Footer Container padding */
+  .section:has(.footer-content) {
+    padding-block-start: 56px !important;
+    padding-block-end: 48px !important;
+    border-top: 1px solid #e4d3c4 !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    .section:has(.footer-content) {
+      padding-block-start: 36px !important;
+      padding-block-end: 32px !important;
+    }
+  }
+
+  /* Premium Newsletter Card at the top of the footer */
+  .footer-newsletter-card {
+    background-color: #fffaf4 !important;
+    border: 1px solid #e4d3c4 !important;
+    border-radius: 22px !important;
+    box-shadow: 0 10px 30px rgba(47, 38, 31, 0.04) !important;
+    padding: 40px 48px !important;
+    margin-bottom: 56px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 32px !important;
+    width: 100% !important;
+    max-width: var(--page-width, 1400px) !important;
+    margin-inline: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    .footer-newsletter-card {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      padding: 28px 24px !important;
+      margin-bottom: 36px !important;
+      gap: 24px !important;
+      border-radius: 18px !important;
+    }
+  }
+
+  .footer-newsletter-card__content {
+    flex: 1 1 50% !important;
+    text-align: left !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    .footer-newsletter-card__content {
+      text-align: center !important;
+    }
+  }
+
+  .footer-newsletter-card__heading {
+    font-family: var(--font-primary--family), serif !important;
+    font-size: clamp(24px, 2.2vw, 32px) !important;
+    font-weight: 500 !important;
+    color: #2f261f !important;
+    margin: 0 0 8px 0 !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  .footer-newsletter-card__text {
+    font-size: 15px !important;
+    color: #8a7566 !important;
+    margin: 0 !important;
+    line-height: 1.5 !important;
+  }
+
+  .footer-newsletter-card__form {
+    flex: 1 1 45% !important;
+    max-width: 480px !important;
+    width: 100% !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    .footer-newsletter-card__form {
+      max-width: 100% !important;
+    }
+  }
+
+  .footer-newsletter-card__form-inner {
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .footer-newsletter-card__pill {
+    display: flex !important;
+    align-items: center !important;
+    background-color: #fffaf4 !important;
+    border: 1px solid #e4d3c4 !important;
+    border-radius: 50px !important;
+    padding: 5px 5px 5px 20px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
+  }
+
+  .footer-newsletter-card__pill:focus-within {
+    border-color: #c9855a !important;
+    box-shadow: 0 0 0 3px rgba(201, 133, 90, 0.1) !important;
+  }
+
+  .footer-newsletter-card__input {
+    flex: 1 !important;
+    border: none !important;
+    background: transparent !important;
+    color: #2f261f !important;
+    font-size: 15px !important;
+    padding: 10px 0 !important;
+    outline: none !important;
+    min-width: 0 !important;
+  }
+
+  .footer-newsletter-card__input::placeholder {
+    color: #8a7566 !important;
+    opacity: 0.6 !important;
+  }
+
+  .footer-newsletter-card__submit {
+    background-color: #c9855a !important;
+    color: #fffaf4 !important;
+    border: none !important;
+    border-radius: 50px !important;
+    padding: 12px 28px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: background-color 0.3s ease !important;
+  }
+
+  .footer-newsletter-card__submit:hover {
+    background-color: #9f6847 !important;
+  }
+
+  .footer-newsletter-card__submit .arrow-icon {
+    width: 14px !important;
+    height: 10px !important;
+    transition: transform 0.3s ease !important;
+  }
+
+  .footer-newsletter-card__submit:hover .arrow-icon {
+    transform: translateX(3px) !important;
+  }
+
+  /* Main Grid */
   .footer-content {
     position: relative;
-    z-index: 1;
-    contain: content;
-    content-visibility: auto;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--footer-gap);
+    z-index: 3;
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 48px !important;
     align-items: start;
-    padding: 3rem 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    border-inline: 0;
-    border-bottom: 0;
-    border-radius: 0;
+    padding: 0 !important;
+    border: none !important;
     background: transparent;
-  }
-
-  .footer-content::before {
-    content: '';
-    position: absolute;
-    top: -3.5rem;
-    right: 0;
-    left: 0;
-    height: 3.5rem;
-    background: linear-gradient(180deg, rgba(47, 36, 29, 0) 0%, rgba(47, 36, 29, 0.62) 100%);
-    pointer-events: none;
+    max-width: var(--page-width, 1400px) !important;
+    margin-inline: auto !important;
   }
 
   .footer-content > * {
     min-width: 0;
+    border-left: none !important;
+    padding-left: 0 !important;
   }
 
-  /* Headings styling */
-  .footer-content :is(.menu__heading, .menu__heading__default, .text-block.h3 > *, .text-block.h2 > *, h2, h3, h4) {
-    color: #fff9f2 !important;
+  /* Headings styling - Help, About, Legal */
+  .footer-content .menu__heading,
+  .footer-content .menu__heading__default {
+    color: #2f261f !important;
     font-family: var(--font-primary--family), sans-serif;
-    font-size: 0.85rem !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.12em !important;
+    margin-block-end: 20px !important;
+    margin-block-start: 0 !important;
+    line-height: 1.2 !important;
+    display: block !important;
+  }
+
+  /* Target Brand Block (Column 1) specifically */
+  /* Make the first paragraph of the first text block inside the brand column the JEMINISE logo/title */
+  .footer-content > :first-child > :first-child p {
+    color: #2f261f !important;
+    font-family: var(--font-primary--family), sans-serif;
+    font-size: 16px !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.15em !important;
-    margin-block-end: 1.5rem !important;
+    margin-block-end: 20px !important;
     margin-block-start: 0 !important;
     line-height: 1.2 !important;
-    display: block;
+    display: block !important;
   }
 
-  /* List items and links */
-  .footer-content .menu__item {
-    margin-block-end: 0.75rem !important;
-  }
-  .footer-content .menu__item + .menu__item {
-    margin-block-start: 0.75rem !important;
-  }
-
-  .footer-content :is(.menu__item a, .menu a, .menu summary, .social-links a) {
-    color: rgba(255, 249, 242, 0.65) !important;
-    font-size: 0.95rem !important;
+  /* Target description text inside the brand column */
+  .footer-content > :first-child > :nth-child(2) p {
+    font-size: 14px !important;
     line-height: 1.6 !important;
-    text-decoration: none !important;
-    transition: color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+    color: #8a7566 !important;
+    margin-block-start: 0 !important;
+    margin-block-end: 0 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
   }
 
-  .footer-content :is(.menu__item a:hover, .menu a:hover, .menu summary:hover, .social-links a:hover) {
-    color: #d9a06f !important;
-  }
-
-  /* Social Icons customization */
+  /* Social links placement inside brand block */
   .footer-content .social-icons__wrapper {
     justify-content: flex-start !important;
-    gap: 1rem !important;
-    margin-top: 1rem !important;
+    gap: 12px !important;
+    margin-top: 20px !important;
   }
 
   .footer-content .social-icons__icon-wrapper {
@@ -157,121 +340,105 @@
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 2.25rem !important;
-    height: 2.25rem !important;
+    width: 36px !important;
+    height: 36px !important;
     border-radius: 50% !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    background-color: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid #e4d3c4 !important;
+    background-color: #fffaf4 !important;
     transition: all 0.3s ease !important;
   }
 
   .footer-content .social-icons__icon-wrapper a:hover {
-    border-color: #d9a06f !important;
-    background-color: rgba(217, 160, 111, 0.08) !important;
+    border-color: #c9855a !important;
+    background-color: #fffaf4 !important;
     transform: translateY(-2px) !important;
   }
 
   .footer-content .social-icons__icon {
-    width: 1.1rem !important;
-    height: 1.1rem !important;
-    color: rgba(255, 249, 242, 0.75) !important;
+    width: 16px !important;
+    height: 16px !important;
+    color: #8a7566 !important;
     fill: currentColor !important;
-    display: block !important;
   }
 
   .footer-content .social-icons__icon-wrapper a:hover .social-icons__icon {
-    color: #d9a06f !important;
+    color: #c9855a !important;
   }
 
   .footer-content .social-icons__icon-label {
     display: none !important;
   }
 
-  /* Email Signup in Footer */
-  .footer-content .email-signup-block {
-    width: 100% !important;
-    max-width: 320px !important;
-    margin-top: 1.25rem !important;
+  /* Links styling in column 2, 3, 4 */
+  .footer-content .menu__item {
+    margin-block-end: 10px !important;
+  }
+  .footer-content .menu__item + .menu__item {
+    margin-block-start: 10px !important;
   }
 
-  .footer-content .email-signup__input-group {
+  .footer-content :is(.menu__item a, .menu a, .menu summary) {
+    color: #8a7566 !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+    transition: color 0.25s ease, transform 0.25s ease !important;
+  }
+
+  .footer-content :is(.menu__item a:hover, .menu a:hover, .menu summary:hover) {
+    color: #c9855a !important;
+    transform: translateX(3px) !important;
+  }
+
+  /* Trust Line styling */
+  .footer-trust-line {
+    border-top: 1px solid #e4d3c4 !important;
+    margin-top: 48px !important;
+    padding-top: 24px !important;
     display: flex !important;
-    align-items: stretch !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    border-radius: 4px !important;
-    background-color: rgba(255, 255, 255, 0.04) !important;
-    padding: 3px !important;
-    transition: border-color 0.3s ease !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 12px 24px !important;
+    font-size: 14px !important;
+    color: #8a7566 !important;
+    text-align: center !important;
   }
 
-  .footer-content .email-signup__input-group:focus-within {
-    border-color: #d9a06f !important;
+  .footer-trust-line .divider {
+    color: #e4d3c4 !important;
+    user-select: none !important;
   }
 
-  .footer-content .email-signup__input {
-    flex: 1 !important;
-    border: none !important;
-    background: transparent !important;
-    color: #fff9f2 !important;
-    padding: 0.75rem 1rem !important;
-    font-size: 0.95rem !important;
-    outline: none !important;
+  @media screen and (max-width: 749px) {
+    .footer-trust-line {
+      margin-top: 36px !important;
+      padding-top: 20px !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+    }
+    .footer-trust-line .divider {
+      display: none !important;
+    }
   }
 
-  .footer-content .email-signup__input::placeholder {
-    color: rgba(255, 249, 242, 0.4) !important;
-  }
-
-  .footer-content .email-signup__button {
-    background-color: #d9a06f !important;
-    color: #2f241d !important;
-    border: none !important;
-    border-radius: 3px !important;
-    padding: 0.75rem 1.25rem !important;
-    font-weight: 600 !important;
-    font-size: 0.9rem !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-    cursor: pointer !important;
-    transition: background-color 0.3s ease, color 0.3s ease !important;
-  }
-
-  .footer-content .email-signup__button:hover {
-    background-color: #fff9f2 !important;
-    color: #2f241d !important;
-  }
-
-  /* Responsive breakpoints */
+  /* Responsive breakpoints for Main Grid */
   @media screen and (max-width: 749px) {
     .footer-content {
       grid-template-columns: 1fr !important;
-      gap: 2.5rem !important;
-      padding: 3.5rem 1rem !important;
+      gap: 28px !important;
+      text-align: left !important;
+    }
+    .footer-content .social-icons__wrapper {
+      justify-content: flex-start !important;
     }
   }
 
   @media screen and (min-width: 750px) and (max-width: 989px) {
     .footer-content {
       grid-template-columns: repeat(2, 1fr) !important;
-      gap: 3rem 2rem !important;
-      padding: 4rem 2rem !important;
-    }
-  }
-
-  @media screen and (min-width: 990px) {
-    .footer-content {
-      grid-template-columns: repeat(var(--grid-columns), 1fr) !important;
-      gap: clamp(2.5rem, 4.5vw, 5.5rem) !important;
-      padding: 4.5rem 0 3.5rem 0 !important;
-    }
-
-    /* Single item centered */
-    .footer-content[style*='--grid-columns: 1'] {
-      justify-items: center !important;
-    }
-
-    .footer-content--isolated-grid-item-desktop > :last-child {
-      grid-column: 1 / -1 !important;
+      gap: 40px 32px !important;
     }
   }
 {% endstylesheet %}
