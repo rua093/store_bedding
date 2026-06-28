@@ -1,0 +1,912 @@
+{% liquid
+  assign hero_image = section.settings.hero_image
+  assign hero_widths = '750, 1100, 1500, 1800, 2200, 2600, 3000, 3840'
+  assign row_widths = '450, 650, 850, 1100, 1400, 1800'
+  assign has_hero_image = false
+
+  if hero_image != blank
+    assign has_hero_image = true
+  endif
+%}
+
+<section
+  id="AboutUsPage-{{ section.id }}"
+  class="about-us-page"
+  aria-labelledby="AboutUsPageTitle-{{ section.id }}"
+  style="
+    --about-bg: {{ section.settings.page_background }};
+    --about-surface: {{ section.settings.card_background }};
+    --about-text: {{ section.settings.text_color }};
+    --about-muted: {{ section.settings.muted_text_color }};
+    --about-accent: {{ section.settings.accent_color }};
+    --about-button-bg: {{ section.settings.button_background }};
+    --about-button-text: {{ section.settings.button_text_color }};
+    --about-hero-overlay: {{ section.settings.hero_overlay_color | color_modify: 'alpha', section.settings.hero_overlay_opacity }};
+  "
+>
+  <div class="about-us-page__hero{% unless has_hero_image %} about-us-page__hero--placeholder{% endunless %}">
+    {%- if has_hero_image -%}
+      {{
+        hero_image
+        | image_url: width: 3840
+        | image_tag:
+          class: 'about-us-page__hero-image',
+          widths: hero_widths,
+          sizes: '100vw',
+          loading: 'eager',
+          fetchpriority: 'high',
+          alt: section.settings.hero_image_alt
+      }}
+    {%- endif -%}
+
+    <div class="about-us-page__hero-overlay"></div>
+
+    <div class="about-us-page__hero-content">
+      <h1 id="AboutUsPageTitle-{{ section.id }}" class="about-us-page__title">
+        {{ section.settings.hero_title | escape }}
+      </h1>
+
+      {%- if section.settings.hero_subtitle != blank -%}
+        <div class="about-us-page__subtitle">
+          {{ section.settings.hero_subtitle | escape | newline_to_br }}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="about-us-page__body">
+    <div class="about-us-page__rows">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign row_image = block.settings.image
+          assign row_alt = block.settings.image_alt | default: row_image.alt | default: block.settings.heading
+        -%}
+
+        <article
+          class="about-us-page__row about-us-page__row--image-{{ block.settings.image_position }}"
+          {{ block.shopify_attributes }}
+        >
+          <div class="about-us-page__media">
+            {%- if row_image != blank -%}
+              {{
+                row_image
+                | image_url: width: 1800
+                | image_tag:
+                  class: 'about-us-page__row-image',
+                  widths: row_widths,
+                  sizes: '(min-width: 1200px) 39vw, (min-width: 990px) 42vw, 100vw',
+                  loading: 'lazy',
+                  alt: row_alt
+              }}
+            {%- else -%}
+              <div class="about-us-page__image-placeholder" aria-hidden="true"></div>
+            {%- endif -%}
+          </div>
+
+          <div class="about-us-page__content">
+            {%- if block.settings.kicker != blank -%}
+              <p class="about-us-page__kicker">{{ block.settings.kicker | escape }}</p>
+            {%- endif -%}
+
+            {%- if block.settings.heading != blank -%}
+              <h2 class="about-us-page__row-title">{{ block.settings.heading | escape }}</h2>
+            {%- endif -%}
+
+            {%- if block.settings.text != blank -%}
+              <div class="about-us-page__text rte">
+                {{ block.settings.text }}
+              </div>
+            {%- endif -%}
+
+            {%- if block.settings.button_label != blank -%}
+              {%- if block.settings.button_link != blank -%}
+                <a
+                  class="about-us-page__button"
+                  href="{{ block.settings.button_link }}"
+                  aria-label="{{ block.settings.button_label | escape }}{% if block.settings.heading != blank %} - {{ block.settings.heading | escape }}{% endif %}"
+                >
+                  {{ block.settings.button_label | escape }}
+                  <span aria-hidden="true">&rarr;</span>
+                </a>
+              {%- else -%}
+                <span class="about-us-page__button about-us-page__button--disabled" aria-disabled="true">
+                  {{ block.settings.button_label | escape }}
+                  <span aria-hidden="true">&rarr;</span>
+                </span>
+              {%- endif -%}
+            {%- endif -%}
+          </div>
+        </article>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.enable_cta -%}
+      <section class="about-us-page__cta" aria-labelledby="AboutUsPageCtaTitle-{{ section.id }}">
+        <div class="about-us-page__cta-inner">
+          <div class="about-us-page__cta-copy">
+            {%- if section.settings.cta_heading != blank -%}
+              <h2 id="AboutUsPageCtaTitle-{{ section.id }}" class="about-us-page__cta-title">
+                {{ section.settings.cta_heading | escape }}
+              </h2>
+            {%- endif -%}
+
+            {%- if section.settings.cta_text != blank -%}
+              <div class="about-us-page__cta-text">
+                {{ section.settings.cta_text | escape | newline_to_br }}
+              </div>
+            {%- endif -%}
+          </div>
+
+          <div class="about-us-page__cta-links">
+            {%- if section.settings.blanket_link != blank -%}
+              <a
+                class="about-us-page__cta-link"
+                href="{{ section.settings.blanket_link }}"
+                aria-label="Shop Blankets"
+              >
+                Shop Blankets
+              </a>
+            {%- endif -%}
+
+            {%- if section.settings.quilt_link != blank -%}
+              <a
+                class="about-us-page__cta-link"
+                href="{{ section.settings.quilt_link }}"
+                aria-label="Shop Quilts"
+              >
+                Shop Quilts
+              </a>
+            {%- endif -%}
+
+            {%- if section.settings.comforter_link != blank -%}
+              <a
+                class="about-us-page__cta-link"
+                href="{{ section.settings.comforter_link }}"
+                aria-label="Shop Comforters"
+              >
+                Shop Comforters
+              </a>
+            {%- endif -%}
+          </div>
+        </div>
+      </section>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .about-us-page {
+    background:
+      linear-gradient(180deg, rgba(255, 250, 244, 0.72) 0%, rgba(251, 246, 239, 0) 16%),
+      var(--about-bg);
+    color: var(--about-text);
+    font-family: var(--font-body--family);
+    overflow: clip;
+  }
+
+  .about-us-page * {
+    box-sizing: border-box;
+  }
+
+  .about-us-page__hero {
+    position: relative;
+    min-height: clamp(420px, 35vw, 500px);
+    display: grid;
+    place-items: center;
+    isolation: isolate;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at top left, rgba(255, 255, 255, 0.34), transparent 34%),
+      radial-gradient(circle at 82% 18%, rgba(243, 232, 220, 0.48), transparent 24%),
+      linear-gradient(135deg, #b49f8d 0%, #cdb9a7 44%, #bea792 100%);
+  }
+
+  .about-us-page__hero--placeholder::before,
+  .about-us-page__hero--placeholder::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .about-us-page__hero--placeholder::before {
+    background:
+      radial-gradient(circle at 50% 54%, rgba(255, 244, 233, 0.14), transparent 0 26%),
+      linear-gradient(115deg, rgba(255, 255, 255, 0.08) 0%, transparent 34%, rgba(78, 58, 43, 0.08) 100%),
+      repeating-linear-gradient(
+        90deg,
+        rgba(255, 248, 239, 0.09) 0 1px,
+        transparent 1px 72px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        rgba(255, 248, 239, 0.07) 0 1px,
+        transparent 1px 72px
+      );
+    opacity: 0.8;
+  }
+
+  .about-us-page__hero--placeholder::after {
+    inset: auto -14% -24% auto;
+    width: min(34vw, 340px);
+    height: min(34vw, 340px);
+    border-radius: 999px;
+    border: 1px solid rgba(255, 246, 236, 0.22);
+    box-shadow:
+      0 0 0 28px rgba(255, 246, 236, 0.06),
+      0 0 0 56px rgba(255, 246, 236, 0.04);
+    opacity: 0.9;
+  }
+
+  .about-us-page__hero-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+  }
+
+  .about-us-page__hero-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(32, 22, 16, 0.12) 0%, rgba(32, 22, 16, 0.2) 100%),
+      var(--about-hero-overlay);
+    z-index: -1;
+  }
+
+  .about-us-page__hero-content {
+    width: min(92vw, 840px);
+    padding: clamp(40px, 6vw, 72px) 24px;
+    text-align: center;
+    color: #fffaf5;
+    text-wrap: balance;
+  }
+
+  .about-us-page__kicker {
+    margin: 0 0 16px;
+    font-size: 0.74rem;
+    line-height: 1.4;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: color-mix(in srgb, var(--about-accent) 86%, white 14%);
+  }
+
+  .about-us-page__title {
+    margin: 0;
+    font-family: var(--font-heading--family);
+    font-style: var(--font-heading--style);
+    font-weight: var(--font-heading--weight);
+    font-size: clamp(2.8rem, 5.9vw, 5.1rem);
+    line-height: 0.96;
+    letter-spacing: -0.045em;
+    color: #fffaf5;
+    text-wrap: balance;
+    text-shadow: 0 12px 28px rgba(47, 36, 29, 0.16);
+  }
+
+  .about-us-page__subtitle {
+    width: min(100%, 700px);
+    margin: 22px auto 0;
+    font-size: clamp(1rem, 0.95vw + 0.74rem, 1.14rem);
+    line-height: 1.76;
+    font-weight: 500;
+    color: rgba(255, 250, 245, 0.98);
+  }
+
+  .about-us-page__body {
+    padding: clamp(34px, 5vw, 56px) clamp(16px, 2.8vw, 28px) clamp(64px, 7vw, 88px);
+  }
+
+  .about-us-page__rows {
+    width: min(100%, 1220px);
+    margin: 0 auto;
+    display: grid;
+    gap: clamp(26px, 3vw, 38px);
+  }
+
+  .about-us-page__row {
+    display: grid;
+    grid-template-columns: minmax(0, 0.94fr) minmax(0, 1.06fr);
+    align-items: stretch;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 253, 249, 0.98));
+    border: 1px solid rgba(128, 99, 74, 0.12);
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow:
+      0 18px 34px rgba(78, 58, 43, 0.045),
+      0 2px 8px rgba(78, 58, 43, 0.025);
+  }
+
+  .about-us-page__row--image-right {
+    grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr);
+  }
+
+  .about-us-page__row--image-right .about-us-page__media {
+    order: 2;
+  }
+
+  .about-us-page__media {
+    position: relative;
+    min-height: clamp(360px, 34vw, 500px);
+    background:
+      radial-gradient(circle at top left, rgba(255, 255, 255, 0.45), transparent 34%),
+      linear-gradient(135deg, #ecdfd2 0%, #dcc6b3 50%, #eadfd3 100%);
+  }
+
+  .about-us-page__row-image,
+  .about-us-page__image-placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .about-us-page__row-image {
+    object-fit: cover;
+  }
+
+  .about-us-page__image-placeholder {
+    position: relative;
+    min-height: inherit;
+    overflow: hidden;
+    background:
+      linear-gradient(145deg, rgba(255, 252, 247, 0.7), rgba(227, 207, 188, 0.78)),
+      linear-gradient(135deg, #efe2d5, #d5baa3);
+  }
+
+  .about-us-page__image-placeholder::before,
+  .about-us-page__image-placeholder::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .about-us-page__image-placeholder::before {
+    background:
+      radial-gradient(circle at 25% 30%, rgba(255, 255, 255, 0.42), transparent 0 18%),
+      radial-gradient(circle at 74% 72%, rgba(119, 86, 57, 0.1), transparent 0 22%),
+      radial-gradient(circle at 54% 48%, rgba(255, 248, 242, 0.34), transparent 0 14%),
+      repeating-linear-gradient(
+        135deg,
+        rgba(255, 250, 245, 0.2) 0 2px,
+        transparent 2px 22px
+      );
+  }
+
+  .about-us-page__image-placeholder::after {
+    inset: 12% 10%;
+    border-radius: 24px;
+    border: 1px solid rgba(102, 73, 49, 0.12);
+    opacity: 0.7;
+  }
+
+  .about-us-page__content {
+    display: flex;
+    min-height: clamp(360px, 34vw, 500px);
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: clamp(56px, 5vw, 72px);
+    text-align: left;
+  }
+
+  .about-us-page__row-title {
+    max-width: 13ch;
+    margin: 0;
+    font-family: var(--font-heading--family);
+    font-style: var(--font-heading--style);
+    font-weight: var(--font-heading--weight);
+    font-size: clamp(2.05rem, 2.9vw, 3.05rem);
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    color: var(--about-text);
+    text-wrap: balance;
+  }
+
+  .about-us-page__text {
+    width: min(100%, 560px);
+    margin-top: 20px;
+    color: color-mix(in srgb, var(--about-text) 88%, white 12%);
+    font-size: clamp(0.97rem, 0.3vw + 0.9rem, 1rem);
+    line-height: 1.74;
+  }
+
+  .about-us-page__text > * {
+    margin-block: 0 1em;
+  }
+
+  .about-us-page__text > *:last-child {
+    margin-bottom: 0;
+  }
+
+  .about-us-page__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    margin-top: 28px;
+    padding: 0 24px;
+    border-radius: 999px;
+    background: var(--about-button-bg);
+    color: var(--about-button-text);
+    font-size: 0.78rem;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition:
+      transform 180ms ease,
+      opacity 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .about-us-page__button:hover {
+    transform: translateY(-1px);
+    opacity: 0.94;
+  }
+
+  .about-us-page__button:focus-visible {
+    outline: 2px solid var(--about-accent);
+    outline-offset: 4px;
+  }
+
+  .about-us-page__button--disabled {
+    opacity: 0.72;
+    cursor: default;
+  }
+
+  .about-us-page__cta {
+    width: min(100%, 1220px);
+    margin: clamp(34px, 4vw, 46px) auto 0;
+  }
+
+  .about-us-page__cta-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 24px;
+    align-items: center;
+    padding: clamp(34px, 4.8vw, 54px);
+    border: 1px solid rgba(128, 99, 74, 0.12);
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at top right, rgba(240, 226, 213, 0.8), transparent 28%),
+      linear-gradient(180deg, rgba(255, 252, 247, 0.95), rgba(255, 250, 244, 0.98));
+    box-shadow:
+      0 18px 34px rgba(78, 58, 43, 0.038),
+      0 2px 8px rgba(78, 58, 43, 0.024);
+  }
+
+  .about-us-page__cta-copy {
+    max-width: 640px;
+  }
+
+  .about-us-page__cta-title {
+    margin: 0;
+    font-family: var(--font-heading--family);
+    font-style: var(--font-heading--style);
+    font-weight: var(--font-heading--weight);
+    font-size: clamp(1.95rem, 2vw + 1rem, 2.75rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    color: var(--about-text);
+    text-wrap: balance;
+  }
+
+  .about-us-page__cta-text {
+    max-width: 56ch;
+    margin-top: 14px;
+    color: color-mix(in srgb, var(--about-text) 84%, white 16%);
+    font-size: clamp(0.98rem, 0.24vw + 0.92rem, 1rem);
+    line-height: 1.72;
+  }
+
+  .about-us-page__cta-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .about-us-page__cta-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 20px;
+    border-radius: 999px;
+    border: 1px solid rgba(128, 99, 74, 0.18);
+    background: rgba(255, 253, 250, 0.86);
+    color: var(--about-text);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    transition:
+      transform 180ms ease,
+      border-color 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .about-us-page__cta-link:hover {
+    transform: translateY(-1px);
+    border-color: rgba(128, 99, 74, 0.28);
+    background: rgba(255, 250, 244, 0.98);
+  }
+
+  .about-us-page__cta-link:focus-visible {
+    outline: 2px solid var(--about-accent);
+    outline-offset: 4px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .about-us-page__hero {
+      min-height: clamp(360px, 48vw, 420px);
+    }
+
+    .about-us-page__row,
+    .about-us-page__row--image-right {
+      grid-template-columns: 1fr;
+    }
+
+    .about-us-page__row--image-right .about-us-page__media {
+      order: 0;
+    }
+
+    .about-us-page__media {
+      min-height: clamp(300px, 56vw, 400px);
+    }
+
+    .about-us-page__content {
+      min-height: auto;
+      padding: clamp(40px, 7vw, 48px);
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .about-us-page__row-title {
+      max-width: 100%;
+    }
+
+    .about-us-page__cta-inner {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .about-us-page__cta-links {
+      justify-content: flex-start;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .about-us-page__hero {
+      min-height: clamp(300px, 82vw, 360px);
+    }
+
+    .about-us-page__hero-content {
+      width: min(100%, 430px);
+      padding: 34px 18px;
+    }
+
+    .about-us-page__title {
+      font-size: clamp(2.25rem, 11vw, 3rem);
+      line-height: 1.02;
+      text-shadow: 0 10px 22px rgba(47, 36, 29, 0.14);
+    }
+
+    .about-us-page__subtitle {
+      margin-top: 18px;
+      font-size: 0.98rem;
+      line-height: 1.72;
+    }
+
+    .about-us-page__body {
+      padding: 26px 16px 56px;
+    }
+
+    .about-us-page__rows {
+      gap: 22px;
+    }
+
+    .about-us-page__row {
+      border-radius: 24px;
+    }
+
+    .about-us-page__media {
+      min-height: 260px;
+    }
+
+    .about-us-page__content {
+      padding: 26px 24px 28px;
+    }
+
+    .about-us-page__kicker {
+      margin-bottom: 12px;
+      font-size: 0.72rem;
+      letter-spacing: 0.13em;
+    }
+
+    .about-us-page__row-title {
+      font-size: clamp(1.9rem, 8.6vw, 2.5rem);
+    }
+
+    .about-us-page__text {
+      width: 100%;
+      margin-top: 16px;
+      font-size: 0.98rem;
+      line-height: 1.74;
+    }
+
+    .about-us-page__button {
+      width: 100%;
+      margin-top: 24px;
+    }
+
+    .about-us-page__cta {
+      margin-top: 24px;
+    }
+
+    .about-us-page__cta-inner {
+      padding: 28px 22px;
+      border-radius: 24px;
+    }
+
+    .about-us-page__cta-title {
+      font-size: clamp(1.8rem, 8vw, 2.3rem);
+    }
+
+    .about-us-page__cta-text {
+      font-size: 0.98rem;
+      line-height: 1.7;
+    }
+
+    .about-us-page__cta-links {
+      width: 100%;
+      gap: 10px;
+    }
+
+    .about-us-page__cta-link {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .about-us-page__button {
+      transition: none;
+    }
+
+    .about-us-page__button:hover {
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "About Us page",
+  "tag": "section",
+  "class": "section-wrapper about-us-page-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hero"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero image"
+    },
+    {
+      "type": "text",
+      "id": "hero_image_alt",
+      "label": "Hero image alt text"
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Hero heading",
+      "default": "About JEMINISE"
+    },
+    {
+      "type": "textarea",
+      "id": "hero_subtitle",
+      "label": "Hero subtitle",
+      "default": "A warm, simple intro about your brand goes here. Replace this with your own About Us message."
+    },
+    {
+      "type": "color",
+      "id": "hero_overlay_color",
+      "label": "Hero overlay color",
+      "default": "#2F241D"
+    },
+    {
+      "type": "range",
+      "id": "hero_overlay_opacity",
+      "label": "Hero overlay opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.4
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "page_background",
+      "label": "Page background",
+      "default": "#FBF6EF"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Content card background",
+      "default": "#FFFDF9"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Heading text",
+      "default": "#2F241D"
+    },
+    {
+      "type": "color",
+      "id": "muted_text_color",
+      "label": "Body text",
+      "default": "#5F4C3F"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent",
+      "default": "#B07A54"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#2F241D"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#FFF8EF"
+    },
+    {
+      "type": "header",
+      "content": "Bottom CTA"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_cta",
+      "label": "Enable bottom CTA",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_heading",
+      "label": "CTA heading",
+      "default": "Find a piece that feels like home"
+    },
+    {
+      "type": "textarea",
+      "id": "cta_text",
+      "label": "CTA text",
+      "default": "Explore printed blankets, quilts, and comforters designed for meaningful gifts and cozy everyday living."
+    },
+    {
+      "type": "url",
+      "id": "blanket_link",
+      "label": "Blanket link"
+    },
+    {
+      "type": "url",
+      "id": "quilt_link",
+      "label": "Quilt link"
+    },
+    {
+      "type": "url",
+      "id": "comforter_link",
+      "label": "Comforter link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "content_row",
+      "name": "Image and text row",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Section image"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "Image alt text"
+        },
+        {
+          "type": "select",
+          "id": "image_position",
+          "label": "Image position on desktop",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "left"
+        },
+        {
+          "type": "text",
+          "id": "kicker",
+          "label": "Block eyebrow"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Our Mission"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Add your own brand story, mission, values, or process here. This block is designed as a clean editable frame.</p>"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "Explore Now"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "presets": [
+    {
+      "name": "About Us page",
+      "blocks": [
+        {
+          "type": "content_row",
+          "settings": {
+            "heading": "Our Mission",
+            "image_position": "left"
+          }
+        },
+        {
+          "type": "content_row",
+          "settings": {
+            "heading": "Our Story",
+            "image_position": "right"
+          }
+        },
+        {
+          "type": "content_row",
+          "settings": {
+            "heading": "Our Approach",
+            "image_position": "left"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
