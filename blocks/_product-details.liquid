@@ -209,6 +209,8 @@
     padding-bottom: 8px;
     border-top: 1px solid rgba(184, 115, 69, 0.16);
     color: #7c6859;
+    --star-fill-color: #d8a43a;
+    --star-fill-color-rgb: 216, 164, 58;
   }
 
   .product-details--main-product > .group-block > .group-block-content > product-price {
@@ -337,10 +339,42 @@
     width: 100%;
   }
 
+  .product-details--main-product product-price > [ref='priceContainer'] {
+    display: grid;
+    gap: 0;
+  }
+
   .product-details--main-product product-price :is(.price__regular, .price__sale) {
     font-size: clamp(1.4rem, 1.8vw, 1.75rem);
     line-height: 1.12;
     font-weight: 600;
+  }
+
+  .product-details--main-product .price__sale-layout {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }
+
+  .product-details--main-product .compare-at-price {
+    font-size: 0.92em;
+    color: #b19f93;
+    text-decoration-thickness: 1px;
+  }
+
+  .product-details--main-product .price-sale-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.95rem;
+    padding: 0.32rem 0.78rem;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(249, 239, 230, 0.98) 0%, rgba(245, 232, 220, 0.96) 100%);
+    color: #9f7656;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.01em;
   }
 
   .product-details--main-product .tax-note,
@@ -349,6 +383,62 @@
     color: #7b6657;
     font-size: 0.9rem;
     line-height: 1.45;
+  }
+
+  .product-details--main-product .tax-note {
+    display: none;
+  }
+
+  .product-details--main-product .price-callouts {
+    display: grid;
+    gap: 0.6rem;
+    margin-top: 0.7rem;
+  }
+
+  .product-details--main-product .price-discount-message,
+  .product-details--main-product .price-shipping-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: fit-content;
+    max-width: 100%;
+    font-size: 0.92rem;
+    line-height: 1.4;
+  }
+
+  .product-details--main-product .price-discount-message {
+    padding: 0.6rem 0.85rem;
+    border-radius: 10px;
+    background: linear-gradient(90deg, rgba(245, 228, 255, 0.82) 0%, rgba(246, 236, 255, 0.92) 100%);
+    color: #8d58a8;
+  }
+
+  .product-details--main-product .price-shipping-line {
+    color: #7a675a;
+  }
+
+  .product-details--main-product .price-discount-message__icon,
+  .product-details--main-product .price-shipping-line__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+  }
+
+  .product-details--main-product .price-discount-message__icon {
+    color: #8d58a8;
+  }
+
+  .product-details--main-product .price-shipping-line__icon {
+    color: #8f603e;
+  }
+
+  .product-details--main-product .price-discount-message__icon :is(svg, img),
+  .product-details--main-product .price-shipping-line__icon :is(svg, img) {
+    width: 100%;
+    height: 100%;
   }
 
   .product-details--main-product .product-personalizer {
@@ -538,12 +628,50 @@
 
     .product-details--main-product > .group-block > .group-block-content > .text-block.h2:first-of-type :is(h1, h2, h3, h4, h5, h6) {
       max-width: none;
-      font-size: clamp(24px, 7vw, 34px);
+      font-size: clamp(16px, 5vw, 20px);
+      line-height: 1.06;
+      letter-spacing: -0.025em;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .product-details--main-product product-price :is(.price__regular, .price__sale) {
+      font-size: clamp(1.15rem, 5.4vw, 1.45rem);
+      line-height: 1.08;
+    }
+
+    .product-details--main-product .price__sale-layout {
+      gap: 0.5rem;
+    }
+
+    .product-details--main-product .price-sale-badge {
+      min-height: 1.75rem;
+      padding: 0.28rem 0.65rem;
+      font-size: 0.75rem;
+    }
+
+    .product-details--main-product .price-callouts {
+      gap: 0.5rem;
+      margin-top: 0.55rem;
+    }
+
+    .product-details--main-product .price-discount-message,
+    .product-details--main-product .price-shipping-line {
+      font-size: 0.78rem;
+      line-height: 1.35;
+    }
+
+    .product-details--main-product .price-discount-message {
+      width: 100%;
+      padding: 0.55rem 0.7rem;
     }
 
     .product-details--main-product .personalizer-option__label {
-      width: 4.6rem;
-      height: 4.6rem;
+      width: 3.85rem;
+      height: 3.85rem;
+      border-radius: 12px;
     }
   }
 {% endstylesheet %}

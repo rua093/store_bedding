@@ -5,26 +5,34 @@
   @param {product} product_resource - The product to render
   @param {boolean} [show_unit_price] - Whether to show the unit price
   @param {boolean} [show_sale_price_first] - Whether to show the sale price first
+  @param {boolean} [show_product_callouts] - Whether to show PDP-only sale badge and promo/shipping callouts
 {%- enddoc -%}
 
 {%- liquid
   assign show_unit_price = show_unit_price | default: false
   assign show_sale_price_first = show_sale_price_first | default: false
+  assign show_product_callouts = show_product_callouts | default: false
+  assign render_product_callouts = false
+  if show_product_callouts and request.page_type == 'product'
+    assign render_product_callouts = true
+  endif
   assign selected_variant = product_resource.selected_or_first_available_variant
   assign price = selected_variant.price
   assign compare_at_price = selected_variant.compare_at_price
   assign price_amount = selected_variant.price | default: 0
   assign compare_at_price_amount = selected_variant.compare_at_price | default: 0
   assign max_safe_compare_at_price = price_amount | times: 5
+  assign savings_percentage = 0
 
   assign show_compare_price = false
   assign allow_compare_price = true
-  if template.name == 'product' and compare_at_price_amount > max_safe_compare_at_price
+  if compare_at_price_amount > max_safe_compare_at_price
     assign allow_compare_price = false
   endif
 
   if compare_at_price_amount > price_amount and allow_compare_price
     assign show_compare_price = true
+    assign savings_percentage = compare_at_price_amount | minus: price_amount | times: 100.0 | divided_by: compare_at_price_amount | round
   endif
 
   if product_resource == blank
@@ -113,25 +121,30 @@
         {% endunless %}
       "
     >
-      {% if show_sale_price_first %}
-        <span class="price-item__group">
-          <span class="visually-hidden">{{ 'content.price_sale' | t }}&nbsp;</span>
-          <span class="price-item--sale price">{{ price | default: '&nbsp;' }}</span>
-        </span>
-        <span class="price-item__group">
-          <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
-          <span class="price-item--regular compare-at-price">{{- compare_at_price -}}</span>
-        </span>
-      {% else %}
-        <span class="price-item__group">
-          <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
-          <span class="price-item--regular compare-at-price">{{- compare_at_price -}}</span>
-        </span>
-        <span class="price-item__group">
-          <span class="visually-hidden">{{ 'content.price_sale' | t }}&nbsp;</span>
-          <span class="price-item--sale price">{{ price | default: '&nbsp;' }}</span>
-        </span>
-      {% endif %}
+      <div class="price__sale-layout">
+        {% if show_sale_price_first %}
+          <span class="price-item__group">
+            <span class="visually-hidden">{{ 'content.price_sale' | t }}&nbsp;</span>
+            <span class="price-item--sale price">{{ price | default: '&nbsp;' }}</span>
+          </span>
+          <span class="price-item__group">
+            <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
+            <span class="price-item--regular compare-at-price">{{- compare_at_price -}}</span>
+          </span>
+        {% else %}
+          <span class="price-item__group">
+            <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
+            <span class="price-item--regular compare-at-price">{{- compare_at_price -}}</span>
+          </span>
+          <span class="price-item__group">
+            <span class="visually-hidden">{{ 'content.price_sale' | t }}&nbsp;</span>
+            <span class="price-item--sale price">{{ price | default: '&nbsp;' }}</span>
+          </span>
+        {% endif %}
+        {% if render_product_callouts and savings_percentage > 0 %}
+          <span class="price-sale-badge">Save {{ savings_percentage }}%</span>
+        {% endif %}
+      </div>
     </div>
   {% endif %}
   {%- if selected_variant.unit_price and show_unit_price %}
@@ -145,6 +158,22 @@
     {% render 'unit-price', price: unit_price, measurement: selected_variant.unit_price_measurement %}
   {%- endif -%}
 </div>
+{%- if render_product_callouts -%}
+  <div class="price-callouts">
+    <div class="price-discount-message">
+      <span class="price-discount-message__icon" aria-hidden="true">
+        {{- 'icon-discount.svg' | inline_asset_content -}}
+      </span>
+      <span>Extra 10% off at checkout · Use code WELCOME10</span>
+    </div>
+    <div class="price-shipping-line">
+      <span class="price-shipping-line__icon" aria-hidden="true">
+        {{- 'icon-orders.svg' | inline_asset_content -}}
+      </span>
+      <span>Free shipping on orders over $75 · Ships in 3-5 business days</span>
+    </div>
+  </div>
+{%- endif -%}
 {%- if has_volume_pricing -%}
   <small
     ref="volumePricingNote"
