@@ -74,4 +74,31 @@
     border-radius: calc(var(--media-radius, var(--style-border-radius-inputs)) + 2px);
     background: rgb(var(--color-foreground-rgb) / 0.03);
   }
+
+  .product-information--main-product .product-information__media .product-media-container {
+    border-radius: 22px;
+    background: #fffaf4;
+  }
+
+  .product-information--main-product .product-information__media .slideshow-controls__thumbnail {
+    padding: 3px;
+    border-radius: 18px;
+  }
+
+  .product-information--main-product .product-information__media .slideshow-controls__thumbnail img {
+    border-radius: 12px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-information--main-product .product-information__media .media-gallery__mobile-controls[thumbnails] {
+      margin-top: 12px;
+    }
+
+    .product-information--main-product .product-information__media .media-gallery__mobile-controls[thumbnails] .slideshow-controls__thumbnails {
+      gap: 10px;
+      justify-content: flex-start;
+      overflow-x: auto;
+      padding-inline: 2px;
+    }
+  }
 {% endstylesheet %}

@@ -13,9 +13,17 @@
   assign selected_variant = product_resource.selected_or_first_available_variant
   assign price = selected_variant.price
   assign compare_at_price = selected_variant.compare_at_price
+  assign price_amount = selected_variant.price | default: 0
+  assign compare_at_price_amount = selected_variant.compare_at_price | default: 0
+  assign max_safe_compare_at_price = price_amount | times: 5
 
   assign show_compare_price = false
-  if compare_at_price > price
+  assign allow_compare_price = true
+  if template.name == 'product' and compare_at_price_amount > max_safe_compare_at_price
+    assign allow_compare_price = false
+  endif
+
+  if compare_at_price_amount > price_amount and allow_compare_price
     assign show_compare_price = true
   endif
 

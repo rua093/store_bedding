@@ -57,6 +57,28 @@
         {%- liquid
           assign swatch_count = product_option.values | map: 'swatch' | compact | size
           assign variant_style = block_settings.variant_style
+          assign display_option_name = product_option.name | strip
+          assign display_option_name_downcase = display_option_name | downcase
+
+          if display_option_name_downcase contains ' from '
+            if display_option_name_downcase contains 'vnd' or display_option_name_downcase contains 'usd' or display_option_name_downcase contains '$'
+              assign display_option_name = ''
+            endif
+          endif
+
+          assign display_selected_value = product_option.selected_value | strip
+          assign display_selected_value_downcase = display_selected_value | downcase
+          assign first_option_value_preview = product_option.values.first | strip | downcase
+
+          if display_selected_value_downcase contains ' from '
+            if display_selected_value_downcase contains 'vnd' or display_selected_value_downcase contains 'usd' or display_selected_value_downcase contains '$'
+              assign display_selected_value = display_selected_value | split: ' from ' | first | strip
+            endif
+          endif
+
+          if product_option.values.size > 1 and first_option_value_preview contains 'option'
+            assign display_option_name = 'Choose option'
+          endif
 
           if swatch_count > 0 and block_settings.show_swatches
             if block_settings.variant_style == 'dropdown'
@@ -78,12 +100,14 @@
             class="variant-option"
             data-testid="variant-option-single"
           >
-            {{- product_option.name | escape -}}
+            {% if display_option_name != blank %}
+              {{- display_option_name | escape -}}
+            {% endif %}
             <span
               class="variant-option__swatch-value"
               data-testid="variant-option-single-value"
             >
-              {{- product_option.selected_value -}}
+              {{- display_selected_value -}}
             </span>
           </div>
         {%- elsif variant_style == 'swatch' or block_settings.variant_style == 'buttons' -%}
@@ -94,12 +118,29 @@
             {{ option_id_attribute }}
           >
             <legend>
-              {{ product_option.name | escape -}}
+              {% if display_option_name != blank %}
+                {{ display_option_name | escape -}}
+              {% endif %}
               {%- if variant_style == 'swatch' -%}
-                <span class="variant-option__swatch-value">{{ product_option.selected_value }}</span>
+                <span class="variant-option__swatch-value">{{ display_selected_value }}</span>
               {%- endif %}
             </legend>
             {%- for product_option_value in product_option.values -%}
+              {% liquid
+                assign display_option_value = product_option_value | strip
+                assign display_option_value_downcase = display_option_value | downcase
+
+                if display_option_value_downcase contains ' from '
+                  if display_option_value_downcase contains 'vnd' or display_option_value_downcase contains 'usd' or display_option_value_downcase contains '$'
+                    assign display_option_value = display_option_value | split: ' from ' | first | strip
+                    assign display_option_value_downcase = display_option_value | downcase
+                  endif
+                endif
+
+                if product_option.values.size > 1 and display_option_value_downcase contains 'option'
+                  assign display_option_value = 'Option ' | append: forloop.index
+                endif
+              %}
               {% if product_option_value.size > longest_value and option_id_attribute %}
                 {% assign longest_value = product_option_value.size %}
               {% endif %}
@@ -159,7 +200,7 @@
                     class="variant-option__button-label__text"
                     data-key="variant-option-text"
                   >
-                    {{- product_option_value | escape -}}
+                    {{- display_option_value | escape -}}
                   </span>
                 {% endif %}
                 {% render 'strikethrough-variant', product_option: product_option_value %}
@@ -190,7 +231,9 @@
           %}
 
           <div class="variant-option variant-option--dropdowns">
-            <label for="Option-{{ block.id }}-{{ forloop.index0 }}">{{ product_option.name | escape }}</label>
+            {% if display_option_name != blank %}
+              <label for="Option-{{ block.id }}-{{ forloop.index0 }}">{{ display_option_name | escape }}</label>
+            {% endif %}
             <div
               class="variant-option__select-wrapper"
               style="
@@ -205,6 +248,21 @@
                 class="variant-option__select"
               >
                 {%- for product_option_value in product_option.values -%}
+                  {% liquid
+                    assign display_option_value = product_option_value | strip
+                    assign display_option_value_downcase = display_option_value | downcase
+
+                    if display_option_value_downcase contains ' from '
+                      if display_option_value_downcase contains 'vnd' or display_option_value_downcase contains 'usd' or display_option_value_downcase contains '$'
+                        assign display_option_value = display_option_value | split: ' from ' | first | strip
+                        assign display_option_value_downcase = display_option_value | downcase
+                      endif
+                    endif
+
+                    if product_option.values.size > 1 and display_option_value_downcase contains 'option'
+                      assign display_option_value = 'Option ' | append: forloop.index
+                    endif
+                  %}
                   <option
                     value="{{ product_option_value | escape }}"
                     data-input-id="{{ product_option.position }}-{{ forloop.index0 }}"
@@ -217,9 +275,9 @@
                     {% endif %}
                   >
                     {% if product_option_value.available == false %}
-                      {{ product_option_value | escape }} - {{ 'content.unavailable' | t }}
+                      {{ display_option_value | escape }} - {{ 'content.unavailable' | t }}
                     {% else %}
-                      {{ product_option_value | escape }}
+                      {{ display_option_value | escape }}
                     {% endif %}
                   </option>
                 {%- endfor -%}
