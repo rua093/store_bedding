@@ -6,9 +6,19 @@
   More info: https://shopify.dev/docs/storefronts/themes/architecture/blocks/ai-generated-theme-blocks
 {% endcomment %}
 
-{% capture children %}
+{% capture raw_children %}
   {% content_for 'blocks' %}
 {% endcapture %}
+
+{% assign children = raw_children %}
+
+{% if section.id contains '1782702718c3bf58b5' %}
+  {% capture children %}
+    <div class="jeminise-home-judgeme" data-jeminise-home-judgeme>
+      {{ raw_children }}
+    </div>
+  {% endcapture %}
+{% endif %}
 
 {% render 'section',
   section: section,
