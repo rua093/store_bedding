@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "main": {
       "type": "product-information",
@@ -153,13 +154,13 @@
                 "show_swatches": true,
                 "option_label_text_color": "",
                 "variant_style_class": "default",
-                "custom_variant_background": "#FAF8F5",
-                "custom_variant_text": "#3E332D",
-                "custom_variant_border": "#E8E2DB",
+                "custom_variant_background": "#faf8f5",
+                "custom_variant_text": "#3e332d",
+                "custom_variant_border": "#e8e2db",
                 "selected_variant_style_class": "default",
-                "custom_selected_variant_background": "#3E332D",
-                "custom_selected_variant_text": "#FAF8F5",
-                "custom_selected_variant_border": "#3E332D",
+                "custom_selected_variant_background": "#3e332d",
+                "custom_selected_variant_text": "#faf8f5",
+                "custom_selected_variant_border": "#3e332d",
                 "alignment": "left",
                 "padding-block-start": 16,
                 "padding-block-end": 16,
@@ -186,7 +187,7 @@
                 "input_style": "default",
                 "input_background_color": "{{ settings.color_palette.background }}",
                 "input_text_color": "{{ settings.color_palette.foreground }}",
-                "input_border_color": "#E8E2DB",
+                "input_border_color": "#e8e2db",
                 "border_width": 1,
                 "border_radius": 0,
                 "padding-block-start": 0,
@@ -202,7 +203,7 @@
                     "input_style": "default",
                     "input_background_color": "{{ settings.color_palette.background }}",
                     "input_text_color": "{{ settings.color_palette.foreground }}",
-                    "input_border_color": "#E8E2DB",
+                    "input_border_color": "#e8e2db",
                     "border_width": 1,
                     "border_radius": 0
                   },
@@ -213,9 +214,9 @@
                   "static": true,
                   "settings": {
                     "style_class": "button",
-                    "custom_button_background": "#B87A5A",
-                    "custom_button_text": "#FAF8F5",
-                    "custom_button_border": "#B87A5A"
+                    "custom_button_background": "#b87a5a",
+                    "custom_button_text": "#faf8f5",
+                    "custom_button_border": "#b87a5a"
                   },
                   "blocks": {}
                 },
@@ -285,6 +286,7 @@
                 "border_opacity": 100,
                 "border_color": "",
                 "border_radius": 0,
+                "link": "",
                 "open_in_new_tab": false,
                 "placeholder": "",
                 "padding-block-start": 8,
@@ -324,6 +326,7 @@
                     "border_opacity": 100,
                     "border_color": "",
                     "border_radius": 0,
+                    "link": "",
                     "open_in_new_tab": false,
                     "placeholder": "",
                     "padding-block-start": 0,
@@ -332,9 +335,9 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {
-                "group_aXnYyb": {
-                  "type": "group",
-                  "name": "Care",
+                    "group_aXnYyb": {
+                      "type": "group",
+                      "name": "Care",
                       "settings": {
                         "content_direction": "column",
                         "vertical_on_mobile": true,
@@ -351,7 +354,7 @@
                         "height": "fit",
                         "custom_height": 100,
                         "background_media": "none",
-                    "background_color": "#F5F1EA",
+                        "background_color": "#f5f1ea",
                         "video_position": "cover",
                         "background_image_position": "cover",
                         "toggle_overlay": false,
@@ -362,7 +365,8 @@
                         "border_width": 1,
                         "border_opacity": 100,
                         "border_color": "",
-                    "border_radius": 14,
+                        "border_radius": 14,
+                        "link": "",
                         "open_in_new_tab": false,
                         "placeholder": "",
                         "padding-block-start": 42,
@@ -377,6 +381,7 @@
                           "settings": {
                             "icon": "heart",
                             "width": 24,
+                            "link": "",
                             "open_in_new_tab": false,
                             "icon_color": ""
                           },
@@ -414,9 +419,9 @@
                         "text_ktmjan"
                       ]
                     },
-                "group_YAKm6a": {
-                  "type": "group",
-                  "name": "Value",
+                    "group_YAKm6a": {
+                      "type": "group",
+                      "name": "Value",
                       "settings": {
                         "content_direction": "column",
                         "vertical_on_mobile": true,
@@ -433,7 +438,7 @@
                         "height": "fit",
                         "custom_height": 100,
                         "background_media": "none",
-                    "background_color": "#F5F1EA",
+                        "background_color": "#f5f1ea",
                         "video_position": "cover",
                         "background_image_position": "cover",
                         "toggle_overlay": false,
@@ -444,7 +449,8 @@
                         "border_width": 1,
                         "border_opacity": 100,
                         "border_color": "",
-                    "border_radius": 14,
+                        "border_radius": 14,
+                        "link": "",
                         "open_in_new_tab": false,
                         "placeholder": "",
                         "padding-block-start": 42,
@@ -459,6 +465,7 @@
                           "settings": {
                             "icon": "price_tag",
                             "width": 24,
+                            "link": "",
                             "open_in_new_tab": false,
                             "icon_color": ""
                           },
@@ -533,6 +540,7 @@
                     "border_opacity": 100,
                     "border_color": "",
                     "border_radius": 0,
+                    "link": "",
                     "open_in_new_tab": false,
                     "placeholder": "",
                     "padding-block-start": 0,
@@ -541,7 +549,7 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {
-                "group_NGJDpt": {
+                    "group_NGJDpt": {
                       "type": "group",
                       "name": "Design",
                       "settings": {
@@ -560,7 +568,7 @@
                         "height": "fit",
                         "custom_height": 100,
                         "background_media": "none",
-                    "background_color": "#F5F1EA",
+                        "background_color": "#f5f1ea",
                         "video_position": "cover",
                         "background_image_position": "cover",
                         "toggle_overlay": false,
@@ -571,7 +579,8 @@
                         "border_width": 1,
                         "border_opacity": 100,
                         "border_color": "",
-                    "border_radius": 14,
+                        "border_radius": 14,
+                        "link": "",
                         "open_in_new_tab": false,
                         "placeholder": "",
                         "padding-block-start": 42,
@@ -586,6 +595,7 @@
                           "settings": {
                             "icon": "plant",
                             "width": 24,
+                            "link": "",
                             "open_in_new_tab": false,
                             "icon_color": ""
                           },
@@ -623,7 +633,7 @@
                         "text_fN97nd"
                       ]
                     },
-                "group_73gqqM": {
+                    "group_73gqqM": {
                       "type": "group",
                       "name": "Quality",
                       "settings": {
@@ -642,7 +652,7 @@
                         "height": "fit",
                         "custom_height": 100,
                         "background_media": "none",
-                    "background_color": "#F5F1EA",
+                        "background_color": "#f5f1ea",
                         "video_position": "cover",
                         "background_image_position": "cover",
                         "toggle_overlay": false,
@@ -653,7 +663,8 @@
                         "border_width": 1,
                         "border_opacity": 100,
                         "border_color": "",
-                    "border_radius": 14,
+                        "border_radius": 14,
+                        "link": "",
                         "open_in_new_tab": false,
                         "placeholder": "",
                         "padding-block-start": 42,
@@ -668,6 +679,7 @@
                           "settings": {
                             "icon": "leather",
                             "width": 24,
+                            "link": "",
                             "open_in_new_tab": false,
                             "icon_color": ""
                           },
@@ -841,11 +853,11 @@
       "settings": {
         "content_width": "content-center-aligned",
         "desktop_media_position": "left",
-        "equal_columns": false,
+        "equal_columns": true,
         "limit_details_width": false,
         "gap": 48,
         "enable_sticky_add_to_cart": true,
-        "background_color": "{{ settings.color_palette.background }}",
+        "background_color": "#F4E9DF",
         "padding-block-start": 0,
         "padding-block-end": 32
       }
@@ -1044,6 +1056,7 @@
                 "border_opacity": 100,
                 "border_color": "",
                 "border_radius": 0,
+                "link": "",
                 "open_in_new_tab": false,
                 "padding-block-start": 24,
                 "padding-block-end": 24,
@@ -1144,6 +1157,9 @@
         "horizontal_alignment": "flex-start",
         "gap": 28,
         "background_color": "{{ settings.color_palette.background }}",
+        "show_view_all": false,
+        "view_all_label": "Shop all bedding",
+        "view_all_link": "",
         "padding-block-start": 60,
         "padding-block-end": 72
       }
