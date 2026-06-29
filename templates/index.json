@@ -689,48 +689,72 @@
         "padding-block-end": 84
       }
     },
-    "testimonials_Jh3vNt": {
-      "type": "testimonials",
+    "1782702718c3bf58b5": {
+      "type": "_blocks",
       "blocks": {
-        "review_1": {
-          "type": "review",
+        "judge_me_reviews_cards_carousel_yGQpNr": {
+          "type": "shopify://apps/judge-me-reviews/blocks/cards_carousel/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
           "settings": {
-            "quote": "The quilt feels light but still warm. It made our bedroom feel instantly softer.",
-            "author": "Emily R.",
-            "detail": "Verified customer",
-            "rating": 5
-          }
-        },
-        "review_2": {
-          "type": "review",
-          "settings": {
-            "quote": "Beautiful texture, breathable, and easy to layer through the seasons.",
-            "author": "Sarah M.",
-            "detail": "Verified customer",
-            "rating": 5
-          }
-        },
-        "review_3": {
-          "type": "review",
-          "settings": {
-            "quote": "Exactly the cozy hotel-bed feeling I wanted without feeling too heavy.",
-            "author": "Lauren K.",
-            "detail": "Verified customer",
-            "rating": 5
+            "show_sample_reviews": true,
+            "reviews_selection": "all",
+            "products": [],
+            "star_rating": "all",
+            "show_review_media": true,
+            "display_order": "media_first",
+            "no_image_fallback": "review_text_only",
+            "max_reviews": 20,
+            "review_length": "medium",
+            "text_size": "medium",
+            "image_ratio": "1",
+            "reviews_shown": 4,
+            "show_reviewer_name": true,
+            "show_product_name": true,
+            "hide_arrows_mobile": true,
+            "arrows_position": "sides",
+            "max_width": 1100,
+            "corner_styling": "soft",
+            "header_text_color": "#000000",
+            "text_color": "#000000",
+            "card_color": "#F9F9F9",
+            "stars_color": "",
+            "arrows_color": "#000000",
+            "transition_speed": 5,
+            "header_text": "Customers are saying",
+            "show_average_rating": true,
+            "rating_display": "default"
           }
         }
       },
       "block_order": [
-        "review_1",
-        "review_2",
-        "review_3"
+        "judge_me_reviews_cards_carousel_yGQpNr"
       ],
       "settings": {
-        "heading": "Loved by better sleepers",
-        "subheading": "Real words from customers who made their bed feel softer, warmer and calmer.",
-        "background_color": "#f2e5db",
-        "padding-block-start": 40,
-        "padding-block-end": 40
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 0,
+        "padding-block-end": 0
       }
     },
     "trust_signals_P6hero": {
@@ -856,7 +880,7 @@
     "collection_list_xpBxCm",
     "media_with_content_brand_intro",
     "product_list_EDUBdR",
-    "testimonials_Jh3vNt",
-    "trust_signals_P6hero"
+    "trust_signals_P6hero",
+    "1782702718c3bf58b5"
   ]
 }
