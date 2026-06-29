@@ -45,7 +45,7 @@
             "thumbnail_position": "left",
             "thumbnail_width": 56,
             "thumbnail_radius": 0,
-            "aspect_ratio": "1/1.25",
+            "aspect_ratio": "1",
             "constrain_to_viewport": true,
             "media_fit": "cover",
             "media_radius": 0,
