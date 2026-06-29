@@ -21,3 +21,5 @@
 {"time":"2026-06-27T15:59:43.493321+00:00","action":"replace","detail":{"ok":true,"path":"sections/trust-signals.liquid","replacements":1,"newSha256":"39a02cc344cd67df6a1b41c8fbae73577b1850ace90c711619403aa918a8a66c"}}
 {"time":"2026-06-27T15:59:51.121964+00:00","action":"replace","detail":{"ok":true,"path":"sections/media-with-content.liquid","replacements":1,"newSha256":"b6f4c40e99bd466b2299e980077a7e73adeec26dce75e2145fb0912cc3004504"}}
 {"time":"2026-06-27T15:59:55.752939+00:00","action":"replace","detail":{"ok":true,"path":"sections/media-with-content.liquid","replacements":1,"newSha256":"2fafca00dbea29b36c87b7012bb4d7c858f6c19b89b911d7db0291f976beefff"}}
+{"time":"2026-06-29T04:19:43.973346+00:00","action":"replace","detail":{"ok":true,"path":"templates/product.json","replacements":1,"newSha256":"f184a9fc35910f6ef852be8419310a288178ac8406bcc30ec2ea298efee011e9"}}
+{"time":"2026-06-29T04:19:50.045521+00:00","action":"replace","detail":{"ok":true,"path":"snippets/product-media-gallery-content.liquid","replacements":1,"newSha256":"47c6ca0463b1f4b93c8cea9b9d9fbff2b916bdf820c3115913f5a97ce9146db0"}}
