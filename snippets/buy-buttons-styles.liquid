@@ -67,6 +67,8 @@
   }
 
   .product-information--main-product .product-form-buttons {
+    display: grid;
+    grid-template-columns: minmax(124px, 156px) minmax(0, 1fr);
     padding: 0;
     border: 0;
     border-radius: 0;
@@ -74,13 +76,15 @@
     box-shadow: none;
     backdrop-filter: none;
     gap: 12px;
-    align-items: stretch;
+    align-items: end;
   }
 
   .product-information--main-product .product-form-buttons .quantity-selector-wrapper {
-    flex: 0 0 124px;
+    grid-column: 1;
+    align-self: end;
+    width: 100%;
     min-width: 124px;
-    max-width: 124px;
+    max-width: 156px;
   }
 
   .product-information--main-product .product-form-buttons .quantity-selector {
@@ -393,22 +397,18 @@
     display: none;
   }
 
-  .product-information--main-product .product-form-buttons > .add-to-cart-button,
-  .product-information--main-product .product-form-buttons > .accelerated-checkout-block,
-  .product-information--main-product .product-form-buttons > .shopify-payment-button {
-    flex: 1 1 0;
+  .product-information--main-product .product-form-buttons > .add-to-cart-button {
+    grid-column: 2;
+    align-self: end;
+    width: 100%;
     min-width: 0;
   }
 
-  .product-information--main-product .product-form-buttons > .add-to-cart-button {
-    flex: 1.05 1 248px;
-    align-self: end;
-  }
-
   .product-information--main-product .product-form-buttons > .accelerated-checkout-block,
   .product-information--main-product .product-form-buttons > .shopify-payment-button {
-    flex: 0.95 1 220px;
-    min-width: 220px;
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
   }
 
   .product-information--main-product .product-form-buttons button,
@@ -449,9 +449,9 @@
   }
 
   .product-information--main-product .product-form-trust-badges {
+    grid-column: 1 / -1;
     display: grid;
     gap: 14px;
-    flex: 1 0 100%;
     width: 100%;
     margin-top: 4px;
     padding-top: 14px;
@@ -571,6 +571,7 @@
     }
 
     .product-information--main-product .product-form-buttons {
+      grid-template-columns: 1fr;
       padding: 0;
       gap: 12px;
     }
@@ -584,9 +585,10 @@
     .product-information--main-product .product-form-buttons > .add-to-cart-button,
     .product-information--main-product .product-form-buttons > .accelerated-checkout-block,
     .product-information--main-product .product-form-buttons > .shopify-payment-button {
-      flex-basis: 100%;
+      grid-column: 1 / -1;
       width: 100%;
-      min-width: 100%;
+      min-width: 0;
+      max-width: 100%;
     }
 
     .product-information--main-product .product-form-trust-badges {

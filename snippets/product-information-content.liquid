@@ -596,7 +596,7 @@
 
     .product-information--main-product .product-information__media,
     .product-information--main-product .product-details {
-      padding-inline: 0;
+      padding-inline: 0 !important;
     }
 
     .product-information--main-product .product-information__media {
@@ -605,6 +605,11 @@
       position: sticky;
       top: calc(var(--header-height, 80px) + 24px);
       align-self: start;
+    }
+
+    .product-information--main-product .product-information__media media-gallery.spacing-style {
+      padding-block-start: 0 !important;
+      padding-block-end: 0 !important;
     }
 
     .product-information--main-product .product-details--main-product {

@@ -215,18 +215,19 @@
   }
 
   .product-details--main-product .product-form-buttons {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
+    display: grid !important;
+    grid-template-columns: minmax(110px, 140px) minmax(0, 1fr) !important;
     gap: 12px !important;
-    align-items: stretch !important;
+    align-items: end !important;
   }
 
   /* Quantity selector styling */
   .product-details--main-product .quantity-selector-wrapper {
-    flex: 0 0 110px !important;
+    grid-column: 1 !important;
+    align-self: end !important;
+    width: 100% !important;
     min-width: 110px !important;
-    max-width: 110px !important;
+    max-width: 140px !important;
   }
 
   .product-details--main-product .quantity-selector {
@@ -265,7 +266,10 @@
 
   /* Add to Cart button (outlined caramel - very lightweight) */
   .product-details--main-product .add-to-cart-button {
-    flex: 1 1 180px !important;
+    grid-column: 2 !important;
+    align-self: end !important;
+    width: 100% !important;
+    min-width: 0 !important;
     height: 52px !important;
     min-height: 52px !important;
     border-radius: 12px !important;
@@ -289,10 +293,17 @@
     box-shadow: 0 4px 12px rgba(184, 115, 69, 0.15) !important;
   }
 
+  .product-details--main-product .accelerated-checkout-block,
+  .product-details--main-product .shopify-payment-button {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
   /* Buy it Now / Accelerated checkout button (filled caramel) */
   .product-details--main-product .shopify-payment-button__button,
   .product-details--main-product .shopify-payment-button__button--unbranded {
-    flex: 1 1 180px !important;
+    width: 100% !important;
     height: 52px !important;
     min-height: 52px !important;
     border-radius: 12px !important;
@@ -318,6 +329,8 @@
 
   /* Trust Badges and other bottom details */
   .product-details--main-product .product-form-trust-badges {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
     margin-top: 12px !important;
     display: flex !important;
     flex-wrap: wrap !important;
@@ -460,10 +473,16 @@
       font-size: clamp(22px, 6vw, 26px) !important;
     }
 
-    .product-details--main-product .product-form-buttons > * {
-      flex-basis: 100% !important;
+    .product-details--main-product .product-form-buttons {
+      grid-template-columns: 1fr !important;
+    }
+
+    .product-details--main-product .product-form-buttons > *,
+    .product-details--main-product .accelerated-checkout-block,
+    .product-details--main-product .shopify-payment-button {
+      grid-column: 1 / -1 !important;
       width: 100% !important;
-      min-width: 100% !important;
+      min-width: 0 !important;
     }
 
     .product-details--main-product .quantity-selector-wrapper {
