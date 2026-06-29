@@ -48,6 +48,7 @@ class PredictiveSearchComponent extends Component {
     if (this.refs.searchInput.value.length > 0) {
       this.#showResetButton();
     }
+    this.#updateQueryState();
 
     if (dialog) {
       document.addEventListener('keydown', this.#handleKeyboardShortcut, { signal });
@@ -110,6 +111,8 @@ class PredictiveSearchComponent extends Component {
     if (!this.#emptyStateLoaded && RecentlyViewed.getProducts().length > 0) {
       this.#loadEmptyState();
     }
+    
+    this.#updateQueryState();
 
     requestAnimationFrame(() => {
       this.refs.searchInput.focus();
@@ -127,8 +130,8 @@ class PredictiveSearchComponent extends Component {
     const containers = Array.from(
       this.querySelectorAll(
         '.predictive-search-results__wrapper-queries, ' +
-          '.predictive-search-results__wrapper-products, ' +
-          '.predictive-search-results__list'
+        '.predictive-search-results__wrapper-products, ' +
+        '.predictive-search-results__list'
       )
     );
 
@@ -272,6 +275,14 @@ class PredictiveSearchComponent extends Component {
     }
   }
 
+  #updateQueryState() {
+    const hasQuery = this.refs.searchInput.value.trim().length > 0;
+    this.classList.toggle('jem-search--has-query', hasQuery);
+    if (this.refs.form) {
+      this.refs.form.classList.toggle('jem-search--has-query', hasQuery);
+    }
+  }
+
   /**
    * Reset the search state.
    * @param {boolean} [keepFocus=true] - Whether to keep focus on input after reset
@@ -293,6 +304,7 @@ class PredictiveSearchComponent extends Component {
 
     const searchTerm = this.refs.searchInput.value.trim();
     this.#currentIndex = -1;
+    this.#updateQueryState();
 
     if (!searchTerm.length) {
       this.#resetSearch();
@@ -396,7 +408,7 @@ class PredictiveSearchComponent extends Component {
     if (viewedProducts.length === 0) return null;
 
     const url = new URL(Theme.routes.search_url, location.origin);
-    url.searchParams.set('q', viewedProducts.map(/** @param {string} id */ (id) => `id:${id}`).join(' OR '));
+    url.searchParams.set('q', viewedProducts.map(/** @param {string} id */(id) => `id:${id}`).join(' OR '));
     url.searchParams.set('resources[type]', 'product');
 
     return sectionRenderer.getSectionHTML(this.dataset.sectionId, false, url);
@@ -431,6 +443,7 @@ class PredictiveSearchComponent extends Component {
     searchInput.value = '';
     searchInput.setAttribute('aria-expanded', 'false');
     this.#hideResetButton();
+    this.#updateQueryState();
 
     const abortController = this.#createAbortController();
     const url = new URL(window.location.href);
