@@ -1,0 +1,46 @@
+<aside class="jem-search-sidebar" aria-label="Popular collections">
+  <div class="jem-search-sidebar__panel">
+    <p class="jem-search-sidebar__eyebrow">Discover faster</p>
+    <h3 class="jem-search-sidebar__title">Popular Searches</h3>
+    <div class="jem-search-sidebar__list">
+      {% liquid
+        assign collection_count = 0
+      %}
+      
+      {% for collection in collections %}
+        {% if collection.handle == 'all' or collection.handle == 'frontpage' or collection.handle == 'automated-frontpage' %}
+          {% continue %}
+        {% endif %}
+        
+        {% if collection.products_count > 0 and collection_count < 8 %}
+          {% assign collection_count = collection_count | plus: 1 %}
+          <a class="jem-search-category" href="{{ collection.url }}" aria-label="Shop {{ collection.title }} collection">
+            <span class="jem-search-category__icon">
+              {% if collection.image %}
+                {{ collection.image | image_url: width: 40, height: 40, crop: 'center' | image_tag: loading: 'lazy', class: 'jem-search-category__img', style: 'border-radius: 8px; object-fit: cover; width: 100%; height: 100%;' }}
+              {% elsif collection.products.first.featured_image %}
+                {{ collection.products.first.featured_image | image_url: width: 40, height: 40, crop: 'center' | image_tag: loading: 'lazy', class: 'jem-search-category__img', style: 'border-radius: 8px; object-fit: cover; width: 100%; height: 100%;' }}
+              {% else %}
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+              {% endif %}
+            </span>
+            <span class="jem-search-category__copy">
+              <span class="jem-search-category__title">{{ collection.title }}</span>
+              <span class="jem-search-category__meta">
+                {% if collection.metafields.custom.search_subtitle %}
+                  {{ collection.metafields.custom.search_subtitle }}
+                {% elsif collection.products_count %}
+                  {{ collection.products_count }} products
+                {% else %}
+                  Explore collection
+                {% endif %}
+              </span>
+            </span>
+            <span class="jem-search-category__arrow" aria-hidden="true">→</span>
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <a class="jem-search-sidebar__button" href="/collections">View all collections</a>
+  </div>
+</aside>

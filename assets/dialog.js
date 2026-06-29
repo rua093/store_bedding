@@ -12,6 +12,7 @@ import { getScrollTop, scrollTo } from '@theme/scroll-container';
  */
 export class DialogComponent extends Component {
   requiredRefs = ['dialog'];
+  #lastActiveElement = null;
 
   connectedCallback() {
     super.connectedCallback();
@@ -50,6 +51,7 @@ export class DialogComponent extends Component {
 
     if (dialog.open) return;
 
+    this.#lastActiveElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     this.#previousScrollY = getScrollTop();
 
     // Prevent layout thrashing by separating DOM reads from DOM writes
@@ -95,6 +97,7 @@ export class DialogComponent extends Component {
 
     dialog.close();
     dialog.classList.remove('dialog-closing');
+    this.#lastActiveElement?.focus?.();
 
     this.dispatchEvent(new DialogCloseEvent());
   };

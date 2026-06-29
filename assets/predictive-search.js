@@ -52,7 +52,7 @@ class PredictiveSearchComponent extends Component {
     if (dialog) {
       document.addEventListener('keydown', this.#handleKeyboardShortcut, { signal });
       dialog.addEventListener(DialogCloseEvent.eventName, this.#handleDialogClose, { signal });
-      dialog.addEventListener(DialogOpenEvent.eventName, this.#handleDialogOpen, { signal, once: true });
+      dialog.addEventListener(DialogOpenEvent.eventName, this.#handleDialogOpen, { signal });
 
       this.addEventListener('click', this.#handleModalClick, { signal });
     }
@@ -103,12 +103,18 @@ class PredictiveSearchComponent extends Component {
    */
   #handleDialogClose = () => {
     this.#resetSearch();
+    this.refs.searchInput.setAttribute('aria-expanded', 'false');
   };
 
   #handleDialogOpen = () => {
     if (!this.#emptyStateLoaded && RecentlyViewed.getProducts().length > 0) {
       this.#loadEmptyState();
     }
+
+    requestAnimationFrame(() => {
+      this.refs.searchInput.focus();
+      this.refs.searchInput.select();
+    });
   };
 
   #loadEmptyState() {
@@ -290,10 +296,12 @@ class PredictiveSearchComponent extends Component {
 
     if (!searchTerm.length) {
       this.#resetSearch();
+      this.refs.searchInput.setAttribute('aria-expanded', 'false');
       return;
     }
 
     this.#showResetButton();
+    this.refs.searchInput.setAttribute('aria-expanded', 'true');
     this.#getSearchResults(searchTerm);
   }, 200);
 
@@ -319,6 +327,7 @@ class PredictiveSearchComponent extends Component {
     url.searchParams.set('resources[limit_scope]', 'each');
 
     const { predictiveSearchResults } = this.refs;
+    predictiveSearchResults.setAttribute('data-loading', 'true');
 
     const abortController = this.#createAbortController();
 
@@ -337,16 +346,19 @@ class PredictiveSearchComponent extends Component {
       .getSectionHTML(this.dataset.sectionId, false, url)
       .then((resultsMarkup) => {
         if (!resultsMarkup) {
+          predictiveSearchResults.removeAttribute('data-loading');
           deferredPromise.resolve({ totalCount: 0 });
           return;
         }
 
         if (abortController.signal.aborted) {
+          predictiveSearchResults.removeAttribute('data-loading');
           deferredPromise.reject(new Error('Fetch aborted by user'));
           return;
         }
 
         morph(predictiveSearchResults, resultsMarkup);
+        predictiveSearchResults.removeAttribute('data-loading');
 
         this.#resetScrollPositions();
 
@@ -355,9 +367,21 @@ class PredictiveSearchComponent extends Component {
         deferredPromise.resolve({ totalCount: resultCount });
       })
       .catch((error) => {
+        predictiveSearchResults.removeAttribute('data-loading');
         deferredPromise.reject(error);
         if (abortController.signal.aborted) return;
-        throw error;
+        predictiveSearchResults.innerHTML = `
+          <div class="predictive-search-dropdown jem-search-shell" role="listbox" aria-label="Search results">
+            <div class="predictive-search-results__inner jem-search-layout" data-search-results>
+              <section class="jem-search-results jem-search-results--full">
+                <div class="predictive-search-results__no-results jem-search-empty-state">
+                  <h4>We hit a small snag</h4>
+                  <p>Please try your search again in a moment.</p>
+                </div>
+              </section>
+            </div>
+          </div>
+        `;
       });
   }
 
@@ -405,6 +429,7 @@ class PredictiveSearchComponent extends Component {
 
     this.#currentIndex = -1;
     searchInput.value = '';
+    searchInput.setAttribute('aria-expanded', 'false');
     this.#hideResetButton();
 
     const abortController = this.#createAbortController();

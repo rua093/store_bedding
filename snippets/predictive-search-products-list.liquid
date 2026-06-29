@@ -9,6 +9,7 @@
 {%- enddoc -%}
 {%- liquid
   assign recently_viewed_title_text = 'content.recently_viewed_products' | t
+  assign title = title | default: 'Top Results'
 -%}
 <div
   id="predictive-search-products"
@@ -22,11 +23,13 @@
       class="recently-viewed-wrapper"
       ref="recentlyViewedWrapper"
     >
-      <h4
-        class="predictive-search-results__title"
-        ref="recentlyViewedTitle[]"
-      >
-        {{ title }}
+      <div class="jem-search-results-header">
+        <h4
+          class="predictive-search-results__title"
+          ref="recentlyViewedTitle[]"
+        >
+          {{ title }}
+        </h4>
         <button
           class="predictive-search-results__clear button button-unstyled"
           type="button"
@@ -34,9 +37,9 @@
         >
           {{ 'actions.clear' | t }}
         </button>
-      </h4>
+      </div>
       <ul
-        class="predictive-search-results__list predictive-search-results__wrapper-products list-unstyled"
+        class="predictive-search-results__list predictive-search-results__wrapper-products jem-search-products-grid list-unstyled"
       >
         {% liquid
           assign limit = limit | default: 8
@@ -53,14 +56,25 @@
               class="predictive-search-results__card predictive-search-results__card--product"
               ref="recentlyViewedItems[]"
             >
-              {% render 'resource-card',
-                resource_type: 'product',
-                resource: product,
-                image_width: 500,
-                image_hover: true,
-                image_aspect_ratio: '4 / 5',
-                product_view_context: 'search'
-              %}
+              <a class="jem-search-product-card" href="{{ product.url }}">
+                <div class="jem-search-product-card__media">
+                  {% if product.featured_media.preview_image %}
+                    {{
+                      product.featured_media.preview_image
+                      | image_url: width: 520
+                      | image_tag:
+                        loading: 'lazy',
+                        class: 'jem-search-product-card__image',
+                        widths: '240, 360, 520',
+                        sizes: '(min-width: 990px) 18vw, (min-width: 750px) 26vw, 44vw'
+                    }}
+                  {% endif %}
+                </div>
+                <div class="jem-search-product-card__content">
+                  <span class="jem-search-product-card__title">{{ product.title }}</span>
+                  <div class="jem-search-product-card__price">{% render 'price', product_resource: product, show_unit_price: false %}</div>
+                </div>
+              </a>
             </li>
           {% endfor %}
         {% else %}
@@ -69,25 +83,41 @@
               class="predictive-search-results__card predictive-search-results__card--product"
               ref="recentlyViewedItems[]"
             >
-              {% render 'resource-card',
-                resource_type: 'product',
-                resource: product,
-                image_width: 500,
-                image_hover: true,
-                image_aspect_ratio: '4 / 5',
-                product_view_context: 'search'
-              %}
+              <a class="jem-search-product-card" href="{{ product.url }}">
+                <div class="jem-search-product-card__media">
+                  {% if product.featured_media.preview_image %}
+                    {{
+                      product.featured_media.preview_image
+                      | image_url: width: 520
+                      | image_tag:
+                        loading: 'lazy',
+                        class: 'jem-search-product-card__image',
+                        widths: '240, 360, 520',
+                        sizes: '(min-width: 990px) 18vw, (min-width: 750px) 26vw, 44vw'
+                    }}
+                  {% endif %}
+                </div>
+                <div class="jem-search-product-card__content">
+                  <span class="jem-search-product-card__title">{{ product.title }}</span>
+                  <div class="jem-search-product-card__price">{% render 'price', product_resource: product, show_unit_price: false %}</div>
+                </div>
+              </a>
             </li>
           {% endfor %}
         {% endif %}
       </ul>
     </div>
   {% else %}
-    <h4 class="predictive-search-results__title">
-      {{ title }}
-    </h4>
+    <div class="jem-search-results-header">
+      <h4 class="predictive-search-results__title">
+        {{ title }}
+      </h4>
+      {% if view_all_url %}
+        <a class="jem-search-results-header__link" href="{{ view_all_url }}">View all results</a>
+      {% endif %}
+    </div>
     <ul
-      class="predictive-search-results__list predictive-search-results__wrapper-products list-unstyled"
+      class="predictive-search-results__list predictive-search-results__wrapper-products jem-search-products-grid list-unstyled"
     >
       {% liquid
         assign limit = limit | default: 8
@@ -97,14 +127,25 @@
           class="predictive-search-results__card predictive-search-results__card--product"
           ref="resultsItems[]"
         >
-          {% render 'resource-card',
-            resource_type: 'product',
-            resource: product,
-            image_width: 500,
-            image_hover: true,
-            image_aspect_ratio: '4 / 5',
-            product_view_context: 'search'
-          %}
+          <a class="jem-search-product-card" href="{{ product.url }}">
+            <div class="jem-search-product-card__media">
+              {% if product.featured_media.preview_image %}
+                {{
+                  product.featured_media.preview_image
+                  | image_url: width: 520
+                  | image_tag:
+                    loading: 'lazy',
+                    class: 'jem-search-product-card__image',
+                    widths: '240, 360, 520',
+                    sizes: '(min-width: 990px) 18vw, (min-width: 750px) 26vw, 44vw'
+                }}
+              {% endif %}
+            </div>
+            <div class="jem-search-product-card__content">
+              <span class="jem-search-product-card__title">{{ product.title }}</span>
+              <div class="jem-search-product-card__price">{% render 'price', product_resource: product, show_unit_price: false %}</div>
+            </div>
+          </a>
         </li>
       {% endfor %}
     </ul>

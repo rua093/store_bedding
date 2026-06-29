@@ -1,18 +1,24 @@
-
-
 {% render 'predictive-search-styles' %}
 
 {%- if predictive_search.performed or search.performed -%}
+  {% liquid
+    assign blankets_collection = collections['blankets']
+    assign quilts_collection = collections['quilts']
+    assign comforters_collection = collections['comforters']
+    assign christmas_collection = collections['christmas-blankets']
+    assign sports_collection = collections['sports-blankets']
+    assign baptism_collection = collections['christian-baptism-blankets']
+  %}
   <div
     id="predictive-search-results"
-    class="predictive-search-dropdown"
+    class="predictive-search-dropdown jem-search-shell"
     role="listbox"
     aria-label="{{ 'content.search_results_label' | t }}"
     data-transition-container
     style="--color-shadow: rgb(var(--color-foreground-rgb) / var(--opacity-10-25));"
   >
     <div
-      class="predictive-search-results__inner"
+      class="predictive-search-results__inner jem-search-layout"
       data-search-results
     >
       {% if predictive_search.performed %}
@@ -38,89 +44,73 @@
         {%- endif -%}
       </div>
 
-      {% if predictive_search.performed %}
-        {% if predictive_search.resources.queries.size > 0 %}
-          <ul
-            class="predictive-search-results__list predictive-search-results__wrapper predictive-search-results__wrapper-queries list-unstyled"
-          >
-            {%- for resource in predictive_search.resources.queries -%}
-              <li
-                class="predictive-search-results__card--query"
+      {% render 'jem-search-popular-searches' %}
+
+      <section class="jem-search-results" aria-label="Top results">
+        {% if predictive_search.performed and predictive_search.resources.queries.size > 0 %}
+          <div class="jem-search-suggestions">
+            {%- for resource in predictive_search.resources.queries limit: 6 -%}
+              <a
+                class="pills__pill predictive-search-results__pill"
+                href="{{ resource.url }}"
+                aria-label="{{ resource.text }}"
                 ref="resultsItems[]"
                 on:keydown="/onSearchKeyDown"
               >
-                <a
-                  class="pills__pill predictive-search-results__pill"
-                  href="{{ resource.url }}"
-                  aria-label="{{ resource.text }}"
-                >
-                  <span>
-                    {{ resource.styled_text }}
-                  </span>
-                </a>
-              </li>
+                <span>{{ resource.styled_text }}</span>
+              </a>
             {% endfor %}
-          </ul>
+          </div>
         {% endif %}
 
-        {%- if search_results_count > 0 -%}
-          {% if predictive_search.resources.products.size > 0 %}
+        {% if predictive_search.performed %}
+          {%- if predictive_search.resources.products.size > 0 -%}
+            {% capture view_all_url %}{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}{% endcapture %}
             {%- liquid
-              assign title = 'content.search_results_resource_products' | t
+              assign title = 'Top Results'
               assign products = predictive_search.resources.products
-              render 'predictive-search-products-list', title: title, products: products
+              render 'predictive-search-products-list', title: title, products: products, view_all_url: view_all_url
             -%}
-          {% endif %}
+          {%- elsif search_results_count > 0 -%}
+            <div class="jem-search-results-header">
+              <h4 class="predictive-search-results__title">Top Results</h4>
+              <a class="jem-search-results-header__link" href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}">
+                View all results
+              </a>
+            </div>
+            <div class="jem-search-alt-results">
+              {% for resource in predictive_search.resources.collections limit: 4 %}
+                <a class="jem-search-alt-results__item" href="{{ resource.url }}" ref="resultsItems[]">{{ resource.title }}</a>
+              {% endfor %}
+              {% for resource in predictive_search.resources.pages limit: 2 %}
+                <a class="jem-search-alt-results__item" href="{{ resource.url }}" ref="resultsItems[]">{{ resource.title }}</a>
+              {% endfor %}
+              {% for resource in predictive_search.resources.articles limit: 2 %}
+                <a class="jem-search-alt-results__item" href="{{ resource.url }}" ref="resultsItems[]">{{ resource.title }}</a>
+              {% endfor %}
+            </div>
+          {%- elsif predictive_search.resources.queries.size == 0 -%}
+            <div class="predictive-search-results__no-results jem-search-empty-state">
+              <h4>No results found</h4>
+              <p>Try searching for blankets, quilts, comforters, Christmas, or baptism.</p>
+            </div>
+          {%- endif -%}
+        {% else %}
+          {%- liquid
+            assign title = 'content.recently_viewed_products' | t
+            assign products = search.results
 
-          {% if predictive_search.resources.collections.size > 0 %}
-            {% assign resource_title = 'content.search_results_resource_collections' | t %}
-
-            {% render 'predictive-search-resource-carousel',
-              title: resource_title,
-              resource_type: 'collection',
-              resources: predictive_search.resources.collections
-            %}
-          {% endif %}
-
-          {% if predictive_search.resources.pages.size > 0 %}
-            {% assign resource_title = 'content.search_results_resource_pages' | t %}
-
-            {% render 'predictive-search-resource-carousel',
-              title: resource_title,
-              resource_type: 'page',
-              resources: predictive_search.resources.pages
-            %}
-          {% endif %}
-
-          {% if predictive_search.resources.articles.size > 0 %}
-            {% assign resource_title = 'content.search_results_resource_articles' | t %}
-
-            {% render 'predictive-search-resource-carousel',
-              title: resource_title,
-              resource_type: 'article',
-              resources: predictive_search.resources.articles
-            %}
-          {% endif %}
-        {%- elsif predictive_search.resources.queries.size == 0 -%}
-          <p class="predictive-search-results__no-results">
-            {{ 'content.search_results_no_results' | t: terms: predictive_search.terms }}
-          </p>
+            comment
+              Searching for recently viewed products by id doesn't preserve the order of the products.
+              To work around this, we get the product ids into an array then use that to reorder them.
+            endcomment
+            if search.terms contains 'id:'
+              assign new_products_ids = search.terms | replace: 'id:', '' | split: ' OR '
+            endif
+            render 'predictive-search-products-list', title: title, products: products, order_ids: new_products_ids, limit: 4
+          -%}
         {% endif %}
-      {% else %}
-        {%- liquid
-          assign title = 'content.recently_viewed_products' | t
-          assign products = search.results
-
-          comment
-            Searching for recently viewed products by id doesn't preserve the order of the products.
-            To work around this, we get the product ids into an array then use that to reorder them.
-          endcomment
-          if search.terms contains 'id:'
-            assign new_products_ids = search.terms | replace: 'id:', '' | split: ' OR '
-          endif
-          render 'predictive-search-products-list', title: title, products: products, order_ids: new_products_ids, limit: 4
-        -%}
-      {% endif %}
+      </section>
 
       {% if predictive_search.performed %}
         {%- if search_results_count > 0 -%}

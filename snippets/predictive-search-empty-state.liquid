@@ -11,34 +11,50 @@
 
 <div
   id="predictive-search-results"
-  class="predictive-search-dropdown"
+  class="predictive-search-dropdown jem-search-shell"
   role="listbox"
   aria-expanded="true"
   style="--color-shadow: rgb(var(--color-foreground-rgb) / {{ shadow_opacity }});"
 >
   {% if load_empty_state %}
-    <div class="predictive-search-results__inner">
+    {% liquid
+      assign top_results_collection = blank
+      if settings.empty_state_collection != blank and settings.empty_state_collection.products.size > 0
+        assign top_results_collection = settings.empty_state_collection
+      elsif collections['best-selling'] != blank and collections['best-selling'].products.size > 0
+        assign top_results_collection = collections['best-selling']
+      elsif collections['blankets'] != blank and collections['blankets'].products.size > 0
+        assign top_results_collection = collections['blankets']
+      elsif collections['all'] != blank and collections['all'].products.size > 0
+        assign top_results_collection = collections['all']
+      else
+        assign top_results_collection = collections.all
+      endif
+    %}
+    <div class="predictive-search-results__inner jem-search-layout">
+      {% render 'jem-search-popular-searches' %}
+      <section class="jem-search-results" aria-label="Top results">
       {% liquid
-        assign collection = settings.empty_state_collection | default: collections.all
-        assign default_title = 'content.search_results_resource_products' | t
-        assign title = settings.empty_state_collection.title | default: default_title
+        assign title = 'Top Results'
       %}
-      {% paginate collection.products by 4 %}
-        {% assign products = collection.products %}
-        {% comment %} Only show products section if there are products to display {% endcomment %}
+      {% paginate top_results_collection.products by 8 %}
+        {% assign products = top_results_collection.products %}
         {% if products.size > 0 %}
           {% render 'predictive-search-products-list',
             products_test_id: products_test_id,
             title: title,
             products: products,
-            limit: 4
+            limit: 8
           %}
         {% else %}
-          <div class="predictive-search-results__no-results">
-            <p>{{ 'content.no_products_found' | t }}</p>
+          <div class="predictive-search-results__no-results jem-search-empty-state">
+            <h4>Start your search</h4>
+            <p>Try blankets, quilts, comforters, Christmas, sports, or baptism.</p>
+            <a href="/collections/all" style="display:inline-block; margin-top:8px; color:var(--jem-search-accent); text-decoration:none; font-weight:600;">View all products &rarr;</a>
           </div>
         {% endif %}
       {% endpaginate %}
+      </section>
     </div>
   {% endif %}
 </div>
