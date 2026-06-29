@@ -243,10 +243,50 @@
             class="product-form-trust-badges"
             aria-label="Product purchase assurances"
           >
-            <span class="product-form-trust-badge">Secure checkout</span>
-            <span class="product-form-trust-badge">Free shipping over $89</span>
-            <span class="product-form-trust-badge">Made to order</span>
-            <span class="product-form-trust-badge">Support available</span>
+            <div class="product-form-trust-badges__items">
+              <div class="product-form-trust-badge">
+                <span class="product-form-trust-badge__icon" aria-hidden="true">
+                  {{- 'icon-orders.svg' | inline_asset_content -}}
+                </span>
+                <span class="product-form-trust-badge__content">
+                  <span class="product-form-trust-badge__title">Free shipping</span>
+                  <span class="product-form-trust-badge__meta">On orders over $89</span>
+                </span>
+              </div>
+              <div class="product-form-trust-badge">
+                <span class="product-form-trust-badge__icon" aria-hidden="true">
+                  {{- 'icon-available.svg' | inline_asset_content -}}
+                </span>
+                <span class="product-form-trust-badge__content">
+                  <span class="product-form-trust-badge__title">Secure checkout</span>
+                  <span class="product-form-trust-badge__meta">Safe & encrypted</span>
+                </span>
+              </div>
+              <div class="product-form-trust-badge">
+                <span class="product-form-trust-badge__icon" aria-hidden="true">
+                  {{- 'icon-discount.svg' | inline_asset_content -}}
+                </span>
+                <span class="product-form-trust-badge__content">
+                  <span class="product-form-trust-badge__title">Made to order</span>
+                  <span class="product-form-trust-badge__meta">Just for you</span>
+                </span>
+              </div>
+              <div class="product-form-trust-badge">
+                <span class="product-form-trust-badge__icon" aria-hidden="true">
+                  {{- 'icon-account.svg' | inline_asset_content -}}
+                </span>
+                <span class="product-form-trust-badge__content">
+                  <span class="product-form-trust-badge__title">Support available</span>
+                  <span class="product-form-trust-badge__meta">We're here to help</span>
+                </span>
+              </div>
+            </div>
+            <div class="product-form-trust-badges__note">
+              <span class="product-form-trust-badges__note-icon" aria-hidden="true">
+                {{- 'icon-available.svg' | inline_asset_content -}}
+              </span>
+              <span>Faith-filled. Beautifully made. Meaningfully yours.</span>
+            </div>
           </div>
         </div>
         {%- if block_settings.gift_card_form and product.gift_card? -%}

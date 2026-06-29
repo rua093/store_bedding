@@ -1,0 +1,473 @@
+{%- doc -%}
+  Minimalist and lightweight CSS styling overrides for Jeminise luxury bedding PDP.
+{%- enddoc -%}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+  /* Apply luxury typography system */
+  .product-details--main-product > .group-block > .group-block-content > .text-block.h2:first-of-type :is(h1, h2, h3, h4, h5, h6) {
+    font-family: 'Playfair Display', serif !important;
+  }
+
+  .product-details--main-product, 
+  .product-details--main-product button, 
+  .product-details--main-product input, 
+  .product-details--main-product label,
+  .product-details--main-product legend,
+  .product-details--main-product .tax-note,
+  .product-details--main-product .installments,
+  .product-details--main-product .volume-pricing-note {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+  }
+
+  /* Core page layout and premium ivory/cream background */
+  body, 
+  .page-width, 
+  .main-content, 
+  .product-information,
+  .product-information--main-product {
+    background-color: #FAF7F2 !important; /* Soft, warm luxury ivory */
+  }
+
+  /* Desktop layout grid & alignment overrides */
+  @media screen and (min-width: 750px) {
+    .product-information--main-product {
+      max-width: 1480px !important;
+      width: 100% !important;
+      padding-inline: clamp(24px, 4vw, 48px) !important;
+    }
+    
+    .product-information--main-product .product-information__grid {
+      display: grid !important;
+      grid-template-columns: 53% 47% !important; /* Elegant visual ratio */
+      gap: 48px !important;
+      align-items: start !important;
+    }
+
+    .product-information--main-product .product-information__media {
+      grid-column: 1 / 2 !important;
+      width: 100% !important;
+      order: 0 !important;
+    }
+
+    .product-information--main-product .product-details {
+      grid-column: 2 / 3 !important;
+      width: 100% !important;
+      order: 1 !important;
+      margin-top: 0 !important;
+    }
+  }
+
+  /* Clean, borderless white card for details with plenty of breathing room */
+  .product-details--main-product > .group-block > .group-block-content {
+    background: #ffffff !important;
+    border: 1px solid rgba(184, 115, 69, 0.06) !important; /* Extremely thin, warm border */
+    border-radius: 24px !important;
+    box-shadow: 0 10px 40px rgba(62, 51, 45, 0.02) !important; /* Super lightweight soft shadow */
+    padding: clamp(24px, 3.5vw, 40px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+    position: relative !important;
+  }
+
+  /* Remove old heavy gradient wrapper background */
+  .product-details--main-product > .group-block > .group-block-content::before {
+    display: none !important;
+  }
+
+  /* Remove old individual panel backgrounds, borders, and box shadows */
+  .product-details--main-product > .group-block > .group-block-content > .text-block.h2,
+  .product-details--main-product > .group-block > .group-block-content > .rating-wrapper,
+  .product-details--main-product > .group-block > .group-block-content > product-price,
+  .product-details--main-product > .group-block > .group-block-content > variant-picker,
+  .product-details--main-product > .group-block > .group-block-content > .buy-buttons-block {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Title block spacing and font styling */
+  .product-details--main-product > .group-block > .group-block-content > .text-block.h2 {
+    margin-bottom: 2px !important;
+  }
+
+  .product-details--main-product > .group-block > .group-block-content > .text-block.h2:first-of-type :is(h1, h2, h3, h4, h5, h6) {
+    max-width: none !important;
+    font-size: clamp(26px, 2.2vw, 32px) !important;
+    font-weight: 400 !important; /* Slender, light serif weight */
+    line-height: 1.3 !important;
+    letter-spacing: -0.01em !important;
+    color: #2F241D !important;
+  }
+
+  /* Star rating row styling */
+  .product-details--main-product .rating-wrapper {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    color: #8C7667 !important;
+    font-size: 0.88rem !important;
+    margin-top: -10px !important;
+  }
+
+  .product-details--main-product .rating-wrapper .stars {
+    fill: #bd7442 !important; /* Caramel stars */
+    height: 14px !important;
+    width: 14px !important;
+  }
+
+  .product-details--main-product .rating-wrapper .stars.filled-star {
+    fill: #bd7442 !important;
+  }
+
+  .product-details--main-product .rating-wrapper .rating-count {
+    font-weight: 500 !important;
+    color: #8C7667 !important;
+  }
+
+  /* Product price styling */
+  .product-details--main-product product-price {
+    margin-top: -6px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+  }
+
+  .product-details--main-product product-price :is(.price__regular, .price__sale) {
+    font-size: clamp(22px, 1.8vw, 26px) !important;
+    font-weight: 400 !important; /* Slender price font */
+    color: #bd7442 !important; /* Caramel price color */
+    letter-spacing: -0.01em !important;
+  }
+
+  .product-details--main-product product-price .price__compare {
+    font-size: 1rem !important;
+    color: #A69285 !important;
+    text-decoration: line-through !important;
+    margin-left: 8px !important;
+  }
+
+  .product-details--main-product .tax-note,
+  .product-details--main-product .installments {
+    font-size: 0.82rem !important;
+    color: #8C7667 !important;
+    margin-top: 1px !important;
+  }
+
+  /* Variant picker container spacing */
+  .product-details--main-product variant-picker {
+    margin-top: 4px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .product-details--main-product variant-picker fieldset legend {
+    font-size: 0.8rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    font-weight: 600 !important;
+    color: #8C7667 !important;
+    margin-bottom: 6px !important;
+  }
+
+  /* Slender Variant button pills */
+  .product-details--main-product variant-picker .variant-option__button-label {
+    background-color: #ffffff !important;
+    border: 1px solid #dcd1c4 !important; /* Lighter border color */
+    color: #4a3e3d !important;
+    border-radius: 10px !important; /* Soft corner */
+    min-height: 44px !important; /* Shorter height for elegance */
+    font-size: 0.85rem !important;
+    font-weight: 400 !important;
+    padding-inline: 14px !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .product-details--main-product variant-picker .variant-option__button-label:hover {
+    border-color: #bd7442 !important;
+    color: #bd7442 !important;
+    background-color: #FAF7F2 !important;
+  }
+
+  /* Variant checked active state */
+  .product-details--main-product variant-picker .variant-option__button-label:has(:checked) {
+    background-color: #bd7442 !important;
+    border-color: #bd7442 !important;
+    color: #ffffff !important;
+  }
+
+  .product-details--main-product variant-picker .variant-option__button-label__pill {
+    background: #bd7442 !important;
+  }
+
+  .product-details--main-product variant-picker .variant-option__button-label:has(:checked) .variant-option__button-label__text {
+    color: #ffffff !important;
+  }
+
+  /* Quantity Selector & Buttons row layout */
+  .product-details--main-product .buy-buttons-block {
+    margin-top: 6px !important;
+  }
+
+  .product-details--main-product .product-form-buttons {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+  }
+
+  /* Quantity selector styling */
+  .product-details--main-product .quantity-selector-wrapper {
+    flex: 0 0 110px !important;
+    min-width: 110px !important;
+    max-width: 110px !important;
+  }
+
+  .product-details--main-product .quantity-selector {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    height: 52px !important; /* Shorter and cleaner height */
+    border-radius: 12px !important;
+    border: 1px solid #ebdcd0 !important;
+    background: #ffffff !important;
+    padding-inline: 4px !important;
+  }
+
+  .product-details--main-product .quantity-selector :is(.quantity-minus, .quantity-plus) {
+    width: 32px !important;
+    height: 32px !important;
+    color: #bd7442 !important;
+    cursor: pointer !important;
+    background: transparent !important;
+    border: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: transform 0.2s ease !important;
+  }
+
+  .product-details--main-product .quantity-selector input[type='number'] {
+    width: 32px !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    color: #352821 !important;
+    text-align: center !important;
+    border: none !important;
+    background: transparent !important;
+  }
+
+  /* Add to Cart button (outlined caramel - very lightweight) */
+  .product-details--main-product .add-to-cart-button {
+    flex: 1 1 180px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    border-radius: 12px !important;
+    border: 1px solid #bd7442 !important; /* Thin 1px border */
+    background: transparent !important;
+    color: #bd7442 !important;
+    font-size: 0.88rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    transition: all 0.25s ease !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .product-details--main-product .add-to-cart-button:hover:not([disabled]) {
+    background: #bd7442 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(184, 115, 69, 0.15) !important;
+  }
+
+  /* Buy it Now / Accelerated checkout button (filled caramel) */
+  .product-details--main-product .shopify-payment-button__button,
+  .product-details--main-product .shopify-payment-button__button--unbranded {
+    flex: 1 1 180px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    border-radius: 12px !important;
+    border: none !important;
+    background: #bd7442 !important;
+    color: #ffffff !important;
+    font-size: 0.88rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    transition: all 0.25s ease !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .product-details--main-product .shopify-payment-button__button:hover:not([disabled]),
+  .product-details--main-product .shopify-payment-button__button--unbranded:hover:not([disabled]) {
+    background: #a76236 !important;
+    box-shadow: 0 4px 12px rgba(167, 98, 54, 0.15) !important;
+  }
+
+  /* Trust Badges and other bottom details */
+  .product-details--main-product .product-form-trust-badges {
+    margin-top: 12px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+    justify-content: flex-start !important;
+  }
+
+  .product-details--main-product .product-form-trust-badge {
+    font-size: 0.8rem !important;
+    color: #8C7667 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    font-weight: 500 !important;
+  }
+
+  /* Clean Descriptions & Accordions below */
+  .product-details--main-product rte-formatter,
+  .product-details--main-product .accordion {
+    background: #ffffff !important;
+    border: 1px solid rgba(184, 115, 69, 0.06) !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    margin-top: 16px !important;
+    box-shadow: 0 4px 20px rgba(62, 51, 45, 0.01) !important;
+  }
+
+  .product-details--main-product .accordion .details {
+    background: #ffffff !important;
+    border: 1px solid #ebdcd0 !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+  }
+
+  /* CLEAN, LIGHT MEDIA GALLERY STYLES */
+  .product-information--main-product .product-information__media .media-gallery--carousel slideshow-component::before {
+    display: none !important; /* Completely remove background gradient box */
+  }
+
+  .product-information--main-product .product-information__media .media-gallery--carousel .product-media-container {
+    background: transparent !important; /* No heavy white block under images */
+    border: none !important; /* Remove outer border */
+    border-radius: 20px !important;
+    box-shadow: none !important; /* Remove heavy shadow */
+    overflow: hidden !important;
+  }
+
+  /* Aspect ratio clamp for gallery */
+  @media screen and (min-width: 750px) {
+    .product-information--main-product .product-information__media .product-media {
+      min-height: clamp(520px, 68vh, 700px) !important;
+      height: clamp(520px, 68vh, 700px) !important;
+    }
+    .product-information--main-product .product-information__media .product-media :is(img, video, iframe, .deferred-media__poster-image) {
+      max-height: clamp(520px, 68vh, 700px) !important;
+      height: 100% !important;
+      width: 100% !important;
+      object-fit: cover !important;
+      border-radius: 20px !important; /* Add corner directly to the image */
+    }
+  }
+
+  /* Thumbnail Gallery styling */
+  .product-information--main-product .product-information__media .slideshow-controls__thumbnail {
+    border-radius: 10px !important;
+    border: 1px solid #e1d6cc !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .product-information--main-product .product-information__media .slideshow-controls__thumbnail[aria-selected='true'] {
+    border-color: #bd7442 !important;
+  }
+
+  .product-information--main-product .product-information__media .slideshow-controls__thumbnail img {
+    border-radius: 8px !important;
+  }
+
+  /* Slender Carousel Arrows styling */
+  .product-information--main-product .product-information__media slideshow-arrows {
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 100% !important;
+    height: 0 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    padding-inline: 12px !important;
+    pointer-events: none !important;
+    z-index: 10 !important;
+    mix-blend-mode: normal !important;
+  }
+
+  .product-information--main-product .product-information__media slideshow-arrows .slideshow-control {
+    pointer-events: auto !important;
+    opacity: 0.8 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    border-radius: 50% !important;
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: #2F241D !important;
+    box-shadow: 0 2px 8px rgba(62, 51, 45, 0.08) !important;
+    transition: all 0.2s ease !important;
+    border: 1px solid rgba(184, 115, 69, 0.05) !important;
+  }
+
+  .product-information--main-product .product-information__media slideshow-arrows .slideshow-control:hover {
+    background-color: #bd7442 !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    box-shadow: 0 4px 12px rgba(184, 115, 69, 0.2) !important;
+    border-color: #bd7442 !important;
+  }
+
+  /* Mobile responsive styling rules */
+  @media screen and (max-width: 749px) {
+    .product-information--main-product .product-information__grid {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 16px !important;
+      padding-inline: 16px !important;
+    }
+
+    .product-information--main-product .product-information__media {
+      width: 100% !important;
+      padding: 0 !important;
+    }
+
+    .product-details--main-product > .group-block > .group-block-content {
+      padding: 20px !important;
+      border-radius: 20px !important;
+    }
+
+    .product-details--main-product > .group-block > .group-block-content > .text-block.h2:first-of-type :is(h1, h2, h3, h4, h5, h6) {
+      font-size: clamp(22px, 6vw, 26px) !important;
+    }
+
+    .product-details--main-product .product-form-buttons > * {
+      flex-basis: 100% !important;
+      width: 100% !important;
+      min-width: 100% !important;
+    }
+
+    .product-details--main-product .quantity-selector-wrapper {
+      max-width: 100% !important;
+    }
+  }
+</style>

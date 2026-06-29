@@ -100,31 +100,33 @@
     {% assign product_href = '#ProductInformation-' | append: section_id %}
     {% render 'skip-to-content-link', href: product_href, text: 'accessibility.skip_to_product_info' %}
   {% endif %}
-  <product-component
-    class="{{ product_grid_class }}"
-    data-product-grid-content
-    {% # theme-check-disable UnknownFilter %}
-    view-event-payload="{{ product | standard_event_data: 'view' | escape }}"
-    {% # theme-check-enable UnknownFilter %}
-  >
-    {% assign render_order_array = render_order | split: ',' %}
-    {% capture media %}
-      <div
-        class="product-information__media"
-        data-testid="product-information-media"
-      >
-        {{ media_gallery }}
-      </div>
-    {% endcapture %}
+  <div class="product-information__shell">
+    <product-component
+      class="{{ product_grid_class }}"
+      data-product-grid-content
+      {% # theme-check-disable UnknownFilter %}
+      view-event-payload="{{ product | standard_event_data: 'view' | escape }}"
+      {% # theme-check-enable UnknownFilter %}
+    >
+      {% assign render_order_array = render_order | split: ',' %}
+      {% capture media %}
+        <div
+          class="product-information__media"
+          data-testid="product-information-media"
+        >
+          {{ media_gallery }}
+        </div>
+      {% endcapture %}
 
-    {% for block in render_order_array %}
-      {% if block == 'media' and product_has_media %}
-        {{ media }}
-      {% elsif block == 'product-details' %}
-        {{ product_details }}
-      {% endif %}
-    {% endfor %}
-  </product-component>
+      {% for block in render_order_array %}
+        {% if block == 'media' and product_has_media %}
+          {{ media }}
+        {% elsif block == 'product-details' %}
+          {{ product_details }}
+        {% endif %}
+      {% endfor %}
+    </product-component>
+  </div>
 
   {% if is_main_product_page %}
     <div class="product-information__details-below" data-product-details-below hidden></div>
@@ -145,6 +147,10 @@
     --product-shadow: 0 22px 44px rgba(47, 36, 29, 0.08);
     max-width: min(1440px, calc(100vw - clamp(24px, 4vw, 48px)));
     margin-inline: auto;
+  }
+
+  .product-information__shell {
+    width: 100%;
   }
 
   /* Base grid layout */
@@ -356,7 +362,7 @@
     }
 
     .product-details {
-      grid-column: 2 / 3;
+      grid-column: 1 / -1;
     }
   }
 
@@ -366,9 +372,24 @@
       grid-column: 2;
     }
 
+    .product-information--main-product .product-information__shell {
+      position: relative;
+      border: 1px solid var(--product-border);
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at top left, rgba(255, 241, 225, 0.92), transparent 31%),
+        radial-gradient(circle at bottom right, rgba(255, 248, 240, 0.78), transparent 26%),
+        linear-gradient(180deg, rgba(255, 254, 251, 0.99) 0%, rgba(255, 250, 244, 0.98) 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.92),
+        0 30px 62px rgba(47, 36, 29, 0.1),
+        0 12px 24px rgba(184, 115, 69, 0.06);
+      padding: clamp(20px, 2vw, 28px);
+    }
+
     .product-information--main-product .product-information__grid:not(.product-information--media-none) {
       align-items: start;
-      gap: clamp(36px, 4vw, 64px);
+      gap: clamp(28px, 3vw, 42px);
       grid-column: 1 / -1;
     }
 
@@ -498,6 +519,10 @@
   }
 
   @media screen and (min-width: 750px) and (max-width: 989px) {
+    .product-information--main-product .product-information__shell {
+      padding: 18px;
+    }
+
     .product-information--main-product .product-information__grid:not(.product-information--media-none) {
       grid-template-columns: minmax(0, 1fr);
     }
@@ -507,6 +532,15 @@
       padding-inline: 0;
       grid-column: 1 / -1;
       order: initial;
+    }
+
+    .product-information--main-product .product-information__media,
+    .product-information--main-product .product-details--main-product {
+      position: static;
+      top: auto;
+      max-height: none;
+      overflow: visible;
+      padding-right: 0;
     }
   }
 
@@ -568,6 +602,22 @@
     .product-information--main-product .product-information__media {
       width: 100%;
       min-width: 0;
+      position: sticky;
+      top: calc(var(--header-height, 80px) + 24px);
+      align-self: start;
+    }
+
+    .product-information--main-product .product-details--main-product {
+      align-self: start;
+      max-height: none;
+      overflow: visible;
+      overscroll-behavior: auto;
+      padding-right: 0;
+    }
+
+    .product-information--main-product .product-details--main-product.sticky-content--desktop {
+      position: static;
+      top: auto;
     }
 
     .product-information--main-product .product-information__details-below {
@@ -588,9 +638,22 @@
   }
 
   @media screen and (max-width: 749px) {
+    .product-information--main-product .product-information__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+    }
+
     .product-information--main-product {
       max-width: min(100%, calc(100vw - 24px));
       padding-bottom: max(88px, env(safe-area-inset-bottom));
+    }
+
+    .product-information--main-product .product-information__shell {
+      border: 1px solid rgba(92, 61, 42, 0.1);
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255, 254, 251, 0.98) 0%, rgba(255, 249, 242, 0.97) 100%);
+      box-shadow: 0 18px 34px rgba(47, 36, 29, 0.07);
+      padding: 12px;
     }
 
     .product-information--main-product .product-information__details-below {
@@ -647,6 +710,15 @@
 
     .product-information--main-product .product-description-rich tr:last-child td {
       padding-bottom: 0;
+    }
+
+    .product-information--main-product .product-information__media,
+    .product-information--main-product .product-details--main-product {
+      position: static;
+      top: auto;
+      max-height: none;
+      overflow: visible;
+      padding-right: 0;
     }
   }
 {% endstylesheet %}

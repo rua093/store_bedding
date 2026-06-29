@@ -352,26 +352,7 @@
     display: grid;
     grid-template-columns: 64px minmax(0, 1fr);
     align-items: start;
-    column-gap: 18px;
-    position: relative;
-    isolation: isolate;
-  }
-
-  .product-information--main-product .product-information__media .media-gallery--carousel slideshow-component::before {
-    content: '';
-    position: absolute;
-    inset: -12px -12px -14px 74px;
-    border-radius: 32px;
-    background:
-      radial-gradient(circle at top left, rgba(255, 241, 225, 1), transparent 34%),
-      radial-gradient(circle at bottom right, rgba(255, 247, 238, 0.88), transparent 28%),
-      linear-gradient(180deg, rgba(255, 254, 251, 1) 0%, rgba(255, 249, 241, 0.97) 100%);
-    border: 1px solid rgba(120, 84, 58, 0.14);
-    box-shadow:
-      0 34px 66px rgba(47, 36, 29, 0.1),
-      0 14px 28px rgba(184, 115, 69, 0.08);
-    z-index: -1;
-    pointer-events: none;
+    column-gap: 24px;
   }
 
   .product-information--main-product
@@ -401,12 +382,12 @@
 
   .product-information--main-product .product-information__media .media-gallery--carousel .product-media-container {
     background: linear-gradient(180deg, #ffffff 0%, #fffaf4 58%, #fff6ee 100%);
-    border: 1px solid rgba(120, 84, 58, 0.2);
+    border: 1px solid rgba(120, 84, 58, 0.16);
     border-radius: 22px;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.94),
       inset 0 0 0 1px rgba(255, 255, 255, 0.54),
-      0 28px 56px rgba(47, 36, 29, 0.1);
+      0 16px 30px rgba(47, 36, 29, 0.08);
   }
 
   .product-information--main-product .product-information__media .product-media {
@@ -428,7 +409,7 @@
   .product-information--main-product .product-information__media slideshow-controls[thumbnails] {
     align-self: start;
     gap: 12px;
-    padding-top: 8px;
+    padding-top: 6px;
     padding-left: 2px;
     padding-right: 2px;
   }
@@ -460,11 +441,6 @@
 
     .product-information--main-product .product-information__media .media-gallery--carousel slideshow-component {
       display: block;
-    }
-
-    .product-information--main-product .product-information__media .media-gallery--carousel slideshow-component::before {
-      inset: -10px -10px -12px;
-      border-radius: 26px;
     }
 
     .product-information--main-product .product-information__media .product-media {
