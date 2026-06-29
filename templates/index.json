@@ -814,10 +814,7 @@
           "settings": {
             "show_sample_reviews": true,
             "reviews_selection": "all",
-            "products": [
-              "jeminise-custom-bible-verse-christian-blanket-personalized-inspira-b0g5ppbxw5",
-              "jeminise-custom-dog-blanket-personalized-blanket-with-dog-photo-pe-b0dg8x5f6m"
-            ],
+            "products": [],
             "star_rating": "4_to_5_star",
             "show_review_media": true,
             "display_order": "media_first",
