@@ -4,33 +4,320 @@
   if section.settings.background_color != blank
     render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
   endif
+
+  assign hero_image = section.settings.hero_image
+  assign eyebrow_text = section.settings.eyebrow | default: 'Search results'
+  assign heading_text = section.settings.heading | default: 'Cozy finds'
+  assign subtitle_text = section.settings.subtitle | default: 'Made for moments that matter.'
+  assign fallback_text = section.settings.fallback_text | default: 'Search blankets, quilts, comforters and more.'
+  assign overlay_primary = section.settings.overlay_strength | plus: 17 | at_most: 100
+  assign overlay_secondary = section.settings.overlay_strength | plus: 14 | at_most: 100
+  assign overlay_tertiary = section.settings.overlay_strength | minus: 8 | at_least: 0
+  assign overlay_edge = section.settings.overlay_strength | minus: 64 | at_least: 0
 %}
 
 <div
   class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
 ></div>
 <div class="section section--page-width{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}">
-  <div
-    class="spacing-style search-page__header"
+  <section
+    id="JemSearchHero-{{ section.id }}"
+    class="spacing-style jem-search-hero-section"
     style="
       --horizontal-alignment: {{ section.settings.alignment }};
       {% render 'spacing-style', settings: section.settings %}
     "
   >
-    {% assign heading_text = 'content.search' | t %}
+    <div class="jem-search-hero">
+      <div class="jem-search-hero__media" aria-hidden="true">
+        {% if hero_image != blank %}
+          {{
+            hero_image
+            | image_url: width: 2400
+            | image_tag:
+              alt: '',
+              loading: 'eager',
+              widths: '750, 1100, 1500, 1800, 2200, 2400',
+              sizes: '(min-width: 990px) 1200px, 100vw',
+              class: 'jem-search-hero__image'
+          }}
+        {% else %}
+          <img
+            src="{{ 'brand-intro-bedroom.png' | asset_url }}"
+            alt=""
+            loading="eager"
+            class="jem-search-hero__image"
+          >
+        {% endif %}
+      </div>
+      <div class="jem-search-hero__overlay" aria-hidden="true"></div>
 
-    {% if search.performed %}
-      {% assign heading_text = 'content.search_results' | t %}
-    {% endif %}
+      <div class="jem-search-hero__inner">
+        <div class="jem-search-hero__content">
+          {% if eyebrow_text != blank %}
+            <p class="jem-search-hero__eyebrow">{{ eyebrow_text }}</p>
+          {% endif %}
+          {% if heading_text != blank %}
+            <h1 class="jem-search-hero__title">{{ heading_text }}</h1>
+          {% endif %}
+          {% if subtitle_text != blank %}
+            <p class="jem-search-hero__subtitle">{{ subtitle_text }}</p>
+          {% endif %}
 
-    {% capture heading_text %}
-      <h3>{{ heading_text }}</h3>
-    {% endcapture %}
+          {% if search.performed and search.terms != blank and section.settings.show_results_count %}
+            <p class="jem-search-hero__meta">
+              {{ search.results_count }} results for "{{ search.terms | escape }}"
+            </p>
+          {% elsif fallback_text != blank %}
+            <p class="jem-search-hero__meta">{{ fallback_text }}</p>
+          {% endif %}
+        </div>
 
-    {% content_for 'block', id: 'heading', type: '_heading', text: heading_text %}
-    {% content_for 'block', id: 'search', type: '_search-input' %}
-  </div>
+        <div class="jem-search-hero__search">
+          {% content_for 'block', id: 'search', type: '_search-input' %}
+        </div>
+      </div>
+    </div>
+
+  </section>
 </div>
+
+{% style %}
+  #JemSearchHero-{{ section.id }} {
+    display: block;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero {
+    position: relative;
+    min-height: clamp(222px, 17vw, 238px);
+    overflow: hidden;
+    border: 1px solid rgba(116, 82, 58, 0.14);
+    border-radius: 22px;
+    background: linear-gradient(135deg, #fffaf4 0%, #f5ebe0 100%);
+    box-shadow: 0 16px 34px rgb(73 53 40 / 7%);
+    isolation: isolate;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__media,
+  #JemSearchHero-{{ section.id }} .jem-search-hero__overlay {
+    position: absolute;
+    inset: 0;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: {{ section.settings.image_position }};
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__overlay {
+    background:
+      linear-gradient(
+        90deg,
+        rgb(255 250 244 / {{ overlay_primary }}%) 0%,
+        rgb(255 250 244 / {{ overlay_secondary }}%) 24%,
+        rgb(255 250 244 / {{ overlay_tertiary | plus: 6 | at_most: 100 }}%) 46%,
+        rgb(255 250 244 / {{ overlay_edge | plus: 10 | at_most: 100 }}%) 78%
+      ),
+      linear-gradient(180deg, rgb(255 255 255 / 8%), rgb(255 255 255 / 0%));
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 460px);
+    gap: 24px;
+    align-items: center;
+    min-height: inherit;
+    padding: clamp(22px, 3.2vw, 34px);
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__content {
+    max-width: 400px;
+    color: #2f241d;
+    min-width: 0;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__eyebrow {
+    margin: 0 0 10px;
+    color: #c47a4a;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__title {
+    margin: 0;
+    color: #2f241d;
+    font-size: clamp(3rem, 3vw, 3.25rem);
+    line-height: 0.96;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__subtitle {
+    margin: 10px 0 0;
+    color: #6f5a4c;
+    font-size: 0.98rem;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__meta {
+    margin: 10px 0 0;
+    color: #6f5a4c;
+    font-size: 0.94rem;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__search {
+    width: 100%;
+    max-width: 440px;
+    justify-self: end;
+    min-width: 0;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__search .search-page-input__parent {
+    align-items: stretch;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__search search-page-input-component {
+    max-width: 100%;
+    margin: 0;
+    border-radius: 999px;
+    background: rgb(255 253 251 / 90%);
+    box-shadow: 0 10px 24px rgb(75 52 37 / 8%);
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__search .search-page-input {
+    min-height: 60px;
+    border-radius: 999px;
+    border-color: rgba(116, 82, 58, 0.1);
+    background: #fffdfb;
+    color: #2f241d;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__search .search__icon svg,
+  #JemSearchHero-{{ section.id }} .jem-search-hero__search .search__reset-button svg {
+    color: #7b6657;
+  }
+
+  @media screen and (max-width: 1199px) {
+    #JemSearchHero-{{ section.id }} .jem-search-hero {
+      min-height: 230px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__inner {
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+      padding: 24px 28px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__title {
+      font-size: clamp(2.5rem, 3.8vw, 2.7rem);
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    #JemSearchHero-{{ section.id }} .jem-search-hero {
+      min-height: clamp(220px, 30vw, 236px);
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__inner {
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 16px 20px;
+      padding: 24px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__content {
+      max-width: 360px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__title {
+      font-size: clamp(2.5rem, 5vw, 2.75rem);
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__search {
+      align-self: center;
+      max-width: 340px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #JemSearchHero-{{ section.id }} .jem-search-hero {
+      min-height: 210px;
+      border-radius: 22px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__media {
+      inset: 0;
+      height: auto;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__overlay {
+      background:
+        linear-gradient(180deg, rgb(255 250 244 / 94%) 0%, rgb(255 250 244 / 82%) 48%, rgb(47 36 29 / 18%) 100%),
+        linear-gradient(90deg, rgb(255 250 244 / 88%) 0%, rgb(255 250 244 / 24%) 100%);
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__inner {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+      align-content: space-between;
+      padding: 16px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__content {
+      max-width: 100%;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__eyebrow {
+      margin-bottom: 8px;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__title {
+      font-size: clamp(1.9rem, 8.2vw, 2.125rem);
+      line-height: 0.95;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__search {
+      justify-self: stretch;
+      max-width: 100%;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__search search-page-input-component {
+      box-shadow: 0 8px 20px rgb(75 52 37 / 7%);
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__search .search-page-input {
+      min-height: 48px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__subtitle,
+    #JemSearchHero-{{ section.id }} .jem-search-hero__meta {
+      font-size: 0.81rem;
+      line-height: 1.35;
+    }
+  }
+
+  @media screen and (max-width: 479px) {
+    #JemSearchHero-{{ section.id }} .jem-search-hero {
+      min-height: 204px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__inner {
+      padding: 14px;
+      gap: 10px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__title {
+      font-size: clamp(1.875rem, 9vw, 2rem);
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__search .search-page-input {
+      min-height: 46px;
+    }
+  }
+{% endstyle %}
 
 {% schema %}
 {
@@ -63,6 +350,79 @@
       "placeholder": "t:settings.default"
     },
     {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Banner image"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Search results"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Cozy finds"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Made for moments that matter."
+    },
+    {
+      "type": "text",
+      "id": "fallback_text",
+      "label": "Fallback text before search",
+      "default": "Search blankets, quilts, comforters and more."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_results_count",
+      "label": "Show search results count",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "overlay_strength",
+      "label": "Overlay strength",
+      "min": 70,
+      "max": 96,
+      "step": 1,
+      "unit": "%",
+      "default": 80
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position",
+      "default": "center right",
+      "options": [
+        {
+          "value": "center center",
+          "label": "Center"
+        },
+        {
+          "value": "center right",
+          "label": "Right"
+        },
+        {
+          "value": "center left",
+          "label": "Left"
+        },
+        {
+          "value": "top center",
+          "label": "Top"
+        },
+        {
+          "value": "bottom center",
+          "label": "Bottom"
+        }
+      ]
+    },
+    {
       "type": "header",
       "content": "t:content.padding"
     },
@@ -85,6 +445,11 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Search hero"
     }
   ]
 }
