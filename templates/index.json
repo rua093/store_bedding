@@ -210,9 +210,9 @@
       "settings": {
         "collection_list": [
           "baseball",
-          "best-selling",
           "cactus",
-          "cardinal"
+          "cardinal",
+          "book-lover-blankets"
         ],
         "layout_type": "bento",
         "carousel_on_mobile": true,
@@ -418,14 +418,12 @@
       "type": "bestselling-bedding",
       "settings": {
         "collection": "best-selling",
-        "promo_image": "",
         "eyebrow": "OUR MOST LOVED",
         "title": "Bestselling Bedding",
         "description": "Loved for softness, warmth and everyday comfort.",
         "cta_label": "Shop Collection",
         "cta_link": "shopify://collections/best-selling",
-        "section_width": "page-width",
-        "color_scheme": "scheme-1"
+        "section_width": "page-width"
       }
     },
     "trust_signals_P6hero": {
@@ -459,7 +457,7 @@
         "text_A2": {
           "type": "text",
           "settings": {
-            "text": "<p><strong>Breathable &amp; Cozy</strong>Lightweight warmth all year round</p>",
+            "text": "<p><strong>Breathable & Cozy</strong>Lightweight warmth all year round</p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -540,8 +538,8 @@
       ],
       "settings": {
         "background_color": "#f2e5db",
-        "padding-block-start": 40,
-        "padding-block-end": 40,
+        "padding-block-start": 0,
+        "padding-block-end": 0,
         "gap_between_items": 20
       }
     },
