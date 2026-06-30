@@ -89,12 +89,12 @@
 
   #JemSearchHero-{{ section.id }} .jem-search-hero {
     position: relative;
-    min-height: clamp(210px, 28vw, 238px);
+    min-height: clamp(222px, 17vw, 238px);
     overflow: hidden;
     border: 1px solid rgba(116, 82, 58, 0.14);
-    border-radius: 24px;
+    border-radius: 22px;
     background: linear-gradient(135deg, #fffaf4 0%, #f5ebe0 100%);
-    box-shadow: 0 20px 46px rgb(73 53 40 / 8%);
+    box-shadow: 0 16px 34px rgb(73 53 40 / 7%);
     isolation: isolate;
   }
 
@@ -116,27 +116,28 @@
       linear-gradient(
         90deg,
         rgb(255 250 244 / {{ overlay_primary }}%) 0%,
-        rgb(255 250 244 / {{ overlay_secondary }}%) 26%,
-        rgb(255 250 244 / {{ overlay_tertiary }}%) 46%,
-        rgb(255 250 244 / {{ overlay_edge }}%) 78%
+        rgb(255 250 244 / {{ overlay_secondary }}%) 24%,
+        rgb(255 250 244 / {{ overlay_tertiary | plus: 6 | at_most: 100 }}%) 46%,
+        rgb(255 250 244 / {{ overlay_edge | plus: 10 | at_most: 100 }}%) 78%
       ),
-      linear-gradient(180deg, rgb(255 255 255 / 10%), rgb(255 255 255 / 0%));
+      linear-gradient(180deg, rgb(255 255 255 / 8%), rgb(255 255 255 / 0%));
   }
 
   #JemSearchHero-{{ section.id }} .jem-search-hero__inner {
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(360px, 430px);
-    gap: 30px;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 460px);
+    gap: 24px;
     align-items: center;
     min-height: inherit;
-    padding: clamp(24px, 4vw, 40px);
+    padding: clamp(22px, 3.2vw, 34px);
   }
 
   #JemSearchHero-{{ section.id }} .jem-search-hero__content {
-    max-width: 430px;
+    max-width: 400px;
     color: #2f241d;
+    min-width: 0;
   }
 
   #JemSearchHero-{{ section.id }} .jem-search-hero__eyebrow {
@@ -151,26 +152,27 @@
   #JemSearchHero-{{ section.id }} .jem-search-hero__title {
     margin: 0;
     color: #2f241d;
-    font-size: clamp(2.125rem, 4vw, 3rem);
-    line-height: 0.95;
+    font-size: clamp(3rem, 3vw, 3.25rem);
+    line-height: 0.96;
   }
 
   #JemSearchHero-{{ section.id }} .jem-search-hero__subtitle {
-    margin: 12px 0 0;
+    margin: 10px 0 0;
     color: #6f5a4c;
-    font-size: 1rem;
+    font-size: 0.98rem;
   }
 
   #JemSearchHero-{{ section.id }} .jem-search-hero__meta {
-    margin: 12px 0 0;
+    margin: 10px 0 0;
     color: #6f5a4c;
-    font-size: 0.96rem;
+    font-size: 0.94rem;
   }
 
   #JemSearchHero-{{ section.id }} .jem-search-hero__search {
     width: 100%;
-    max-width: 430px;
+    max-width: 440px;
     justify-self: end;
+    min-width: 0;
   }
 
   #JemSearchHero-{{ section.id }} .jem-search-hero__search .search-page-input__parent {
@@ -181,14 +183,14 @@
     max-width: 100%;
     margin: 0;
     border-radius: 999px;
-    background: rgb(255 253 251 / 92%);
-    box-shadow: 0 16px 34px rgb(75 52 37 / 10%);
+    background: rgb(255 253 251 / 90%);
+    box-shadow: 0 10px 24px rgb(75 52 37 / 8%);
   }
 
   #JemSearchHero-{{ section.id }} .jem-search-hero__search .search-page-input {
     min-height: 60px;
     border-radius: 999px;
-    border-color: rgba(116, 82, 58, 0.12);
+    border-color: rgba(116, 82, 58, 0.1);
     background: #fffdfb;
     color: #2f241d;
   }
@@ -198,45 +200,121 @@
     color: #7b6657;
   }
 
+  @media screen and (max-width: 1199px) {
+    #JemSearchHero-{{ section.id }} .jem-search-hero {
+      min-height: 230px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__inner {
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+      padding: 24px 28px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__title {
+      font-size: clamp(2.5rem, 3.8vw, 2.7rem);
+    }
+  }
+
   @media screen and (max-width: 989px) {
+    #JemSearchHero-{{ section.id }} .jem-search-hero {
+      min-height: clamp(220px, 30vw, 236px);
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__inner {
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 16px 20px;
+      padding: 24px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__content {
+      max-width: 360px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__title {
+      font-size: clamp(2.5rem, 5vw, 2.75rem);
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__search {
+      align-self: center;
+      max-width: 340px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #JemSearchHero-{{ section.id }} .jem-search-hero {
+      min-height: 210px;
+      border-radius: 22px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__media {
+      inset: 0;
+      height: auto;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__overlay {
+      background:
+        linear-gradient(180deg, rgb(255 250 244 / 94%) 0%, rgb(255 250 244 / 82%) 48%, rgb(47 36 29 / 18%) 100%),
+        linear-gradient(90deg, rgb(255 250 244 / 88%) 0%, rgb(255 250 244 / 24%) 100%);
+    }
+
     #JemSearchHero-{{ section.id }} .jem-search-hero__inner {
       grid-template-columns: minmax(0, 1fr);
-      gap: 20px;
+      gap: 12px;
+      align-content: space-between;
+      padding: 16px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__content {
+      max-width: 100%;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__eyebrow {
+      margin-bottom: 8px;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__title {
+      font-size: clamp(1.9rem, 8.2vw, 2.125rem);
+      line-height: 0.95;
     }
 
     #JemSearchHero-{{ section.id }} .jem-search-hero__search {
       justify-self: stretch;
       max-width: 100%;
     }
-  }
 
-  @media screen and (max-width: 749px) {
-    #JemSearchHero-{{ section.id }} .jem-search-hero {
-      min-height: 0;
-      border-radius: 22px;
+    #JemSearchHero-{{ section.id }} .jem-search-hero__search search-page-input-component {
+      box-shadow: 0 8px 20px rgb(75 52 37 / 7%);
     }
 
-    #JemSearchHero-{{ section.id }} .jem-search-hero__media {
-      inset: auto 0 0 0;
-      height: 48%;
-    }
-
-    #JemSearchHero-{{ section.id }} .jem-search-hero__overlay {
-      background:
-        linear-gradient(180deg, rgb(255 250 244 / 98%) 0%, rgb(255 250 244 / 92%) 42%, rgb(255 250 244 / 60%) 70%, rgb(255 250 244 / 16%) 100%);
-    }
-
-    #JemSearchHero-{{ section.id }} .jem-search-hero__inner {
-      padding: 20px 18px 144px;
-    }
-
-    #JemSearchHero-{{ section.id }} .jem-search-hero__title {
-      font-size: 1.75rem;
+    #JemSearchHero-{{ section.id }} .jem-search-hero__search .search-page-input {
+      min-height: 48px;
     }
 
     #JemSearchHero-{{ section.id }} .jem-search-hero__subtitle,
     #JemSearchHero-{{ section.id }} .jem-search-hero__meta {
-      font-size: 0.94rem;
+      font-size: 0.81rem;
+      line-height: 1.35;
+    }
+  }
+
+  @media screen and (max-width: 479px) {
+    #JemSearchHero-{{ section.id }} .jem-search-hero {
+      min-height: 204px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__inner {
+      padding: 14px;
+      gap: 10px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__title {
+      font-size: clamp(1.875rem, 9vw, 2rem);
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__search .search-page-input {
+      min-height: 46px;
     }
   }
 {% endstyle %}
