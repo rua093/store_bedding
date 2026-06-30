@@ -4,11 +4,7 @@
   assign product = block.settings.product
 -%}
 
-{% capture children %}
-  {% content_for 'blocks', closest.product: product %}
-{% endcapture %}
-
-{% render 'product-card', children: children, product: product, block: block %}
+{% render 'custom-product-card', product: product, section_id: section.id, product_view_context: 'manual-product-card', show_badge: true %}
 
 {% schema %}
 {

@@ -11,6 +11,7 @@
 
   assign hero_description = collection.description | strip_html | strip
   assign hero_widths = '750, 1100, 1500, 1800, 2100, 2400, 2880, 3200, 3840'
+  assign fallback_hero_bg = 'bg-product.png' | asset_url
 %}
 
 <section
@@ -18,7 +19,10 @@
   class="collection-hero-wrapper"
   aria-labelledby="CollectionHeroTitle-{{ section.id }}"
 >
-  <div class="collection-hero{% unless has_hero_image %} collection-hero--no-media{% endunless %}">
+  <div
+    class="collection-hero{% unless has_hero_image %} collection-hero--no-media{% endunless %}"
+    style="--collection-hero-bg: url('{{ fallback_hero_bg }}');"
+  >
     {% if has_hero_image %}
       <div class="collection-hero__media">
         {{
@@ -64,13 +68,11 @@
     min-height: 520px;
     max-height: 560px;
     overflow: hidden;
-    background: linear-gradient(180deg, #f4efe7 0%, #ece3d7 100%);
+    background: var(--collection-hero-bg) center / cover no-repeat;
   }
 
   .collection-hero--no-media {
-    background:
-      radial-gradient(circle at top, rgb(255 255 255 / 0.5), transparent 52%),
-      linear-gradient(180deg, #f5efe7 0%, #e8ddcf 100%);
+    background: var(--collection-hero-bg) center / cover no-repeat;
   }
 
   .collection-hero__media,
@@ -95,8 +97,8 @@
 
   .collection-hero__placeholder {
     background:
-      linear-gradient(135deg, rgb(255 255 255 / 0.18), transparent 38%),
-      linear-gradient(180deg, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0));
+      linear-gradient(135deg, rgb(255 255 255 / 0.08), transparent 38%),
+      linear-gradient(180deg, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0));
   }
 
   .collection-hero__content {
@@ -147,14 +149,7 @@
 }
 
 .collection-hero--no-media .collection-hero__content-inner::before {
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgb(255 255 255 / 0.58) 0%,
-      rgb(255 255 255 / 0.28) 56%,
-      transparent 76%
-    );
-  box-shadow: none;
+  display: none;
 }
 
 .collection-hero__eyebrow {
@@ -211,14 +206,18 @@
 }
 
 .collection-hero--no-media .collection-hero__eyebrow {
-  color: rgb(76 58 44 / 0.78);
-  text-shadow: none;
+  color: rgb(76 58 44 / 0.86);
+  text-shadow:
+    0 1px 0 rgb(255 250 244 / 0.5),
+    0 8px 24px rgb(255 250 244 / 0.35);
 }
 
 .collection-hero--no-media .collection-hero__title {
   color: #2f241d;
   -webkit-text-stroke: 0;
-  text-shadow: none;
+  text-shadow:
+    0 1px 0 rgb(255 250 244 / 0.5),
+    0 8px 24px rgb(255 250 244 / 0.35);
 }
 
 .collection-hero--no-media .collection-hero__title::after {

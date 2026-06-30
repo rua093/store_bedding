@@ -54,83 +54,13 @@
           <div class="bestselling-bedding__product-grid">
             {% if featured_collection != blank and featured_collection.products_count > 0 %}
               {% for product in featured_collection.products limit: 6 %}
-                {% liquid
-                  assign card_variant = product.selected_or_first_available_variant
-                  assign product_card_id = 'bestselling-bedding-card-link-' | append: section.id | append: '-' | append: product.id
-                  assign current_price = card_variant.price
-                  assign compare_price = card_variant.compare_at_price
-                  assign max_safe_compare_price = current_price | times: 5
-                  assign show_compare_price = false
-                  assign has_quick_add = false
-                  if settings.quick_add and product.available
-                    assign has_quick_add = true
-                  endif
-                  assign has_mobile_quick_add = false
-                  if has_quick_add and settings.mobile_quick_add
-                    assign has_mobile_quick_add = true
-                  endif
-                  if compare_price > current_price and compare_price <= max_safe_compare_price
-                    assign show_compare_price = true
-                  endif
-
-                  assign badge_label = 'Best Seller'
-                  if show_compare_price
-                    assign badge_label = 'Sale'
-                  endif
+                {% render 'custom-product-card',
+                  product: product,
+                  section_id: section.id,
+                  product_view_context: 'home-bestselling-bedding',
+                  show_badge: true,
+                  card_class: 'bestselling-bedding-card'
                 %}
-
-                <product-card
-                  class="product-card bestselling-bedding-card"
-                  data-product-id="{{ product.id }}"
-                  style="
-                    --quick-add-display: {% if has_quick_add %}flex{% else %}none{% endif %};
-                    --quick-add-mobile-display: {% if has_mobile_quick_add %}flex{% else %}none{% endif %};
-                    --quick-add-mobile-opacity: {% if has_mobile_quick_add %}1{% else %}0{% endif %};
-                  ">
-                  <a
-                    id="{{ product_card_id | md5 }}"
-                    class="bestselling-bedding-card__card-link"
-                    href="{{ card_variant.url | default: product.url }}"
-                    ref="productCardLink">
-                    <span class="visually-hidden">{{ product.title }}</span>
-                  </a>
-                  <div class="bestselling-bedding-card__card">
-                    <div class="bestselling-bedding-card__media">
-                      {% if product.featured_media != blank %}
-                        {{
-                          product.featured_media | image_url: width: 960 | image_tag: class: 'bestselling-bedding-card__image', widths: '220, 320, 480, 640, 960', sizes: '(min-width: 990px) 17vw, (min-width: 750px) 28vw, 46vw', loading: 'lazy', alt: product.featured_media.alt | default: product.title
-                        }}
-                        {% if product.media.size > 1 %}
-                          {{
-                            product.media[1] | image_url: width: 960 | image_tag: class: 'bestselling-bedding-card__image bestselling-bedding-card__image--hover', widths: '220, 320, 480, 640, 960', sizes: '(min-width: 990px) 17vw, (min-width: 750px) 28vw, 46vw', loading: 'lazy', alt: product.media[1].alt | default: product.title
-                          }}
-                        {% endif %}
-                      {% else %}
-                        <div class="bestselling-bedding-card__placeholder" aria-hidden="true">
-                          {{ 'product-apparel-1' | placeholder_svg_tag: 'bestselling-bedding-card__placeholder-svg' }}
-                        </div>
-                      {% endif %}
-                      <span class="bestselling-bedding-card__badge{% if badge_label == 'Sale' %} bestselling-bedding-card__badge--sale{% endif %}">
-                        {{ badge_label }}
-                      </span>
-                      {% if settings.quick_add or settings.mobile_quick_add %}
-                        {% render 'quick-add'
-                          , product: product
-                          , section_id: section.id %}
-                      {% endif %}
-                    </div>
-
-                    <div class="bestselling-bedding-card__content">
-                      <h3 class="bestselling-bedding-card__title">{{ product.title | escape }}</h3>
-                      <div class="bestselling-bedding-card__price-row">
-                        <span class="bestselling-bedding-card__price">{{ current_price | money }}</span>
-                        {% if show_compare_price %}
-                          <span class="bestselling-bedding-card__compare">{{ compare_price | money }}</span>
-                        {% endif %}
-                      </div>
-                    </div>
-                  </div>
-                </product-card>
               {% endfor %}
             {% else %}
               {% for index in (1..6) %}

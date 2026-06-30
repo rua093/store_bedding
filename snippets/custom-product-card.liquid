@@ -1,0 +1,403 @@
+{%- doc -%}
+  Lightweight custom product card without card-gallery/slideshow.
+
+  @param {object} product
+  @param {string} section_id
+  @param {string} [product_view_context]
+  @param {boolean} [show_badge]
+  @param {string} [card_class]
+{%- enddoc -%}
+
+{% liquid
+  assign selected_variant = product.selected_or_first_available_variant
+  assign product_card_section_id = section_id | default: 'custom-product-card'
+  assign product_card_id = 'custom-product-card-link-' | append: product_card_section_id | append: '-' | append: product.id
+  assign current_price = selected_variant.price
+  assign compare_price = selected_variant.compare_at_price
+  assign max_safe_compare_price = current_price | times: 5
+  assign show_compare_price = false
+  if compare_price > current_price and compare_price <= max_safe_compare_price
+    assign show_compare_price = true
+  endif
+
+  assign show_sale_badge = false
+  if show_badge and show_compare_price
+    assign show_sale_badge = true
+  endif
+
+  assign has_quick_add = false
+  if settings.quick_add and product.available
+    assign has_quick_add = true
+  endif
+
+  assign has_mobile_quick_add = false
+  if has_quick_add and settings.mobile_quick_add
+    assign has_mobile_quick_add = true
+  endif
+
+  assign root_card_class = card_class | default: ''
+  assign contextual_link_class = ''
+  assign contextual_card_class = ''
+  assign contextual_media_class = ''
+  assign contextual_image_class = ''
+  assign contextual_hover_image_class = ''
+  assign contextual_placeholder_class = ''
+  assign contextual_placeholder_svg_class = ''
+  assign contextual_badge_class = ''
+  assign contextual_content_class = ''
+  assign contextual_title_class = ''
+  assign contextual_price_row_class = ''
+  assign contextual_price_class = ''
+  assign contextual_compare_class = ''
+  assign featured_image_classes = 'custom-product-card__image'
+  assign hover_image_classes = 'custom-product-card__image custom-product-card__image--hover'
+  assign placeholder_svg_classes = 'custom-product-card__placeholder-svg'
+
+  if root_card_class != blank
+    assign contextual_link_class = root_card_class | append: '__card-link'
+    assign contextual_card_class = root_card_class | append: '__card'
+    assign contextual_media_class = root_card_class | append: '__media'
+    assign contextual_image_class = root_card_class | append: '__image'
+    assign contextual_hover_image_class = root_card_class | append: '__image--hover'
+    assign contextual_placeholder_class = root_card_class | append: '__placeholder'
+    assign contextual_placeholder_svg_class = root_card_class | append: '__placeholder-svg'
+    assign contextual_badge_class = root_card_class | append: '__badge'
+    assign contextual_content_class = root_card_class | append: '__content'
+    assign contextual_title_class = root_card_class | append: '__title'
+    assign contextual_price_row_class = root_card_class | append: '__price-row'
+    assign contextual_price_class = root_card_class | append: '__price'
+    assign contextual_compare_class = root_card_class | append: '__compare'
+    assign featured_image_classes = featured_image_classes | append: ' ' | append: contextual_image_class
+    assign hover_image_classes = hover_image_classes | append: ' ' | append: contextual_image_class | append: ' ' | append: contextual_hover_image_class
+    assign placeholder_svg_classes = placeholder_svg_classes | append: ' ' | append: contextual_placeholder_svg_class
+  endif
+
+  assign onboarding = false
+  if product == blank or product.id == empty
+    assign onboarding = true
+  endif
+%}
+
+<product-card
+  class="product-card custom-product-card{% if root_card_class != blank %} {{ root_card_class }}{% endif %}"
+  data-product-id="{{ product.id }}"
+  {% if onboarding %}
+    data-placeholder="true"
+  {% endif %}
+  style="
+    --quick-add-display: {% if has_quick_add %}flex{% else %}none{% endif %};
+    --quick-add-mobile-display: {% if has_mobile_quick_add %}flex{% else %}none{% endif %};
+    --quick-add-mobile-opacity: {% if has_mobile_quick_add %}1{% else %}0{% endif %};
+    --padding-inline-end: 0.35rem;
+    --padding-block-end: 0.35rem;
+    --border-radius: 18px;
+  "
+  {%- unless onboarding -%}
+    {% # theme-check-disable-next-line UnknownFilter %}
+    view-event-payload="{{ product | standard_event_data: 'view', context: product_view_context | escape }}"
+  {%- endunless -%}
+>
+  <a
+    id="{{ product_card_id | md5 }}"
+    class="custom-product-card__card-link{% if contextual_link_class != blank %} {{ contextual_link_class }}{% endif %}"
+    {% unless onboarding %}
+      href="{{ selected_variant.url | default: product.url }}"
+    {% endunless %}
+    ref="productCardLink"
+  >
+    <span class="visually-hidden">{{ product.title }}</span>
+  </a>
+
+  <div class="custom-product-card__card{% if contextual_card_class != blank %} {{ contextual_card_class }}{% endif %}">
+    <div class="custom-product-card__media{% if contextual_media_class != blank %} {{ contextual_media_class }}{% endif %}">
+      {% if product.featured_media != blank %}
+        {{
+          product.featured_media
+          | image_url: width: 960
+          | image_tag:
+            class: featured_image_classes,
+            widths: '220, 320, 480, 640, 960',
+            sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw',
+            loading: 'lazy',
+            alt: product.featured_media.alt | default: product.title
+        }}
+        {% if product.media.size > 1 %}
+          {{
+            product.media[1]
+            | image_url: width: 960
+            | image_tag:
+              class: hover_image_classes,
+              widths: '220, 320, 480, 640, 960',
+              sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw',
+              loading: 'lazy',
+              alt: product.media[1].alt | default: product.title
+          }}
+        {% endif %}
+      {% else %}
+        <div class="custom-product-card__placeholder{% if contextual_placeholder_class != blank %} {{ contextual_placeholder_class }}{% endif %}" aria-hidden="true">
+          {{ 'product-apparel-1' | placeholder_svg_tag: placeholder_svg_classes }}
+        </div>
+      {% endif %}
+
+      {% if show_sale_badge %}
+        <span class="custom-product-card__badge custom-product-card__badge--sale{% if contextual_badge_class != blank %} {{ contextual_badge_class }} {{ contextual_badge_class }}--sale{% endif %}">
+          Sale
+        </span>
+      {% endif %}
+
+      {% if settings.quick_add or settings.mobile_quick_add %}
+        {% render 'quick-add', product: product, section_id: product_card_section_id %}
+      {% endif %}
+    </div>
+
+    <div class="custom-product-card__content{% if contextual_content_class != blank %} {{ contextual_content_class }}{% endif %}">
+      <h3 class="custom-product-card__title{% if contextual_title_class != blank %} {{ contextual_title_class }}{% endif %}">
+        {{ product.title | escape }}
+      </h3>
+      <div class="custom-product-card__price-row{% if contextual_price_row_class != blank %} {{ contextual_price_row_class }}{% endif %}">
+        <span class="custom-product-card__price{% if contextual_price_class != blank %} {{ contextual_price_class }}{% endif %}">
+          {{ current_price | money }}
+        </span>
+        {% if show_compare_price %}
+          <span class="custom-product-card__compare{% if contextual_compare_class != blank %} {{ contextual_compare_class }}{% endif %}">
+            {{ compare_price | money }}
+          </span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</product-card>
+
+{% style %}
+  .custom-product-card {
+    position: relative;
+    min-width: 0;
+    height: 100%;
+  }
+
+  .custom-product-card__card-link {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: 22px;
+  }
+
+  .custom-product-card__card {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 0.62rem;
+    height: 100%;
+    padding: 0.72rem;
+    border: 1px solid rgba(116, 82, 58, 0.18);
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(255, 254, 251, 0.995) 0%, rgba(255, 249, 242, 0.985) 100%);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.9) inset,
+      0 14px 30px rgba(80, 58, 43, 0.08),
+      0 3px 10px rgba(80, 58, 43, 0.04);
+    color: inherit;
+    text-decoration: none;
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      border-color 180ms ease;
+  }
+
+  .custom-product-card .quick-add {
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .custom-product-card .quick-add__button {
+    z-index: 6;
+    pointer-events: all;
+  }
+
+  .custom-product-card__media {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    aspect-ratio: 1 / 1.02;
+    background: linear-gradient(180deg, #f2e4d8 0%, #ead6c3 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.75),
+      inset 0 0 0 1px rgba(121, 90, 69, 0.08);
+  }
+
+  .custom-product-card__image,
+  .custom-product-card__placeholder,
+  .custom-product-card__placeholder-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .custom-product-card__image {
+    display: block;
+    object-fit: cover;
+    transition:
+      opacity 850ms ease,
+      transform 1100ms ease,
+      filter 900ms ease;
+    transform: scale(1);
+  }
+
+  .custom-product-card__image--hover {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .custom-product-card__placeholder {
+    background:
+      radial-gradient(circle at top left, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0) 24%),
+      linear-gradient(180deg, #efdfd0 0%, #dec6b1 100%);
+  }
+
+  .custom-product-card__placeholder-svg {
+    display: block;
+    opacity: 0.24;
+    color: #fffaf4;
+  }
+
+  .custom-product-card__badge {
+    position: absolute;
+    top: 0.72rem;
+    left: 0.72rem;
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.8rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    font-family: var(--font-subheading--family);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: rgba(154, 79, 43, 0.96);
+    color: #fff8f1;
+    box-shadow: 0 10px 22px rgba(108, 55, 29, 0.22);
+    border: 1px solid transparent;
+  }
+
+  .custom-product-card__content {
+    display: grid;
+    align-content: start;
+    gap: 0.42rem;
+    min-width: 0;
+  }
+
+  .custom-product-card__title {
+    margin: 0;
+    font-family: var(--font-body--family);
+    font-style: var(--font-body--style);
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.38;
+    letter-spacing: -0.01em;
+    color: #000000;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .custom-product-card__price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+  }
+
+  .custom-product-card__price {
+    font-family: var(--font-body--family);
+    font-style: var(--font-body--style);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #c62828;
+  }
+
+  .custom-product-card__compare {
+    font-family: var(--font-body--family);
+    font-style: var(--font-body--style);
+    font-size: 0.85rem;
+    color: #a99384;
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .custom-product-card:is(:hover, :focus-within) .custom-product-card__card {
+      transform: translateY(-3px);
+      border-color: rgba(116, 82, 58, 0.28);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.94) inset,
+        0 20px 40px rgba(80, 58, 43, 0.11),
+        0 6px 18px rgba(80, 58, 43, 0.06);
+    }
+
+    .custom-product-card:is(:hover, :focus-within) .quick-add__button {
+      opacity: 1;
+    }
+
+    .custom-product-card:is(:hover, :focus-within) .custom-product-card__image--hover {
+      opacity: 1;
+      transform: scale(1.045);
+      filter: saturate(1.015);
+    }
+
+    .custom-product-card:is(:hover, :focus-within) .custom-product-card__image:not(.custom-product-card__image--hover),
+    .custom-product-card:is(:hover, :focus-within) .custom-product-card__placeholder {
+      transform: scale(1.03);
+      filter: saturate(1.01);
+    }
+  }
+
+  @media screen and (max-width: 1199px) {
+    .custom-product-card__card {
+      padding: 0.62rem;
+      border-radius: 20px;
+    }
+
+    .custom-product-card__title {
+      font-size: 0.94rem;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .custom-product-card__card {
+      gap: 0.52rem;
+      padding: 0.58rem;
+      border-radius: 18px;
+    }
+
+    .custom-product-card__media {
+      border-radius: 15px;
+      aspect-ratio: 1 / 1.08;
+    }
+
+    .custom-product-card__badge {
+      top: 0.52rem;
+      left: 0.52rem;
+      min-height: 1.55rem;
+      padding: 0.18rem 0.56rem;
+      font-size: 0.62rem;
+    }
+
+    .custom-product-card__title {
+      font-size: 0.88rem;
+      line-height: 1.4;
+    }
+
+    .custom-product-card__price {
+      font-size: 0.94rem;
+    }
+
+    .custom-product-card__compare {
+      font-size: 0.78rem;
+    }
+  }
+{% endstyle %}
