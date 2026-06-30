@@ -42,11 +42,17 @@
   assign patchwork_heading = section.settings.patchwork_heading | strip
   assign patchwork_subheading = section.settings.patchwork_subheading | strip
   assign patchwork_count = 0
-  assign intro_collection = section_collections.first
+  assign intro_collection = blank
   assign intro_image = blank
   assign intro_title = 'Collection coming soon'
   assign intro_alt = ''
   assign right_tile_limit = max_items | minus: 1
+
+  if has_selected_collections
+    for collection in section_collections limit: 1
+      assign intro_collection = collection
+    endfor
+  endif
 
   if has_selected_collections
     for collection in section_collections offset: 1 limit: right_tile_limit
