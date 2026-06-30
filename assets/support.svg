@@ -1,0 +1,11 @@
+<svg viewBox="0 -4 64 64" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+  <g transform="translate(1 1)">
+    <path d="M9,23 C9,8.9 17.2,0 31,0 C44.8,0 53,8.8 53,23"/>
+    <path d="M9.2,41 C4.1,41 0,37 0,32 C0,27 4.1,23 9.2,23 C14.2,23 14.2,41 9.2,41 Z"/>
+    <path d="M52.8,41 C57.9,41 62,37 62,32 C62,27 57.9,23 52.8,23 C47.8,23 47.8,41 52.8,41 Z"/>
+    <path d="M54,41.1 C54,50.6 42.3,49.9 39.1,49.9"/>
+    <ellipse cx="33.5" cy="50" rx="5.5" ry="4"/>
+    <path d="M4.1,39 C4.1,39 8.5,31.9 4.1,25.1"/>
+    <path d="M58,25.1 C58,25.1 53.6,32.2 58,39"/>
+  </g>
+</svg>

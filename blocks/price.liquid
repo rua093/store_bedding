@@ -40,6 +40,8 @@
   class="text-block {{ text_block_classes }} text-{{ block_settings.alignment }} {{ block_settings.type_preset | default: 'paragraph' }} spacing-style"
   data-block-id="{{ block.id }}"
   data-product-id="{{ product_resource.id }}"
+  data-money-format="{% if settings.currency_code_enabled_product_pages %}{{ shop.money_with_currency_format | strip_html | escape }}{% else %}{{ shop.money_format | strip_html | escape }}{% endif %}"
+  data-currency="{{ cart.currency.iso_code | default: shop.currency }}"
   style="
     {% render 'typography-style', settings: block_settings %}
     {% render 'spacing-style', settings: block_settings %}

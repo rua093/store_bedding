@@ -1,6 +1,7 @@
 import { ThemeEvents } from '@theme/events';
 import { Component } from '@theme/component';
 import { StandardEvents, ProductSelectEvent } from '@shopify/events';
+import { formatMoney } from '@theme/money-formatting';
 
 /**
  * @typedef {Object} ProductPriceRefs
@@ -38,6 +39,8 @@ class ProductPrice extends Component {
    */
   #handleProductSelect = (event) => {
     if (!(event.target instanceof Element) || event.target.closest('product-card')) return;
+
+    this.#optimisticallyUpdatePrice(event);
 
     event.promise
       .then(({ detail }) => {
@@ -86,6 +89,130 @@ class ProductPrice extends Component {
         if (error?.name !== 'AbortError') console.warn('[product-price] Event promise rejected:', error);
       });
   };
+
+  /**
+   * Updates the PDP price immediately using selected variant option data.
+   * Falls back to server-rendered replacement after the variant fetch resolves.
+   * @param {ProductSelectEvent} event
+   */
+  #optimisticallyUpdatePrice(event) {
+    if (!(event.target instanceof Element)) return;
+    if (event.target.closest('product-card') || event.target.closest('quick-add-dialog')) return;
+
+    const variantPicker =
+      event.target instanceof HTMLElement ? event.target.closest('variant-picker') : null;
+
+    if (!(variantPicker instanceof HTMLElement)) return;
+
+    const priceSource = this.#getSelectedPriceSource(variantPicker, event);
+    if (!(priceSource instanceof HTMLElement)) return;
+
+    const price = Number(priceSource.dataset.variantPrice);
+    if (!Number.isFinite(price)) return;
+
+    const compareAtPrice = Number(priceSource.dataset.variantCompareAtPrice);
+    this.#updatePriceDisplay(price, compareAtPrice);
+  }
+
+  /**
+   * @param {HTMLElement} variantPicker
+   * @param {ProductSelectEvent} event
+   * @returns {HTMLElement | null}
+   */
+  #getSelectedPriceSource(variantPicker, event) {
+    const optionValueId = event.detail?.optionValueId;
+    if (optionValueId) {
+      const optionById = variantPicker.querySelector(`[data-option-value-id="${CSS.escape(optionValueId)}"]`);
+      if (optionById instanceof HTMLElement) return optionById;
+    }
+
+    const selectedOption = variantPicker.querySelector('select option:checked');
+    if (selectedOption instanceof HTMLElement) return selectedOption;
+
+    const checkedInput = variantPicker.querySelector('fieldset input:checked');
+    if (checkedInput instanceof HTMLElement) return checkedInput;
+
+    return null;
+  }
+
+  /**
+   * @param {number} priceCents
+   * @param {number} compareAtPriceCents
+   */
+  #updatePriceDisplay(priceCents, compareAtPriceCents) {
+    const { priceContainer } = this.refs;
+    if (!(priceContainer instanceof HTMLElement)) return;
+
+    const formattedPrice = this.#formatPrice(priceCents);
+    const hasComparePrice = Number.isFinite(compareAtPriceCents) && compareAtPriceCents > priceCents;
+
+    const regularPrice = priceContainer.querySelector('.price__regular .price');
+    const salePrice = priceContainer.querySelector('.price__sale .price-item--sale.price, .price__sale .price');
+    const comparePrices = Array.from(priceContainer.querySelectorAll('.compare-at-price'));
+    const regularBlock = priceContainer.querySelector('.price__regular');
+    const saleBlock = priceContainer.querySelector('.price__sale');
+    const badge = this.querySelector('.price-sale-badge');
+
+    if (hasComparePrice) {
+      const formattedCompareAtPrice = this.#formatPrice(compareAtPriceCents);
+      const savingsPercentage = Math.round(((compareAtPriceCents - priceCents) * 100) / compareAtPriceCents);
+
+      regularBlock?.classList.add('price__hidden');
+      saleBlock?.classList.remove('price__hidden');
+
+      if (salePrice) salePrice.textContent = formattedPrice;
+      comparePrices.forEach((comparePrice) => {
+        comparePrice.textContent = formattedCompareAtPrice;
+      });
+
+      if (badge instanceof HTMLElement) {
+        badge.textContent = `Save ${savingsPercentage}%`;
+        badge.hidden = false;
+        badge.style.display = '';
+      }
+      return;
+    }
+
+    regularBlock?.classList.remove('price__hidden');
+    saleBlock?.classList.add('price__hidden');
+
+    if (regularPrice) regularPrice.textContent = formattedPrice;
+    if (salePrice) salePrice.textContent = formattedPrice;
+    comparePrices.forEach((comparePrice) => {
+      comparePrice.textContent = '';
+    });
+
+    if (badge instanceof HTMLElement) {
+      badge.hidden = true;
+      badge.style.display = 'none';
+    }
+  }
+
+  /**
+   * @param {number} cents
+   * @returns {string}
+   */
+  #formatPrice(cents) {
+    const moneyFormat = this.dataset.moneyFormat || '${{amount}}';
+    const currency = this.dataset.currency || window.Shopify?.currency?.active || 'USD';
+    const locale = document.documentElement.lang || navigator.language || 'en-US';
+
+    try {
+      return formatMoney(cents, moneyFormat, currency);
+    } catch (_error) {
+      try {
+        return new Intl.NumberFormat(locale, {
+          style: 'currency',
+          currency,
+        }).format(cents / 100);
+      } catch (_fallbackError) {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        }).format(cents / 100);
+      }
+    }
+  }
 }
 
 if (!customElements.get('product-price')) {

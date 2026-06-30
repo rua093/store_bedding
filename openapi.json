@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://arab-sir-resident-dev.trycloudflare.com",
+      "url": "https://eternal-lay-civil-deployment.trycloudflare.com",
       "description": "Replace this with the Public URL printed by agent_api_server.py"
     }
   ],
