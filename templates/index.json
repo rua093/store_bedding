@@ -249,6 +249,19 @@
         "padding-block-end": 50
       }
     },
+    "new_arrivals_line_home": {
+      "type": "new-arrivals-line-carousel",
+      "settings": {
+        "collection": "new-arrivals",
+        "heading": "NEW ARRIVALS",
+        "subheading": "Discover our latest custom blankets, quilts and comforters.",
+        "button_label": "View all",
+        "button_link": "",
+        "product_limit": 8,
+        "show_arrows": true,
+        "show_progress": true
+      }
+    },
     "media_with_content_brand_intro": {
       "type": "media-with-content",
       "blocks": {
@@ -616,6 +629,7 @@
   "order": [
     "hero_iLBwPd",
     "collection_list_xpBxCm",
+    "new_arrivals_line_home",
     "media_with_content_brand_intro",
     "product_list_EDUBdR",
     "trust_signals_P6hero",

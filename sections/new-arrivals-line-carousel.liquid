@@ -1,0 +1,605 @@
+{% liquid
+  assign selected_collection = section.settings.collection
+  if selected_collection == blank
+    assign fallback_collection = collections['new-arrivals']
+    if fallback_collection != blank
+      assign selected_collection = fallback_collection
+    endif
+  endif
+
+  assign section_heading = section.settings.heading | default: 'OUR NEW ARRIVALS'
+  assign section_subheading = section.settings.subheading | default: 'Discover our latest custom blankets, quilts and comforters.'
+  assign section_button_label = section.settings.button_label | default: 'View all'
+  assign product_limit = section.settings.product_limit | default: 8
+  assign show_arrows = section.settings.show_arrows
+  assign show_progress = section.settings.show_progress
+  assign resolved_button_link = section.settings.button_link
+
+  if resolved_button_link == blank and selected_collection != blank
+    assign resolved_button_link = selected_collection.url
+  endif
+
+  assign has_products = false
+  if selected_collection != blank and selected_collection.products_count > 0
+    assign has_products = true
+  endif
+
+  assign should_render_section = false
+  if has_products or request.design_mode
+    assign should_render_section = true
+  endif
+%}
+
+{% if should_render_section %}
+  <section class="new-arrivals-strip-section" data-new-arrivals-line-section="{{ section.id }}">
+    <div class="section section--page-width">
+      <div class="new-arrivals-strip-header">
+        <h2 class="new-arrivals-strip-heading">{{ section_heading | escape }}</h2>
+        {% if section_subheading != blank %}
+          <p class="new-arrivals-strip-subheading">{{ section_subheading | escape }}</p>
+        {% endif %}
+      </div>
+
+      <div class="new-arrivals-strip-carousel">
+        <div
+          class="new-arrivals-strip-viewport"
+          data-new-arrivals-line-viewport
+          tabindex="0"
+          aria-label="New arrivals products">
+          <div class="new-arrivals-strip-track" data-new-arrivals-line-track>
+            {% if has_products %}
+              {% for product in selected_collection.products limit: product_limit %}
+                <div class="new-arrivals-strip-item" data-new-arrivals-line-item>
+                  {% render 'custom-product-card'
+                    , product: product
+                    , section_id: section.id
+                    , product_view_context: 'new-arrivals-strip-carousel'
+                    , show_badge: true
+                    , card_class: 'new-arrivals-strip-product-card'
+                  %}
+                </div>
+              {% endfor %}
+            {% elsif request.design_mode %}
+              {% for index in (1..4) %}
+                <div class="new-arrivals-strip-item" data-new-arrivals-line-item>
+                  <div class="new-arrivals-strip-placeholder-card">
+                    <div class="new-arrivals-strip-placeholder-card__media">
+                      {{ 'product-apparel-1' | placeholder_svg_tag: 'new-arrivals-strip-placeholder-card__svg' }}
+                    </div>
+                    <div class="new-arrivals-strip-placeholder-card__body">
+                      <strong>Choose a collection to preview products</strong>
+                      <span>New arrivals card {{ index }}</span>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      {% if show_progress and has_products %}
+        <div
+          class="new-arrivals-strip-dots"
+          data-new-arrivals-strip-dots
+          aria-label="Carousel pagination"></div>
+      {% endif %}
+    </div>
+  </section>
+
+  <script>
+    (() => {
+      const sectionId = {{ section.id | json }};
+      const store = window.__newArrivalsLineCarouselStore || (window.__newArrivalsLineCarouselStore = new Map());
+
+      const getSectionRoot = (id, scope) => {
+        if (scope?.matches?.(`[data-new-arrivals-line-section="${id}"]`)) {
+          return scope;
+        }
+
+        return (
+          scope?.querySelector?.(`[data-new-arrivals-line-section="${id}"]`) ||
+          document.querySelector(`[data-new-arrivals-line-section="${id}"]`)
+        );
+      };
+
+      const destroySection = (id) => {
+        const cleanup = store.get(id);
+        if (typeof cleanup === 'function') {
+          cleanup();
+        }
+        store.delete(id);
+      };
+
+      const loadEmbla = () => {
+        if (window.EmblaCarousel) {
+          return Promise.resolve(window.EmblaCarousel);
+        }
+
+        if (window.__newArrivalsEmblaPromise) {
+          return window.__newArrivalsEmblaPromise;
+        }
+
+        window.__newArrivalsEmblaPromise = new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://unpkg.com/embla-carousel/embla-carousel.umd.js';
+          script.async = true;
+          script.onload = () => resolve(window.EmblaCarousel);
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+
+        return window.__newArrivalsEmblaPromise;
+      };
+
+      const initSection = (id, scope) => {
+        destroySection(id);
+
+        const root = getSectionRoot(id, scope);
+        if (!root) return;
+
+        const viewport = root.querySelector('[data-new-arrivals-line-viewport]');
+        const track = root.querySelector('[data-new-arrivals-line-track]');
+        const items = Array.from(root.querySelectorAll('[data-new-arrivals-line-item]'));
+        if (!viewport || !track || items.length === 0) return;
+
+        const prevButton = root.querySelector('[data-new-arrivals-line-prev]');
+        const nextButton = root.querySelector('[data-new-arrivals-line-next]');
+        const dotsRoot = root.querySelector('[data-new-arrivals-strip-dots]');
+        const controller = new AbortController();
+        const { signal } = controller;
+        let embla = null;
+        let isDestroyed = false;
+        let isPointerDown = false;
+        let didDrag = false;
+        let pointerDownX = 0;
+
+        viewport.addEventListener(
+          'dragstart',
+          (event) => {
+            event.preventDefault();
+          },
+          { signal }
+        );
+
+        viewport.addEventListener(
+          'pointerdown',
+          (event) => {
+            if (event.pointerType === 'mouse' && event.button !== 0) return;
+            isPointerDown = true;
+            didDrag = false;
+            pointerDownX = event.clientX;
+            viewport.classList.add('is-dragging');
+          },
+          { signal }
+        );
+
+        viewport.addEventListener(
+          'pointermove',
+          (event) => {
+            if (!isPointerDown) return;
+            if (Math.abs(event.clientX - pointerDownX) > 5) {
+              didDrag = true;
+            }
+          },
+          { signal }
+        );
+
+        const endPointerDrag = () => {
+          isPointerDown = false;
+          window.setTimeout(() => {
+            viewport.classList.remove('is-dragging');
+          }, 0);
+        };
+
+        viewport.addEventListener('pointerup', endPointerDrag, { signal });
+        viewport.addEventListener('pointercancel', endPointerDrag, { signal });
+        viewport.addEventListener('lostpointercapture', endPointerDrag, { signal });
+
+        viewport.addEventListener(
+          'click',
+          (event) => {
+            if (!didDrag) return;
+            event.preventDefault();
+            event.stopPropagation();
+          },
+          { signal, capture: true }
+        );
+
+        store.set(id, () => {
+          isDestroyed = true;
+          controller.abort();
+          viewport.classList.remove('is-dragging');
+          embla?.destroy();
+        });
+
+        loadEmbla()
+          .then((EmblaCarousel) => {
+            if (isDestroyed || !EmblaCarousel || !viewport.isConnected) return;
+
+            embla = EmblaCarousel(viewport, {
+              align: 'start',
+              loop: false,
+              dragFree: true,
+              containScroll: 'trimSnaps',
+              skipSnaps: false,
+              slidesToScroll: 1
+            });
+
+            const renderDots = () => {
+              if (!dotsRoot) return;
+              dotsRoot.innerHTML = '';
+
+              embla.scrollSnapList().forEach((_, index) => {
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = 'new-arrivals-strip-dot';
+                dot.setAttribute('aria-label', `Go to slide group ${index + 1}`);
+                dot.addEventListener(
+                  'click',
+                  () => {
+                    embla?.scrollTo(index);
+                  },
+                  { signal }
+                );
+                dotsRoot.appendChild(dot);
+              });
+            };
+
+            const updateDots = () => {
+              if (!dotsRoot) return;
+              const selected = embla.selectedScrollSnap();
+              dotsRoot.querySelectorAll('.new-arrivals-strip-dot').forEach((dot, index) => {
+                dot.classList.toggle('is-active', index === selected);
+              });
+            };
+
+            const updateButtons = () => {
+              if (prevButton) prevButton.disabled = !embla.canScrollPrev();
+              if (nextButton) nextButton.disabled = !embla.canScrollNext();
+            };
+
+            prevButton?.addEventListener(
+              'click',
+              () => {
+                embla?.scrollPrev();
+              },
+              { signal }
+            );
+
+            nextButton?.addEventListener(
+              'click',
+              () => {
+                embla?.scrollNext();
+              },
+              { signal }
+            );
+
+            embla.on('select', updateDots);
+            embla.on('select', updateButtons);
+            embla.on('reInit', () => {
+              renderDots();
+              updateDots();
+              updateButtons();
+            });
+
+            renderDots();
+            updateDots();
+            updateButtons();
+          })
+          .catch(() => {
+            viewport.classList.remove('is-dragging');
+          });
+      };
+
+      window.__initNewArrivalsLineCarousel = initSection;
+      window.__destroyNewArrivalsLineCarousel = destroySection;
+
+      if (!window.__newArrivalsLineCarouselEventsBound) {
+        window.__newArrivalsLineCarouselEventsBound = true;
+
+        document.addEventListener('shopify:section:load', (event) => {
+          const root =
+            event.target?.matches?.('[data-new-arrivals-line-section]')
+              ? event.target
+              : event.target?.querySelector?.('[data-new-arrivals-line-section]');
+          const id = root?.getAttribute('data-new-arrivals-line-section');
+          if (id) {
+            window.__initNewArrivalsLineCarousel?.(id, event.target);
+          }
+        });
+
+        document.addEventListener('shopify:section:unload', (event) => {
+          const root =
+            event.target?.matches?.('[data-new-arrivals-line-section]')
+              ? event.target
+              : event.target?.querySelector?.('[data-new-arrivals-line-section]');
+          const id = root?.getAttribute('data-new-arrivals-line-section');
+          if (id) {
+            window.__destroyNewArrivalsLineCarousel?.(id);
+          }
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener(
+          'DOMContentLoaded',
+          () => {
+            initSection(sectionId);
+          },
+          { once: true }
+        );
+      } else {
+        initSection(sectionId);
+      }
+    })();
+  </script>
+{% endif %}
+
+{% stylesheet %}
+  .new-arrivals-strip-section {
+    position: relative;
+    padding-block: 0 clamp(1.1rem, 2vw, 1.7rem);
+    overflow-x: clip;
+    background: transparent;
+  }
+
+  .new-arrivals-strip-heading {
+    margin: 0 auto;
+    max-width: 52rem;
+    color: #fff;
+    font-family: var(--font-heading--family);
+    font-style: var(--font-heading--style);
+    font-size: clamp(2rem, 4vw, 3.6rem);
+    line-height: 1;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .new-arrivals-strip-subheading {
+    margin: 0.6rem auto 0;
+    max-width: 52rem;
+    color: rgba(255, 255, 255, 0.92);
+    font-family: var(--font-body--family);
+    font-style: var(--font-body--style);
+    font-size: clamp(1rem, 1.2vw, 1.2rem);
+    line-height: 1.45;
+  }
+
+  .new-arrivals-strip-carousel {
+    position: relative;
+    display: block;
+    padding-block: clamp(1rem, 1.8vw, 1.35rem);
+  }
+
+  .new-arrivals-strip-viewport {
+    overflow: hidden;
+    cursor: grab;
+    touch-action: pan-y pinch-zoom;
+  }
+
+  .new-arrivals-strip-viewport.is-dragging {
+    cursor: grabbing;
+  }
+
+  .new-arrivals-strip-track {
+    display: flex;
+    gap: 1.35rem;
+    will-change: transform;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .new-arrivals-strip-viewport.is-dragging,
+  .new-arrivals-strip-viewport.is-dragging * {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .new-arrivals-strip-item {
+    flex: 0 0 calc((100% - 4.05rem) / 4);
+    min-width: 0;
+  }
+
+  .new-arrivals-strip-product-card {
+    height: 100%;
+  }
+
+  .new-arrivals-strip-section .custom-product-card__card,
+  .new-arrivals-strip-section .custom-product-card__card-link {
+    border-radius: 12px;
+  }
+
+  .new-arrivals-strip-section .custom-product-card__card {
+    box-shadow: none;
+  }
+
+  .new-arrivals-strip-section .custom-product-card__media,
+  .new-arrivals-strip-section .custom-product-card__image,
+  .new-arrivals-strip-section .custom-product-card__placeholder,
+  .new-arrivals-strip-section .custom-product-card__placeholder-svg {
+    border-radius: 9px;
+  }
+
+  .new-arrivals-strip-section .custom-product-card__image--hover {
+    display: none;
+  }
+
+  .new-arrivals-strip-section img,
+  .new-arrivals-strip-section a {
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
+
+  .new-arrivals-strip-section .custom-product-card__image,
+  .new-arrivals-strip-section .custom-product-card__image--hover {
+    pointer-events: none;
+  }
+
+  .new-arrivals-strip-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.65rem;
+    margin-top: 1rem;
+  }
+
+  .new-arrivals-strip-dot {
+    width: 0.72rem;
+    height: 0.72rem;
+    border-radius: 999px;
+    border: 2px solid #111;
+    background: transparent;
+    opacity: 0.5;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .new-arrivals-strip-dot.is-active {
+    background: #111;
+    opacity: 1;
+  }
+
+  .new-arrivals-strip-placeholder-card {
+    display: grid;
+    gap: 0.8rem;
+    height: 100%;
+    padding: 0.72rem;
+    border: 1px solid rgba(116, 82, 58, 0.16);
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(255, 254, 251, 0.995) 0%, rgba(255, 249, 242, 0.985) 100%);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.92) inset
+    , 0 14px 30px rgba(80, 58, 43, 0.08);
+  }
+
+  .new-arrivals-strip-placeholder-card__media {
+    aspect-ratio: 1 / 1.02;
+    border-radius: 18px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #f2e4d8 0%, #ead6c3 100%);
+  }
+
+  .new-arrivals-strip-placeholder-card__svg {
+    width: 100%;
+    height: 100%;
+    opacity: 0.22;
+    color: #fffaf4;
+  }
+
+  .new-arrivals-strip-placeholder-card__body {
+    display: grid;
+    gap: 0.3rem;
+    color: #7f6758;
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .new-arrivals-strip-placeholder-card__body strong {
+    color: #111;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .new-arrivals-strip-section .custom-product-card:is(:hover, :focus-within) .custom-product-card__card {
+      transform: none;
+      border-color: rgba(116, 82, 58, 0.24);
+      box-shadow: none;
+    }
+
+    .new-arrivals-strip-section .custom-product-card:is(:hover, :focus-within) .custom-product-card__image--hover {
+      opacity: 0;
+      transform: none;
+    }
+
+    .new-arrivals-strip-section .custom-product-card:is(:hover, :focus-within) .custom-product-card__image:not(.custom-product-card__image--hover),
+    .new-arrivals-strip-section .custom-product-card:is(:hover, :focus-within) .custom-product-card__placeholder {
+      transform: none;
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    .new-arrivals-strip-item {
+      flex-basis: calc((100% - 2.7rem) / 3);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .new-arrivals-strip-item {
+      flex-basis: min(78vw, 18rem);
+    }
+  }
+
+  .new-arrivals-strip-header {
+    width: auto;
+    margin-inline: calc(var(--page-margin, 1rem) * -1);
+    background: #000;
+    color: #fff;
+    text-align: center;
+    padding: clamp(1.9rem, 3vw, 2.8rem) 1rem;
+    margin-bottom: clamp(1rem, 2vw, 1.4rem);
+  }
+
+{% endstylesheet %}
+
+{% schema %}
+  {
+    "name": "New Arrivals Line",
+    "tag": "section",
+    "class": "section-new-arrivals-line-carousel",
+    "enabled_on": {
+      "templates": ["index"]
+    },
+    "settings": [
+      {
+        "type": "collection",
+        "id": "collection",
+        "label": "Collection"
+      },
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default": "OUR NEW ARRIVALS"
+      },
+      {
+        "type": "text",
+        "id": "subheading",
+        "label": "Subheading",
+        "default": "Discover our latest custom blankets, quilts and comforters."
+      },
+      {
+        "type": "text",
+        "id": "button_label",
+        "label": "Button label",
+        "default": "View all"
+      }, {
+        "type": "url",
+        "id": "button_link",
+        "label": "Button link"
+      }, {
+        "type": "range",
+        "id": "product_limit",
+        "label": "Products to show",
+        "min": 4,
+        "max": 12,
+        "step": 1,
+        "default": 8
+      }, {
+        "type": "checkbox",
+        "id": "show_arrows",
+        "label": "Show arrows",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "show_progress",
+        "label": "Show dots pagination",
+        "default": true
+      }
+    ],
+    "presets": [
+      {
+        "name": "New Arrivals Line"
+      }
+    ]
+  }
+{% endschema %}
