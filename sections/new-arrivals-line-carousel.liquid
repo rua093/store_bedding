@@ -13,7 +13,6 @@
   assign product_limit = section.settings.product_limit | default: 8
   assign show_arrows = section.settings.show_arrows
   assign show_progress = section.settings.show_progress
-  assign new_arrivals_bg = 'bg_new_arrivals.png' | asset_url
   assign resolved_button_link = section.settings.button_link
 
   if resolved_button_link == blank and selected_collection != blank
@@ -32,11 +31,7 @@
 %}
 
 {% if should_render_section %}
-  <section
-    class="new-arrivals-strip-section"
-    data-new-arrivals-line-section="{{ section.id }}"
-    style="--new-arrivals-bg: url('{{ new_arrivals_bg }}');"
-  >
+  <section class="new-arrivals-strip-section" data-new-arrivals-line-section="{{ section.id }}">
     <div class="section section--page-width">
       <div class="new-arrivals-strip-header">
         <h2 class="new-arrivals-strip-heading">{{ section_heading | escape }}</h2>
@@ -346,17 +341,7 @@
     position: relative;
     padding-block: 0 clamp(1.1rem, 2vw, 1.7rem);
     overflow-x: clip;
-    background: var(--new-arrivals-bg) center center / cover no-repeat;
-  }
-
-  .new-arrivals-strip-header {
-    width: auto;
-    margin-inline: calc(var(--page-margin, 1rem) * -1);
-    background: #000;
-    color: #fff;
-    text-align: center;
-    padding: clamp(1.9rem, 3vw, 2.8rem) 1rem;
-    margin-bottom: clamp(1rem, 2vw, 1.4rem);
+    background: transparent;
   }
 
   .new-arrivals-strip-heading {
@@ -544,10 +529,14 @@
     }
   }
 
-  @media screen and (min-width: 990px) {
-    .new-arrivals-strip-section {
-      background-attachment: fixed;
-    }
+  .new-arrivals-strip-header {
+    width: auto;
+    margin-inline: calc(var(--page-margin, 1rem) * -1);
+    background: #000;
+    color: #fff;
+    text-align: center;
+    padding: clamp(1.9rem, 3vw, 2.8rem) 1rem;
+    margin-bottom: clamp(1rem, 2vw, 1.4rem);
   }
 
 {% endstylesheet %}
