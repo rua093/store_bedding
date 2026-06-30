@@ -19,7 +19,10 @@
     {%- if section.settings.background_color != blank -%}--trust-signals-background: {{ section.settings.background_color }};{%- endif -%}
   "
 >
-  <div class="trust-signals__page-width">
+  <div class="trust-signals__page-width{% if is_trust_signals_hero %} section section--page-width{% endif %}">
+    {% if is_trust_signals_hero %}
+      <div class="trust-signals__hero-panel">
+    {% endif %}
     <div
       class="trust-signals__inner"
       data-homepage-reveal-children="{% if is_trust_signals_hero %}.trust-signals__hero-grid{% else %}:scope > *{% endif %}"
@@ -116,6 +119,7 @@
       >
         <span>Made with love for you and your furry friend</span>
       </div>
+      </div>
     {% endif %}
   </div>
 </section>
@@ -208,7 +212,7 @@
 
   .trust-signals--hero {
     --trust-signals-background: #ead9ca;
-    padding-block: clamp(3rem, 4.6vw, 4rem);
+    padding-block: clamp(1.25rem, 2.2vw, 2rem);
     position: relative;
     isolation: isolate;
     background:
@@ -223,7 +227,7 @@
     top: -1px;
     right: 0;
     left: 0;
-    height: clamp(2.5rem, 6vw, 4.5rem);
+    height: clamp(1.4rem, 3vw, 2.4rem);
     background: linear-gradient(180deg, rgba(243, 230, 215, 0.92) 0%, rgba(243, 230, 215, 0) 100%);
     pointer-events: none;
     z-index: 0;
@@ -235,17 +239,23 @@
     right: 0;
     bottom: -1px;
     left: 0;
-    height: clamp(2.75rem, 6vw, 4.75rem);
+    height: clamp(1.4rem, 3vw, 2.4rem);
     background: linear-gradient(180deg, rgba(234, 217, 202, 0) 0%, rgba(234, 217, 202, 0.92) 100%);
     pointer-events: none;
     z-index: 0;
   }
 
   .trust-signals--hero .trust-signals__page-width {
-    width: min(calc(100% - 3rem), 112rem);
+    width: 100%;
+    margin-inline: 0;
+  }
+
+  .trust-signals--hero .trust-signals__hero-panel {
     position: relative;
+    grid-column: 2;
+    width: 100%;
     border-radius: 1.6rem;
-    border: 1px solid rgba(92, 61, 42, 0.14);
+    border: 1px solid rgba(92, 61, 42, 0.24);
     background: linear-gradient(180deg, #fffaf4 0%, #fff9f2 100%);
     box-shadow:
       0 1px 0 rgba(255, 255, 255, 0.82) inset,
@@ -253,26 +263,30 @@
     overflow: hidden;
   }
 
-  .trust-signals--hero .trust-signals__page-width::before {
+  .trust-signals--hero .trust-signals__hero-panel::before {
     content: '';
     position: absolute;
     inset: 0.55rem;
-    border: 1px dashed rgba(184, 115, 69, 0.22);
+    border: 1px dashed rgba(184, 115, 69, 0.34);
     border-radius: 1.15rem;
     pointer-events: none;
     z-index: 1;
   }
 
+  .trust-signals--hero .trust-signals__inner,
+  .trust-signals--hero .trust-signals__hero-signoff {
+    position: relative;
+    z-index: 2;
+  }
+
   .trust-signals--hero .trust-signals__inner {
     display: block;
-    padding: clamp(2.8rem, 4vw, 4rem) clamp(1.8rem, 2.6vw, 2.6rem) clamp(2.4rem, 3vw, 3rem);
+    padding: clamp(1.35rem, 2.1vw, 2rem) clamp(1.2rem, 2vw, 2rem) clamp(1.15rem, 1.8vw, 1.65rem);
     border: 0;
     border-radius: 0;
     background: transparent;
     box-shadow: none;
     overflow: visible;
-    position: relative;
-    z-index: 2;
   }
 
   .trust-signals--hero .trust-signals__inner::before {
@@ -282,7 +296,7 @@
   .trust-signals--hero .trust-signals__hero-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0;
+    gap: clamp(0.75rem, 1.2vw, 1.25rem);
   }
 
   .trust-signals--hero .trust-signals__hero-item {
@@ -291,7 +305,7 @@
     flex-direction: column;
     align-items: center;
     min-width: 0;
-    padding: 0 clamp(1rem, 2vw, 2rem);
+    padding: 0 clamp(0.6rem, 1.2vw, 1.1rem);
     text-align: center;
     background: transparent;
     border: 0;
@@ -312,9 +326,9 @@
   }
 
   .trust-signals--hero .trust-signals__hero-icon {
-    width: clamp(11rem, 13vw, 15rem);
-    height: clamp(11rem, 13vw, 15rem);
-    margin-bottom: 0.15rem;
+    width: clamp(6.4rem, 7.4vw, 8.4rem);
+    height: clamp(6.4rem, 7.4vw, 8.4rem);
+    margin-bottom: 0.35rem;
     display: grid;
     place-items: center;
     background: transparent;
@@ -356,7 +370,7 @@
     display: block !important;
     width: 3.8rem;
     height: 0.23rem;
-    margin: 0.95rem auto 1rem;
+    margin: 0.5rem auto 0.65rem;
     border-radius: 999px;
     background: #b87345;
   }
@@ -382,12 +396,12 @@
     position: relative;
     z-index: 2;
     margin-top: 0;
-    padding: clamp(1.1rem, 1.5vw, 1.45rem) 2rem;
+    padding: clamp(0.65rem, 1vw, 0.95rem) 2rem;
     text-align: center;
     background: linear-gradient(90deg, rgba(243, 230, 215, 0.94), rgba(255, 249, 242, 0.98), rgba(243, 230, 215, 0.94));
     border-top: 1px solid rgba(92, 61, 42, 0.1);
     color: #7a4a2d;
-    font-size: clamp(1.35rem, 1.8vw, 2rem);
+    font-size: clamp(1.05rem, 1.35vw, 1.45rem);
     line-height: 1.15;
     opacity: 1;
     font-family: "Snell Roundhand", "Segoe Script", "Apple Chancery", cursive;
@@ -425,7 +439,7 @@
 
     .trust-signals--hero .trust-signals__hero-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      row-gap: 2.5rem;
+      row-gap: 1.4rem;
     }
 
     .trust-signals--hero .trust-signals__hero-signoff {
@@ -467,12 +481,11 @@
     }
 
     .trust-signals--hero {
-      padding-block: 2rem 2.75rem;
+      padding-block: clamp(1rem, 4vw, 1.5rem);
     }
 
     .trust-signals--hero .trust-signals__page-width {
-      width: min(calc(100% - 1.25rem), 42rem);
-      border-radius: 1.2rem;
+      width: 100%;
     }
 
     .trust-signals--hero .trust-signals__hero-grid {
@@ -488,14 +501,18 @@
       display: none;
     }
 
+    .trust-signals--hero .trust-signals__hero-panel {
+      border-radius: 1.2rem;
+    }
+
     .trust-signals--hero .trust-signals__inner {
-      padding: 1.8rem 1rem 2rem;
+      padding: 1rem;
     }
 
     .trust-signals--hero .trust-signals__hero-icon {
-      width: clamp(5.25rem, 28vw, 7.5rem);
-      height: clamp(5.25rem, 28vw, 7.5rem);
-      margin-bottom: 0.5rem;
+      width: clamp(5.6rem, 24vw, 6.4rem);
+      height: clamp(5.6rem, 24vw, 6.4rem);
+      margin-bottom: 0.4rem;
     }
 
     .trust-signals--hero .trust-signals__hero-title {
@@ -509,7 +526,7 @@
     }
 
     .trust-signals--hero .trust-signals__hero-signoff {
-      padding: 1rem 1.25rem;
+      padding: 0.6rem 1rem;
       font-size: 1.2rem;
     }
 
