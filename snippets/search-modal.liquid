@@ -129,24 +129,6 @@
             %}
           </div>
         </div>
-
-        <div class="jem-search-support">
-          <div class="jem-search-support__copy">
-            <p class="jem-search-support__title">Need help finding the perfect bedding?</p>
-            <a
-              href="/pages/contact"
-              class="jem-search-support__link"
-            >
-              Chat with our team
-            </a>
-          </div>
-          <a
-            href="/collections/all"
-            class="jem-search-support__button"
-          >
-            View all products
-          </a>
-        </div>
       </form>
     </predictive-search-component>
   </dialog>
@@ -442,7 +424,7 @@
     height: 100%;
     min-height: 0;
     display: grid;
-    grid-template-columns: minmax(250px, 280px) minmax(0, 1fr);
+    grid-template-columns: minmax(300px, 330px) minmax(0, 1fr);
     gap: 28px;
     align-items: stretch;
     width: 100%;
@@ -588,9 +570,9 @@
     scrollbar-width: thin;
     min-width: 0;
     width: 100%;
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 18px;
-    align-content: start;
   }
 
   .jem-search-results--full {
@@ -815,65 +797,43 @@
     background-size: 200% 100%;
     animation: jem-search-shimmer 1.2s linear infinite;
   }
-
-  .jem-search-support {
-    flex: 0 0 auto;
-    position: relative;
-    z-index: 10;
-    margin-top: 0;
+  .jem-search-products-cta-wrap {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 28px;
-    background: #f7efe7;
-    border: 1px solid rgba(126, 91, 64, 0.14);
-    border-radius: 999px;
-    overflow: hidden;
+    justify-content: center;
+    width: 100%;
+    margin-top: auto;
+    padding: 16px 0 2px;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 250, 244, 0),
+      rgba(255, 250, 244, 0.92) 34%,
+      rgba(255, 250, 244, 0.98) 100%
+    );
   }
 
-  .jem-search-support__copy {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .jem-search-support__title {
-    margin: 0;
-    color: var(--jem-search-text);
-    font-size: 0.95rem;
-    font-weight: 600;
-  }
-
-  .jem-search-support__link {
-    color: var(--jem-search-accent);
-    text-decoration: none;
-    font-weight: 600;
-  }
-
-  .jem-search-support__link:hover {
-    text-decoration: underline;
-  }
-
-  .jem-search-support__button {
+  .jem-search-products-cta {
+    width: min(320px, 100%);
+    min-height: 48px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 48px;
-    padding: 0 20px;
+    gap: 10px;
     border-radius: 999px;
-    background: #f1dfce;
+    border: 1px solid rgba(183, 121, 82, 0.3);
+    background: #fffdf9;
     color: var(--jem-search-text);
-    text-decoration: none;
     font-weight: 600;
-    white-space: nowrap;
+    text-decoration: none;
     transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
   }
 
-  .jem-search-support__button:hover {
+  .jem-search-products-cta:hover {
     transform: translateY(-1px);
-    background: #ecd7c2;
-    box-shadow: 0 10px 22px rgba(54, 33, 19, 0.08);
+    background: #fff8f1;
+    box-shadow: 0 10px 20px rgba(54, 33, 19, 0.05);
   }
 
   @media screen and (min-width: 990px) {
@@ -891,7 +851,7 @@
     }
 
     .jem-search-layout {
-      grid-template-columns: minmax(210px, 240px) minmax(0, 1fr);
+      grid-template-columns: minmax(250px, 280px) minmax(0, 1fr);
       gap: 22px;
     }
 
@@ -1061,43 +1021,11 @@
       -webkit-line-clamp: 2;
     }
 
-    .jem-search-product-card__price {
-      font-size: 0.82rem;
-    }
-
-    .jem-search-support {
-      flex: 0 0 auto;
-      position: relative;
-      z-index: 5;
-      padding: 12px;
-      border-radius: 16px;
-      gap: 8px;
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .jem-search-support__copy {
-      display: grid;
-      gap: 2px;
-    }
-
-    .jem-search-support__title {
-      font-size: 0.82rem;
-      line-height: 1.25;
-    }
-
-    .jem-search-support__link {
-      font-size: 0.82rem;
-    }
-
-    .jem-search-support__button {
-      min-height: 44px;
-      height: 44px;
+    .jem-search-products-cta {
       width: 100%;
     }
 
     .jem-search--has-query .jem-search-sidebar,
-    .jem-search--has-query .jem-search-support,
     .jem-search--has-query .jem-search-suggestions {
       display: none !important;
     }

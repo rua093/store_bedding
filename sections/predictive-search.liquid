@@ -110,6 +110,7 @@
             render 'predictive-search-products-list', title: title, products: products, order_ids: new_products_ids, limit: 4
           -%}
         {% endif %}
+        {% render 'jem-search-products-cta' %}
       </section>
 
       {% if predictive_search.performed %}
