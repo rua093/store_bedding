@@ -106,13 +106,13 @@
       {
         "type": "font_picker",
         "id": "type_heading_font",
-        "default": "anonymous_pro_n4",
+        "default": "lora_n4",
         "label": "t:options.heading"
       },
       {
         "type": "font_picker",
         "id": "type_accent_font",
-        "default": "anonymous_pro_n4",
+        "default": "lora_n4",
         "label": "t:options.accent"
       },
       {

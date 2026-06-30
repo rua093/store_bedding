@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://longer-yukon-scanner-postcards.trycloudflare.com",
+      "url": "https://arab-sir-resident-dev.trycloudflare.com",
       "description": "Replace this with the Public URL printed by agent_api_server.py"
     }
   ],
