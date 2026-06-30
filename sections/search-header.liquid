@@ -10,27 +10,201 @@
   class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
 ></div>
 <div class="section section--page-width{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}">
-  <div
-    class="spacing-style search-page__header"
+  <section
+    id="JemSearchHero-{{ section.id }}"
+    class="spacing-style jem-search-hero-section"
     style="
       --horizontal-alignment: {{ section.settings.alignment }};
       {% render 'spacing-style', settings: section.settings %}
     "
   >
-    {% assign heading_text = 'content.search' | t %}
+    <div class="jem-search-hero">
+      <div class="jem-search-hero__media" aria-hidden="true">
+        <img
+          src="{{ 'brand-intro-bedroom.png' | asset_url }}"
+          alt=""
+          loading="eager"
+          class="jem-search-hero__image"
+        >
+      </div>
+      <div class="jem-search-hero__overlay" aria-hidden="true"></div>
 
-    {% if search.performed %}
-      {% assign heading_text = 'content.search_results' | t %}
-    {% endif %}
+      <div class="jem-search-hero__inner">
+        <div class="jem-search-hero__content">
+          <p class="jem-search-hero__eyebrow">Search results</p>
+          <h1 class="jem-search-hero__title">Cozy finds</h1>
+          <p class="jem-search-hero__subtitle">Made for moments that matter.</p>
 
-    {% capture heading_text %}
-      <h3>{{ heading_text }}</h3>
-    {% endcapture %}
+          {% if search.performed and search.terms != blank %}
+            <p class="jem-search-hero__meta">
+              {{ search.results_count }} results for "{{ search.terms | escape }}"
+            </p>
+          {% else %}
+            <p class="jem-search-hero__meta">Search blankets, quilts, comforters and more.</p>
+          {% endif %}
+        </div>
 
-    {% content_for 'block', id: 'heading', type: '_heading', text: heading_text %}
-    {% content_for 'block', id: 'search', type: '_search-input' %}
-  </div>
+        <div class="jem-search-hero__search">
+          {% content_for 'block', id: 'search', type: '_search-input' %}
+        </div>
+      </div>
+    </div>
+
+  </section>
 </div>
+
+{% style %}
+  #JemSearchHero-{{ section.id }} {
+    display: block;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero {
+    position: relative;
+    min-height: clamp(210px, 28vw, 238px);
+    overflow: hidden;
+    border: 1px solid rgba(116, 82, 58, 0.14);
+    border-radius: 24px;
+    background: linear-gradient(135deg, #fffaf4 0%, #f5ebe0 100%);
+    box-shadow: 0 20px 46px rgb(73 53 40 / 8%);
+    isolation: isolate;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__media,
+  #JemSearchHero-{{ section.id }} .jem-search-hero__overlay {
+    position: absolute;
+    inset: 0;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center right;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__overlay {
+    background:
+      linear-gradient(90deg, rgb(255 250 244 / 97%) 0%, rgb(255 250 244 / 94%) 26%, rgb(255 250 244 / 72%) 46%, rgb(255 250 244 / 16%) 78%),
+      linear-gradient(180deg, rgb(255 255 255 / 10%), rgb(255 255 255 / 0%));
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(360px, 430px);
+    gap: 30px;
+    align-items: center;
+    min-height: inherit;
+    padding: clamp(24px, 4vw, 40px);
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__content {
+    max-width: 430px;
+    color: #2f241d;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__eyebrow {
+    margin: 0 0 10px;
+    color: #c47a4a;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__title {
+    margin: 0;
+    color: #2f241d;
+    font-size: clamp(2.125rem, 4vw, 3rem);
+    line-height: 0.95;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__subtitle {
+    margin: 12px 0 0;
+    color: #6f5a4c;
+    font-size: 1rem;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__meta {
+    margin: 12px 0 0;
+    color: #6f5a4c;
+    font-size: 0.96rem;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__search {
+    width: 100%;
+    max-width: 430px;
+    justify-self: end;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__search .search-page-input__parent {
+    align-items: stretch;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__search search-page-input-component {
+    max-width: 100%;
+    margin: 0;
+    border-radius: 999px;
+    background: rgb(255 253 251 / 92%);
+    box-shadow: 0 16px 34px rgb(75 52 37 / 10%);
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__search .search-page-input {
+    min-height: 60px;
+    border-radius: 999px;
+    border-color: rgba(116, 82, 58, 0.12);
+    background: #fffdfb;
+    color: #2f241d;
+  }
+
+  #JemSearchHero-{{ section.id }} .jem-search-hero__search .search__icon svg,
+  #JemSearchHero-{{ section.id }} .jem-search-hero__search .search__reset-button svg {
+    color: #7b6657;
+  }
+
+  @media screen and (max-width: 989px) {
+    #JemSearchHero-{{ section.id }} .jem-search-hero__inner {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 20px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__search {
+      justify-self: stretch;
+      max-width: 100%;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #JemSearchHero-{{ section.id }} .jem-search-hero {
+      min-height: 0;
+      border-radius: 22px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__media {
+      inset: auto 0 0 0;
+      height: 48%;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__overlay {
+      background:
+        linear-gradient(180deg, rgb(255 250 244 / 98%) 0%, rgb(255 250 244 / 92%) 42%, rgb(255 250 244 / 60%) 70%, rgb(255 250 244 / 16%) 100%);
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__inner {
+      padding: 20px 18px 144px;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__title {
+      font-size: 1.75rem;
+    }
+
+    #JemSearchHero-{{ section.id }} .jem-search-hero__subtitle,
+    #JemSearchHero-{{ section.id }} .jem-search-hero__meta {
+      font-size: 0.94rem;
+    }
+  }
+{% endstyle %}
 
 {% schema %}
 {
