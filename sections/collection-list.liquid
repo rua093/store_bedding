@@ -12,8 +12,8 @@
     assign has_selected_collections = true
     assign section_collections = section.settings.collection_list
     assign max_items = section.settings.collection_list.count
-    if is_patchwork_layout and max_items > 4
-      assign max_items = 4
+    if is_patchwork_layout and max_items > 5
+      assign max_items = 5
     endif
     if section.settings.max_collections > 0 and max_items > section.settings.max_collections
       assign max_items = section.settings.max_collections
@@ -29,7 +29,7 @@
   endif
 
   if is_patchwork_layout
-    assign max_items = 4
+    assign max_items = 5
   endif
 %}
 
@@ -42,13 +42,31 @@
   assign patchwork_heading = section.settings.patchwork_heading | strip
   assign patchwork_subheading = section.settings.patchwork_subheading | strip
   assign patchwork_count = 0
+  assign intro_collection = section_collections.first
+  assign intro_image = blank
+  assign intro_title = 'Collection coming soon'
+  assign intro_alt = ''
+  assign right_tile_limit = max_items | minus: 1
 
   if has_selected_collections
-    for collection in section_collections limit: max_items
+    for collection in section_collections offset: 1 limit: right_tile_limit
       if collection != blank
         assign patchwork_count = patchwork_count | plus: 1
       endif
     endfor
+  endif
+
+  if intro_collection != blank
+    assign intro_title = intro_collection.title
+    assign intro_image = intro_collection.image
+    if intro_image == blank and intro_collection.products.first.featured_image != blank
+      assign intro_image = intro_collection.products.first.featured_image
+    endif
+    if intro_image != blank and intro_image.alt != blank
+      assign intro_alt = intro_image.alt
+    else
+      assign intro_alt = intro_title
+    endif
   endif
 
   if is_patchwork_layout and patchwork_count == 0
@@ -92,21 +110,45 @@
 
   {% if is_patchwork_layout %}
     <div class="collection-patchwork collection-patchwork--count-{{ patchwork_count }}">
-      <div
-        class="section-resource-list__content collection-patchwork__editorial{% if section.settings.enable_patchwork_motion %} homepage-reveal{% endif %}"
-        data-reveal-preset="section-soft-reveal"
-      >
-        <img
-          class="collection-patchwork__intro-image"
-          src="{{ 'section_collection_list.png' | asset_url }}"
-          alt=""
-          loading="lazy"
-          width="1024"
-          height="1365"
+      {% if intro_collection != blank %}
+        <a
+          href="{{ intro_collection.url }}"
+          class="section-resource-list__content collection-patchwork__editorial collection-patchwork__intro-tile{% if section.settings.enable_patchwork_motion %} homepage-reveal{% endif %}"
+          data-reveal-preset="section-soft-reveal"
         >
-      </div>
+      {% else %}
+        <div
+          class="section-resource-list__content collection-patchwork__editorial collection-patchwork__intro-tile collection-patchwork__intro-tile--placeholder{% if section.settings.enable_patchwork_motion %} homepage-reveal{% endif %}"
+          data-reveal-preset="section-soft-reveal"
+        >
+      {% endif %}
+          <div class="collection-patchwork__media">
+            {% if intro_image != blank %}
+              {{
+                intro_image
+                | image_url: width: 2400
+                | image_tag:
+                  widths: '600, 800, 1200, 1600, 2000, 2400',
+                  sizes: '(min-width: 990px) 34vw, (min-width: 750px) 50vw, 100vw',
+                  loading: 'lazy',
+                  class: 'collection-patchwork__intro-image collection-patchwork__image',
+                  alt: intro_alt
+              }}
+            {% else %}
+              {{ 'collection-apparel-1' | placeholder_svg_tag: 'collection-patchwork__intro-image collection-patchwork__image collection-patchwork__image--placeholder' }}
+            {% endif %}
+          </div>
 
-      {% for collection in section_collections limit: max_items %}
+          <div class="collection-patchwork__content">
+            <h3 class="collection-patchwork__title">{{ intro_title | escape }}</h3>
+          </div>
+      {% if intro_collection != blank %}
+        </a>
+      {% else %}
+        </div>
+      {% endif %}
+
+      {% for collection in section_collections offset: 1 limit: right_tile_limit %}
         {% liquid
           assign reveal_rotation = '-0.9deg'
           assign reveal_modulo = forloop.index0 | modulo: 4
@@ -596,7 +638,7 @@
 
   [data-testid='collection-list'] .collection-patchwork {
     display: grid;
-    gap: clamp(0.55rem, 1vw, 0.75rem);
+    gap: clamp(0.9rem, 1.45vw, 1.25rem);
     align-items: stretch;
   }
 
@@ -623,13 +665,45 @@
   }
 
   .collection-patchwork__intro-image {
-    position: absolute;
-    inset: 0;
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__intro-tile {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__intro-tile .collection-patchwork__media {
+    position: absolute;
+    inset: 0;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__intro-tile::after {
+    content: '' !important;
+    position: absolute;
+    inset: 0;
+    display: block !important;
+    background: linear-gradient(180deg, rgb(34 23 16 / 0.04) 0%, rgb(34 23 16 / 0.18) 48%, rgb(34 23 16 / 0.62) 100%);
+    pointer-events: none;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__intro-tile .collection-patchwork__content {
+    position: absolute;
+    left: clamp(1rem, 2vw, 1.6rem);
+    right: clamp(1rem, 2vw, 1.6rem);
+    bottom: clamp(1rem, 1.8vw, 1.45rem);
+    z-index: 1;
+    min-height: auto;
+    display: block;
+  }
+
+  [data-testid='collection-list'] .collection-patchwork__intro-tile .collection-patchwork__title {
+    color: #fffaf4;
+    text-shadow: 0 2px 16px rgb(24 15 10 / 0.35);
   }
 
   [data-testid='collection-list'] .collection-patchwork__botanical {
