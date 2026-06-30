@@ -209,10 +209,10 @@
       "name": "Collection list",
       "settings": {
         "collection_list": [
-          "baseball",
           "cactus",
           "cardinal",
-          "book-lover-blankets"
+          "book-lover-blankets",
+          "baseball"
         ],
         "layout_type": "bento",
         "carousel_on_mobile": true,
@@ -245,8 +245,8 @@
         "show_view_all": true,
         "view_all_label": "Explore all collections",
         "view_all_link": "/collections",
-        "padding-block-start": 36,
-        "padding-block-end": 36
+        "padding-block-start": 50,
+        "padding-block-end": 50
       }
     },
     "media_with_content_brand_intro": {
