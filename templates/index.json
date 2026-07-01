@@ -577,6 +577,12 @@
         "gap_between_items": 20
       }
     },
+    "customer_reviews_home": {
+      "type": "customer-reviews",
+      "settings": {
+        "section_width": "page-width"
+      }
+    },
     "1782702718c3bf58b5": {
       "type": "_blocks",
       "blocks": {
@@ -654,6 +660,7 @@
     "collection_list_xpBxCm",
     "media_with_content_brand_intro",
     "trust_signals_P6hero",
+    "customer_reviews_home",
     "1782702718c3bf58b5"
   ]
 }

@@ -186,11 +186,10 @@ function createObserver() {
     (entries) => {
       entries.forEach((entry) => {
         const element = entry.target;
-        if (entry.isIntersecting) {
-          startReveal(element);
-        } else {
-          resetReveal(element);
-        }
+        if (!entry.isIntersecting) return;
+
+        startReveal(element);
+        observer?.unobserve(element);
       });
     },
     {
