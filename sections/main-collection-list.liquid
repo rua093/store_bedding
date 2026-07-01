@@ -3,6 +3,12 @@
 {% liquid
   assign section_collections = collections
   assign max_items = 20
+  assign compact_banner_image = section.settings.compact_banner_image
+  if compact_banner_image != blank
+    assign compact_banner_image_url = compact_banner_image | image_url: width: 1600
+  else
+    assign compact_banner_image_url = 'brand-intro-bedroom.png' | asset_url
+  endif
   if section.settings.background_color != blank
     render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
   endif
@@ -24,11 +30,53 @@
   style="
     {% render 'spacing-style', settings: section.settings %}
     {% render 'gap-style', value: section.settings.gap %}
+    {% if section.settings.show_compact_banner %}
+      --collection-compact-top-space: 22px;
+    {% endif %}
   "
 >
-  <div class="section-resource-list__content">
-    {%- content_for 'blocks' -%}
-  </div>
+  {% if section.settings.show_compact_banner %}
+    <div class="collection-list-compact-banner">
+      <div class="collection-list-compact-banner__media">
+        <img
+          src="{{ compact_banner_image_url }}"
+          alt="{{ section.settings.compact_banner_heading | default: 'All Collections' | escape }}"
+          loading="eager"
+          width="1600"
+          height="960"
+        >
+      </div>
+      <div class="collection-list-compact-banner__content">
+        {% if section.settings.compact_banner_eyebrow != blank %}
+          <p class="collection-list-compact-banner__eyebrow">
+            {{ section.settings.compact_banner_eyebrow }}
+          </p>
+        {% endif %}
+        {% if section.settings.compact_banner_heading != blank %}
+          <h1 class="collection-list-compact-banner__heading">
+            {{ section.settings.compact_banner_heading }}
+          </h1>
+        {% endif %}
+        {% if section.settings.compact_banner_text != blank %}
+          <p class="collection-list-compact-banner__text">
+            {{ section.settings.compact_banner_text }}
+          </p>
+        {% endif %}
+        {% if section.settings.compact_banner_button_label != blank %}
+          <a
+            class="collection-list-compact-banner__button"
+            href="#collections-grid-{{ section.id }}"
+          >
+            {{ section.settings.compact_banner_button_label }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  {% else %}
+    <div class="section-resource-list__content">
+      {%- content_for 'blocks' -%}
+    </div>
+  {% endif %}
 
   {% if section_collections == null %}
     {% for i in (1..max_items) %}
@@ -36,34 +84,587 @@
     {% endfor %}
 
     {% assign section_collections = section_collections | split: ',' %}
-  {% endif %}
+    {% capture list_items %}
+      {% for collection in section_collections limit: max_items %}
+        <div class="resource-list__item">
+          {% content_for 'block', type: '_collection-card', id: 'static-collection-card', closest.collection: collection %}
+        </div>
+        {% unless forloop.last %}
+          <!--@list/split-->
+        {% endunless %}
+      {% endfor %}
+    {% endcapture %}
 
-  {% capture list_items %}
-    {% for collection in section_collections limit: max_items %}
-      <div class="resource-list__item">
-        {% content_for 'block', type: '_collection-card', id: 'static-collection-card', closest.collection: collection %}
+    {% liquid
+      assign list_items_array = list_items | strip | split: '<!--@list/split-->'
+    %}
+
+    <div id="collections-grid-{{ section.id }}" class="collection-list-grid-anchor">
+      {% render 'resource-list',
+        list_items: list_items,
+        list_items_array: list_items_array,
+        settings: section.settings,
+        carousel_ref: 'mainCollectionList',
+        slide_count: max_items,
+        content_type: 'collections',
+        test_id: 'collections-list-grid'
+      %}
+    </div>
+  {% else %}
+    {% assign pagination_anchor = '#collections-grid-' | append: section.id %}
+    {% paginate collections by section.settings.collections_per_page %}
+      {% capture list_items %}
+        {% for collection in collections %}
+          <div class="resource-list__item">
+            {% content_for 'block', type: '_collection-card', id: 'static-collection-card', closest.collection: collection %}
+          </div>
+          {% unless forloop.last %}
+            <!--@list/split-->
+          {% endunless %}
+        {% endfor %}
+      {% endcapture %}
+
+      {% liquid
+        assign list_items_array = list_items | strip | split: '<!--@list/split-->'
+      %}
+
+      <div id="collections-grid-{{ section.id }}" class="collection-list-grid-anchor">
+        {% render 'resource-list',
+          list_items: list_items,
+          list_items_array: list_items_array,
+          settings: section.settings,
+          carousel_ref: 'mainCollectionList',
+          slide_count: list_items_array.size,
+          content_type: 'collections',
+          test_id: 'collections-list-grid'
+        %}
       </div>
-      {% unless forloop.last %}
-        <!--@list/split-->
-      {% endunless %}
-    {% endfor %}
-  {% endcapture %}
 
-  {% liquid
-    # Create an array from the list items to be used for different layout types
-    assign list_items_array = list_items | strip | split: '<!--@list/split-->'
-  %}
+      {% if paginate.pages > 1 %}
+        <nav class="collection-list-pagination" aria-label="Collections pagination">
+          {% if paginate.previous %}
+            <a
+              class="collection-list-pagination__item collection-list-pagination__item--nav"
+              href="{{ paginate.previous.url | append: pagination_anchor }}"
+            >
+              Previous
+            </a>
+          {% else %}
+            <span class="collection-list-pagination__item collection-list-pagination__item--nav is-disabled">
+              Previous
+            </span>
+          {% endif %}
 
-  {% render 'resource-list',
-    list_items: list_items,
-    list_items_array: list_items_array,
-    settings: section.settings,
-    carousel_ref: 'mainCollectionList',
-    slide_count: max_items,
-    content_type: 'collections',
-    test_id: 'collections-list-grid'
-  %}
+          {% for part in paginate.parts %}
+            {% if part.is_link %}
+              <a
+                class="collection-list-pagination__item"
+                href="{{ part.url | append: pagination_anchor }}"
+              >
+                {{ part.title }}
+              </a>
+            {% elsif part.title == paginate.current_page %}
+              <span class="collection-list-pagination__item is-active" aria-current="page">
+                {{ part.title }}
+              </span>
+            {% else %}
+              <span class="collection-list-pagination__item collection-list-pagination__item--ellipsis">
+                {{ part.title }}
+              </span>
+            {% endif %}
+          {% endfor %}
+
+          {% if paginate.next %}
+            <a
+              class="collection-list-pagination__item collection-list-pagination__item--nav"
+              href="{{ paginate.next.url | append: pagination_anchor }}"
+            >
+              Next
+            </a>
+          {% else %}
+            <span class="collection-list-pagination__item collection-list-pagination__item--nav is-disabled">
+              Next
+            </span>
+          {% endif %}
+        </nav>
+      {% endif %}
+    {% endpaginate %}
+  {% endif %}
 </div>
+
+{% stylesheet %}
+  .ui-test-collection-list .section-resource-list {
+    padding-top: var(--collection-compact-top-space, inherit);
+  }
+
+  .ui-test-collection-list .collection-list-compact-banner {
+    position: relative;
+    display: block;
+    min-height: 210px;
+    max-height: 230px;
+    overflow: hidden;
+    width: calc(100% + 40px);
+    margin-inline: -20px;
+    border: 1px solid rgba(192, 168, 144, 0.18);
+    border-radius: 22px;
+    background: linear-gradient(135deg, #fffdfa 0%, #f6ede1 100%);
+    box-shadow: 0 12px 28px rgba(109, 83, 60, 0.06);
+    isolation: isolate;
+  }
+
+  .ui-test-collection-list .collection-list-compact-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      90deg,
+      rgba(250, 246, 239, 0.88) 0%,
+      rgba(250, 246, 239, 0.62) 24%,
+      rgba(250, 246, 239, 0.28) 42%,
+      rgba(250, 246, 239, 0) 58%
+    );
+    pointer-events: none;
+  }
+
+  .ui-test-collection-list .collection-list-compact-banner__content {
+    position: absolute;
+    inset: 0 auto 0 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 7px;
+    width: min(34%, 29rem);
+    padding: 24px 34px 24px 38px;
+    min-width: 0;
+  }
+
+  .ui-test-collection-list .collection-list-compact-banner__content::before {
+    content: '';
+    position: absolute;
+    inset: 14px -18px 14px 12px;
+    z-index: -1;
+    border-radius: 18px;
+    background: linear-gradient(90deg, rgba(255, 251, 246, 0.46) 0%, rgba(255, 249, 243, 0.24) 56%, rgba(255, 249, 243, 0.08) 100%);
+    backdrop-filter: blur(2px);
+    pointer-events: none;
+  }
+
+  .ui-test-collection-list .collection-list-compact-banner__eyebrow {
+    margin: 0;
+    color: #b0835f;
+    font-size: 0.62rem;
+    font-weight: 650;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .ui-test-collection-list .collection-list-compact-banner__heading {
+    margin: 0;
+    color: #30251f;
+    font-size: clamp(38px, 3.2vw, 52px);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+
+  .ui-test-collection-list .collection-list-compact-banner__text {
+    margin: 0;
+    max-width: 29ch;
+    color: #47382f;
+    font-size: 0.92rem;
+    line-height: 1.4;
+    font-weight: 600;
+  }
+
+  .ui-test-collection-list .collection-list-compact-banner__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-width: 100px;
+    min-height: 37px;
+    padding: 0.48rem 1.25rem;
+    border-radius: 4px;
+    background: #241d19;
+    color: #ffffff;
+    font-size: 0.84rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 6px 12px rgba(36, 29, 25, 0.12);
+    transition:
+      background-color 0.2s ease,
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .ui-test-collection-list .collection-list-compact-banner__button:hover {
+    background: #302722;
+    transform: translateY(-1px);
+    box-shadow: 0 7px 12px rgba(36, 29, 25, 0.13);
+  }
+
+  .ui-test-collection-list .collection-list-compact-banner__media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .ui-test-collection-list .collection-list-compact-banner__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 66% center;
+    filter: brightness(1.1) contrast(0.95) saturate(0.98);
+  }
+
+  .ui-test-collection-list .collection-list-grid-anchor {
+    width: 100%;
+    margin-top: 24px;
+  }
+
+  .ui-test-collection-list .collection-list-grid-anchor .resource-list--grid {
+    --resource-list-columns: repeat(3, minmax(0, 1fr));
+    --resource-list-columns-mobile: repeat(2, minmax(0, 1fr));
+    --resource-list-column-gap-desktop: 28px;
+    --resource-list-row-gap-desktop: 34px;
+    align-items: start !important;
+  }
+
+  .ui-test-collection-list .collection-list-grid-anchor .resource-list__item {
+    height: auto !important;
+    align-self: start !important;
+  }
+
+  .ui-test-collection-list .collection-list-grid-anchor .collection-card {
+    border: 1px solid rgba(190, 167, 141, 0.42);
+    border-radius: 18px;
+    background: rgba(255, 251, 247, 0.92);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.045);
+    overflow: hidden;
+    padding: 10px 10px 12px;
+    height: auto !important;
+    min-height: 0 !important;
+    align-self: start !important;
+    transition:
+      border-color 300ms ease,
+      box-shadow 300ms ease,
+      background-color 300ms ease,
+      transform 300ms ease;
+  }
+
+  .ui-test-collection-list .collection-list-grid-anchor .collection-card__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    height: auto !important;
+  }
+
+  .ui-test-collection-list .collection-list-grid-anchor .collection-card__image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 5 / 4;
+    overflow: hidden;
+    border-radius: 17px;
+    background: #f5ede2;
+    isolation: isolate;
+  }
+
+  .ui-test-collection-list .collection-list-grid-anchor .collection-card__image::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 14%;
+    background: linear-gradient(180deg, rgba(252, 248, 242, 0) 0%, rgba(252, 248, 242, 0.22) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .ui-test-collection-list .collection-list-grid-anchor .collection-card__image .resource-image__image,
+  .ui-test-collection-list .collection-list-grid-anchor .collection-card__image svg,
+  .ui-test-collection-list .collection-list-grid-anchor .collection-card__image .placeholder-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 300ms ease;
+  }
+
+  .ui-test-collection-list .collection-list-grid-anchor .collection-card__content {
+    align-items: flex-start;
+    justify-content: flex-start;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 9px 2px 0;
+    gap: 0;
+  }
+
+  .ui-test-collection-list .collection-list-grid-anchor .collection-card:not(.collection-card--image-bg) .collection-card__content {
+    padding: 9px 2px 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  .ui-test-collection-list .collection-list-grid-anchor .collection-card__content .text-block {
+    width: 100%;
+    align-items: flex-start;
+    color: #2d241f;
+  }
+
+  .ui-test-collection-list .collection-list-grid-anchor .collection-card__content .text-block > * {
+    width: 100%;
+    max-inline-size: 100%;
+    margin: 0;
+    color: #342821;
+    font-family: var(--font-subheading--family, var(--font-body--family));
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.34;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-align: left;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ui-test-collection-list .collection-list-grid-anchor .collection-card:hover {
+      border-color: rgba(165, 131, 99, 0.34);
+      background: rgba(255, 251, 247, 0.98);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+      transform: translateY(-1px);
+    }
+
+    .ui-test-collection-list .collection-list-grid-anchor .collection-card:hover .collection-card__image {
+      box-shadow: none;
+    }
+
+    .ui-test-collection-list .collection-list-grid-anchor .collection-card:hover .collection-card__image .resource-image__image,
+    .ui-test-collection-list .collection-list-grid-anchor .collection-card:hover .collection-card__image svg,
+    .ui-test-collection-list .collection-list-grid-anchor .collection-card:hover .collection-card__image .placeholder-svg {
+      transform: scale(1.035);
+    }
+
+    .ui-test-collection-list .collection-list-grid-anchor .collection-card:hover .collection-card__content .text-block > * {
+      color: #7d5738;
+    }
+  }
+
+  .ui-test-collection-list .collection-list-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 30px;
+  }
+
+  .ui-test-collection-list .collection-list-pagination__item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 35px;
+    padding: 0.5rem 0.82rem;
+    border: 1px solid rgba(190, 167, 141, 0.4);
+    border-radius: 8px;
+    background: rgba(255, 252, 247, 0.96);
+    color: #433227;
+    font-size: 0.88rem;
+    font-weight: 550;
+    line-height: 1;
+    text-decoration: none;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .ui-test-collection-list .collection-list-pagination__item:hover {
+    background: #f5ede2;
+    border-color: rgba(165, 131, 99, 0.36);
+  }
+
+  .ui-test-collection-list .collection-list-pagination__item.is-active {
+    border-color: #241d19;
+    background: #241d19;
+    color: #ffffff;
+  }
+
+  .ui-test-collection-list .collection-list-pagination__item.is-disabled {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .ui-test-collection-list .collection-list-pagination__item--nav {
+    min-width: 74px;
+  }
+
+  .ui-test-collection-list .collection-list-pagination__item--ellipsis {
+    border-color: transparent;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 1024px) {
+    .ui-test-collection-list .section-resource-list {
+      padding-top: clamp(16px, 3vw, 20px);
+    }
+
+    .ui-test-collection-list .collection-list-compact-banner {
+      min-height: 200px;
+      max-height: 220px;
+      width: calc(100% + 32px);
+      margin-inline: -16px;
+    }
+
+    .ui-test-collection-list .collection-list-compact-banner__content {
+      width: min(48%, 26rem);
+      padding: 20px 24px;
+      gap: 8px;
+    }
+
+    .ui-test-collection-list .collection-list-compact-banner__content::before {
+      inset: 12px -10px 12px 8px;
+    }
+
+    .ui-test-collection-list .collection-list-compact-banner__heading {
+      font-size: clamp(34px, 4vw, 46px);
+    }
+
+    .ui-test-collection-list .collection-list-compact-banner__text {
+      max-width: 25ch;
+      font-size: 0.88rem;
+    }
+
+    .ui-test-collection-list .collection-list-grid-anchor {
+      margin-top: 18px;
+    }
+
+    .ui-test-collection-list .collection-list-grid-anchor .resource-list--grid {
+      --resource-list-columns: repeat(3, minmax(0, 1fr));
+      --resource-list-column-gap-desktop: 20px;
+      --resource-list-row-gap-desktop: 30px;
+    }
+
+    .ui-test-collection-list .collection-list-grid-anchor .collection-card__image {
+      border-radius: 16px;
+    }
+
+    .ui-test-collection-list .collection-list-grid-anchor .collection-card__content {
+      padding-top: 9px;
+    }
+
+    .ui-test-collection-list .collection-list-grid-anchor .collection-card__content .text-block > * {
+      font-size: 12.5px;
+      letter-spacing: 0.15em;
+    }
+
+    .ui-test-collection-list .collection-list-pagination {
+      gap: 7px;
+      margin-top: 22px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ui-test-collection-list .section-resource-list {
+      padding-top: clamp(12px, 5vw, 16px);
+    }
+
+    .ui-test-collection-list .collection-list-compact-banner {
+      min-height: 220px;
+      max-height: 250px;
+      width: calc(100% + 24px);
+      margin-inline: -12px;
+    }
+
+    .ui-test-collection-list .collection-list-compact-banner__content {
+      width: min(100%, 19.5rem);
+      padding: 20px 20px 18px;
+      gap: 8px;
+    }
+
+    .ui-test-collection-list .collection-list-compact-banner__content::before {
+      inset: 10px -6px 10px 4px;
+      border-radius: 16px;
+      background: linear-gradient(90deg, rgba(255, 251, 246, 0.5) 0%, rgba(255, 249, 243, 0.28) 60%, rgba(255, 249, 243, 0.1) 100%);
+    }
+
+    .ui-test-collection-list .collection-list-compact-banner__heading {
+      font-size: clamp(28px, 7vw, 36px);
+      max-width: 11ch;
+    }
+
+    .ui-test-collection-list .collection-list-compact-banner__text {
+      max-width: 22ch;
+      font-size: 0.86rem;
+      line-height: 1.36;
+    }
+
+    .ui-test-collection-list .collection-list-compact-banner__button {
+      min-width: 104px;
+      min-height: 37px;
+      padding: 0.5rem 0.95rem;
+      font-size: 0.88rem;
+    }
+
+    .ui-test-collection-list .collection-list-grid-anchor {
+      margin-top: 16px;
+    }
+
+    .ui-test-collection-list .collection-list-grid-anchor .resource-list--grid {
+      --resource-list-columns-mobile: repeat(2, minmax(0, 1fr));
+      --resource-list-column-gap-desktop: 14px;
+      --resource-list-row-gap-desktop: 24px;
+    }
+
+    .ui-test-collection-list .collection-list-grid-anchor .collection-card {
+      border-radius: 16px;
+      padding: 8px 8px 12px;
+    }
+
+    .ui-test-collection-list .collection-list-grid-anchor .collection-card__image {
+      border-radius: 14px;
+    }
+
+    .ui-test-collection-list .collection-list-grid-anchor .collection-card__content {
+      padding-top: 9px;
+    }
+
+    .ui-test-collection-list .collection-list-grid-anchor .collection-card__content .text-block > * {
+      font-size: 11.75px;
+      letter-spacing: 0.14em;
+      line-height: 1.34;
+    }
+
+    .ui-test-collection-list .collection-list-pagination {
+      gap: 6px;
+      margin-top: 18px;
+    }
+
+    .ui-test-collection-list .collection-list-pagination__item {
+      min-width: 36px;
+      height: 34px;
+      padding: 0.52rem 0.75rem;
+      font-size: 0.82rem;
+    }
+
+    .ui-test-collection-list .collection-list-pagination__item--nav {
+      min-width: 62px;
+    }
+  }
+
+  @media screen and (max-width: 369px) {
+    .ui-test-collection-list .collection-list-grid-anchor .resource-list--grid {
+      --resource-list-columns-mobile: repeat(1, minmax(0, 1fr));
+    }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -211,6 +812,15 @@
       "visible_if": "{{ section.settings.layout_type == 'editorial' }}"
     },
     {
+      "type": "range",
+      "id": "collections_per_page",
+      "label": "Collections per page",
+      "min": 9,
+      "max": 36,
+      "step": 3,
+      "default": 24
+    },
+    {
       "type": "header",
       "content": "t:content.carousel_navigation",
       "visible_if": "{{ section.settings.layout_type == 'carousel' or section.settings.carousel_on_mobile == true }}"
@@ -268,6 +878,45 @@
     {
       "type": "header",
       "content": "t:content.section_layout"
+    },
+    {
+      "type": "header",
+      "content": "Compact banner"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_compact_banner",
+      "label": "Show compact banner",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "compact_banner_eyebrow",
+      "label": "Eyebrow",
+      "default": "JEMINISE COLLECTIONS"
+    },
+    {
+      "type": "text",
+      "id": "compact_banner_heading",
+      "label": "Heading",
+      "default": "All Collections"
+    },
+    {
+      "type": "text",
+      "id": "compact_banner_text",
+      "label": "Text",
+      "default": "Explore blankets, quilts & comforters."
+    },
+    {
+      "type": "text",
+      "id": "compact_banner_button_label",
+      "label": "Button label",
+      "default": "Browse"
+    },
+    {
+      "type": "image_picker",
+      "id": "compact_banner_image",
+      "label": "Banner image"
     },
     {
       "type": "select",
