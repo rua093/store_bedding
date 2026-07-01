@@ -330,6 +330,22 @@
 </div>
 
 {% stylesheet %}
+  .shopify-section:has([data-testid='collection-list'].section-resource-list--patchwork) {
+    isolation: isolate;
+  }
+
+  .shopify-section:has([data-testid='collection-list'].section-resource-list--patchwork) .section-background {
+    z-index: 0;
+  }
+
+  .shopify-section:has([data-testid='collection-list'].section-resource-list--patchwork)
+    [data-testid='collection-list'].section-resource-list--patchwork {
+    position: relative;
+    z-index: 1;
+    padding-block-start: 50px;
+    padding-block-end: 50px;
+  }
+
   .ui-test-collection-list [data-testid='collection-list'] {
     padding-block-start: var(--padding-block-start);
     padding-block-end: var(--padding-block-end);

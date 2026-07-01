@@ -14,6 +14,22 @@
   assign show_arrows = section.settings.show_arrows
   assign show_progress = section.settings.show_progress
   assign resolved_button_link = section.settings.button_link
+  assign show_button = section.settings.show_button
+  assign section_background_color = section.settings.section_background_color | default: 'transparent'
+  assign header_background_color = section.settings.header_background_color | default: '#000000'
+  assign heading_color = section.settings.heading_color | default: '#ffffff'
+  assign subheading_color = section.settings.subheading_color | default: '#ebebeb'
+  assign dot_color = section.settings.dot_color | default: '#111111'
+  assign card_gap = section.settings.card_gap | default: 22
+  assign desktop_columns = section.settings.desktop_columns | default: 4
+  assign tablet_columns = section.settings.tablet_columns | default: 3
+  assign mobile_card_width = section.settings.mobile_card_width | default: 78
+  assign mobile_card_max_width = section.settings.mobile_card_max_width | default: 18
+  assign header_padding_top = section.settings.header_padding_top | default: 38
+  assign header_padding_bottom = section.settings.header_padding_bottom | default: 38
+  assign header_spacing_bottom = section.settings.header_spacing_bottom | default: 22
+  assign carousel_padding_top = section.settings.carousel_padding_top | default: 18
+  assign carousel_padding_bottom = section.settings.carousel_padding_bottom | default: 18
 
   if resolved_button_link == blank and selected_collection != blank
     assign resolved_button_link = selected_collection.url
@@ -31,12 +47,37 @@
 %}
 
 {% if should_render_section %}
-  <section class="new-arrivals-strip-section" data-new-arrivals-line-section="{{ section.id }}">
-    <div class="section section--page-width">
+  <section
+    class="new-arrivals-strip-section spacing-style"
+    data-new-arrivals-line-section="{{ section.id }}"
+    style="
+      {% render 'spacing-style', settings: section.settings %}
+      --new-arrivals-section-bg: {{ section_background_color }};
+      --new-arrivals-header-bg: {{ header_background_color }};
+      --new-arrivals-heading-color: {{ heading_color }};
+      --new-arrivals-subheading-color: {{ subheading_color }};
+      --new-arrivals-dot-color: {{ dot_color }};
+      --new-arrivals-card-gap: {{ card_gap }}px;
+      --new-arrivals-desktop-columns: {{ desktop_columns }};
+      --new-arrivals-tablet-columns: {{ tablet_columns }};
+      --new-arrivals-mobile-card-width: {{ mobile_card_width }}vw;
+      --new-arrivals-mobile-card-max-width: {{ mobile_card_max_width }}rem;
+      --new-arrivals-header-padding-top: {{ header_padding_top }}px;
+      --new-arrivals-header-padding-bottom: {{ header_padding_bottom }}px;
+      --new-arrivals-header-spacing-bottom: {{ header_spacing_bottom }}px;
+      --new-arrivals-carousel-padding-top: {{ carousel_padding_top }}px;
+      --new-arrivals-carousel-padding-bottom: {{ carousel_padding_bottom }}px;
+    ">
+    <div class="section section--{{ section.settings.section_width | default: 'page-width' }}">
       <div class="new-arrivals-strip-header">
         <h2 class="new-arrivals-strip-heading">{{ section_heading | escape }}</h2>
         {% if section_subheading != blank %}
           <p class="new-arrivals-strip-subheading">{{ section_subheading | escape }}</p>
+        {% endif %}
+        {% if show_button and section_button_label != blank and resolved_button_link != blank %}
+          <a class="new-arrivals-strip-button" href="{{ resolved_button_link }}">
+            {{ section_button_label | escape }}
+          </a>
         {% endif %}
       </div>
 
@@ -339,15 +380,14 @@
 {% stylesheet %}
   .new-arrivals-strip-section {
     position: relative;
-    padding-block: 0 clamp(1.1rem, 2vw, 1.7rem);
     overflow-x: clip;
-    background: transparent;
+    background: var(--new-arrivals-section-bg, transparent);
   }
 
   .new-arrivals-strip-heading {
     margin: 0 auto;
     max-width: 52rem;
-    color: #fff;
+    color: var(--new-arrivals-heading-color, #fff);
     font-family: var(--font-heading--family);
     font-style: var(--font-heading--style);
     font-size: clamp(2rem, 4vw, 3.6rem);
@@ -359,17 +399,45 @@
   .new-arrivals-strip-subheading {
     margin: 0.6rem auto 0;
     max-width: 52rem;
-    color: rgba(255, 255, 255, 0.92);
+    color: var(--new-arrivals-subheading-color, rgba(255, 255, 255, 0.92));
     font-family: var(--font-body--family);
     font-style: var(--font-body--style);
     font-size: clamp(1rem, 1.2vw, 1.2rem);
     line-height: 1.45;
   }
 
+  .new-arrivals-strip-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: max(44px, var(--minimum-touch-target));
+    margin-top: 1rem;
+    padding: 0.9rem 1.5rem;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    color: var(--new-arrivals-heading-color, #fff);
+    font-family: var(--font-body--family);
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: none;
+    transition:
+      background-color 180ms ease,
+      color 180ms ease,
+      border-color 180ms ease,
+      opacity 180ms ease;
+  }
+
+  .new-arrivals-strip-button:hover,
+  .new-arrivals-strip-button:focus-visible {
+    background: color-mix(in srgb, var(--new-arrivals-heading-color, #fff) 12%, transparent);
+  }
+
   .new-arrivals-strip-carousel {
     position: relative;
     display: block;
-    padding-block: clamp(1rem, 1.8vw, 1.35rem);
+    padding-block: var(--new-arrivals-carousel-padding-top, clamp(1rem, 1.8vw, 1.35rem))
+      var(--new-arrivals-carousel-padding-bottom, clamp(1rem, 1.8vw, 1.35rem));
   }
 
   .new-arrivals-strip-viewport {
@@ -384,7 +452,7 @@
 
   .new-arrivals-strip-track {
     display: flex;
-    gap: 1.35rem;
+    gap: var(--new-arrivals-card-gap, 1.35rem);
     will-change: transform;
     user-select: none;
     -webkit-user-select: none;
@@ -397,7 +465,10 @@
   }
 
   .new-arrivals-strip-item {
-    flex: 0 0 calc((100% - 4.05rem) / 4);
+    flex: 0 0 calc(
+      (100% - (var(--new-arrivals-card-gap, 1.35rem) * (var(--new-arrivals-desktop-columns, 4) - 1))) /
+        var(--new-arrivals-desktop-columns, 4)
+    );
     min-width: 0;
   }
 
@@ -447,7 +518,7 @@
     width: 0.72rem;
     height: 0.72rem;
     border-radius: 999px;
-    border: 2px solid #111;
+    border: 2px solid var(--new-arrivals-dot-color, #111);
     background: transparent;
     opacity: 0.5;
     cursor: pointer;
@@ -455,7 +526,7 @@
   }
 
   .new-arrivals-strip-dot.is-active {
-    background: #111;
+    background: var(--new-arrivals-dot-color, #111);
     opacity: 1;
   }
 
@@ -519,24 +590,30 @@
 
   @media screen and (max-width: 989px) {
     .new-arrivals-strip-item {
-      flex-basis: calc((100% - 2.7rem) / 3);
+      flex-basis: calc(
+        (100% - (var(--new-arrivals-card-gap, 1.35rem) * (var(--new-arrivals-tablet-columns, 3) - 1))) /
+          var(--new-arrivals-tablet-columns, 3)
+      );
     }
   }
 
   @media screen and (max-width: 749px) {
     .new-arrivals-strip-item {
-      flex-basis: min(78vw, 18rem);
+      flex-basis: min(var(--new-arrivals-mobile-card-width, 78vw), var(--new-arrivals-mobile-card-max-width, 18rem));
     }
   }
 
   .new-arrivals-strip-header {
     width: auto;
     margin-inline: calc(var(--page-margin, 1rem) * -1);
-    background: #000;
-    color: #fff;
+    background: var(--new-arrivals-header-bg, #000);
+    color: var(--new-arrivals-heading-color, #fff);
     text-align: center;
-    padding: clamp(1.9rem, 3vw, 2.8rem) 1rem;
-    margin-bottom: clamp(1rem, 2vw, 1.4rem);
+    padding:
+      var(--new-arrivals-header-padding-top, clamp(1.9rem, 3vw, 2.8rem))
+      1rem
+      var(--new-arrivals-header-padding-bottom, clamp(1.9rem, 3vw, 2.8rem));
+    margin-bottom: var(--new-arrivals-header-spacing-bottom, clamp(1rem, 2vw, 1.4rem));
   }
 
 {% endstylesheet %}
@@ -568,15 +645,23 @@
         "default": "Discover our latest custom blankets, quilts and comforters."
       },
       {
+        "type": "checkbox",
+        "id": "show_button",
+        "label": "Show button",
+        "default": false
+      },
+      {
         "type": "text",
         "id": "button_label",
         "label": "Button label",
         "default": "View all"
-      }, {
+      },
+      {
         "type": "url",
         "id": "button_link",
         "label": "Button link"
-      }, {
+      },
+      {
         "type": "range",
         "id": "product_limit",
         "label": "Products to show",
@@ -584,16 +669,194 @@
         "max": 12,
         "step": 1,
         "default": 8
-      }, {
+      },
+      {
+        "type": "select",
+        "id": "section_width",
+        "label": "Section width",
+        "default": "page-width",
+        "options": [
+          {
+            "value": "page-width",
+            "label": "Page width"
+          },
+          {
+            "value": "full-width",
+            "label": "Full width"
+          }
+        ]
+      },
+      {
         "type": "checkbox",
         "id": "show_arrows",
         "label": "Show arrows",
         "default": true
-      }, {
+      },
+      {
         "type": "checkbox",
         "id": "show_progress",
         "label": "Show dots pagination",
         "default": true
+      },
+      {
+        "type": "header",
+        "content": "Colors"
+      },
+      {
+        "type": "color",
+        "id": "section_background_color",
+        "label": "Section background",
+        "default": "#f7f3ee"
+      },
+      {
+        "type": "color",
+        "id": "header_background_color",
+        "label": "Header background",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "heading_color",
+        "label": "Heading color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "subheading_color",
+        "label": "Subheading color",
+        "default": "#ebebeb"
+      },
+      {
+        "type": "color",
+        "id": "dot_color",
+        "label": "Dot color",
+        "default": "#111111"
+      },
+      {
+        "type": "header",
+        "content": "Spacing"
+      },
+      {
+        "type": "range",
+        "id": "padding-block-start",
+        "label": "Top padding",
+        "min": 0,
+        "max": 120,
+        "step": 4,
+        "default": 0,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "padding-block-end",
+        "label": "Bottom padding",
+        "min": 0,
+        "max": 120,
+        "step": 4,
+        "default": 28,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "header_padding_top",
+        "label": "Header top padding",
+        "min": 0,
+        "max": 120,
+        "step": 2,
+        "default": 38,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "header_padding_bottom",
+        "label": "Header bottom padding",
+        "min": 0,
+        "max": 120,
+        "step": 2,
+        "default": 38,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "header_spacing_bottom",
+        "label": "Space below header",
+        "min": 0,
+        "max": 80,
+        "step": 2,
+        "default": 22,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "carousel_padding_top",
+        "label": "Carousel top padding",
+        "min": 0,
+        "max": 60,
+        "step": 2,
+        "default": 18,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "carousel_padding_bottom",
+        "label": "Carousel bottom padding",
+        "min": 0,
+        "max": 60,
+        "step": 2,
+        "default": 18,
+        "unit": "px"
+      },
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "range",
+        "id": "desktop_columns",
+        "label": "Desktop cards per view",
+        "min": 2,
+        "max": 5,
+        "step": 1,
+        "default": 4
+      },
+      {
+        "type": "range",
+        "id": "tablet_columns",
+        "label": "Tablet cards per view",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "default": 3
+      },
+      {
+        "type": "range",
+        "id": "mobile_card_width",
+        "label": "Mobile card width",
+        "min": 55,
+        "max": 95,
+        "step": 1,
+        "default": 78,
+        "unit": "vw"
+      },
+      {
+        "type": "range",
+        "id": "mobile_card_max_width",
+        "label": "Mobile max card width",
+        "min": 14,
+        "max": 24,
+        "step": 1,
+        "default": 18,
+        "unit": "rem"
+      },
+      {
+        "type": "range",
+        "id": "card_gap",
+        "label": "Gap between cards",
+        "min": 8,
+        "max": 36,
+        "step": 2,
+        "default": 22,
+        "unit": "px"
       }
     ],
     "presets": [
