@@ -445,7 +445,7 @@
         "heading_color": "#fefefe",
         "heading_accent_color": "#d39a74",
         "subheading_color": "#ffffff",
-        "dot_color": "#ffffff",
+        "dot_color": "#563D30",
         "padding-block-start": 0,
         "padding-block-end": 32,
         "header_padding_top": 32,
