@@ -98,10 +98,10 @@
         {% endif %}
         <h2 class="new-arrivals-strip-heading">
           {% if heading_lead != blank %}
-            <span class="new-arrivals-strip-heading__lead">{{ heading_lead | escape }}</span>
-            <span class="new-arrivals-strip-heading__accent">{{ heading_accent | escape }}</span>
+            {{ heading_lead | escape }}
+            <em>{{ heading_accent | escape }}</em>
           {% else %}
-            <span class="new-arrivals-strip-heading__accent">{{ heading_accent | escape }}</span>
+            <em>{{ heading_accent | escape }}</em>
           {% endif %}
         </h2>
         {% if section_subheading != blank %}
@@ -425,57 +425,51 @@
 
   .new-arrivals-strip-heading {
     margin: 0 auto;
-    max-width: 52rem;
-    color: var(--new-arrivals-heading-color, #fff);
+    max-width: 16ch;
+    color: #fff8ef;
     font-family: var(--font-heading--family);
-    font-style: var(--font-heading--style);
-    font-size: clamp(2.5rem, 5vw, 5rem);
-    line-height: 0.94;
-    letter-spacing: -0.035em;
+    font-style: normal;
+    font-size: clamp(1.55rem, 2.55vw, 2.7rem);
+    font-weight: 560;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
     text-wrap: balance;
     text-shadow:
-      0 1px 0 rgb(255 255 255 / 0.26),
-      0 8px 28px rgb(20 10 5 / 0.28);
+      0 1px 0 rgb(255 255 255 / 0.18),
+      0 5px 18px rgb(20 10 5 / 0.18);
   }
 
-  .new-arrivals-strip-heading__lead,
-  .new-arrivals-strip-heading__accent {
+  .new-arrivals-strip-heading em {
     display: inline-block;
-  }
-
-  .new-arrivals-strip-heading__lead {
-    color: var(--new-arrivals-heading-color, #fff);
-  }
-
-  .new-arrivals-strip-heading__accent {
-    color: var(--new-arrivals-heading-accent-color, #d39a74);
     font-style: italic;
-    font-weight: 500;
-    margin-inline-start: 0.14em;
+    color: #dfb78f;
+    font-family: var(--font-heading--family);
+    font-weight: inherit;
+    margin-inline-start: 0.12em;
   }
 
   .new-arrivals-strip-eyebrow {
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.6rem;
     color: color-mix(in srgb, var(--new-arrivals-heading-accent-color, #d39a74) 85%, white);
     font-family: var(--font-body--family);
-    font-size: clamp(0.76rem, 0.8vw, 0.92rem);
+    font-size: clamp(0.72rem, 0.72vw, 0.84rem);
     font-weight: 700;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.18em;
     line-height: 1;
     text-transform: uppercase;
     text-shadow: 0 1px 10px rgb(16 8 4 / 0.2);
   }
 
   .new-arrivals-strip-subheading {
-    margin: 0.9rem auto 0;
-    max-width: 38rem;
-    color: var(--new-arrivals-subheading-color, rgba(255, 255, 255, 0.92));
+    margin: 0.6rem auto 0;
+    max-width: 30rem;
+    color: rgba(255, 248, 239, 0.84);
     font-family: var(--font-body--family);
     font-style: var(--font-body--style);
-    font-size: clamp(1rem, 1.15vw, 1.28rem);
-    font-weight: 500;
-    line-height: 1.38;
-    text-shadow: 0 4px 18px rgb(18 10 6 / 0.24);
+    font-size: clamp(0.86rem, 0.88vw, 0.98rem);
+    font-weight: 450;
+    line-height: 1.45;
+    text-shadow: 0 3px 14px rgb(18 10 6 / 0.2);
   }
 
   .new-arrivals-strip-button {
