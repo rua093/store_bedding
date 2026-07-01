@@ -39,14 +39,11 @@ export class MediaGallery extends Component {
    * @param {ProductSelectEvent} event - The product select event.
    */
   #handleProductSelect = (event) => {
-    if (
-      !(event.target instanceof Element) ||
-      event.target.closest('product-card') ||
-      event.target.closest('quick-add-dialog, .quick-add-modal')
-    ) {
+    if (!(event.target instanceof Element) || event.target.closest('product-card')) {
       return;
     }
 
+    const isQuickAddModal = Boolean(event.target.closest('quick-add-dialog, .quick-add-modal'));
     const variantPicker = event.target.closest('variant-picker');
     const optionValueId = event.detail?.optionValueId;
 
@@ -65,6 +62,10 @@ export class MediaGallery extends Component {
       if (slide) {
         this.slideshow.select({ id: mediaId }, undefined, { animate: false });
       }
+    }
+
+    if (isQuickAddModal) {
+      return;
     }
 
     event.promise
