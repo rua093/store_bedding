@@ -105,15 +105,11 @@
           </div>
           <button
             type="button"
-            class="button predictive-search__close-modal-button"
+            class="button-unstyled predictive-search__close-modal-button"
             aria-label="Close search"
             on:click="dialog-component/closeDialog"
             ref="closeModalButton"
-          >
-            <span class="svg-wrapper">
-              {{ 'icon-close.svg' | inline_asset_content }}
-            </span>
-          </button>
+          ></button>
         </div>
 
         <div class="predictive-search-form__content-wrapper">
@@ -375,36 +371,70 @@
   }
 
   .predictive-search__close-modal-button {
-    --button-color: var(--jem-search-text);
-    --button-background-color: rgba(255, 253, 249, 0.92);
-
+    appearance: none;
+    position: relative;
+    inline-size: 56px;
+    block-size: 56px;
+    min-inline-size: 56px;
+    min-block-size: 56px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    width: 52px;
-    height: 52px;
-    margin-inline-start: 0;
+    justify-content: center;
     padding: 0;
+    margin: 0;
     border: 1px solid var(--jem-search-border);
     border-radius: 999px;
+    background: rgba(255, 253, 249, 0.92);
+    color: var(--jem-search-text);
     box-shadow: 0 10px 24px rgba(54, 33, 19, 0.08);
+    line-height: 0;
+    font-size: 0;
+    text-transform: none;
+    box-sizing: border-box;
+    cursor: pointer;
+    flex: 0 0 auto;
+    justify-self: center;
+    align-self: center;
+    overflow: visible;
+  }
 
-    &:active {
-      transform: scale(0.8);
-      transition: transform 100ms var(--animation-timing-active);
-    }
+  .predictive-search__close-modal-button .svg-wrapper {
+    display: none;
+  }
 
-    .svg-wrapper,
-    svg {
-      width: 14px;
-      height: 14px;
-    }
+  .predictive-search__close-modal-button::before,
+  .predictive-search__close-modal-button::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    inline-size: 15px;
+    block-size: 1.6px;
+    border-radius: 999px;
+    background: currentColor;
+    transform-origin: center;
+  }
+
+  .predictive-search__close-modal-button::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  .predictive-search__close-modal-button::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
   }
 
   .predictive-search__close-modal-button:hover {
-    --button-color: var(--jem-search-text);
-    --button-background-color: var(--jem-search-soft);
-    transform: translateY(-1px);
+    background: var(--jem-search-soft);
+  }
+
+  .predictive-search__close-modal-button:active {
+    transform: scale(0.96);
+    transform-origin: center;
+  }
+
+  .predictive-search__close-modal-button:focus-visible {
+    outline: 2px solid rgba(183, 121, 82, 0.45);
+    outline-offset: 3px;
   }
 
   .jem-search-shell {
@@ -719,6 +749,25 @@
     min-width: 0;
   }
 
+  .jem-search-product-card__badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.65rem;
+    padding: 0.18rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(154, 79, 43, 0.96);
+    color: #fff8f1;
+    box-shadow: 0 10px 22px rgba(108, 55, 29, 0.22);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
   .jem-search-product-card__title {
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -730,38 +779,25 @@
     line-height: 1.4;
   }
 
+  .jem-search-product-card__price-row {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
   .jem-search-product-card__price {
-    display: block;
-    color: var(--jem-search-text);
-  }
-
-  .jem-search-product-card__price > div {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 10px;
-    align-items: baseline;
-  }
-
-  .jem-search-product-card__price .price__regular,
-  .jem-search-product-card__price .price__sale {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 10px;
-    align-items: baseline;
-  }
-
-  .jem-search-product-card__price .price__hidden {
-    display: none;
-  }
-
-  .jem-search-product-card__price .price {
+    color: #c62828;
+    font-size: 0.98rem;
     font-weight: 700;
-    color: var(--jem-search-text);
+    letter-spacing: -0.03em;
   }
 
-  .jem-search-product-card__price .compare-at-price {
-    color: var(--jem-search-muted);
+  .jem-search-product-card__compare {
+    color: #a99384;
+    font-size: 0.84rem;
     text-decoration: line-through;
+    text-decoration-thickness: 1px;
   }
 
   .jem-search-empty-state {
@@ -862,66 +898,121 @@
   }
 
   @media screen and (max-width: 749px) {
+    .search-modal {
+      --jem-search-mobile-control-size: 56px;
+    }
+
+    .dialog-modal[open].search-modal__content {
+      animation: none;
+      transform: none;
+    }
+
+    .dialog-modal.search-modal__content.dialog-closing {
+      animation: none;
+      transform: none;
+    }
+
     .search-modal__content[open] {
-      width: calc(100vw - 20px);
-      height: min(90dvh, 760px);
-      max-height: 90dvh;
-      margin: auto;
-      border-radius: 18px;
-      overflow: hidden;
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      max-width: 100vw;
+      height: 100dvh;
+      height: 100svh;
+      max-height: 100dvh;
+      max-height: 100svh;
+      margin: 0;
+      padding: 0;
+      border-radius: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+      touch-action: pan-y;
     }
 
     .predictive-search-form {
-      height: 100%;
-      min-height: 0;
+      height: auto;
+      min-height: 100%;
       display: flex;
       flex-direction: column;
       padding: 12px;
       gap: 12px;
-      overflow: hidden;
+      overflow: visible;
     }
 
     .predictive-search-form__header {
       flex: 0 0 auto;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 48px;
-      gap: 8px;
+      grid-template-columns: minmax(0, 1fr) var(--jem-search-mobile-control-size);
+      gap: 10px;
       align-items: center;
     }
 
     .predictive-search-form__header-inner {
       min-width: 0;
-      min-height: 48px;
-      padding-inline: 12px 8px;
+      height: var(--jem-search-mobile-control-size);
+      min-height: var(--jem-search-mobile-control-size);
+      padding-inline: 14px 10px;
+      box-sizing: border-box;
+      align-items: center;
     }
 
     input.search-input {
-      min-height: 48px;
+      min-height: 0;
+      height: 100%;
       min-width: 0;
       width: 100%;
-      padding-inline-start: 32px;
-      font-size: 0.9rem;
+      padding-block: 0;
+      padding-inline-start: 34px;
+      font-size: 16px;
+      line-height: 1.2;
     }
 
     .predictive-search__close-modal-button {
-      width: 48px;
-      height: 48px;
-      flex: 0 0 48px;
+      inline-size: var(--jem-search-mobile-control-size);
+      block-size: var(--jem-search-mobile-control-size);
+      min-inline-size: var(--jem-search-mobile-control-size);
+      min-block-size: var(--jem-search-mobile-control-size);
+      justify-self: center;
+      align-self: center;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      margin: 0;
+      line-height: 0;
+      font-size: 0;
+    }
+
+    .predictive-search__close-modal-button:hover {
+      transform: none;
+    }
+
+    .predictive-search__close-modal-button:active {
+      transform: scale(0.96);
+    }
+
+    .predictive-search__icon {
+      left: 16px;
+      width: 19px;
+      height: 19px;
+    }
+
+    .predictive-search__icon > svg {
+      width: 19px;
+      height: 19px;
     }
 
     .predictive-search-form__content-wrapper {
       flex: 1 1 auto;
       min-height: 0;
-      overflow: hidden;
+      overflow: visible;
     }
 
     .predictive-search-form__content {
-      height: 100%;
+      height: auto;
       min-height: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior-y: contain;
+      overflow: visible;
       padding-right: 2px;
     }
 
@@ -953,38 +1044,71 @@
       height: auto;
       max-height: none;
       min-height: 0;
-      padding: 14px;
+      padding: 12px;
       border-radius: 16px;
       gap: 10px;
       overflow: visible;
     }
 
+    .jem-search-sidebar__eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+    }
+
     .jem-search-sidebar__list {
       display: grid;
       gap: 8px;
-      max-height: 190px;
+      max-height: clamp(172px, 27svh, 214px);
       overflow-y: auto;
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-y: contain;
       touch-action: pan-y;
       padding-right: 4px;
+      scrollbar-width: thin;
     }
 
     .jem-search-category {
-      min-height: 44px;
-      padding: 8px 10px;
-      gap: 10px;
+      min-height: 52px;
+      padding: 7px 10px;
+      gap: 9px;
+      border-radius: 13px;
     }
 
     .jem-search-category__icon,
     .jem-search-category__img {
-      width: 38px;
-      height: 38px;
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      flex: 0 0 34px;
+    }
+
+    .jem-search-category__copy {
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .jem-search-category__title {
+      font-size: 0.92rem;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .jem-search-category__meta {
+      font-size: 0.78rem;
+      line-height: 1.15;
+    }
+
+    .jem-search-category__arrow {
+      flex: 0 0 auto;
     }
 
     .jem-search-sidebar__button {
-      min-height: 44px;
+      min-height: 42px;
+      font-size: 0.95rem;
+      border-radius: 999px;
     }
 
     .jem-search-results {
@@ -1015,10 +1139,30 @@
       aspect-ratio: 1 / 1;
     }
 
+    .jem-search-product-card__badge {
+      top: 8px;
+      left: 8px;
+      min-height: 1.45rem;
+      padding: 0.14rem 0.5rem;
+      font-size: 0.6rem;
+    }
+
     .jem-search-product-card__title {
       font-size: 0.82rem;
       line-height: 1.25;
       -webkit-line-clamp: 2;
+    }
+
+    .jem-search-product-card__price-row {
+      gap: 0.35rem;
+    }
+
+    .jem-search-product-card__price {
+      font-size: 0.88rem;
+    }
+
+    .jem-search-product-card__compare {
+      font-size: 0.74rem;
     }
 
     .jem-search-products-cta {

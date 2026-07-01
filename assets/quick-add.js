@@ -251,6 +251,8 @@ export class QuickAddComponent extends Component {
       productDetails?.remove();
     }
 
+    this.#positionQuickAddTrustBadges(productGrid);
+
     // Sync the view-event-payload attribute and morph children into the modal's product-component
     const payload = productGrid.getAttribute('view-event-payload') || '';
     modalContent.setAttribute('view-event-payload', payload);
@@ -263,7 +265,6 @@ export class QuickAddComponent extends Component {
     await this.#prepareQuickAddModalMedia(modalContent, this.#modalBindingsAbortController.signal);
     this.#bindQuickAddOptimisticPrice(modalContent, this.#modalBindingsAbortController.signal);
     this.#syncVariantSelection(modalContent);
-    this.#positionQuickAddTrustBadges(modalContent);
   }
 
   /**
@@ -371,15 +372,15 @@ export class QuickAddComponent extends Component {
 
   /**
    * Moves trust badges into a full-width rail at the bottom of the quick add modal.
-   * @param {Element} modalContent
+   * @param {Element} container
    */
-  #positionQuickAddTrustBadges(modalContent) {
-    if (!(modalContent instanceof HTMLElement)) return;
+  #positionQuickAddTrustBadges(container) {
+    if (!(container instanceof HTMLElement)) return;
 
-    const media = modalContent.querySelector(':scope > .product-information__media, .product-information__media');
-    const details = modalContent.querySelector(':scope > .product-details, .product-details');
-    const trustBadges = modalContent.querySelector('.product-form-trust-badges');
-    const oldMain = modalContent.querySelector(':scope > .quick-add-modal__main');
+    const media = container.querySelector(':scope > .product-information__media, .product-information__media');
+    const details = container.querySelector(':scope > .product-details, .product-details');
+    const trustBadges = container.querySelector('.product-form-trust-badges');
+    const oldMain = container.querySelector(':scope > .quick-add-modal__main');
 
     if (oldMain instanceof HTMLElement) {
       oldMain.replaceWith(...Array.from(oldMain.childNodes));
@@ -395,11 +396,11 @@ export class QuickAddComponent extends Component {
       main.appendChild(details);
     }
 
-    modalContent.prepend(main);
+    container.prepend(main);
 
     if (trustBadges instanceof HTMLElement) {
       trustBadges.setAttribute('data-quick-add-trust-rail', 'true');
-      modalContent.appendChild(trustBadges);
+      container.appendChild(trustBadges);
     }
   }
 
@@ -757,15 +758,35 @@ class QuickAddDialog extends DialogComponent {
 
   /** @param {ProductSelectEvent} event - The product select event */
   #handleProductSelect = (event) => {
+    const modalContent = this.querySelector('#quick-add-modal-content');
+    const variantPicker = modalContent?.querySelector('variant-picker');
+    const optionValueId = event.detail?.optionValueId;
+    const selectedOption =
+      (optionValueId &&
+        variantPicker?.querySelector(`[data-option-value-id="${CSS.escape(String(optionValueId))}"]`)) ||
+      (event.target instanceof HTMLSelectElement ? event.target.options[event.target.selectedIndex] : null) ||
+      variantPicker?.querySelector('select option:checked, select option[selected], fieldset input:checked');
+    const mediaId = selectedOption?.dataset?.optionMediaId;
+
+    if (mediaId) {
+      this.#selectQuickAddMedia(mediaId);
+    }
+
     // Wait for variant update data
     event.promise
       .then(({ detail }) => {
         if (!detail?.html) return;
 
         const { html } = detail;
+        const newFirstSlide = html.querySelector('media-gallery slideshow-slide');
+        const newMediaId = newFirstSlide?.getAttribute('slide-id') || newFirstSlide?.dataset?.mediaId;
         const anchorElement = /** @type {HTMLAnchorElement} */ (html.querySelector('.view-product-title a'));
         const viewMoreDetailsLink = /** @type {HTMLAnchorElement} */ (this.querySelector('.view-product-title a'));
         const mobileProductTitle = /** @type {HTMLAnchorElement} */ (this.querySelector('.product-header a'));
+
+        if (newMediaId) {
+          this.#selectQuickAddMedia(newMediaId);
+        }
 
         if (!anchorElement) return;
 
@@ -776,6 +797,45 @@ class QuickAddDialog extends DialogComponent {
         if (error?.name !== 'AbortError') console.warn('[quick-add] Event promise rejected:', error);
       });
   };
+
+  /**
+   * Selects the matching quick add media slide without replacing the current gallery.
+   * @param {string} mediaId
+   */
+  #selectQuickAddMedia(mediaId) {
+    const gallery = this.querySelector('#quick-add-modal-content media-gallery');
+    if (!(gallery instanceof HTMLElement) || !mediaId) return;
+
+    const normalizedMediaId = String(mediaId);
+    const slideshow = gallery.querySelector('slideshow-component');
+    const slides = Array.from(gallery.querySelectorAll('slideshow-slide'));
+
+    const slide = slides.find((slide) => {
+      if (!(slide instanceof HTMLElement)) return false;
+      return slide.getAttribute('slide-id') === normalizedMediaId || slide.dataset.mediaId === normalizedMediaId;
+    });
+
+    if (!(slide instanceof HTMLElement)) return;
+
+    if (slideshow && typeof slideshow.select === 'function') {
+      slideshow.select({ id: normalizedMediaId }, undefined, { animate: false });
+      return;
+    }
+
+    const slideIndex = slides.indexOf(slide);
+    slides.forEach((currentSlide, index) => {
+      if (currentSlide instanceof HTMLElement) {
+        currentSlide.setAttribute('aria-hidden', index === slideIndex ? 'false' : 'true');
+      }
+    });
+
+    const slideshowSlides = gallery.querySelector('slideshow-slides');
+    if (slideshowSlides instanceof HTMLElement) {
+      slideshowSlides.scrollTo({ left: slide.offsetLeft, behavior: 'auto' });
+    } else {
+      slide.scrollIntoView({ block: 'nearest', inline: 'start', behavior: 'auto' });
+    }
+  }
 
   #handleDialogClose = () => {
     const iosVersion = getIOSVersion();

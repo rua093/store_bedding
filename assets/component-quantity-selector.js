@@ -21,24 +21,9 @@ import { parseIntOrDefault } from '@theme/utilities';
  */
 export class QuantitySelectorComponent extends Component {
   requiredRefs = ['quantityInput', 'minusButton', 'plusButton'];
-  serverDisabledMinus = false;
-  serverDisabledPlus = false;
-  initialized = false;
 
   connectedCallback() {
     super.connectedCallback();
-
-    // Capture server-disabled state on first load
-    const { minusButton, plusButton } = this.refs;
-
-    if (minusButton.disabled) {
-      this.serverDisabledMinus = true;
-    }
-    if (plusButton.disabled) {
-      this.serverDisabledPlus = true;
-    }
-
-    this.initialized = true;
     this.updateButtonStates();
   }
 
@@ -160,18 +145,18 @@ export class QuantitySelectorComponent extends Component {
    * Updates button states based on current value and limits
    */
   updateButtonStates() {
-    const { minusButton, plusButton } = this.refs;
+    const { quantityInput, minusButton, plusButton } = this.refs;
     const { min, value } = this.getCurrentValues();
     const effectiveMax = this.getEffectiveMax();
 
-    // Only manage buttons that weren't server-disabled
-    if (!this.serverDisabledMinus) {
-      minusButton.disabled = value <= min;
+    if (quantityInput.disabled) {
+      minusButton.disabled = true;
+      plusButton.disabled = true;
+      return;
     }
 
-    if (!this.serverDisabledPlus) {
-      plusButton.disabled = effectiveMax !== null && value >= effectiveMax;
-    }
+    minusButton.disabled = value <= min;
+    plusButton.disabled = effectiveMax !== null && value >= effectiveMax;
   }
 
   /**
