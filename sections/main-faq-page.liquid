@@ -1,0 +1,649 @@
+{% liquid
+  assign faq_items_count = 0
+  assign benefit_items_count = 0
+
+  for block in section.blocks
+    if block.type == 'faq_item'
+      assign faq_items_count = faq_items_count | plus: 1
+    elsif block.type == 'benefit_item'
+      assign benefit_items_count = benefit_items_count | plus: 1
+    endif
+  endfor
+%}
+
+<script src="{{ 'faq-page.js' | asset_url }}" defer="defer"></script>
+
+<style>
+  #shopify-section-{{ section.id }} .faq-page {
+    --faq-bg: {{ section.settings.background_color | default: '#fbf7f0' }};
+    --faq-card: {{ section.settings.card_color | default: '#fffdf8' }};
+    --faq-border: {{ section.settings.border_color | default: '#eadfd1' }};
+    --faq-accent: {{ section.settings.accent_color | default: '#9b5f3f' }};
+    --faq-text: {{ section.settings.text_color | default: '#2e2925' }};
+    --faq-muted: color-mix(in srgb, var(--faq-text) 68%, transparent);
+    --faq-soft: color-mix(in srgb, var(--faq-accent) 10%, var(--faq-card));
+    background:
+      radial-gradient(circle at 12% 12%, color-mix(in srgb, var(--faq-accent) 8%, transparent), transparent 26%),
+      radial-gradient(circle at 85% 18%, color-mix(in srgb, var(--faq-accent) 6%, transparent), transparent 24%),
+      linear-gradient(180deg, color-mix(in srgb, var(--faq-bg) 96%, white), var(--faq-bg));
+    color: var(--faq-text);
+    padding: clamp(20px, 3vw, 40px) 16px clamp(34px, 5vw, 78px);
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__shell {
+    width: min(100%, 1500px);
+    margin: 0 auto;
+    padding: clamp(28px, 4vw, 48px);
+    border: 1px solid var(--faq-border);
+    border-radius: clamp(22px, 3vw, 34px);
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--faq-card) 96%, white), color-mix(in srgb, var(--faq-bg) 88%, white));
+    box-shadow: 0 24px 70px color-mix(in srgb, var(--faq-accent) 10%, transparent);
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__header {
+    max-width: 820px;
+    margin: 0 auto clamp(24px, 3.5vw, 42px);
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+    padding: 6px 16px;
+    margin-bottom: 16px;
+    border: 1px solid var(--faq-border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--faq-card) 86%, white);
+    color: var(--faq-accent);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__eyebrow svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__heading {
+    margin: 0;
+    color: var(--faq-text);
+    font-family: var(--font-primary--family, var(--font-heading--family, serif));
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 500;
+    letter-spacing: -.045em;
+    line-height: .98;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__subheading {
+    max-width: 760px;
+    margin: 18px auto 0;
+    color: var(--faq-muted);
+    font-size: clamp(15px, 1.3vw, 19px);
+    line-height: 1.6;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__ornament {
+    display: grid;
+    grid-template-columns: minmax(38px, 72px) auto minmax(38px, 72px);
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    width: fit-content;
+    margin: 20px auto 0;
+    color: var(--faq-accent);
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__ornament::before,
+  #shopify-section-{{ section.id }} .faq-page__ornament::after {
+    content: "";
+    height: 1px;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--faq-accent) 52%, transparent));
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__ornament::after {
+    background: linear-gradient(90deg, color-mix(in srgb, var(--faq-accent) 52%, transparent), transparent);
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__ornament svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__accordion-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(18px, 2.4vw, 30px);
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__column {
+    display: grid;
+    align-content: start;
+    gap: 14px;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__item {
+    border: 1px solid var(--faq-border);
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--faq-card) 92%, white);
+    box-shadow: 0 12px 34px color-mix(in srgb, var(--faq-accent) 5%, transparent);
+    overflow: hidden;
+    transition: border-color .22s ease, background .22s ease, box-shadow .22s ease;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__item[open] {
+    border-color: color-mix(in srgb, var(--faq-accent) 34%, var(--faq-border));
+    background: var(--faq-card);
+    box-shadow: 0 18px 42px color-mix(in srgb, var(--faq-accent) 8%, transparent);
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__item summary {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: clamp(14px, 2vw, 24px);
+    min-height: 86px;
+    padding: 16px 22px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__icon,
+  #shopify-section-{{ section.id }} .faq-page__benefit-icon {
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border: 1px solid color-mix(in srgb, var(--faq-accent) 18%, var(--faq-border));
+    border-radius: 999px;
+    background:
+      radial-gradient(circle at 30% 25%, color-mix(in srgb, var(--faq-accent) 14%, transparent), transparent 42%),
+      var(--faq-soft);
+    color: var(--faq-accent);
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__icon {
+    width: 52px;
+    height: 52px;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__icon svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__question {
+    color: var(--faq-text);
+    font-family: var(--font-primary--family, var(--font-heading--family, serif));
+    font-size: clamp(17px, 1.55vw, 23px);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -.025em;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__chevron {
+    display: inline-grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    color: var(--faq-accent);
+    transition: transform .22s ease;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__chevron svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__item[open] .faq-page__chevron {
+    transform: rotate(180deg);
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__answer {
+    padding: 0 28px 26px 88px;
+    color: var(--faq-muted);
+    font-size: clamp(14px, 1vw, 16px);
+    line-height: 1.75;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__answer > *:first-child {
+    margin-top: 0;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__answer > *:last-child {
+    margin-bottom: 0;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__answer ul,
+  #shopify-section-{{ section.id }} .faq-page__answer ol {
+    margin: 10px 0 10px 1.1em;
+    padding: 0;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__answer li::marker {
+    color: var(--faq-accent);
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__benefits {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: clamp(22px, 3vw, 34px);
+    border: 1px solid var(--faq-border);
+    border-radius: 22px;
+    background: color-mix(in srgb, var(--faq-card) 90%, white);
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__benefit {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 18px;
+    padding: clamp(18px, 2.5vw, 28px);
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__benefit + .faq-page__benefit {
+    border-left: 1px solid var(--faq-border);
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__benefit-icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__benefit-icon svg {
+    width: 34px;
+    height: 34px;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__benefit-heading {
+    margin: 0 0 6px;
+    color: var(--faq-text);
+    font-size: clamp(15px, 1.1vw, 18px);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  #shopify-section-{{ section.id }} .faq-page__benefit-text {
+    margin: 0;
+    color: var(--faq-muted);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  @media screen and (max-width: 1180px) {
+    #shopify-section-{{ section.id }} .faq-page__benefits {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #shopify-section-{{ section.id }} .faq-page__benefit:nth-child(odd) {
+      border-left: 0;
+    }
+
+    #shopify-section-{{ section.id }} .faq-page__benefit:nth-child(n+3) {
+      border-top: 1px solid var(--faq-border);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .faq-page {
+      padding: 16px 12px 36px;
+    }
+
+    #shopify-section-{{ section.id }} .faq-page__shell {
+      padding: 24px 14px;
+      border-radius: 24px;
+    }
+
+    #shopify-section-{{ section.id }} .faq-page__eyebrow {
+      font-size: 11px;
+      letter-spacing: .09em;
+    }
+
+    #shopify-section-{{ section.id }} .faq-page__accordion-columns {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    #shopify-section-{{ section.id }} .faq-page__item summary {
+      min-height: 74px;
+      gap: 12px;
+      padding: 13px 14px;
+    }
+
+    #shopify-section-{{ section.id }} .faq-page__icon {
+      width: 44px;
+      height: 44px;
+    }
+
+    #shopify-section-{{ section.id }} .faq-page__icon svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    #shopify-section-{{ section.id }} .faq-page__question {
+      font-size: 17px;
+    }
+
+    #shopify-section-{{ section.id }} .faq-page__answer {
+      padding: 0 16px 20px 70px;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    #shopify-section-{{ section.id }} .faq-page__benefits {
+      grid-template-columns: 1fr;
+      border-radius: 18px;
+    }
+
+    #shopify-section-{{ section.id }} .faq-page__benefit,
+    #shopify-section-{{ section.id }} .faq-page__benefit + .faq-page__benefit,
+    #shopify-section-{{ section.id }} .faq-page__benefit:nth-child(odd),
+    #shopify-section-{{ section.id }} .faq-page__benefit:nth-child(n+3) {
+      border-left: 0;
+      border-top: 1px solid var(--faq-border);
+    }
+
+    #shopify-section-{{ section.id }} .faq-page__benefit:first-child {
+      border-top: 0;
+    }
+
+    #shopify-section-{{ section.id }} .faq-page__benefit {
+      grid-template-columns: auto minmax(0, 1fr);
+      padding: 18px;
+    }
+
+    #shopify-section-{{ section.id }} .faq-page__benefit-icon {
+      width: 58px;
+      height: 58px;
+    }
+
+    #shopify-section-{{ section.id }} .faq-page__benefit-icon svg {
+      width: 29px;
+      height: 29px;
+    }
+  }
+
+  @media screen and (max-width: 420px) {
+    #shopify-section-{{ section.id }} .faq-page__item summary {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+
+    #shopify-section-{{ section.id }} .faq-page__answer {
+      padding-left: 16px;
+    }
+  }
+</style>
+
+<section
+  class="faq-page"
+  data-faq-page
+  data-close-other-items="{{ section.settings.close_other_items }}"
+>
+  <div class="faq-page__shell">
+    <header class="faq-page__header">
+      {% if section.settings.eyebrow != blank %}
+        <div class="faq-page__eyebrow">
+          {% render 'faq-icon', icon: 'shield' %}
+          <span>{{ section.settings.eyebrow | escape }}</span>
+        </div>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h1 class="faq-page__heading">{{ section.settings.heading | escape }}</h1>
+      {% endif %}
+
+      {% if section.settings.subheading != blank %}
+        <div class="faq-page__subheading">{{ section.settings.subheading }}</div>
+      {% endif %}
+
+      <div class="faq-page__ornament">
+        {% render 'faq-icon', icon: 'leaf' %}
+      </div>
+    </header>
+
+    {% if faq_items_count > 0 %}
+      <div class="faq-page__accordion-columns">
+        <div class="faq-page__column">
+          {% liquid
+            assign faq_position = 0
+          %}
+          {% for block in section.blocks %}
+            {% if block.type == 'faq_item' %}
+              {% liquid
+                assign faq_position = faq_position | plus: 1
+                assign column_remainder = faq_position | modulo: 2
+              %}
+              {% if column_remainder == 1 %}
+                <details
+                  class="faq-page__item"
+                  data-faq-item
+                  {{ block.shopify_attributes }}
+                >
+                  <summary aria-expanded="false">
+                    <span class="faq-page__icon">{% render 'faq-icon', icon: block.settings.icon %}</span>
+                    <span class="faq-page__question">{{ block.settings.question | escape }}</span>
+                    <span class="faq-page__chevron">
+                      <svg aria-hidden="true" focusable="false" viewBox="0 0 20 20" fill="none"><path d="m5 7.5 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                  </summary>
+                  <div class="faq-page__answer rte" hidden>
+                    {{ block.settings.answer }}
+                  </div>
+                </details>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <div class="faq-page__column">
+          {% liquid
+            assign faq_position = 0
+          %}
+          {% for block in section.blocks %}
+            {% if block.type == 'faq_item' %}
+              {% liquid
+                assign faq_position = faq_position | plus: 1
+                assign column_remainder = faq_position | modulo: 2
+              %}
+              {% if column_remainder == 0 %}
+                <details
+                  class="faq-page__item"
+                  data-faq-item
+                  {{ block.shopify_attributes }}
+                >
+                  <summary aria-expanded="false">
+                    <span class="faq-page__icon">{% render 'faq-icon', icon: block.settings.icon %}</span>
+                    <span class="faq-page__question">{{ block.settings.question | escape }}</span>
+                    <span class="faq-page__chevron">
+                      <svg aria-hidden="true" focusable="false" viewBox="0 0 20 20" fill="none"><path d="m5 7.5 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                  </summary>
+                  <div class="faq-page__answer rte" hidden>
+                    {{ block.settings.answer }}
+                  </div>
+                </details>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if benefit_items_count > 0 %}
+      <div class="faq-page__benefits">
+        {% for block in section.blocks %}
+          {% if block.type == 'benefit_item' %}
+            <div class="faq-page__benefit" {{ block.shopify_attributes }}>
+              <span class="faq-page__benefit-icon">{% render 'faq-icon', icon: block.settings.icon %}</span>
+              <div>
+                {% if block.settings.heading != blank %}
+                  <h2 class="faq-page__benefit-heading">{{ block.settings.heading | escape }}</h2>
+                {% endif %}
+                {% if block.settings.text != blank %}
+                  <p class="faq-page__benefit-text">{{ block.settings.text | escape }}</p>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FAQ page",
+  "class": "section-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "FAQ • SHIPPING • RETURNS"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Frequently Asked Questions"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "<p>Everything you need to know before creating your personalized bedding.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first_item",
+      "label": "Open first FAQ by default",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "close_other_items",
+      "label": "Close other FAQs when one opens",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#fbf7f0"
+    },
+    {
+      "type": "color",
+      "id": "card_color",
+      "label": "Card background",
+      "default": "#fffdf8"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "#eadfd1"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent",
+      "default": "#9b5f3f"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#2e2925"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "package", "label": "Package" },
+            { "value": "eye", "label": "Eye" },
+            { "value": "pencil", "label": "Pencil" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "washer", "label": "Washer" },
+            { "value": "gift", "label": "Gift" },
+            { "value": "truck", "label": "Truck" },
+            { "value": "sparkle", "label": "Sparkle" }
+          ],
+          "default": "package"
+        },
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Can I customize this product?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Yes. You can add names, dates, photos, quotes, or your own idea to create a personalized bedding piece.</p>"
+        }
+      ]
+    },
+    {
+      "type": "benefit_item",
+      "name": "Benefit item",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "truck", "label": "Truck" },
+            { "value": "eye", "label": "Eye" },
+            { "value": "gift", "label": "Gift" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "package", "label": "Package" },
+            { "value": "sparkle", "label": "Sparkle" }
+          ],
+          "default": "truck"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Fast Production"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Custom-made and shipped with care."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ page"
+    }
+  ]
+}
+{% endschema %}
