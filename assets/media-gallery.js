@@ -39,7 +39,33 @@ export class MediaGallery extends Component {
    * @param {ProductSelectEvent} event - The product select event.
    */
   #handleProductSelect = (event) => {
-    if (!(event.target instanceof Element) || event.target.closest('product-card')) return;
+    if (
+      !(event.target instanceof Element) ||
+      event.target.closest('product-card') ||
+      event.target.closest('quick-add-dialog, .quick-add-modal')
+    ) {
+      return;
+    }
+
+    const variantPicker = event.target.closest('variant-picker');
+    const optionValueId = event.detail?.optionValueId;
+
+    const selectedOption =
+      (optionValueId && variantPicker?.querySelector(`[data-option-value-id="${CSS.escape(optionValueId)}"]`)) ||
+      (event.target instanceof HTMLSelectElement ? event.target.options[event.target.selectedIndex] : null) ||
+      variantPicker?.querySelector('select option:checked, select option[selected], fieldset input:checked');
+
+    const mediaId = selectedOption?.dataset?.optionMediaId;
+
+    if (mediaId && this.slideshow) {
+      const slide = this.slideshow.refs?.slides?.find(
+        (slide) => slide.getAttribute('slide-id') === mediaId || slide.dataset.mediaId === mediaId
+      );
+
+      if (slide) {
+        this.slideshow.select({ id: mediaId }, undefined, { animate: false });
+      }
+    }
 
     event.promise
       .then(({ detail }) => {

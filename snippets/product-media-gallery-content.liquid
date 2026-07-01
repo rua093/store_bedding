@@ -350,9 +350,9 @@
 
   .product-information--main-product .product-information__media .media-gallery--carousel slideshow-component {
     display: grid;
-    grid-template-columns: 64px minmax(0, 1fr);
+    grid-template-columns: calc(var(--thumbnail-width) + 12px) minmax(0, 1fr);
     align-items: start;
-    column-gap: 24px;
+    column-gap: 22px;
   }
 
   .product-information--main-product
@@ -362,7 +362,7 @@
     grid-template:
       'controls container' auto
       'controls arrows' min-content
-      / 64px minmax(0, 1fr);
+      / calc(var(--thumbnail-width) + 12px) minmax(0, 1fr);
   }
 
   .product-information--main-product
@@ -372,7 +372,7 @@
     grid-template:
       'container controls' auto
       'arrows controls' min-content
-      / minmax(0, 1fr) 64px;
+      / minmax(0, 1fr) calc(var(--thumbnail-width) + 12px);
   }
 
   .product-information--main-product .product-information__media .media-gallery--carousel slideshow-container,
@@ -415,7 +415,11 @@
   }
 
   .product-information--main-product .product-information__media .slideshow-controls__thumbnail {
-    border-radius: 16px;
+    width: var(--thumbnail-width);
+    min-width: var(--thumbnail-width);
+    aspect-ratio: 1 / 1;
+    padding: 4px;
+    border-radius: 18px;
     background: linear-gradient(180deg, #ffffff 0%, #fff8f0 100%);
     border: 1px solid rgba(120, 84, 58, 0.18);
     box-shadow:
@@ -452,6 +456,11 @@
       .product-media
       :is(img, video, iframe, .deferred-media__poster-image) {
       max-height: min(72vh, 560px);
+    }
+
+    .product-information--main-product .product-information__media .media-gallery__mobile-controls[thumbnails] .slideshow-controls__thumbnail {
+      width: 56px;
+      min-width: 56px;
     }
   }
 {% endstyle %}
@@ -520,14 +529,19 @@
         {% elsif block_settings.zoom %}
           {%- capture attributes -%}on:click="#zoom-dialog-{{ block_id }}/open/{{ forloop.index0 }}"{% if settings.transition_to_main_product and forloop.first %} data-view-transition-type="product-image-transition"{% endif %}{% endcapture -%}
         {% endif %}
+        {% capture media_attributes %}
+          {{ attributes }}
+          data-media-id="{{ media.id }}"
+        {% endcapture %}
 
         {% render 'slideshow-slide',
           index: forloop.index0,
           children: children,
           class: class,
           style: style,
-          attributes: attributes,
+          attributes: media_attributes,
           media_fit: block_settings.media_fit,
+          slide_id: media.id
         %}
       {% endfor %}
     {% endcapture %}

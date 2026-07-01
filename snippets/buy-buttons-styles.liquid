@@ -397,9 +397,32 @@
     display: none;
   }
 
-  .product-information--main-product .product-form-buttons > .add-to-cart-button {
+  .product-information--main-product .product-form-buttons > span:has(.add-to-cart-button) {
     grid-column: 2;
     align-self: end;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .product-information--main-product .product-form-buttons .quantity-selector-wrapper::before {
+    display: none;
+  }
+
+  .product-information--main-product .product-form-buttons::before {
+    content: 'Quantity';
+    grid-column: 1 / -1;
+    display: block;
+    color: #43342b;
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: -4px;
+  }
+
+  .product-information--main-product .product-form-buttons > span:has(.add-to-cart-button) {
+    grid-column: 2;
+    align-self: stretch;
     width: 100%;
     min-width: 0;
   }
@@ -578,13 +601,13 @@
       gap: 12px;
     }
 
-    .product-information--main-product .product-form-buttons .quantity-selector-wrapper::before {
-      margin-bottom: 0.45rem;
+    .product-information--main-product .product-form-buttons::before {
+      margin-bottom: -2px;
       font-size: 0.92rem;
     }
 
     .product-information--main-product .product-form-buttons .quantity-selector-wrapper,
-    .product-information--main-product .product-form-buttons > .add-to-cart-button,
+    .product-information--main-product .product-form-buttons > span:has(.add-to-cart-button),
     .product-information--main-product .product-form-buttons > .accelerated-checkout-block,
     .product-information--main-product .product-form-buttons > .shopify-payment-button {
       grid-column: 1 / -1;

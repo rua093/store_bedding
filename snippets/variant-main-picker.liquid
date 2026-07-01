@@ -129,6 +129,7 @@
               {% liquid
                 assign display_option_value = product_option_value | strip
                 assign display_option_value_downcase = display_option_value | downcase
+                assign option_featured_media = product_option_value.variant.featured_media
 
                 if display_option_value_downcase contains ' from '
                   if display_option_value_downcase contains 'vnd' or display_option_value_downcase contains 'usd' or display_option_value_downcase contains '$'
@@ -139,6 +140,10 @@
 
                 if product_option.values.size > 1 and display_option_value_downcase contains 'option'
                   assign display_option_value = 'Option ' | append: forloop.index
+                endif
+
+                if option_featured_media == blank and product_option_value.product_url
+                  assign option_featured_media = product_option_value.variant.product.featured_media
                 endif
               %}
               {% if product_option_value.size > longest_value and option_id_attribute %}
@@ -163,6 +168,9 @@
                   data-option-value-id="{{ product_option_value.id }}"
                   data-option-available="{{ product_option_value.available }}"
                   data-connected-product-url="{{ product_option_value.product_url }}"
+                  {% if option_featured_media %}
+                    data-option-media-id="{{ option_featured_media.id }}"
+                  {% endif %}
                   {% if product_option_value.variant.id %}
                     data-variant-id="{{ product_option_value.variant.id }}"
                     data-variant-price="{{ product_option_value.variant.price }}"
@@ -254,6 +262,7 @@
                   {% liquid
                     assign display_option_value = product_option_value | strip
                     assign display_option_value_downcase = display_option_value | downcase
+                    assign option_featured_media = product_option_value.variant.featured_media
 
                     if display_option_value_downcase contains ' from '
                       if display_option_value_downcase contains 'vnd' or display_option_value_downcase contains 'usd' or display_option_value_downcase contains '$'
@@ -265,12 +274,19 @@
                     if product_option.values.size > 1 and display_option_value_downcase contains 'option'
                       assign display_option_value = 'Option ' | append: forloop.index
                     endif
+
+                    if option_featured_media == blank and product_option_value.product_url
+                      assign option_featured_media = product_option_value.variant.product.featured_media
+                    endif
                   %}
                   <option
                     value="{{ product_option_value | escape }}"
                     data-input-id="{{ product_option.position }}-{{ forloop.index0 }}"
                     data-option-name="{{ product_option.name | escape }}"
                     data-option-value-id="{{ product_option_value.id }}"
+                    {% if option_featured_media %}
+                      data-option-media-id="{{ option_featured_media.id }}"
+                    {% endif %}
                     data-variant-id="{{ product_option_value.variant.id }}"
                     data-variant-price="{{ product_option_value.variant.price }}"
                     data-variant-compare-at-price="{{ product_option_value.variant.compare_at_price }}"

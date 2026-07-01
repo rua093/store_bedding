@@ -81,12 +81,12 @@
   }
 
   .product-information--main-product .product-information__media .slideshow-controls__thumbnail {
-    padding: 3px;
+    padding: 4px;
     border-radius: 18px;
   }
 
   .product-information--main-product .product-information__media .slideshow-controls__thumbnail img {
-    border-radius: 12px;
+    border-radius: 13px;
   }
 
   @media screen and (max-width: 749px) {
@@ -99,6 +99,11 @@
       justify-content: flex-start;
       overflow-x: auto;
       padding-inline: 2px;
+    }
+
+    .product-information--main-product .product-information__media .media-gallery__mobile-controls[thumbnails] .slideshow-controls__thumbnail {
+      width: 56px;
+      min-width: 56px;
     }
   }
 {% endstylesheet %}
