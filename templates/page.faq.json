@@ -1,0 +1,116 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-faq-page",
+      "settings": {
+        "eyebrow": "FAQ \u2022 SHIPPING \u2022 RETURNS",
+        "heading": "Frequently Asked Questions",
+        "subheading": "<p>Everything you need to know before creating your personalized bedding.</p>",
+        "open_first_item": true,
+        "close_other_items": true,
+        "background_color": "#fbf7f0",
+        "card_color": "#fffdf8",
+        "border_color": "#eadfd1",
+        "accent_color": "#9b5f3f",
+        "text_color": "#2e2925"
+      },
+      "blocks": {
+        "faq_production_shipping": {
+          "type": "faq_item",
+          "settings": {
+            "icon": "package",
+            "question": "How long does it take to produce and ship my custom bedding?",
+            "answer": "<p>Each piece is made with care after your order is placed.</p><ul><li>Production time: 3\u20135 business days</li><li>Estimated shipping time: 5\u201312 business days, depending on destination</li><li>Total estimated delivery: 8\u201317 business days</li></ul><p>You\u2019ll receive tracking information as soon as your order ships.</p>"
+          }
+        },
+        "faq_preview": {
+          "type": "faq_item",
+          "settings": {
+            "icon": "eye",
+            "question": "Can I preview my design before production?",
+            "answer": "<p>For personalized or fully custom orders, you can request a preview before production. We\u2019ll help check the main details such as photo placement, names, dates, colors, and layout so the final design feels right.</p>"
+          }
+        },
+        "faq_washing": {
+          "type": "faq_item",
+          "settings": {
+            "icon": "washer",
+            "question": "Is the bedding machine washable?",
+            "answer": "<p>Yes. Machine wash cold on a gentle cycle with mild detergent. Avoid bleach, harsh chemicals, and high heat to help preserve the softness of the fabric and the clarity of the print.</p>"
+          }
+        },
+        "faq_personalization": {
+          "type": "faq_item",
+          "settings": {
+            "icon": "pencil",
+            "question": "What personalization can I add to my bedding?",
+            "answer": "<p>You can personalize your bedding with photos, names, meaningful dates, quotes, short messages, illustrations, pets, hobbies, themes, or a completely original idea. If you have a reference image or mood, you can send it with your request.</p>"
+          }
+        },
+        "faq_gift": {
+          "type": "faq_item",
+          "settings": {
+            "icon": "gift",
+            "question": "Is this a good gift option?",
+            "answer": "<p>Yes. Personalized bedding works well for birthdays, anniversaries, family gifts, pet lovers, memorial gifts, holidays, and anyone who loves cozy items with a personal story behind them.</p>"
+          }
+        },
+        "faq_issue": {
+          "type": "faq_item",
+          "settings": {
+            "icon": "shield",
+            "question": "What should I do if there is an issue with my order?",
+            "answer": "<p>If your item arrives damaged, defective, or different from the approved details, please contact us with your order number and clear photos. We\u2019ll review the issue and help with the best available solution.</p>"
+          }
+        },
+        "benefit_fast": {
+          "type": "benefit_item",
+          "settings": {
+            "icon": "truck",
+            "heading": "Made to Order",
+            "text": "Custom-made with care after your order is placed."
+          }
+        },
+        "benefit_preview": {
+          "type": "benefit_item",
+          "settings": {
+            "icon": "eye",
+            "heading": "Preview Support",
+            "text": "We help make sure your design details look right."
+          }
+        },
+        "benefit_gift": {
+          "type": "benefit_item",
+          "settings": {
+            "icon": "gift",
+            "heading": "Gift-Ready",
+            "text": "Thoughtful, personal gifts for meaningful moments."
+          }
+        },
+        "benefit_quality": {
+          "type": "benefit_item",
+          "settings": {
+            "icon": "shield",
+            "heading": "Quality Promise",
+            "text": "If something is wrong, contact us and we\u2019ll help."
+          }
+        }
+      },
+      "block_order": [
+        "faq_production_shipping",
+        "faq_preview",
+        "faq_washing",
+        "faq_personalization",
+        "faq_gift",
+        "faq_issue",
+        "benefit_fast",
+        "benefit_preview",
+        "benefit_gift",
+        "benefit_quality"
+      ]
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
