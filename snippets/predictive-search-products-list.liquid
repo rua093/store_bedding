@@ -52,6 +52,16 @@
           {% for _id in order_ids %}
             {% assign int_id = _id | times: 1 %}
             {% assign product = products | find: 'id', int_id %}
+            {% liquid
+              assign selected_variant = product.selected_or_first_available_variant
+              assign current_price = selected_variant.price
+              assign compare_price = selected_variant.compare_at_price
+              assign max_safe_compare_price = current_price | times: 5
+              assign show_compare_price = false
+              if compare_price > current_price and compare_price <= max_safe_compare_price
+                assign show_compare_price = true
+              endif
+            %}
             <li
               class="predictive-search-results__card predictive-search-results__card--product"
               ref="recentlyViewedItems[]"
@@ -69,16 +79,34 @@
                         sizes: '(min-width: 990px) 18vw, (min-width: 750px) 26vw, 44vw'
                     }}
                   {% endif %}
+                  {% if show_compare_price %}
+                    <span class="jem-search-product-card__badge">Sale</span>
+                  {% endif %}
                 </div>
                 <div class="jem-search-product-card__content">
                   <span class="jem-search-product-card__title">{{ product.title }}</span>
-                  <div class="jem-search-product-card__price">{% render 'price', product_resource: product, show_unit_price: false %}</div>
+                  <div class="jem-search-product-card__price-row">
+                    <span class="jem-search-product-card__price">{{ current_price | money }}</span>
+                    {% if show_compare_price %}
+                      <span class="jem-search-product-card__compare">{{ compare_price | money }}</span>
+                    {% endif %}
+                  </div>
                 </div>
               </a>
             </li>
           {% endfor %}
         {% else %}
           {% for product in products limit: limit %}
+            {% liquid
+              assign selected_variant = product.selected_or_first_available_variant
+              assign current_price = selected_variant.price
+              assign compare_price = selected_variant.compare_at_price
+              assign max_safe_compare_price = current_price | times: 5
+              assign show_compare_price = false
+              if compare_price > current_price and compare_price <= max_safe_compare_price
+                assign show_compare_price = true
+              endif
+            %}
             <li
               class="predictive-search-results__card predictive-search-results__card--product"
               ref="recentlyViewedItems[]"
@@ -96,10 +124,18 @@
                         sizes: '(min-width: 990px) 18vw, (min-width: 750px) 26vw, 44vw'
                     }}
                   {% endif %}
+                  {% if show_compare_price %}
+                    <span class="jem-search-product-card__badge">Sale</span>
+                  {% endif %}
                 </div>
                 <div class="jem-search-product-card__content">
                   <span class="jem-search-product-card__title">{{ product.title }}</span>
-                  <div class="jem-search-product-card__price">{% render 'price', product_resource: product, show_unit_price: false %}</div>
+                  <div class="jem-search-product-card__price-row">
+                    <span class="jem-search-product-card__price">{{ current_price | money }}</span>
+                    {% if show_compare_price %}
+                      <span class="jem-search-product-card__compare">{{ compare_price | money }}</span>
+                    {% endif %}
+                  </div>
                 </div>
               </a>
             </li>
@@ -123,6 +159,16 @@
         assign limit = limit | default: 8
       %}
       {% for product in products limit: limit %}
+        {% liquid
+          assign selected_variant = product.selected_or_first_available_variant
+          assign current_price = selected_variant.price
+          assign compare_price = selected_variant.compare_at_price
+          assign max_safe_compare_price = current_price | times: 5
+          assign show_compare_price = false
+          if compare_price > current_price and compare_price <= max_safe_compare_price
+            assign show_compare_price = true
+          endif
+        %}
         <li
           class="predictive-search-results__card predictive-search-results__card--product"
           ref="resultsItems[]"
@@ -140,10 +186,18 @@
                     sizes: '(min-width: 990px) 18vw, (min-width: 750px) 26vw, 44vw'
                 }}
               {% endif %}
+              {% if show_compare_price %}
+                <span class="jem-search-product-card__badge">Sale</span>
+              {% endif %}
             </div>
             <div class="jem-search-product-card__content">
               <span class="jem-search-product-card__title">{{ product.title }}</span>
-              <div class="jem-search-product-card__price">{% render 'price', product_resource: product, show_unit_price: false %}</div>
+              <div class="jem-search-product-card__price-row">
+                <span class="jem-search-product-card__price">{{ current_price | money }}</span>
+                {% if show_compare_price %}
+                  <span class="jem-search-product-card__compare">{{ compare_price | money }}</span>
+                {% endif %}
+              </div>
             </div>
           </a>
         </li>

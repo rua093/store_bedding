@@ -115,8 +115,10 @@ class PredictiveSearchComponent extends Component {
     this.#updateQueryState();
 
     requestAnimationFrame(() => {
-      this.refs.searchInput.focus();
-      this.refs.searchInput.select();
+      this.refs.searchInput.focus({ preventScroll: true });
+      if (!window.matchMedia('(max-width: 749px)').matches) {
+        this.refs.searchInput.select();
+      }
     });
   };
 
