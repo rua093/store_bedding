@@ -9,6 +9,7 @@
 
   assign section_heading = section.settings.heading | default: 'OUR NEW ARRIVALS'
   assign section_subheading = section.settings.subheading | default: 'Discover our latest custom blankets, quilts and comforters.'
+  assign section_eyebrow = section.settings.eyebrow | default: 'JUST LANDED'
   assign section_button_label = section.settings.button_label | default: 'View all'
   assign product_limit = section.settings.product_limit | default: 8
   assign show_arrows = section.settings.show_arrows
@@ -18,6 +19,7 @@
   assign section_background_color = section.settings.section_background_color | default: 'transparent'
   assign header_background_color = section.settings.header_background_color | default: '#000000'
   assign heading_color = section.settings.heading_color | default: '#ffffff'
+  assign heading_accent_color = section.settings.heading_accent_color | default: '#d39a74'
   assign subheading_color = section.settings.subheading_color | default: '#ebebeb'
   assign dot_color = section.settings.dot_color | default: '#111111'
   assign card_gap = section.settings.card_gap | default: 22
@@ -44,6 +46,25 @@
   if has_products or request.design_mode
     assign should_render_section = true
   endif
+
+  assign heading_words = section_heading | strip | split: ' '
+  assign heading_word_count = heading_words.size
+  assign heading_accent = section_heading
+  assign heading_lead = ''
+
+  if heading_word_count > 1
+    assign accent_index = heading_word_count | minus: 1
+    assign heading_accent = heading_words | last
+
+    capture heading_lead
+      for word in heading_words limit: accent_index
+        echo word
+        unless forloop.last
+          echo ' '
+        endunless
+      endfor
+    endcapture
+  endif
 %}
 
 {% if should_render_section %}
@@ -52,9 +73,11 @@
     data-new-arrivals-line-section="{{ section.id }}"
     style="
       {% render 'spacing-style', settings: section.settings %}
+      --new-arrivals-bg-image: url('{{ "bg_new_arrivals.png" | asset_url }}');
       --new-arrivals-section-bg: {{ section_background_color }};
       --new-arrivals-header-bg: {{ header_background_color }};
       --new-arrivals-heading-color: {{ heading_color }};
+      --new-arrivals-heading-accent-color: {{ heading_accent_color }};
       --new-arrivals-subheading-color: {{ subheading_color }};
       --new-arrivals-dot-color: {{ dot_color }};
       --new-arrivals-card-gap: {{ card_gap }}px;
@@ -70,7 +93,17 @@
     ">
     <div class="section section--{{ section.settings.section_width | default: 'page-width' }}">
       <div class="new-arrivals-strip-header">
-        <h2 class="new-arrivals-strip-heading">{{ section_heading | escape }}</h2>
+        {% if section_eyebrow != blank %}
+          <p class="new-arrivals-strip-eyebrow">{{ section_eyebrow | escape }}</p>
+        {% endif %}
+        <h2 class="new-arrivals-strip-heading">
+          {% if heading_lead != blank %}
+            <span class="new-arrivals-strip-heading__lead">{{ heading_lead | escape }}</span>
+            <span class="new-arrivals-strip-heading__accent">{{ heading_accent | escape }}</span>
+          {% else %}
+            <span class="new-arrivals-strip-heading__accent">{{ heading_accent | escape }}</span>
+          {% endif %}
+        </h2>
         {% if section_subheading != blank %}
           <p class="new-arrivals-strip-subheading">{{ section_subheading | escape }}</p>
         {% endif %}
@@ -381,7 +414,13 @@
   .new-arrivals-strip-section {
     position: relative;
     overflow-x: clip;
-    background: var(--new-arrivals-section-bg, transparent);
+    isolation: isolate;
+    background:
+      linear-gradient(rgb(0 0 0 / 0.08), rgb(0 0 0 / 0.08)),
+      var(--new-arrivals-bg-image, none);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 
   .new-arrivals-strip-heading {
@@ -390,20 +429,53 @@
     color: var(--new-arrivals-heading-color, #fff);
     font-family: var(--font-heading--family);
     font-style: var(--font-heading--style);
-    font-size: clamp(2rem, 4vw, 3.6rem);
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    line-height: 0.94;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+    text-shadow:
+      0 1px 0 rgb(255 255 255 / 0.26),
+      0 8px 28px rgb(20 10 5 / 0.28);
+  }
+
+  .new-arrivals-strip-heading__lead,
+  .new-arrivals-strip-heading__accent {
+    display: inline-block;
+  }
+
+  .new-arrivals-strip-heading__lead {
+    color: var(--new-arrivals-heading-color, #fff);
+  }
+
+  .new-arrivals-strip-heading__accent {
+    color: var(--new-arrivals-heading-accent-color, #d39a74);
+    font-style: italic;
+    font-weight: 500;
+    margin-inline-start: 0.14em;
+  }
+
+  .new-arrivals-strip-eyebrow {
+    margin: 0 0 0.75rem;
+    color: color-mix(in srgb, var(--new-arrivals-heading-accent-color, #d39a74) 85%, white);
+    font-family: var(--font-body--family);
+    font-size: clamp(0.76rem, 0.8vw, 0.92rem);
+    font-weight: 700;
+    letter-spacing: 0.22em;
     line-height: 1;
-    letter-spacing: 0.04em;
     text-transform: uppercase;
+    text-shadow: 0 1px 10px rgb(16 8 4 / 0.2);
   }
 
   .new-arrivals-strip-subheading {
-    margin: 0.6rem auto 0;
-    max-width: 52rem;
+    margin: 0.9rem auto 0;
+    max-width: 38rem;
     color: var(--new-arrivals-subheading-color, rgba(255, 255, 255, 0.92));
     font-family: var(--font-body--family);
     font-style: var(--font-body--style);
-    font-size: clamp(1rem, 1.2vw, 1.2rem);
-    line-height: 1.45;
+    font-size: clamp(1rem, 1.15vw, 1.28rem);
+    font-weight: 500;
+    line-height: 1.38;
+    text-shadow: 0 4px 18px rgb(18 10 6 / 0.24);
   }
 
   .new-arrivals-strip-button {
@@ -606,7 +678,7 @@
   .new-arrivals-strip-header {
     width: auto;
     margin-inline: calc(var(--page-margin, 1rem) * -1);
-    background: var(--new-arrivals-header-bg, #000);
+    background: transparent;
     color: var(--new-arrivals-heading-color, #fff);
     text-align: center;
     padding:
@@ -637,6 +709,12 @@
         "id": "heading",
         "label": "Heading",
         "default": "OUR NEW ARRIVALS"
+      },
+      {
+        "type": "text",
+        "id": "eyebrow",
+        "label": "Eyebrow",
+        "default": "JUST LANDED"
       },
       {
         "type": "text",
@@ -719,6 +797,12 @@
         "id": "heading_color",
         "label": "Heading color",
         "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "heading_accent_color",
+        "label": "Heading accent color",
+        "default": "#d39a74"
       },
       {
         "type": "color",
