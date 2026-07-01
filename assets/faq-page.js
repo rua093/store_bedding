@@ -5,15 +5,37 @@
 
     const closeOtherItems = root.dataset.closeOtherItems === 'true';
     const items = Array.from(root.querySelectorAll('[data-faq-item]'));
+    const syncItemState = (item) => {
+      const summary = item.querySelector('summary');
+      const answer = item.querySelector('.faq-page__answer');
+      const isOpen = item.hasAttribute('open');
 
-    if (!closeOtherItems) return;
+      if (summary instanceof HTMLElement) {
+        summary.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      }
+
+      if (answer instanceof HTMLElement) {
+        answer.hidden = !isOpen;
+      }
+    };
+
+    items.forEach((item) => {
+      item.removeAttribute('open');
+      syncItemState(item);
+    });
 
     items.forEach((item) => {
       item.addEventListener('toggle', () => {
-        if (!item.open) return;
-        items.forEach((otherItem) => {
-          if (otherItem !== item) otherItem.removeAttribute('open');
-        });
+        if (item.open && closeOtherItems) {
+          items.forEach((otherItem) => {
+            if (otherItem !== item) {
+              otherItem.removeAttribute('open');
+              syncItemState(otherItem);
+            }
+          });
+        }
+
+        syncItemState(item);
       });
     });
   };

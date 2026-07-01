@@ -27,7 +27,7 @@
       radial-gradient(circle at 85% 18%, color-mix(in srgb, var(--faq-accent) 6%, transparent), transparent 24%),
       linear-gradient(180deg, color-mix(in srgb, var(--faq-bg) 96%, white), var(--faq-bg));
     color: var(--faq-text);
-    padding: clamp(34px, 5vw, 78px) 16px;
+    padding: clamp(20px, 3vw, 40px) 16px clamp(34px, 5vw, 78px);
   }
 
   #shopify-section-{{ section.id }} .faq-page__shell {
@@ -296,7 +296,7 @@
 
   @media screen and (max-width: 749px) {
     #shopify-section-{{ section.id }} .faq-page {
-      padding: 18px 12px 36px;
+      padding: 16px 12px 36px;
     }
 
     #shopify-section-{{ section.id }} .faq-page__shell {
@@ -427,17 +427,16 @@
                 <details
                   class="faq-page__item"
                   data-faq-item
-                  {% if faq_position == 1 and section.settings.open_first_item %}open{% endif %}
                   {{ block.shopify_attributes }}
                 >
-                  <summary>
+                  <summary aria-expanded="false">
                     <span class="faq-page__icon">{% render 'faq-icon', icon: block.settings.icon %}</span>
                     <span class="faq-page__question">{{ block.settings.question | escape }}</span>
                     <span class="faq-page__chevron">
                       <svg aria-hidden="true" focusable="false" viewBox="0 0 20 20" fill="none"><path d="m5 7.5 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </span>
                   </summary>
-                  <div class="faq-page__answer rte">
+                  <div class="faq-page__answer rte" hidden>
                     {{ block.settings.answer }}
                   </div>
                 </details>
@@ -462,14 +461,14 @@
                   data-faq-item
                   {{ block.shopify_attributes }}
                 >
-                  <summary>
+                  <summary aria-expanded="false">
                     <span class="faq-page__icon">{% render 'faq-icon', icon: block.settings.icon %}</span>
                     <span class="faq-page__question">{{ block.settings.question | escape }}</span>
                     <span class="faq-page__chevron">
                       <svg aria-hidden="true" focusable="false" viewBox="0 0 20 20" fill="none"><path d="m5 7.5 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </span>
                   </summary>
-                  <div class="faq-page__answer rte">
+                  <div class="faq-page__answer rte" hidden>
                     {{ block.settings.answer }}
                   </div>
                 </details>
