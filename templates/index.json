@@ -249,6 +249,18 @@
         "padding-block-end": 50
       }
     },
+    "product_list_EDUBdR": {
+      "type": "bestselling-bedding",
+      "settings": {
+        "collection": "best-selling",
+        "eyebrow": "OUR MOST LOVED",
+        "title": "Bestselling Bedding",
+        "description": "Loved for softness, warmth and everyday comfort.",
+        "cta_label": "Shop Collection",
+        "cta_link": "shopify://collections/best-selling",
+        "section_width": "page-width"
+      }
+    },
     "media_with_content_brand_intro": {
       "type": "media-with-content",
       "blocks": {
@@ -414,18 +426,6 @@
         "padding-block-end": 0
       }
     },
-    "product_list_EDUBdR": {
-      "type": "bestselling-bedding",
-      "settings": {
-        "collection": "best-selling",
-        "eyebrow": "OUR MOST LOVED",
-        "title": "Bestselling Bedding",
-        "description": "Loved for softness, warmth and everyday comfort.",
-        "cta_label": "Shop Collection",
-        "cta_link": "shopify://collections/best-selling",
-        "section_width": "page-width"
-      }
-    },
     "new_arrivals_line_home": {
       "type": "new-arrivals-line-carousel",
       "settings": {
@@ -445,7 +445,7 @@
         "heading_color": "#fefefe",
         "heading_accent_color": "#d39a74",
         "subheading_color": "#ffffff",
-        "dot_color": "#563D30",
+        "dot_color": "#563d30",
         "padding-block-start": 0,
         "padding-block-end": 32,
         "header_padding_top": 32,
@@ -649,10 +649,10 @@
   },
   "order": [
     "hero_iLBwPd",
-    "collection_list_xpBxCm",
-    "media_with_content_brand_intro",
     "product_list_EDUBdR",
     "new_arrivals_line_home",
+    "collection_list_xpBxCm",
+    "media_with_content_brand_intro",
     "trust_signals_P6hero",
     "1782702718c3bf58b5"
   ]
