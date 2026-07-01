@@ -430,15 +430,6 @@
       "type": "new-arrivals-line-carousel",
       "settings": {
         "collection": "new-arrivals",
-<<<<<<< HEAD
-        "heading": "NEW ARRIVALS",
-        "subheading": "Discover our latest custom blankets, quilts and comforters.",
-        "button_label": "View all",
-        "button_link": "",
-        "product_limit": 8,
-        "show_arrows": true,
-        "show_progress": true
-=======
         "heading": "New Arrivals",
         "eyebrow": "JUST LANDED",
         "subheading": "Discover our latest custom blankets, quilts and comforters.",
@@ -467,7 +458,6 @@
         "mobile_card_width": 78,
         "mobile_card_max_width": 18,
         "card_gap": 22
->>>>>>> 8a8e2664c1939a3b99db255040332efa2716a59a
       }
     },
     "trust_signals_P6hero": {

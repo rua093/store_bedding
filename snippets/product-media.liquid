@@ -18,7 +18,10 @@
     assign fetch_priority = 'high'
   endif
 
-  assign focal_point_style = '--focal-point: ' | append: media.presentation.focal_point | append: ';'
+  assign focal_point_style = ''
+  if media.presentation.focal_point != blank
+    assign focal_point_style = '--focal-point: ' | append: media.presentation.focal_point | append: ';'
+  endif
 %}
 
 <div

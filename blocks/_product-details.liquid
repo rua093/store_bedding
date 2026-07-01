@@ -257,16 +257,14 @@
     display: none;
   }
 
-  .product-details--main-product > .group-block > .group-block-content > .text-block.h2:first-of-type {
-    margin-bottom: 0;
-  }
-
-  .product-details--main-product > .group-block > .group-block-content > .text-block.h2:first-of-type :is(h1, h2, h3, h4, h5, h6) {
+  .product-details--main-product
+    > .group-block
+    > .group-block-content
+    > .text-block.h2
+    > h1 {
     width: 100%;
     max-width: none;
-    margin-top: 0;
-    margin-block-start: 0;
-    margin-block: 0;
+    margin: 0;
     font-size: clamp(32px, 2.6vw, 46px);
     line-height: 1.06;
     letter-spacing: -0.03em;
@@ -275,7 +273,11 @@
   }
 
   @supports not (text-wrap: pretty) {
-    .product-details--main-product > .group-block > .group-block-content > .text-block.h2:first-of-type :is(h1, h2, h3, h4, h5, h6) {
+    .product-details--main-product
+      > .group-block
+      > .group-block-content
+      > .text-block.h2
+      > h1 {
       text-wrap: normal;
     }
   }
@@ -836,10 +838,10 @@
       padding-bottom: 0;
     }
 
-  .product-details--main-product > .group-block > .group-block-content > variant-picker {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
+    .product-details--main-product > .group-block > .group-block-content > variant-picker {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
 
     .product-details--main-product > .group-block > .group-block-content > .buy-buttons-block {
       padding-top: 0;
@@ -854,12 +856,16 @@
       border-radius: 18px;
     }
 
-    .product-details--main-product > .group-block > .group-block-content > .text-block.h2:first-of-type :is(h1, h2, h3, h4, h5, h6) {
+    .product-details--main-product
+      > .group-block
+      > .group-block-content
+      > .text-block.h2
+      > h1 {
       max-width: none;
-      margin-block: 0;
-      font-size: clamp(24px, 6.8vw, 32px);
-      line-height: 1.14;
-      letter-spacing: -0.025em;
+      margin: 0;
+      font-size: clamp(18px, 5vw, 24px);
+      line-height: 1.12;
+      letter-spacing: -0.022em;
       text-wrap: pretty;
     }
 

@@ -31,7 +31,7 @@
   }
 
   /* Desktop layout grid & alignment overrides */
-  @media screen and (min-width: 750px) {
+  @media screen and (min-width: 990px) {
     .product-information--main-product {
       max-width: 1480px !important;
       width: 100% !important;
@@ -378,17 +378,45 @@
   }
 
   /* Aspect ratio clamp for gallery */
-  @media screen and (min-width: 750px) {
+  @media screen and (min-width: 990px) {
     .product-information--main-product .product-information__media .product-media {
-      min-height: clamp(520px, 68vh, 700px) !important;
-      height: clamp(520px, 68vh, 700px) !important;
+      min-height: 0 !important;
+      height: auto !important;
+      max-height: min(100%, 720px, calc(100vh - 190px)) !important;
     }
     .product-information--main-product .product-information__media .product-media :is(img, video, iframe, .deferred-media__poster-image) {
-      max-height: clamp(520px, 68vh, 700px) !important;
+      max-height: min(100%, 720px, calc(100vh - 190px)) !important;
       height: 100% !important;
       width: 100% !important;
-      object-fit: cover !important;
+      object-fit: contain !important;
+      object-position: center center !important;
       border-radius: 20px !important; /* Add corner directly to the image */
+    }
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .product-information--main-product .product-information__grid {
+      grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .product-information--main-product .product-information__media,
+    .product-information--main-product .product-details {
+      grid-column: 1 / -1 !important;
+      position: static !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    .product-information--main-product .product-information__media .product-media {
+      min-height: 0 !important;
+      height: auto !important;
+      max-height: none !important;
+    }
+
+    .product-information--main-product .product-information__media .product-media :is(img, video, iframe, .deferred-media__poster-image) {
+      max-height: none !important;
+      object-fit: contain !important;
+      object-position: center center !important;
     }
   }
 
