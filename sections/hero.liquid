@@ -224,7 +224,7 @@
               <span class="hero__heading-line hero__heading-line--accent homepage-reveal" data-reveal-preset="premium-hero-reveal" style="--reveal-delay: 450ms;">Every Night</span>
             </h1>
           {% else %}
-            <h1 class="hero__heading homepage-reveal" data-reveal-preset="premium-hero-reveal" style="--reveal-delay: 300ms;">{{ hero_heading | escape }}</h1>
+            <h1 class="hero__heading homepage-reveal" data-reveal-preset="premium-hero-reveal" style="--reveal-delay: 300ms;">{{ hero_heading | escape | newline_to_br }}</h1>
           {% endif %}
         {% endif %}
         {% if hero_description != blank %}
