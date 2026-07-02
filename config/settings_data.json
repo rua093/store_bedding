@@ -62,7 +62,7 @@
     "popover_border_color": "#E8E2DB",
     "currency_code_enabled_product_pages": false,
     "currency_code_enabled_product_cards": false,
-    "mobile_quick_add": true,
+    "mobile_quick_add": false,
     "quick_add_background": "#FAF8F5",
     "quick_add_text": "#3E332D",
     "product_corner_radius": 14,
