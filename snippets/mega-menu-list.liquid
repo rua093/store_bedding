@@ -78,6 +78,12 @@
 >
   {% for link in parent_link.links %}
     {% liquid
+      assign mega_link_url = link.url | strip
+      assign is_locked_parent_link = false
+      if link.links != blank and mega_link_url == '#'
+        assign is_locked_parent_link = true
+      endif
+
       # Decide whether to open a column span, and how many columns of the grid to span
       if forloop.first or open_column_span == false
         assign open_column_span = true
@@ -107,34 +113,43 @@
       endif
     %}
     <div>
-      <a
-        href="{{ link.url }}"
-        class="mega-menu__link {% if link.links != blank %}mega-menu__link--parent{% endif %}"
-      >
-        {% if menu_content_type == 'collection_images' %}
-          {%- capture collection_image_sizes -%}
-            {%- if parent_link.links.size <= 4 -%}
-              {%- assign columns_per_item = 2 -%}
-            {%- else -%}
-              {%- assign columns_per_item = 1 -%}
-            {%- endif -%}
-            {%- render 'util-mega-menu-img-sizes-attr',
-              menu_content_type: 'collection_images',
-              settings: settings,
-              grid_columns: grid_columns_count,
-              grid_columns_tablet: grid_columns_count_tablet,
-              grid_columns_collection_images: grid_columns_count_collection_images,
-              parent_links_size: parent_link.links.size,
-              columns_per_item: columns_per_item
-            -%}
-          {%- endcapture -%}
-
-          {% render 'link-featured-image', link: link, class: 'mega-menu__link-image', sizes: collection_image_sizes %}
-        {% endif %}
-        <span class="wrap-text">
-          {{- link.title -}}
+      {% if is_locked_parent_link %}
+        <span
+          class="mega-menu__link mega-menu__link--parent mega-menu__link--locked-parent"
+          aria-disabled="true"
+        >
+          <span class="wrap-text">{{- link.title -}}</span>
         </span>
-      </a>
+      {% else %}
+        <a
+          href="{{ link.url }}"
+          class="mega-menu__link {% if link.links != blank %}mega-menu__link--parent{% endif %}"
+        >
+          {% if menu_content_type == 'collection_images' %}
+            {%- capture collection_image_sizes -%}
+              {%- if parent_link.links.size <= 4 -%}
+                {%- assign columns_per_item = 2 -%}
+              {%- else -%}
+                {%- assign columns_per_item = 1 -%}
+              {%- endif -%}
+              {%- render 'util-mega-menu-img-sizes-attr',
+                menu_content_type: 'collection_images',
+                settings: settings,
+                grid_columns: grid_columns_count,
+                grid_columns_tablet: grid_columns_count_tablet,
+                grid_columns_collection_images: grid_columns_count_collection_images,
+                parent_links_size: parent_link.links.size,
+                columns_per_item: columns_per_item
+              -%}
+            {%- endcapture -%}
+
+            {% render 'link-featured-image', link: link, class: 'mega-menu__link-image', sizes: collection_image_sizes %}
+          {% endif %}
+          <span class="wrap-text">
+            {{- link.title -}}
+          </span>
+        </a>
+      {% endif %}
       {% if link.links != blank %}
         <ul
           class="list-unstyled"
