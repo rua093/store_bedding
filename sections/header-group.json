@@ -17,8 +17,8 @@
         "announcement_mxxhta": {
           "type": "_announcement",
           "settings": {
-            "text": "Wrap your home in comfort with blankets, quilts and comforters",
-            "link": "shopify://collections/all",
+            "text": "Custom Bedding Made From Your Ideas",
+            "link": "/collections/all",
             "font": "var(--font-primary--family)",
             "font_size": "var(--font-size--body-md)",
             "letter_spacing": "normal",
