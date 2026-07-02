@@ -542,7 +542,7 @@
         "text_A4": {
           "type": "text",
           "settings": {
-            "text": "<p><strong>Free Shipping</strong>On orders over $99 across the US</p>",
+            "text": "<p><strong>Free Shipping</strong>Free shipping on every bedding order, delivered to your door</p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
