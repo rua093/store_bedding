@@ -178,9 +178,9 @@
     --hero-copy-max-width: 31rem;
     --hero-text-align: {{ hero_text_align }};
     --hero-eyebrow-color: rgb(240 199 161 / 0.96);
-    --hero-heading-color: #fff8ef;
-    --hero-description-color: rgb(255 248 239 / 0.86);
-    --hero-secondary-cta-color: rgb(255 248 239 / 0.92);
+    --hero-heading-color: #ffffff;
+    --hero-description-color: #ffffff;
+    --hero-secondary-cta-color: #ffffff;
     --hero-secondary-cta-hover: #ffffff;
     --hero-text-shadow: 0 1px 2px rgb(31 22 16 / 0.2), 0 10px 30px rgb(31 22 16 / 0.16);
     --hero-eyebrow-shadow: 0 1px 2px rgb(31 22 16 / 0.26), 0 8px 24px rgb(31 22 16 / 0.18);
@@ -230,7 +230,7 @@
         {% if hero_description != blank %}
           <p class="hero__description homepage-reveal" data-reveal-preset="premium-hero-reveal" style="--reveal-delay: 650ms;">{{ hero_description | escape }}</p>
         {% endif %}
-        {% if hero_primary_label != blank or hero_secondary_label != blank %}
+        {% if hero_primary_label != blank %}
           <div class="hero__actions homepage-reveal" data-reveal-preset="premium-hero-reveal" style="--reveal-delay: 850ms;">
             {% if hero_primary_label != blank %}
               <a
@@ -245,34 +245,7 @@
                 {{ hero_primary_label | escape }}
               </a>
             {% endif %}
-            {% if hero_secondary_label != blank %}
-              <a
-                {% if hero_secondary_link == blank %}
-                  role="link"
-                  aria-disabled="true"
-                {% else %}
-                  href="{{ hero_secondary_link }}"
-                {% endif %}
-                class="hero__cta hero__cta--secondary"
-              >
-                {{ hero_secondary_label | escape }}
-              </a>
-            {% endif %}
           </div>
-        {% endif %}
-        {% if hero_heading != blank %}
-          <ul
-            class="hero__trust-list"
-            aria-label="Bedding highlights"
-            data-homepage-reveal-children="li"
-            data-homepage-reveal-preset="premium-hero-reveal"
-            data-homepage-reveal-base-delay="1050"
-            data-homepage-reveal-stagger="90"
-          >
-            <li>Cloud-soft layers</li>
-            <li>Warm textures</li>
-            <li>Calmer nights</li>
-          </ul>
         {% endif %}
       </div>
     </div>
@@ -430,7 +403,7 @@
 
   .hero__heading-line {
     display: block;
-    color: #fff8ef;
+    color: #ffffff;
     font-family: var(--font-heading--family);
     font-style: normal;
     font-weight: var(--font-heading--weight);
