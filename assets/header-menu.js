@@ -3,8 +3,8 @@ import { debounce, onDocumentLoaded, setHeaderMenuStyle } from '@theme/utilities
 import { MegaMenuHoverEvent } from '@theme/events';
 
 /** Skim filter: pointer must dwell this long before MegaMenuHoverEvent fires. */
-const HOVER_COMMIT_DELAY_MS = 150;
-const CLOSE_INTENT_DELAY_MS = 120;
+const HOVER_COMMIT_DELAY_MS = 50;
+const CLOSE_INTENT_DELAY_MS = 90;
 
 /**
  * A custom element that manages a header menu.
@@ -95,6 +95,10 @@ class HeaderMenu extends Component {
     this.#lastPointer.x = event.clientX;
     this.#lastPointer.y = event.clientY;
 
+    if (this.#switchToHoveredTopLevelItem()) {
+      return;
+    }
+
     const moving = Math.abs(event.movementX) >= 1 || event.movementY >= 1;
     activeLink.dataset.safetyBox = `${moving}`;
 
@@ -125,6 +129,31 @@ class HeaderMenu extends Component {
         listItem.dispatchEvent(new PointerEvent('pointerenter', { bubbles: false }));
       }
     });
+  }
+
+  #switchToHoveredTopLevelItem() {
+    const activeItem = this.#state.activeItem;
+    if (!activeItem) return false;
+
+    const previousSafetyBox = activeItem.dataset.safetyBox;
+    delete activeItem.dataset.safetyBox;
+
+    const target = document.elementFromPoint(this.#lastPointer.x, this.#lastPointer.y);
+
+    if (previousSafetyBox !== undefined) {
+      activeItem.dataset.safetyBox = previousSafetyBox;
+    }
+
+    if (!(target instanceof Element)) return false;
+
+    const listItem = target.closest('.menu-list__list-item');
+    if (!listItem || !this.contains(listItem)) return false;
+
+    const nextItem = listItem.querySelector('[ref="menuitem"]');
+    if (!(nextItem instanceof HTMLElement) || nextItem === activeItem) return false;
+
+    listItem.dispatchEvent(new PointerEvent('pointerenter', { bubbles: false }));
+    return true;
   }
 
   /**
@@ -253,7 +282,8 @@ class HeaderMenu extends Component {
       clearTimeout(this.#hoverDispatchTimer);
       this.#hoverDispatchTimer = undefined;
       const committedItem = item;
-      if (event instanceof FocusEvent) {
+      const isSwitchingTopLevelItem = Boolean(previouslyActiveItem && previouslyActiveItem !== item);
+      if (event instanceof FocusEvent || isSwitchingTopLevelItem) {
         this.dispatchEvent(new MegaMenuHoverEvent());
       } else {
         this.#hoverDispatchTimer = setTimeout(() => {
@@ -466,12 +496,13 @@ if (!customElements.get('header-menu')) {
 function findMenuItem(element) {
   if (!(element instanceof Element)) return null;
 
-  if (element?.matches('[slot="more"')) {
-    // Select the first overflowing menu item when hovering over the "More" item
-    return findMenuItem(element.parentElement?.querySelector('[slot="overflow"]'));
+  const listItem = element.closest('.menu-list__list-item');
+
+  if (listItem?.matches('[slot="more"]')) {
+    return findMenuItem(listItem.parentElement?.querySelector('[slot="overflow"]'));
   }
 
-  return element?.querySelector('[ref="menuitem"]');
+  return /** @type {HTMLElement | null} */ (listItem?.querySelector('[ref="menuitem"]') ?? null);
 }
 
 /**
