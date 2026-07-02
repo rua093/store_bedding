@@ -1035,6 +1035,55 @@
       grid-column: 1 / -1;
     }
   }
+
+  @media screen and (max-width: 749px) {
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons {
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      row-gap: 12px !important;
+      column-gap: 0 !important;
+      align-items: stretch !important;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons::before {
+      grid-column: 1 / -1 !important;
+      grid-row: 1 !important;
+      margin: 0 0 4px !important;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .quantity-selector-wrapper {
+      grid-column: 1 / -1 !important;
+      grid-row: 2 !important;
+      width: 100% !important;
+      max-width: none !important;
+      margin: 0 !important;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > span:has(.add-to-cart-button) {
+      grid-column: 1 / -1 !important;
+      grid-row: 3 !important;
+      width: 100% !important;
+      margin: 2px 0 0 !important;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .accelerated-checkout-block {
+      grid-column: 1 / -1 !important;
+      grid-row: 4 !important;
+      width: 100% !important;
+      margin: 8px 0 0 !important;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .accelerated-checkout-block .shopify-payment-button {
+      margin: 0 !important;
+      width: 100% !important;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .product-form-trust-badges {
+      grid-column: 1 / -1 !important;
+      grid-row: 5 !important;
+      margin-top: 16px !important;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
