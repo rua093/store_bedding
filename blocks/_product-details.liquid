@@ -402,22 +402,37 @@
     text-decoration-color: rgba(169, 151, 139, 0.75);
   }
 
-  .product-details--main-product .price-sale-badge {
+  .product-information--main-product .product-details--main-product .price-sale-badge {
     align-self: center;
-  }
-
-  .product-details--main-product .price-sale-badge {
     display: inline-flex;
     align-items: center;
-    min-height: 1.95rem;
-    padding: 0.28rem 0.7rem;
+    justify-content: center;
+    min-height: 2rem;
+    padding: 0.34rem 0.82rem;
     border-radius: 999px;
-    background: linear-gradient(180deg, rgba(249, 239, 230, 0.98) 0%, rgba(245, 232, 220, 0.96) 100%);
-    color: #9f7656;
+    background: linear-gradient(135deg, #bd7442 0%, #a8482b 100%);
+    color: #fffaf5;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow:
+      0 8px 18px rgba(168, 72, 43, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.28);
     font-size: 0.78rem;
-    font-weight: 600;
+    font-weight: 800;
     line-height: 1;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    transform: translateY(-1px);
+  }
+
+  .product-information--main-product .product-details--main-product .price-sale-badge::before {
+    content: '';
+    width: 0.36rem;
+    height: 0.36rem;
+    margin-right: 0.42rem;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.9;
+    box-shadow: 0 0 0 3px rgba(255, 250, 245, 0.18);
   }
 
   .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons {
@@ -886,10 +901,17 @@
       gap: 0.5rem;
     }
 
-    .product-details--main-product .price-sale-badge {
-      min-height: 1.75rem;
-      padding: 0.28rem 0.65rem;
-      font-size: 0.75rem;
+    .product-information--main-product .product-details--main-product .price-sale-badge {
+      min-height: 1.85rem;
+      padding: 0.3rem 0.72rem;
+      font-size: 0.72rem;
+      transform: none;
+    }
+
+    .product-information--main-product .product-details--main-product .price-sale-badge::before {
+      width: 0.32rem;
+      height: 0.32rem;
+      margin-right: 0.36rem;
     }
 
     .product-details--main-product .price-callouts {
@@ -912,6 +934,75 @@
       width: 3.85rem;
       height: 3.85rem;
       border-radius: 12px;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badges {
+      margin-top: 8px;
+      padding-top: 10px;
+      overflow: visible;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badges__items {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 10px;
+      width: 100%;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+      min-width: 0;
+      max-width: 100%;
+      padding-inline: 0;
+      text-align: left;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge::after {
+      display: none;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge__icon {
+      flex: 0 0 auto;
+      width: 17px;
+      height: 17px;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge__content {
+      min-width: 0;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge__title {
+      font-size: clamp(9px, 2.7vw, 10.5px);
+      line-height: 1.15;
+      white-space: normal;
+      word-break: normal;
+      overflow-wrap: normal;
+      hyphens: none;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badges__note {
+      margin-top: 2px;
+      padding: 10px 12px;
+      font-size: clamp(11px, 3vw, 13px);
+      line-height: 1.35;
+    }
+  }
+
+  @media screen and (max-width: 360px) {
+    .product-information--main-product .product-details--main-product .product-form-trust-badges__items {
+      gap: 7px 8px;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge__icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge__title {
+      font-size: 9px;
     }
   }
 
