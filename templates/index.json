@@ -14,12 +14,12 @@
       "name": "t:names.hero",
       "settings": {
         "media_type_1": "image",
-        "image_1": "shopify://shop_images/premium-bedding-hero-banner.png",
+        "image_1": "shopify://shop_images/premium-bedding-hero-banner_8ac173a4-4e5f-40a0-b8e5-59fc70c5e21d.png",
         "custom_mobile_media": false,
         "media_type_1_mobile": "image",
-        "eyebrow": "Premium Bedding",
-        "heading": "Sleep Better Every Night",
-        "description": "Soft blankets, quilts and comforters made for warmer, calmer nights.",
+        "eyebrow": "CUSTOM BEDDING, MADE PERSONAL",
+        "heading": "Your Ideas,Made Cozy",
+        "description": "Turn your photos, names, artwork, and favorite memories into custom blankets, quilts, and comforters made just for you.",
         "primary_label": "Shop Bedding",
         "primary_link": "shopify://collections/all",
         "secondary_label": "Explore Collection",
@@ -36,6 +36,52 @@
         "gradient_direction": "to top",
         "padding-block-start": 0,
         "padding-block-end": 48
+      }
+    },
+    "product_list_EDUBdR": {
+      "type": "bestselling-bedding",
+      "settings": {
+        "collection": "best-selling",
+        "eyebrow": "OUR MOST LOVED",
+        "title": "Bestselling Bedding",
+        "description": "Loved for softness, warmth and everyday comfort.",
+        "cta_label": "Shop Collection",
+        "cta_link": "shopify://collections/best-selling",
+        "section_width": "page-width"
+      }
+    },
+    "new_arrivals_line_home": {
+      "type": "new-arrivals-line-carousel",
+      "settings": {
+        "collection": "new-arrivals",
+        "heading": "New Arrivals",
+        "eyebrow": "JUST LANDED",
+        "subheading": "Discover our latest custom blankets, quilts and comforters.",
+        "show_button": false,
+        "button_label": "View all",
+        "button_link": "",
+        "product_limit": 8,
+        "section_width": "page-width",
+        "show_arrows": true,
+        "show_progress": true,
+        "section_background_color": "#d3a68f",
+        "header_background_color": "#d7b29d",
+        "heading_color": "#fefefe",
+        "heading_accent_color": "#d39a74",
+        "subheading_color": "#ffffff",
+        "dot_color": "#563d30",
+        "padding-block-start": 0,
+        "padding-block-end": 32,
+        "header_padding_top": 32,
+        "header_padding_bottom": 12,
+        "header_spacing_bottom": 4,
+        "carousel_padding_top": 8,
+        "carousel_padding_bottom": 10,
+        "desktop_columns": 4,
+        "tablet_columns": 3,
+        "mobile_card_width": 78,
+        "mobile_card_max_width": 18,
+        "card_gap": 22
       }
     },
     "collection_list_xpBxCm": {
@@ -249,18 +295,6 @@
         "padding-block-end": 50
       }
     },
-    "product_list_EDUBdR": {
-      "type": "bestselling-bedding",
-      "settings": {
-        "collection": "best-selling",
-        "eyebrow": "OUR MOST LOVED",
-        "title": "Bestselling Bedding",
-        "description": "Loved for softness, warmth and everyday comfort.",
-        "cta_label": "Shop Collection",
-        "cta_link": "shopify://collections/best-selling",
-        "section_width": "page-width"
-      }
-    },
     "media_with_content_brand_intro": {
       "type": "media-with-content",
       "blocks": {
@@ -424,40 +458,6 @@
         "background_color": "",
         "padding-block-start": 0,
         "padding-block-end": 0
-      }
-    },
-    "new_arrivals_line_home": {
-      "type": "new-arrivals-line-carousel",
-      "settings": {
-        "collection": "new-arrivals",
-        "heading": "New Arrivals",
-        "eyebrow": "JUST LANDED",
-        "subheading": "Discover our latest custom blankets, quilts and comforters.",
-        "show_button": false,
-        "button_label": "View all",
-        "button_link": "",
-        "product_limit": 8,
-        "section_width": "page-width",
-        "show_arrows": true,
-        "show_progress": true,
-        "section_background_color": "#d3a68f",
-        "header_background_color": "#d7b29d",
-        "heading_color": "#fefefe",
-        "heading_accent_color": "#d39a74",
-        "subheading_color": "#ffffff",
-        "dot_color": "#563d30",
-        "padding-block-start": 0,
-        "padding-block-end": 32,
-        "header_padding_top": 32,
-        "header_padding_bottom": 12,
-        "header_spacing_bottom": 4,
-        "carousel_padding_top": 8,
-        "carousel_padding_bottom": 10,
-        "desktop_columns": 4,
-        "tablet_columns": 3,
-        "mobile_card_width": 78,
-        "mobile_card_max_width": 18,
-        "card_gap": 22
       }
     },
     "trust_signals_P6hero": {
