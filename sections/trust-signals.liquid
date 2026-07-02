@@ -489,12 +489,12 @@
     }
 
     .trust-signals--hero .trust-signals__hero-grid {
-      grid-template-columns: 1fr;
-      gap: 1.35rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.1rem 0.75rem;
     }
 
     .trust-signals--hero .trust-signals__hero-item {
-      padding-inline: 0.5rem;
+      padding: 0.75rem 0.45rem;
     }
 
     .trust-signals--hero .trust-signals__hero-item::after {
@@ -510,18 +510,20 @@
     }
 
     .trust-signals--hero .trust-signals__hero-icon {
-      width: clamp(5.6rem, 24vw, 6.4rem);
-      height: clamp(5.6rem, 24vw, 6.4rem);
-      margin-bottom: 0.4rem;
+      width: 2.4rem;
+      height: 2.4rem;
+      margin-bottom: 0.45rem;
     }
 
     .trust-signals--hero .trust-signals__hero-title {
-      font-size: 1.45rem;
+      font-size: 0.95rem;
+      line-height: 1.15;
       overflow-wrap: anywhere;
     }
 
     .trust-signals--hero .trust-signals__hero-body {
-      font-size: 0.96rem;
+      font-size: 0.78rem;
+      line-height: 1.35;
       overflow-wrap: anywhere;
     }
 

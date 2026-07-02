@@ -17,9 +17,15 @@
   assign hero_secondary_label = section.settings.secondary_label | strip
   assign hero_secondary_link = section.settings.secondary_link
   assign hero_heading_is_editorial_default = false
+  assign hero_heading_normalized = hero_heading | newline_to_br | strip_newlines | replace: '<br />', '' | replace: '<br/>', '' | replace: '<br>', ''
+  assign hero_heading_is_custom_split = false
 
   if hero_heading == 'Sleep Better Every Night'
     assign hero_heading_is_editorial_default = true
+  endif
+
+  if hero_heading_normalized == 'Your Ideas,Made Cozy'
+    assign hero_heading_is_custom_split = true
   endif
 
   if section.settings.image_1 != blank and section.settings.media_type_1 == 'image'
@@ -194,20 +200,18 @@
     {% endif %}
   "
   {% if hero_has_visual_preview %}
-    data-shopify-visual-preview
-  {% endif %}
->
-  <div
-    class="hero__section spacing-style section section--full-width"
-    style="{% render 'spacing-style', settings: section.settings %}"
-  >
+  data-shopify-visual-preview
+  {% endif %}>
+  <div class="hero__section spacing-style section section--full-width" style="{% render 'spacing-style', settings: section.settings %}">
     <div class="hero__background" data-testid="hero-media-wrapper">
       <div class="hero__media-grid">
         {{ hero_media }}
       </div>
       {% if section.settings.toggle_overlay %}
         <div class="hero__overlay">
-          {% render 'overlay', settings: section.settings, layer: '0' %}
+          {% render 'overlay'
+            , settings: section.settings
+            , layer: '0' %}
         </div>
       {% endif %}
     </div>
@@ -215,33 +219,61 @@
     <div class="hero__content-shell hero__content-shell--{{ section.settings.section_width }}">
       <div class="hero__content">
         {% if hero_eyebrow != blank %}
-          <p class="hero__eyebrow homepage-reveal" data-reveal-preset="premium-hero-reveal" style="--reveal-delay: 150ms;">{{ hero_eyebrow | escape }}</p>
+          <p
+            class="hero__eyebrow homepage-reveal"
+            data-reveal-preset="premium-hero-reveal"
+            style="--reveal-delay: 150ms;">{{ hero_eyebrow | escape }}</p>
         {% endif %}
         {% if hero_heading != blank %}
           {% if hero_heading_is_editorial_default %}
             <h1 class="hero__heading hero__heading--editorial">
-              <span class="hero__heading-line homepage-reveal" data-reveal-preset="premium-hero-reveal" style="--reveal-delay: 300ms;">Sleep Better</span>
-              <span class="hero__heading-line hero__heading-line--accent homepage-reveal" data-reveal-preset="premium-hero-reveal" style="--reveal-delay: 450ms;">Every Night</span>
+              <span
+                class="hero__heading-line homepage-reveal"
+                data-reveal-preset="premium-hero-reveal"
+                style="--reveal-delay: 300ms;">Sleep Better</span>
+              <span
+                class="hero__heading-line hero__heading-line--accent homepage-reveal"
+                data-reveal-preset="premium-hero-reveal"
+                style="--reveal-delay: 450ms;">Every Night</span>
+            </h1>
+          {% elsif hero_heading_is_custom_split %}
+            <h1 class="hero__heading hero__heading--stacked">
+              <span
+                class="hero__heading-line homepage-reveal"
+                data-reveal-preset="premium-hero-reveal"
+                style="--reveal-delay: 300ms;">Your Ideas,</span>
+              <span
+                class="hero__heading-line homepage-reveal"
+                data-reveal-preset="premium-hero-reveal"
+                style="--reveal-delay: 450ms;">Made Cozy</span>
             </h1>
           {% else %}
-            <h1 class="hero__heading homepage-reveal" data-reveal-preset="premium-hero-reveal" style="--reveal-delay: 300ms;">{{ hero_heading | escape | newline_to_br }}</h1>
+            <h1
+              class="hero__heading homepage-reveal"
+              data-reveal-preset="premium-hero-reveal"
+              style="--reveal-delay: 300ms;">{{ hero_heading | escape | newline_to_br }}</h1>
           {% endif %}
         {% endif %}
         {% if hero_description != blank %}
-          <p class="hero__description homepage-reveal" data-reveal-preset="premium-hero-reveal" style="--reveal-delay: 650ms;">{{ hero_description | escape }}</p>
+          <p
+            class="hero__description homepage-reveal"
+            data-reveal-preset="premium-hero-reveal"
+            style="--reveal-delay: 650ms;">{{ hero_description | escape }}</p>
         {% endif %}
         {% if hero_primary_label != blank %}
-          <div class="hero__actions homepage-reveal" data-reveal-preset="premium-hero-reveal" style="--reveal-delay: 850ms;">
+          <div
+            class="hero__actions homepage-reveal"
+            data-reveal-preset="premium-hero-reveal"
+            style="--reveal-delay: 850ms;">
             {% if hero_primary_label != blank %}
               <a
                 {% if hero_primary_link == blank %}
-                  role="link"
-                  aria-disabled="true"
+                role="link"
+                aria-disabled="true"
                 {% else %}
-                  href="{{ hero_primary_link }}"
+                href="{{ hero_primary_link }}"
                 {% endif %}
-                class="hero__cta hero__cta--primary"
-              >
+                class="hero__cta hero__cta--primary">
                 {{ hero_primary_label | escape }}
               </a>
             {% endif %}
@@ -254,7 +286,7 @@
 
 {% stylesheet %}
   .hero-wrapper {
-    --hero-height-offset: 0px;
+    --hero-height-offset: 0;
   }
 
   body:has(#header-group > .header-section > #header-component) .hero-wrapper:first-child {
@@ -291,9 +323,7 @@
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background:
-      linear-gradient(180deg, rgb(26 19 14 / 0.3) 0%, rgb(26 19 14 / 0.14) 18%, transparent 35%),
-      radial-gradient(88% 74% at 16% 54%, rgb(26 19 14 / 0.3) 0%, rgb(26 19 14 / 0.16) 36%, transparent 70%);
+    background: linear-gradient(180deg, rgb(26 19 14 / 0.3) 0%, rgb(26 19 14 / 0.14) 18%, transparent 35%), radial-gradient(88% 74% at 16% 54%, rgb(26 19 14 / 0.3) 0%, rgb(26 19 14 / 0.16) 36%, transparent 70%);
   }
 
   .hero__media-grid {
@@ -386,10 +416,10 @@
     font-family: var(--font-heading--family);
     font-style: var(--font-heading--style);
     font-weight: var(--font-heading--weight);
-    font-size: clamp(2.8rem, 5.3vw, 4.75rem);
+    font-size: clamp(1.95rem, 3.6vw, 3.1rem);
     line-height: 1.02;
     letter-spacing: -0.038em;
-    max-inline-size: min(11ch, 100%);
+    max-inline-size: min(16ch, 100%);
     text-shadow: var(--hero-text-shadow);
     text-wrap: balance;
   }
@@ -401,13 +431,20 @@
     line-height: 0.9;
   }
 
+  .hero__heading--stacked {
+    display: grid;
+    gap: 0;
+    max-inline-size: max-content;
+    line-height: 0.9;
+  }
+
   .hero__heading-line {
     display: block;
     color: #ffffff;
     font-family: var(--font-heading--family);
     font-style: normal;
     font-weight: var(--font-heading--weight);
-    font-size: clamp(3.5rem, 6vw, 6.2rem);
+    font-size: clamp(2.4rem, 4.2vw, 4.1rem);
     letter-spacing: -0.045em;
   }
 
@@ -454,11 +491,10 @@
     padding: 0.95rem 1.6rem;
     border-radius: 12px;
     text-decoration: none;
-    transition:
-      background-color 0.24s ease,
-      color 0.24s ease,
-      border-color 0.24s ease,
-      box-shadow 0.24s ease;
+    transition: background-color 0.24s ease
+    , color 0.24s ease
+    , border-color 0.24s ease
+    , box-shadow 0.24s ease;
   }
 
   .hero__cta--primary {
@@ -497,10 +533,9 @@
     font-size: 0.88em;
     line-height: 1;
     opacity: 0.74;
-    transition:
-      opacity 0.24s ease,
-      transform 0.24s ease,
-      color 0.24s ease;
+    transition: opacity 0.24s ease
+    , transform 0.24s ease
+    , color 0.24s ease;
   }
 
   .hero__cta--secondary:hover {
@@ -558,7 +593,7 @@
     inset: 0;
   }
 
-  .hero--height-auto :is(.hero__media, .hero__media-grid > .placeholder-svg) {
+  .hero--height-auto:is(.hero__media, .hero__media-grid > .placeholder-svg) {
     aspect-ratio: var(--hero-media-aspect-ratio, 16 / 9);
   }
 
@@ -581,9 +616,7 @@
 
   @media screen and (max-width: 749px) {
     .hero--readability-scrim .hero__background::after {
-      background:
-        linear-gradient(180deg, rgb(26 19 14 / 0.28) 0%, rgb(26 19 14 / 0.12) 20%, transparent 38%),
-        radial-gradient(100% 78% at 28% 70%, rgb(26 19 14 / 0.36) 0%, rgb(26 19 14 / 0.2) 42%, transparent 75%);
+      background: linear-gradient(180deg, rgb(26 19 14 / 0.28) 0%, rgb(26 19 14 / 0.12) 20%, transparent 38%), radial-gradient(100% 78% at 28% 70%, rgb(26 19 14 / 0.36) 0%, rgb(26 19 14 / 0.2) 42%, transparent 75%);
     }
 
     .hero__media-item--desktop {
@@ -611,14 +644,14 @@
     }
 
     .hero__heading {
-      font-size: clamp(2.2rem, 7.8vw, 3.15rem);
+      font-size: clamp(1.95rem, 6.8vw, 2.75rem);
       line-height: 1.03;
       letter-spacing: -0.032em;
-      max-inline-size: 11ch;
+      max-inline-size: 14ch;
     }
 
     .hero__heading-line {
-      font-size: clamp(2.55rem, 12vw, 4rem);
+      font-size: clamp(2.15rem, 10vw, 3.2rem);
     }
 
     .hero__description {
@@ -664,337 +697,297 @@
 {% endstylesheet %}
 
 {% schema %}
-{
-  "name": "t:names.hero",
-  "tag": "section",
-  "class": "hero-wrapper section-wrapper",
-  "disabled_on": {
-    "groups": ["header"]
-  },
-  "settings": [
-    {
-      "type": "header",
-      "content": "t:content.media_1"
+  {
+    "name": "t:names.hero",
+    "tag": "section",
+    "class": "hero-wrapper section-wrapper",
+    "disabled_on": {
+      "groups": ["header"]
     },
-    {
-      "type": "select",
-      "id": "media_type_1",
-      "label": "t:settings.type",
-      "options": [
-        {
-          "value": "image",
-          "label": "t:options.image"
-        },
-        {
-          "value": "video",
-          "label": "t:options.video"
-        }
-      ],
-      "default": "image"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_1",
-      "label": "t:settings.image",
-      "visible_if": "{{ section.settings.media_type_1 == 'image' }}"
-    },
-    {
-      "type": "video",
-      "id": "video_1",
-      "label": "t:settings.video",
-      "visible_if": "{{ section.settings.media_type_1 == 'video' }}"
-    },
-    {
-      "type": "header",
-      "content": "t:content.mobile_media"
-    },
-    {
-      "type": "checkbox",
-      "id": "custom_mobile_media",
-      "label": "t:settings.custom_mobile_media",
-      "default": false
-    },
-    {
-      "type": "header",
-      "content": "t:content.mobile_media_1",
-      "visible_if": "{{ section.settings.custom_mobile_media }}"
-    },
-    {
-      "type": "select",
-      "id": "media_type_1_mobile",
-      "label": "t:settings.type",
-      "options": [
-        {
-          "value": "image",
-          "label": "t:options.image"
-        },
-        {
-          "value": "video",
-          "label": "t:options.video"
-        }
-      ],
-      "default": "image",
-      "visible_if": "{{ section.settings.custom_mobile_media }}"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_1_mobile",
-      "label": "t:settings.image",
-      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_1_mobile == 'image' }}"
-    },
-    {
-      "type": "video",
-      "id": "video_1_mobile",
-      "label": "t:settings.video",
-      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_1_mobile == 'video' }}"
-    },
-    {
-      "type": "header",
-      "content": "Content"
-    },
-    {
-      "type": "text",
-      "id": "eyebrow",
-      "label": "Eyebrow",
-      "default": "Premium Bedding"
-    },
-    {
-      "type": "text",
-      "id": "heading",
-      "label": "Heading",
-      "default": "Sleep Better Every Night"
-    },
-    {
-      "type": "textarea",
-      "id": "description",
-      "label": "Description",
-      "default": "Soft blankets, quilts and comforters made for warmer, calmer nights."
-    },
-    {
-      "type": "text",
-      "id": "primary_label",
-      "label": "Primary CTA Label",
-      "default": "Shop Bedding"
-    },
-    {
-      "type": "url",
-      "id": "primary_link",
-      "label": "Primary CTA Link"
-    },
-    {
-      "type": "text",
-      "id": "secondary_label",
-      "label": "Secondary CTA Label",
-      "default": "Explore Collection"
-    },
-    {
-      "type": "url",
-      "id": "secondary_link",
-      "label": "Secondary CTA Link"
-    },
-    {
-      "type": "header",
-      "content": "t:content.layout"
-    },
-    {
-      "type": "select",
-      "id": "horizontal_alignment_flex_direction_column",
-      "label": "t:settings.alignment",
-      "options": [
-        {
-          "value": "flex-start",
-          "label": "t:options.left"
-        },
-        {
-          "value": "center",
-          "label": "t:options.center"
-        },
-        {
-          "value": "flex-end",
-          "label": "t:options.right"
-        }
-      ],
-      "default": "flex-start"
-    },
-    {
-      "type": "select",
-      "id": "vertical_alignment_flex_direction_column",
-      "label": "t:settings.position",
-      "options": [
-        {
-          "value": "flex-start",
-          "label": "t:options.top"
-        },
-        {
-          "value": "center",
-          "label": "t:options.center"
-        },
-        {
-          "value": "flex-end",
-          "label": "t:options.bottom"
-        }
-      ],
-      "default": "flex-end"
-    },
-    {
-      "type": "select",
-      "id": "section_width",
-      "label": "t:settings.width",
-      "options": [
-        {
-          "value": "page-width",
-          "label": "t:options.page"
-        },
-        {
-          "value": "full-width",
-          "label": "t:options.full"
-        }
-      ],
-      "default": "page-width"
-    },
-    {
-      "type": "select",
-      "id": "section_height",
-      "label": "t:settings.height",
-      "options": [
-        {
-          "value": "auto",
-          "label": "t:options.auto"
-        },
-        {
-          "value": "small",
-          "label": "t:options.small"
-        },
-        {
-          "value": "medium",
-          "label": "t:options.medium"
-        },
-        {
-          "value": "large",
-          "label": "t:options.large"
-        },
-        {
-          "value": "full-screen",
-          "label": "t:options.full_screen"
-        },
-        {
-          "value": "custom",
-          "label": "t:options.custom"
-        }
-      ],
-      "default": "large"
-    },
-    {
-      "type": "range",
-      "id": "section_height_custom",
-      "label": "t:settings.custom_height",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "default": 50,
-      "unit": "%",
-      "visible_if": "{{ section.settings.section_height == 'custom' }}"
-    },
-    {
-      "type": "header",
-      "content": "t:content.appearance"
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:settings.background_color",
-      "placeholder": "t:settings.default"
-    },
-    {
-      "type": "checkbox",
-      "id": "toggle_overlay",
-      "label": "t:settings.media_overlay"
-    },
-    {
-      "type": "color",
-      "id": "overlay_color",
-      "label": "t:settings.overlay_color",
-      "alpha": true,
-      "default": "#00000026",
-      "visible_if": "{{ section.settings.toggle_overlay }}"
-    },
-    {
-      "type": "select",
-      "id": "overlay_style",
-      "label": "t:settings.overlay_style",
-      "options": [
-        {
-          "value": "solid",
-          "label": "t:options.solid"
-        },
-        {
-          "value": "gradient",
-          "label": "t:options.gradient"
-        }
-      ],
-      "default": "solid",
-      "visible_if": "{{ section.settings.toggle_overlay }}"
-    },
-    {
-      "type": "select",
-      "id": "gradient_direction",
-      "label": "t:settings.gradient_direction",
-      "options": [
-        {
-          "value": "to top",
-          "label": "t:options.up"
-        },
-        {
-          "value": "to bottom",
-          "label": "t:options.down"
-        }
-      ],
-      "default": "to top",
-      "visible_if": "{{ section.settings.toggle_overlay and section.settings.overlay_style == 'gradient' }}"
-    },
-    {
-      "type": "header",
-      "content": "t:content.padding"
-    },
-    {
-      "type": "range",
-      "id": "padding-block-start",
-      "label": "t:settings.top",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "padding-block-end",
-      "label": "t:settings.bottom",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 0
-    }
-  ],
-  "presets": [
-    {
-      "name": "t:names.hero",
-      "category": "t:categories.banners",
-      "settings": {
-        "horizontal_alignment_flex_direction_column": "center",
-        "section_height": "large",
-        "padding-block-start": 40,
-        "padding-block-end": 40,
-        "toggle_overlay": true,
-        "overlay_style": "gradient",
-        "eyebrow": "Premium Bedding",
-        "heading": "Sleep Better Every Night",
-        "description": "Soft blankets, quilts and comforters made for warmer, calmer nights.",
-        "primary_label": "Shop Bedding",
-        "secondary_label": "Explore Collection"
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:content.media_1"
+      },
+      {
+        "type": "select",
+        "id": "media_type_1",
+        "label": "t:settings.type",
+        "options": [
+          {
+            "value": "image",
+            "label": "t:options.image"
+          }, {
+            "value": "video",
+            "label": "t:options.video"
+          }
+        ],
+        "default": "image"
+      },
+      {
+        "type": "image_picker",
+        "id": "image_1",
+        "label": "t:settings.image",
+        "visible_if": "{{ section.settings.media_type_1 == 'image' }}"
+      },
+      {
+        "type": "video",
+        "id": "video_1",
+        "label": "t:settings.video",
+        "visible_if": "{{ section.settings.media_type_1 == 'video' }}"
+      }, {
+        "type": "header",
+        "content": "t:content.mobile_media"
+      }, {
+        "type": "checkbox",
+        "id": "custom_mobile_media",
+        "label": "t:settings.custom_mobile_media",
+        "default": false
+      }, {
+        "type": "header",
+        "content": "t:content.mobile_media_1",
+        "visible_if": "{{ section.settings.custom_mobile_media }}"
+      }, {
+        "type": "select",
+        "id": "media_type_1_mobile",
+        "label": "t:settings.type",
+        "options": [
+          {
+            "value": "image",
+            "label": "t:options.image"
+          }, {
+            "value": "video",
+            "label": "t:options.video"
+          }
+        ],
+        "default": "image",
+        "visible_if": "{{ section.settings.custom_mobile_media }}"
+      }, {
+        "type": "image_picker",
+        "id": "image_1_mobile",
+        "label": "t:settings.image",
+        "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_1_mobile == 'image' }}"
+      }, {
+        "type": "video",
+        "id": "video_1_mobile",
+        "label": "t:settings.video",
+        "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_1_mobile == 'video' }}"
+      }, {
+        "type": "header",
+        "content": "Content"
+      }, {
+        "type": "text",
+        "id": "eyebrow",
+        "label": "Eyebrow",
+        "default": "Premium Bedding"
+      }, {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default": "Sleep Better Every Night"
+      }, {
+        "type": "textarea",
+        "id": "description",
+        "label": "Description",
+        "default": "Soft blankets, quilts and comforters made for warmer, calmer nights."
+      }, {
+        "type": "text",
+        "id": "primary_label",
+        "label": "Primary CTA Label",
+        "default": "Shop Bedding"
+      }, {
+        "type": "url",
+        "id": "primary_link",
+        "label": "Primary CTA Link"
+      }, {
+        "type": "text",
+        "id": "secondary_label",
+        "label": "Secondary CTA Label",
+        "default": "Explore Collection"
+      }, {
+        "type": "url",
+        "id": "secondary_link",
+        "label": "Secondary CTA Link"
+      }, {
+        "type": "header",
+        "content": "t:content.layout"
+      }, {
+        "type": "select",
+        "id": "horizontal_alignment_flex_direction_column",
+        "label": "t:settings.alignment",
+        "options": [
+          {
+            "value": "flex-start",
+            "label": "t:options.left"
+          }, {
+            "value": "center",
+            "label": "t:options.center"
+          }, {
+            "value": "flex-end",
+            "label": "t:options.right"
+          }
+        ],
+        "default": "flex-start"
+      }, {
+        "type": "select",
+        "id": "vertical_alignment_flex_direction_column",
+        "label": "t:settings.position",
+        "options": [
+          {
+            "value": "flex-start",
+            "label": "t:options.top"
+          }, {
+            "value": "center",
+            "label": "t:options.center"
+          }, {
+            "value": "flex-end",
+            "label": "t:options.bottom"
+          }
+        ],
+        "default": "flex-end"
+      }, {
+        "type": "select",
+        "id": "section_width",
+        "label": "t:settings.width",
+        "options": [
+          {
+            "value": "page-width",
+            "label": "t:options.page"
+          }, {
+            "value": "full-width",
+            "label": "t:options.full"
+          }
+        ],
+        "default": "page-width"
+      }, {
+        "type": "select",
+        "id": "section_height",
+        "label": "t:settings.height",
+        "options": [
+          {
+            "value": "auto",
+            "label": "t:options.auto"
+          },
+          {
+            "value": "small",
+            "label": "t:options.small"
+          },
+          {
+            "value": "medium",
+            "label": "t:options.medium"
+          },
+          {
+            "value": "large",
+            "label": "t:options.large"
+          }, {
+            "value": "full-screen",
+            "label": "t:options.full_screen"
+          }, {
+            "value": "custom",
+            "label": "t:options.custom"
+          }
+        ],
+        "default": "large"
+      }, {
+        "type": "range",
+        "id": "section_height_custom",
+        "label": "t:settings.custom_height",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50,
+        "unit": "%",
+        "visible_if": "{{ section.settings.section_height == 'custom' }}"
+      }, {
+        "type": "header",
+        "content": "t:content.appearance"
+      }, {
+        "type": "color",
+        "id": "background_color",
+        "label": "t:settings.background_color",
+        "placeholder": "t:settings.default"
+      }, {
+        "type": "checkbox",
+        "id": "toggle_overlay",
+        "label": "t:settings.media_overlay"
+      }, {
+        "type": "color",
+        "id": "overlay_color",
+        "label": "t:settings.overlay_color",
+        "alpha": true,
+        "default": "#00000026",
+        "visible_if": "{{ section.settings.toggle_overlay }}"
+      }, {
+        "type": "select",
+        "id": "overlay_style",
+        "label": "t:settings.overlay_style",
+        "options": [
+          {
+            "value": "solid",
+            "label": "t:options.solid"
+          }, {
+            "value": "gradient",
+            "label": "t:options.gradient"
+          }
+        ],
+        "default": "solid",
+        "visible_if": "{{ section.settings.toggle_overlay }}"
+      }, {
+        "type": "select",
+        "id": "gradient_direction",
+        "label": "t:settings.gradient_direction",
+        "options": [
+          {
+            "value": "to top",
+            "label": "t:options.up"
+          }, {
+            "value": "to bottom",
+            "label": "t:options.down"
+          }
+        ],
+        "default": "to top",
+        "visible_if": "{{ section.settings.toggle_overlay and section.settings.overlay_style == 'gradient' }}"
+      }, {
+        "type": "header",
+        "content": "t:content.padding"
+      }, {
+        "type": "range",
+        "id": "padding-block-start",
+        "label": "t:settings.top",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "default": 0
+      }, {
+        "type": "range",
+        "id": "padding-block-end",
+        "label": "t:settings.bottom",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "default": 0
       }
-    }
-  ]
-}
+    ],
+    "presets": [
+      {
+        "name": "t:names.hero",
+        "category": "t:categories.banners",
+        "settings": {
+          "horizontal_alignment_flex_direction_column": "center",
+          "section_height": "large",
+          "padding-block-start": 40,
+          "padding-block-end": 40,
+          "toggle_overlay": true,
+          "overlay_style": "gradient",
+          "eyebrow": "Premium Bedding",
+          "heading": "Sleep Better Every Night",
+          "description": "Soft blankets, quilts and comforters made for warmer, calmer nights.",
+          "primary_label": "Shop Bedding",
+          "secondary_label": "Explore Collection"
+        }
+      }
+    ]
+  }
 {% endschema %}

@@ -350,7 +350,25 @@
     }
 
     .customer-reviews__grid {
-      grid-template-columns: 1fr;
+      display: flex;
+      overflow-x: auto;
+      gap: 0.9rem;
+      padding-inline: 1rem;
+      padding-block-end: 0.5rem;
+      margin-inline: -1rem;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: 1rem;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .customer-reviews__grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .customer-reviews__card {
+      flex: 0 0 min(84vw, 22rem);
+      scroll-snap-align: start;
     }
 
     .customer-reviews__person {
