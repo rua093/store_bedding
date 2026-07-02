@@ -490,10 +490,34 @@ export class QuickAddComponent extends Component {
       gallery.querySelector('.slideshow-controls__thumbnails-container');
     if (!(controls instanceof HTMLElement)) return;
 
+    const thumbnailScroller =
+      controls.matches('.slideshow-controls__thumbnails-container')
+        ? controls
+        : controls.querySelector('.slideshow-controls__thumbnails-container');
+
     const getThumbnails = () =>
       Array.from(controls.querySelectorAll('.slideshow-controls__thumbnail')).filter(
         (thumbnail) => thumbnail instanceof HTMLElement
       );
+
+    let isPointerDown = false;
+    let isDragging = false;
+    let hasPointerCapture = false;
+    let suppressNextClick = false;
+    let pointerId = null;
+    let startX = 0;
+    let startScrollLeft = 0;
+    const dragThreshold = 5;
+
+    const stopDragging = () => {
+      isPointerDown = false;
+      isDragging = false;
+      hasPointerCapture = false;
+      pointerId = null;
+      if (thumbnailScroller instanceof HTMLElement) {
+        thumbnailScroller.classList.remove('is-dragging');
+      }
+    };
 
     const syncThumbnailState = (index) => {
       const thumbnails = getThumbnails();
@@ -551,6 +575,13 @@ export class QuickAddComponent extends Component {
     controls.addEventListener(
       'click',
       (event) => {
+        if (suppressNextClick) {
+          event.preventDefault();
+          event.stopPropagation();
+          suppressNextClick = false;
+          return;
+        }
+
         const target = event.target;
         if (!(target instanceof Element)) return;
 
@@ -566,6 +597,81 @@ export class QuickAddComponent extends Component {
       },
       { signal }
     );
+
+    if (thumbnailScroller instanceof HTMLElement) {
+      const thumbnailImages = Array.from(thumbnailScroller.querySelectorAll('.slideshow-controls__thumbnail img')).filter(
+        (image) => image instanceof HTMLImageElement
+      );
+
+      thumbnailImages.forEach((image) => {
+        image.draggable = false;
+        image.addEventListener(
+          'dragstart',
+          (event) => {
+            event.preventDefault();
+          },
+          { signal }
+        );
+      });
+
+      thumbnailScroller.addEventListener(
+        'pointerdown',
+        (event) => {
+          if (event.pointerType === 'mouse' && event.button !== 0) return;
+          if (thumbnailScroller.scrollWidth <= thumbnailScroller.clientWidth) return;
+
+          isPointerDown = true;
+          isDragging = false;
+          suppressNextClick = false;
+          pointerId = event.pointerId;
+          startX = event.clientX;
+          startScrollLeft = thumbnailScroller.scrollLeft;
+        },
+        { signal, capture: true }
+      );
+
+      thumbnailScroller.addEventListener(
+        'pointermove',
+        (event) => {
+          if (!isPointerDown || pointerId !== event.pointerId) return;
+
+          const deltaX = event.clientX - startX;
+          if (!isDragging && Math.abs(deltaX) >= dragThreshold) {
+            isDragging = true;
+            thumbnailScroller.setPointerCapture?.(event.pointerId);
+            hasPointerCapture = true;
+            thumbnailScroller.classList.add('is-dragging');
+          }
+
+          if (!isDragging) return;
+
+          event.preventDefault();
+          event.stopPropagation();
+          thumbnailScroller.scrollLeft = startScrollLeft - deltaX;
+        },
+        { signal, capture: true }
+      );
+
+      const endPointerInteraction = (event) => {
+        if (pointerId !== event.pointerId) return;
+
+        if (isDragging) {
+          suppressNextClick = true;
+          window.setTimeout(() => {
+            suppressNextClick = false;
+          }, 0);
+        }
+
+        if (hasPointerCapture) {
+          thumbnailScroller.releasePointerCapture?.(event.pointerId);
+        }
+        stopDragging();
+      };
+
+      thumbnailScroller.addEventListener('pointerup', endPointerInteraction, { signal });
+      thumbnailScroller.addEventListener('pointercancel', endPointerInteraction, { signal });
+      signal.addEventListener('abort', stopDragging, { once: true });
+    }
 
     slideshowComponent.addEventListener(
       SlideshowSelectEvent.eventName,

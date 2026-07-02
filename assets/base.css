@@ -4380,6 +4380,10 @@ body:has(main[data-template*='index']) .footer-wrapper {
   margin-top: 0 !important;
 }
 
+body:has(main[data-template*='product']) .footer-wrapper {
+  margin-top: 0 !important;
+}
+
 /* Homepage Judge.me reviews redesign - image top wave style */
 main[data-template*='index'] .section[class*='1782702718c3bf58b5'],
 main[data-template*='index'] .section-background[class*='1782702718c3bf58b5'] {
