@@ -36,6 +36,14 @@
 
 <script>
   (() => {
+    const desktopDetailsQuery = window.matchMedia('(min-width: 750px)');
+
+    const syncProductDescriptionAccordions = () => {
+      document.querySelectorAll('.product-description-collapsible').forEach((accordion) => {
+        accordion.open = desktopDetailsQuery.matches;
+      });
+    };
+
     const enhanceProductDescriptions = () => {
       document.querySelectorAll('[data-product-details-below] rte-formatter').forEach((description) => {
         if (description.dataset.enhanced === 'true') return;
@@ -85,6 +93,28 @@
         description.style.setProperty('--max-width', '9999px');
         description.innerHTML = '';
         description.appendChild(layout);
+
+        if (!description.closest('.product-description-collapsible')) {
+          const accordion = document.createElement('details');
+          accordion.className = 'product-description-collapsible';
+          accordion.open = desktopDetailsQuery.matches;
+
+          const summary = document.createElement('summary');
+          summary.className = 'product-description-collapsible__summary';
+          summary.innerHTML = `
+            <span>Product Details</span>
+            <span class="product-description-collapsible__icon" aria-hidden="true">+</span>
+          `;
+
+          const content = document.createElement('div');
+          content.className = 'product-description-collapsible__content';
+
+          description.parentNode.insertBefore(accordion, description);
+          accordion.appendChild(summary);
+          accordion.appendChild(content);
+          content.appendChild(description);
+        }
+
         description.dataset.enhanced = 'true';
       });
     };
@@ -110,6 +140,7 @@
       });
 
       enhanceProductDescriptions();
+      syncProductDescriptionAccordions();
     };
 
     const enhanceProductDetailsLayout = () => {
@@ -123,6 +154,7 @@
     }
 
     document.addEventListener('shopify:section:load', enhanceProductDetailsLayout);
+    desktopDetailsQuery.addEventListener('change', syncProductDescriptionAccordions);
   })();
 </script>
 
