@@ -27,20 +27,38 @@
     {{ block.shopify_attributes }}
     aria-hidden="{% if block_index == 0 %}false{% else %}true{% endif %}"
   >
-    <p class="announcement-bar__text">
-      {{ block.settings.text }}
-    </p>
+    <div class="announcement-bar__content luxury-custom-announcement">
+      <span class="announcement-bar__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 20C9.4 16.6 12 11.4 12.2 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M11.5 7.2C10.1 6.8 8.9 5.8 8.3 4.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M10.1 10.8C8.6 10.7 7.1 11.3 6.1 12.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M13.8 11.2C15.1 10.5 16 9.2 16.2 7.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M13.5 15.2C15 15.2 16.4 15.9 17.2 17.1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M8.4 5.2C8.4 5.95 7.79 6.55 7.05 6.55C6.31 6.55 5.7 5.95 5.7 5.2C5.7 4.46 6.31 3.85 7.05 3.85C7.79 3.85 8.4 4.46 8.4 5.2Z" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M7.2 12.8C7.2 13.54 6.59 14.15 5.85 14.15C5.11 14.15 4.5 13.54 4.5 12.8C4.5 12.06 5.11 11.45 5.85 11.45C6.59 11.45 7.2 12.06 7.2 12.8Z" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M17.6 7.1C17.6 7.84 16.99 8.45 16.25 8.45C15.51 8.45 14.9 7.84 14.9 7.1C14.9 6.35 15.51 5.75 16.25 5.75C16.99 5.75 17.6 6.35 17.6 7.1Z" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M18.8 17.9C18.8 18.64 18.19 19.25 17.45 19.25C16.71 19.25 16.1 18.64 16.1 17.9C16.1 17.16 16.71 16.55 17.45 16.55C18.19 16.55 18.8 17.16 18.8 17.9Z" stroke="currentColor" stroke-width="1.2"/>
+        </svg>
+      </span>
 
-    {% if block_settings.link != blank %}
-      <a
-        class="announcement-bar__link"
-        href="{{ block_settings.link }}"
-      >
-        <span class="visually-hidden">
-          {{ block_settings.text | strip_html }}
+      <p class="announcement-bar__text announcement-bar__text--main">
+        <span class="announcement-bar__text-line">
+          <span class="announcement-bar__text-strong">Custom Bedding</span>
+          <span class="announcement-bar__text-divider" aria-hidden="true">&mdash;</span>
+          <span class="announcement-bar__text-emphasis">Made From Your Ideas</span>
+          <span class="announcement-bar__text-divider" aria-hidden="true">&middot;</span>
         </span>
+      </p>
+
+      <a
+        class="announcement-bar__cta"
+        href="/collections/all"
+      >
+        <span class="announcement-bar__cta-label">Custom Now</span>
+        <span class="announcement-bar__cta-arrow" aria-hidden="true">&rarr;</span>
       </a>
-    {% endif %}
+    </div>
   </slideshow-slide>
 {%- endunless -%}
 

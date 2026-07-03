@@ -93,6 +93,11 @@
 
     {% capture children %}
       {% for link in block_settings.menu.links %}
+        {% assign top_link_url = link.url | strip %}
+        {% assign is_locked_top_parent_link = false %}
+        {% if link.links != blank and top_link_url == '#' %}
+          {% assign is_locked_top_parent_link = true %}
+        {% endif %}
         <li
           role="presentation"
           class="menu-list__list-item"
@@ -101,22 +106,36 @@
           on:pointerenter="/activate"
           on:pointerleave="/deactivate"
         >
-          <a
-            href="{{ link.url }}"
-            data-skip-node-update="true"
-            class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}"
-            {%- if link.links != blank -%}
+          {% if is_locked_top_parent_link %}
+            <button
+              type="button"
+              data-skip-node-update="true"
+              class="menu-list__link menu-list__link--locked-top-parent button-unstyled{% if link.active %} menu-list__link--active{% endif %}"
               aria-controls="submenu-{{ forloop.index }}"
               aria-haspopup="true"
               aria-expanded="false"
-            {%- endif -%}
-            {% if link.current %}
-              aria-current="page"
-            {% endif %}
-            ref="menuitem"
-          >
-            <span class="menu-list__link-title">{{- link.title -}}</span>
-          </a>
+              ref="menuitem"
+            >
+              <span class="menu-list__link-title">{{- link.title -}}</span>
+            </button>
+          {% else %}
+            <a
+              href="{{ link.url }}"
+              data-skip-node-update="true"
+              class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}"
+              {%- if link.links != blank -%}
+                aria-controls="submenu-{{ forloop.index }}"
+                aria-haspopup="true"
+                aria-expanded="false"
+              {%- endif -%}
+              {% if link.current %}
+                aria-current="page"
+              {% endif %}
+              ref="menuitem"
+            >
+              <span class="menu-list__link-title">{{- link.title -}}</span>
+            </a>
+          {% endif %}
           {%- if link.links != blank -%}
             <div class="menu-list__submenu{{ background_color_classes }}" ref="submenu[]">
               <div
@@ -328,6 +347,19 @@
   .menu-list__link-title {
     padding-inline: calc(var(--gap-xl) / 2);
   }
+
+  .menu-list__link--locked-top-parent {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    text-align: inherit;
+  }
+
+  .menu-list__link--locked-top-parent:hover,
+  .menu-list__link--locked-top-parent:focus {
+    color: var(--menu-top-level-font-color);
+  }
   [slot='overflow'] .menu-list__link-title {
     padding-inline: 0;
   }
@@ -399,7 +431,7 @@
   .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu,
   .overflow-menu::part(overflow) {
     --submenu-content-opacity: 0;
-    --submenu-content-animation: opacity calc(var(--submenu-animation-speed) * 0.75) var(--animation-easing);
+    --submenu-content-animation: opacity 110ms var(--animation-easing);
 
     visibility: hidden;
     position: absolute;
@@ -541,6 +573,15 @@
     &:hover {
       color: var(--menu-parent-active-font-color);
     }
+  }
+
+  .mega-menu__link--locked-parent {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .mega-menu__link--locked-parent:hover {
+    color: var(--menu-parent-font-color);
   }
 
   @media screen and (max-width: 989px) {
@@ -702,6 +743,31 @@
   }
 
   @media screen and (min-width: 750px) {
+    .mega-menu__grid:not(:has(.mega-menu__content)):not(:has(.mega-menu__link-image)) {
+      display: flex;
+      justify-content: center;
+    }
+
+    .mega-menu__grid:not(:has(.mega-menu__content)):not(:has(.mega-menu__link-image)) .mega-menu__list {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      width: max-content;
+      max-width: min(100%, 1180px);
+      grid-column: auto;
+      column-gap: clamp(4rem, 8vw, 8rem);
+      row-gap: 1.5rem;
+    }
+
+    .mega-menu__grid:not(:has(.mega-menu__content)):not(:has(.mega-menu__link-image)) .mega-menu__column {
+      grid-column: auto;
+      flex: 0 0 auto;
+    }
+
+    .mega-menu__grid:not(:has(.mega-menu__content)):not(:has(.mega-menu__link-image)) .mega-menu__column:has(.mega-menu__link--parent) > div {
+      max-width: 260px;
+    }
+
     .menu-list__link-title {
       position: relative;
     }

@@ -366,13 +366,78 @@
                                 </a>
                               {%- else -%}
                                 {% liquid
+                                  assign drawer_child_url = childlink.url | strip
+                                  assign is_drawer_collapsible_parent = false
+                                  if childlink.links != blank and drawer_child_url == '#'
+                                    assign is_drawer_collapsible_parent = true
+                                  endif
+
                                   assign should_open_first_nested = false
-                                  if first_accordion_open == false and block_settings.drawer_accordion and block_settings.drawer_accordion_expand_first
+                                  if first_accordion_open == false and block_settings.drawer_accordion and block_settings.drawer_accordion_expand_first and is_drawer_collapsible_parent == false
                                     assign first_accordion_open = true
                                     assign should_open_first_nested = true
                                   endif
                                 %}
-                                {% if block_settings.drawer_accordion %}
+                                {% if is_drawer_collapsible_parent %}
+                                  {% capture drawer_group_accordion %}
+                                    <details class="menu-drawer__group-accordion">
+                                      <summary class="menu-drawer__menu-item menu-drawer__menu-item--parent menu-drawer__menu-item--group-heading focus-inset">
+                                        <span class="menu-drawer__menu-item-text wrap-text">{{ childlink.title | escape }}</span>
+                                        <span class="menu-drawer__group-toggle" aria-hidden="true">
+                                          <span class="menu-drawer__group-icon menu-drawer__group-icon--plus">
+                                            {{- 'icon-plus.svg' | inline_asset_content -}}
+                                          </span>
+                                          <span class="menu-drawer__group-icon menu-drawer__group-icon--minus">
+                                            {{- 'icon-minus.svg' | inline_asset_content -}}
+                                          </span>
+                                        </span>
+                                      </summary>
+                                      {% liquid
+                                        assign render_link_image = false
+                                        if block_settings.menu_style == 'collection_images'
+                                          assign catalog_links = childlink.links | where: 'type', 'catalog_link'
+                                          assign collection_list_links = childlink.links | where: 'type', 'collections_link'
+                                          assign collection_links = childlink.links | where: 'type', 'collection_link'
+                                          if catalog_links.size > 0 or collection_list_links.size > 0 or collection_links.size > 0
+                                            assign render_link_image = true
+                                          endif
+                                        endif
+                                      %}
+                                      <ul class="menu-drawer__menu menu-drawer__menu--grandchildlist details-content{% if render_link_image %} menu-drawer__menu--grid{% endif %}" role="list" tabindex="-1">
+                                        {%- for grandchildlink in childlink.links -%}
+                                          <li
+                                            class="menu-drawer__list-item"
+                                            style="--menu-drawer-animation-index: {{ forloop.index }};"
+                                          >
+                                            <a
+                                              id="HeaderDrawer-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
+                                              href="{{ grandchildlink.url }}"
+                                              class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset{% if grandchildlink.current %} menu-drawer__menu-item--active{% endif %}"
+                                              {% if grandchildlink.current %}
+                                                aria-current="page"
+                                              {% endif %}
+                                            >
+                                              {% if render_link_image %}
+                                                {% render 'link-featured-image',
+                                                  link: grandchildlink,
+                                                  class: 'menu-drawer__link-image',
+                                                  sizes: 'auto, 400px'
+                                                %}
+                                              {% endif %}
+                                              <span class="menu-drawer__menu-item-text wrap-text">
+                                                {{- grandchildlink.title | escape -}}
+                                              </span>
+                                            </a>
+                                          </li>
+                                        {%- endfor -%}
+                                      </ul>
+                                    </details>
+                                  {% endcapture %}
+                                  {% render 'accordion-custom-component',
+                                    children: drawer_group_accordion,
+                                    open_by_default_on_mobile: false
+                                  %}
+                                {% elsif block_settings.drawer_accordion %}
                                   {%- comment -%}
                                     Accordion for links with children, in menus with 3 levels of links
                                   {%- endcomment -%}
@@ -709,60 +774,6 @@
         {%- endif -%}
       </div>
 
-      {% liquid
-        if block_settings.menu_style == 'featured_collections'
-          assign top_level_featured_collections = linklist.links | where: 'type', 'collection_link'
-        endif
-
-        if eager_loading and block_settings.menu_style == 'featured_products'
-          for link in linklist.links
-            if link.type == 'collection_link'
-              assign collection_linklist = link
-              assign top_level_featured_products_collection = collection_linklist.object
-              break
-            elsif link.type == 'catalog_link' or link.type == 'collections_link'
-              assign top_level_featured_products_collection = collections.all
-              break
-            endif
-          endfor
-        endif
-      -%}
-      {% if top_level_featured_collections.size > 0 or top_level_featured_products_collection.products_count > 0 %}
-        <div
-          class="menu-drawer__featured-content"
-          style="--menu-drawer-animation-index: {{ linklist.links.size | plus: 1 }};"
-        >
-          <ul class="menu-drawer__featured-content-list menu-drawer__animated-element list-unstyled">
-            {% if top_level_featured_collections.size > 0 %}
-              {%- for collection in top_level_featured_collections limit: max_featured_items -%}
-                <li class="menu-drawer__featured-content-list-item menu-drawer__featured-content-list-item--collection">
-                  {% render 'resource-card',
-                    resource: collection.object,
-                    resource_type: 'collection',
-                    style: 'overlay',
-                    image_aspect_ratio: ratio,
-                    image_sizes: 'auto, 400px'
-                  %}
-                </li>
-              {%- endfor -%}
-            {% elsif top_level_featured_products_collection.products_count > 0 %}
-              {% paginate top_level_featured_products_collection.products by max_featured_items %}
-                {%- for product in top_level_featured_products_collection.products limit: max_featured_items -%}
-                  <li class="menu-drawer__featured-content-list-item menu-drawer__featured-content-list-item--product">
-                    {% render 'resource-card',
-                      resource: product,
-                      resource_type: 'product',
-                      image_aspect_ratio: ratio,
-                      image_sizes: 'auto, 400px',
-                      product_view_context: 'dialog'
-                    %}
-                  </li>
-                {%- endfor -%}
-              {% endpaginate %}
-            {% endif %}
-          </ul>
-        </div>
-      {% endif %}
     </div>
     <div
       class="menu-drawer__backdrop"
@@ -1087,6 +1098,73 @@
     &:hover {
       color: var(--menu-parent-font-color);
     }
+  }
+
+  .menu-drawer__group-accordion {
+    width: 100%;
+  }
+
+  .menu-drawer__group-accordion summary {
+    list-style: none;
+  }
+
+  .menu-drawer__group-accordion summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .menu-drawer__menu-item--group-heading {
+    color: #2f2723;
+    font-weight: 800;
+    letter-spacing: 0.065em;
+    text-transform: uppercase;
+    font-size: clamp(0.96rem, 3.8vw, 1.08rem);
+    line-height: 1.15;
+    padding-block: 0.95rem 0.75rem;
+    border-bottom: 1px solid rgb(62 51 45 / 0.18);
+    justify-content: space-between;
+  }
+
+  .menu-drawer__group-toggle {
+    width: 2.15rem;
+    height: 2.15rem;
+    min-width: 2.15rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(184 121 85 / 0.1);
+    color: #7a4b33;
+    padding: 0;
+  }
+
+  .menu-drawer__group-icon {
+    width: 0.95rem;
+    height: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .menu-drawer__group-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .menu-drawer__group-accordion .menu-drawer__menu--grandchildlist {
+    padding-block-start: 0.45rem;
+    padding-inline-start: 0.35rem;
+  }
+
+  .menu-drawer__group-accordion .menu-drawer__group-icon--minus {
+    display: none;
+  }
+
+  .menu-drawer__group-accordion[open] .menu-drawer__group-icon--plus {
+    display: none;
+  }
+
+  .menu-drawer__group-accordion[open] .menu-drawer__group-icon--minus {
+    display: inline-flex;
   }
 
   .menu-drawer__menu-item--child {
