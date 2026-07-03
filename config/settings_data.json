@@ -13,7 +13,7 @@
     "logo_inverse": "shopify://shop_images/logo.png",
     "logo_height": 36,
     "logo_height_mobile": 28,
-    "page_text_color": "#3E332D",
+    "page_text_color": "#000000",
     "type_body_font": "work_sans_n4",
     "type_subheading_font": "work_sans_n5",
     "type_heading_font": "lora_n4",
