@@ -715,12 +715,13 @@
 
   [data-testid='collection-list'] .collection-patchwork__intro-tile .collection-patchwork__content {
     position: absolute;
-    left: clamp(1rem, 2vw, 1.6rem);
-    right: clamp(1rem, 2vw, 1.6rem);
-    bottom: clamp(1rem, 1.8vw, 1.45rem);
+    inset-inline: 0;
+    inset-block-end: 0;
     z-index: 1;
     min-height: auto;
     display: block;
+    padding: clamp(1.25rem, 2vw, 1.75rem);
+    pointer-events: none;
   }
 
   [data-testid='collection-list'] .collection-patchwork__intro-tile .collection-patchwork__title {
@@ -1026,30 +1027,27 @@
   }
 
   [data-testid='collection-list'] .collection-patchwork__content {
-    position: relative;
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
     z-index: 1;
-    min-height: 100%;
-    display: grid;
-    align-content: end;
-    gap: 0;
+    min-height: auto;
+    display: block;
     padding: clamp(1.25rem, 2vw, 1.75rem);
+    pointer-events: none;
   }
 
   [data-testid='collection-list'] .collection-patchwork__title {
     margin: 0;
-    max-inline-size: 10ch;
+    max-inline-size: 11ch;
     color: #fff8ef;
     font-family: var(--font-heading--family);
-    font-size: clamp(1.65rem, 2.2vw, 2.25rem);
-    font-weight: 560;
-    letter-spacing: -0.055em;
-    line-height: 0.92;
+    font-size: clamp(1.95rem, 2.65vw, 2.7rem);
+    font-weight: 650;
+    letter-spacing: -0.045em;
+    line-height: 0.96;
     text-shadow: 0 1px 2px rgb(31 22 16 / 0.22), 0 10px 22px rgb(31 22 16 / 0.24);
     text-wrap: balance;
-  }
-
-  [data-testid='collection-list'] .collection-patchwork__tile--1 .collection-patchwork__title {
-    font-size: clamp(2rem, 2.75vw, 2.75rem);
   }
 
 
@@ -1642,10 +1640,9 @@
       gap: 0;
     }
 
-    [data-testid='collection-list'] .collection-patchwork__title,
-    [data-testid='collection-list'] .collection-patchwork__tile--1 .collection-patchwork__title {
-      font-size: clamp(1.45rem, 7vw, 1.95rem);
-      line-height: 0.95;
+    [data-testid='collection-list'] .collection-patchwork__title {
+      font-size: clamp(1.55rem, 5.6vw, 2rem);
+      line-height: 0.98;
       overflow-wrap: anywhere;
     }
 
@@ -1741,10 +1738,10 @@
       padding: 0.8rem;
     }
 
-    [data-testid='collection-list'] .collection-patchwork__title,
-    [data-testid='collection-list'] .collection-patchwork__tile--1 .collection-patchwork__title {
-      max-inline-size: 9ch;
-      font-size: clamp(1.12rem, 4.8vw, 1.45rem);
+    [data-testid='collection-list'] .collection-patchwork__title {
+      max-inline-size: 10ch;
+      font-size: clamp(1.25rem, 5.2vw, 1.6rem);
+      line-height: 0.98;
       overflow-wrap: anywhere;
     }
   }
