@@ -123,11 +123,15 @@ class HeaderMenu extends Component {
     const { x, y } = this.#lastPointer;
     requestAnimationFrame(() => {
       const target = document.elementFromPoint(x, y);
-      if (!target) return;
-      const listItem = target.closest('.menu-list__list-item');
-      if (listItem && !listItem.contains(this.#state.activeItem)) {
-        listItem.dispatchEvent(new PointerEvent('pointerenter', { bubbles: false }));
+      const targetState = resolveTopLevelTarget(target);
+      if (!targetState || !this.contains(targetState.listItem) || targetState.nextItem === this.#state.activeItem) return;
+
+      if (!targetState.hasSubmenu && !targetState.isOverflowItem) {
+        this.#deactivate(this.#state.activeItem);
+        return;
       }
+
+      targetState.listItem.dispatchEvent(new PointerEvent('pointerenter', { bubbles: false }));
     });
   }
 
@@ -144,15 +148,15 @@ class HeaderMenu extends Component {
       activeItem.dataset.safetyBox = previousSafetyBox;
     }
 
-    if (!(target instanceof Element)) return false;
+    const targetState = resolveTopLevelTarget(target);
+    if (!targetState || !this.contains(targetState.listItem) || targetState.nextItem === activeItem) return false;
 
-    const listItem = target.closest('.menu-list__list-item');
-    if (!listItem || !this.contains(listItem)) return false;
+    if (!targetState.hasSubmenu && !targetState.isOverflowItem) {
+      this.#deactivate(activeItem);
+      return true;
+    }
 
-    const nextItem = listItem.querySelector('[ref="menuitem"]');
-    if (!(nextItem instanceof HTMLElement) || nextItem === activeItem) return false;
-
-    listItem.dispatchEvent(new PointerEvent('pointerenter', { bubbles: false }));
+    targetState.listItem.dispatchEvent(new PointerEvent('pointerenter', { bubbles: false }));
     return true;
   }
 
@@ -257,11 +261,21 @@ class HeaderMenu extends Component {
 
     if (!item || item == this.#state.activeItem) return;
 
-    const isDefaultSlot = event.target.slot === '';
+    const itemListItem = findListItem(item);
+    const isDefaultSlot = isDefaultSlotListItem(itemListItem);
+    let submenu = findSubmenu(item);
+    const hasSubmenu = Boolean(submenu);
 
     this.dataset.overflowExpanded = (!isDefaultSlot).toString();
 
     const previouslyActiveItem = this.#state.activeItem;
+
+    if (isDefaultSlot && !hasSubmenu) {
+      if (previouslyActiveItem) {
+        this.#deactivate(previouslyActiveItem);
+      }
+      return;
+    }
 
     if (previouslyActiveItem) {
       previouslyActiveItem.ariaExpanded = 'false';
@@ -271,11 +285,15 @@ class HeaderMenu extends Component {
     this.ariaExpanded = 'true';
     item.ariaExpanded = 'true';
 
-    let submenu = findSubmenu(item);
-    const hasSubmenu = Boolean(submenu);
-
     if (!hasSubmenu && !isDefaultSlot) {
       submenu = this.overflowMenu;
+    }
+
+    if (previouslyActiveItem) {
+      const previousSubmenu = findSubmenu(previouslyActiveItem);
+      if (previousSubmenu && previousSubmenu !== submenu) {
+        delete previousSubmenu.dataset.active;
+      }
     }
 
     if (submenu) {
@@ -496,7 +514,7 @@ if (!customElements.get('header-menu')) {
 function findMenuItem(element) {
   if (!(element instanceof Element)) return null;
 
-  const listItem = element.closest('.menu-list__list-item');
+  const listItem = findListItem(element);
 
   if (listItem?.matches('[slot="more"]')) {
     return findMenuItem(listItem.parentElement?.querySelector('[slot="overflow"]'));
@@ -513,4 +531,51 @@ function findMenuItem(element) {
 function findSubmenu(element) {
   const submenu = element?.parentElement?.querySelector('[ref="submenu[]"]');
   return submenu instanceof HTMLElement ? submenu : null;
+}
+
+/**
+ * Find the closest menu list item.
+ * @param {Element | null | undefined} element
+ * @returns {HTMLElement | null}
+ */
+function findListItem(element) {
+  return /** @type {HTMLElement | null} */ (element?.closest('.menu-list__list-item') ?? null);
+}
+
+/**
+ * Whether a menu list item is in the default slot.
+ * @param {HTMLElement | null | undefined} listItem
+ * @returns {boolean}
+ */
+function isDefaultSlotListItem(listItem) {
+  return (listItem?.slot ?? '') === '';
+}
+
+/**
+ * Whether a menu list item represents overflow content.
+ * @param {HTMLElement | null | undefined} listItem
+ * @returns {boolean}
+ */
+function isOverflowListItem(listItem) {
+  return Boolean(listItem && (listItem.matches('[slot="more"]') || !isDefaultSlotListItem(listItem)));
+}
+
+/**
+ * Resolve a top-level menu target and whether it can open submenu content.
+ * @param {Element | null | undefined} element
+ * @returns {{ listItem: HTMLElement, nextItem: HTMLElement, hasSubmenu: boolean, isOverflowItem: boolean } | null}
+ */
+function resolveTopLevelTarget(element) {
+  const listItem = findListItem(element);
+  if (!listItem) return null;
+
+  const nextItem = /** @type {HTMLElement | null} */ (listItem.querySelector('[ref="menuitem"]'));
+  if (!(nextItem instanceof HTMLElement)) return null;
+
+  return {
+    listItem,
+    nextItem,
+    hasSubmenu: Boolean(findSubmenu(nextItem)),
+    isOverflowItem: isOverflowListItem(listItem),
+  };
 }
