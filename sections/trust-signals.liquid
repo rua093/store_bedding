@@ -1,7 +1,7 @@
 {% liquid
   assign is_trust_signals_hero = false
   assign first_trust_text = section.blocks.first.settings.text | default: ''
-  if section.id == 'trust_signals_P6hero' or section.id contains 'trust_signals_P6hero' or first_trust_text contains 'Premium Materials'
+  if section.id == 'trust_signals_P6hero' or section.id contains 'trust_signals_P6hero' or first_trust_text contains 'Soft Comfort'
     assign is_trust_signals_hero = true
   endif
 
@@ -52,11 +52,11 @@
               if trust_title == blank
                 case forloop.index
                   when 1
-                    assign trust_title = 'Premium Materials'
+                    assign trust_title = 'Soft Comfort'
                   when 2
-                    assign trust_title = 'Breathable & Cozy'
+                    assign trust_title = 'Custom Care'
                   when 3
-                    assign trust_title = 'Made to Last'
+                    assign trust_title = 'Lasting Quality'
                   when 4
                     assign trust_title = 'Free Shipping'
                 endcase
@@ -65,13 +65,13 @@
               if trust_body == blank
                 case forloop.index
                   when 1
-                    assign trust_body = 'Carefully selected for lasting comfort'
+                    assign trust_body = 'Thoughtfully made for cozy, everyday comfort.'
                   when 2
-                    assign trust_body = 'Lightweight warmth all year round'
+                    assign trust_body = 'Each design is crafted to match your idea with attention to detail.'
                   when 3
-                    assign trust_body = 'Quality you can feel, night after night'
+                    assign trust_body = 'Carefully created to feel beautiful, durable, and gift-worthy.'
                   when 4
-                    assign trust_body = 'Free shipping on every bedding order, delivered to your door'
+                    assign trust_body = 'Free shipping on every bedding order, delivered to your door.'
                 endcase
               endif
 
@@ -117,7 +117,7 @@
         style="--reveal-delay: 350ms;"
         aria-hidden="true"
       >
-        <span>Made with love for you and your furry friend</span>
+        <span>Jeminise — quality you can feel, comfort you can trust.</span>
       </div>
       </div>
     {% endif %}
