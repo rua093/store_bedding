@@ -467,7 +467,7 @@
         "text_A1": {
           "type": "text",
           "settings": {
-            "text": "<p><strong>Premium Materials</strong>Carefully selected for lasting comfort</p>",
+            "text": "<p><strong>Soft Comfort</strong>Thoughtfully made for cozy, everyday comfort.</p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -492,7 +492,7 @@
         "text_A2": {
           "type": "text",
           "settings": {
-            "text": "<p><strong>Breathable & Cozy</strong>Lightweight warmth all year round</p>",
+            "text": "<p><strong>Custom Care</strong>Each design is crafted to match your idea with attention to detail.</p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -517,7 +517,7 @@
         "text_A3": {
           "type": "text",
           "settings": {
-            "text": "<p><strong>Made to Last</strong>Quality you can feel, night after night</p>",
+            "text": "<p><strong>Lasting Quality</strong>Carefully created to feel beautiful, durable, and gift-worthy.</p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -542,7 +542,7 @@
         "text_A4": {
           "type": "text",
           "settings": {
-            "text": "<p><strong>Free Shipping</strong>Free shipping on every bedding order, delivered to your door</p>",
+            "text": "<p><strong>Free Shipping</strong>Free shipping on every bedding order, delivered to your door.</p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
