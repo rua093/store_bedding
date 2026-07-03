@@ -9,7 +9,7 @@
   <span class="announcement-bar__marquee-separator" aria-hidden="true">•</span>
   <span class="announcement-bar__marquee-item">Free Shipping</span>
   <span class="announcement-bar__marquee-separator" aria-hidden="true">•</span>
-  <span class="announcement-bar__marquee-item">10% Off Your First Order</span>
+  <span class="announcement-bar__marquee-item announcement-bar__marquee-item--promo">10% Off Your First Order</span>
   <span class="announcement-bar__marquee-separator" aria-hidden="true">•</span>
 {%- endcapture -%}
 
@@ -34,38 +34,38 @@
 {% stylesheet %}
   .announcement-bar {
     position: relative;
-    min-height: 42px;
+    min-height: 32px;
     display: flex;
     align-items: center;
     border-block-end: var(--border-bottom-width) solid var(--color-border);
     background-color: {{ section.settings.background_color | default: '#445958' }};
-    background-image: var(--announcement-bg-image);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     border-bottom-color: rgb(var(--color-foreground-rgb) / 0.16);
     overflow: hidden;
+    isolation: isolate;
   }
 
   .announcement-bar::before,
   .announcement-bar::after {
     content: '';
-    position: absolute;
-    inset-inline: 0;
     pointer-events: none;
   }
 
   .announcement-bar::before {
+    position: absolute;
     inset: 0;
-    background:
-      linear-gradient(180deg, rgb(32 21 15 / 0.03), rgb(32 21 15 / 0.03)),
-      linear-gradient(90deg, rgb(255 255 255 / 0.02), transparent 18%, transparent 82%, rgb(255 255 255 / 0.02));
+    z-index: 0;
+    background-image: var(--announcement-bg-image);
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
     opacity: 1;
   }
 
   .announcement-bar::after {
+    position: absolute;
     inset-inline: 0;
     bottom: 0;
+    z-index: 0;
     height: 1px;
     background: rgb(var(--color-foreground-rgb) / 0.16);
   }
@@ -75,6 +75,7 @@
     align-items: center;
     width: 100%;
     position: relative;
+    z-index: 1;
     min-height: inherit;
   }
 
@@ -109,19 +110,34 @@
   .announcement-bar__marquee-separator {
     display: inline-flex;
     align-items: center;
-    color: rgb(var(--color-foreground-rgb));
     font-family: var(--font-heading--family);
-    font-size: clamp(0.82rem, 1vw, 1rem);
-    font-weight: 600;
+    font-size: clamp(0.82rem, 0.98vw, 0.98rem);
+    font-weight: 700;
     letter-spacing: 0.02em;
     line-height: 1.2;
     text-transform: none;
-    text-shadow: 0 1px 0 rgb(19 27 21 / 0.12);
+    text-shadow: 0 1px 0 rgb(255 255 255 / 0.45);
+  }
+
+  .announcement-bar__marquee-item {
+    color: #2f2119;
+  }
+
+  .announcement-bar__marquee-item--promo {
+    color: #8f3f24;
+    font-weight: 800;
+    letter-spacing: 0.018em;
+    padding: 0.08rem 0.4rem;
+    border-radius: 999px;
+    background: rgb(255 248 239 / 0.72);
+    box-shadow:
+      inset 0 0 0 1px rgb(176 79 47 / 0.18),
+      0 1px 4px rgb(63 34 22 / 0.08);
   }
 
   .announcement-bar__marquee-separator {
-    color: rgb(var(--color-foreground-rgb) / 0.7);
-    font-size: 0.95em;
+    color: rgb(47 33 25 / 0.48);
+    font-size: 0.9em;
   }
 
   .announcement-bar:hover .announcement-bar__marquee-track,
@@ -141,7 +157,7 @@
 
   @media screen and (max-width: 749px) {
     .announcement-bar {
-      min-height: 38px;
+      min-height: 30px;
     }
 
     .announcement-bar__slider {
@@ -156,7 +172,11 @@
 
     .announcement-bar__marquee-item,
     .announcement-bar__marquee-separator {
-      font-size: clamp(0.74rem, 2.7vw, 0.86rem);
+      font-size: clamp(0.7rem, 2.45vw, 0.8rem);
+    }
+
+    .announcement-bar__marquee-item--promo {
+      padding: 0.06rem 0.3rem;
     }
   }
 

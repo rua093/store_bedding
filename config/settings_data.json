@@ -94,15 +94,15 @@
         "disabled": false,
         "settings": {
           "greeting_message": "",
-          "background_color": "#FFFFFF",
+          "background_color": "#ffffff",
           "font_color": "#000000",
-          "button_color": "#1C0F09",
+          "button_color": "#1c0f09",
           "secondary_color": "#faf8f5",
           "ternary_color": "#6f625a",
           "button_icon": "chat_bubble",
           "button_text": "no_text",
           "button_horizontal_position": "bottom_right",
-          "button_vertical_position": "higher",
+          "button_vertical_position": "lowest",
           "agent_inherit_fonts": true,
           "agent_font": "system_ui_n4",
           "agent_border_radius": 16
