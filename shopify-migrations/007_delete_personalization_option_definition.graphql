@@ -1,0 +1,9 @@
+mutation DeletePersonalizationOptionDefinition($id: ID!) {
+  metaobjectDefinitionDelete(id: $id) {
+    deletedId
+    userErrors {
+      field
+      message
+    }
+  }
+}

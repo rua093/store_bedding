@@ -36,24 +36,49 @@
   }}
 
   {%- if is_main_product_media and preview_product != blank -%}
-    {%- assign personalization_groups = preview_product.metafields.custom.personalization_groups.value -%}
+    {%- assign personalization_fields = preview_product.metafields.custom.personalization_fields.value -%}
 
-    {%- if personalization_groups != blank -%}
+    {%- if personalization_fields != blank -%}
       <div
-        class="product-media__personalization-layers"
-        data-personalizer-preview-layers
+        class="product-media__personalization-dynamic-preview"
+        data-personalizer-dynamic-preview
         aria-hidden="true">
-        {%- for group in personalization_groups -%}
-          {%- assign layer_key = group.layer_key.value -%}
+        {%- assign option_preview_keys = '|' -%}
+        {%- for field in personalization_fields -%}
+          {%- liquid
+            assign field_type = field.type.value | default: field.type | downcase
+            assign preview_key = field.preview_key.value | default: field.preview_key
+          -%}
 
-          {%- if layer_key != blank -%}
-            <img
-              class="product-media__personalization-layer"
-              data-preview-layer="{{ layer_key | escape }}"
-              alt=""
-              width="1200"
-              height="1200"
-              hidden>
+          {%- if preview_key != blank -%}
+            {%- case field_type -%}
+              {%- when 'image' -%}
+                <img
+                  class="product-media__preview-upload"
+                  data-preview-upload="{{ preview_key | escape }}"
+                  alt=""
+                  width="1200"
+                  height="1200"
+                  hidden>
+              {%- when 'text', 'textarea' -%}
+                <span
+                  class="product-media__preview-text"
+                  data-preview-text="{{ preview_key | escape }}"
+                  hidden
+                ></span>
+              {%- when 'option' -%}
+                {%- capture option_preview_token -%}|{{ preview_key }}|{%- endcapture -%}
+                {%- unless option_preview_keys contains option_preview_token -%}
+                  <img
+                    class="product-media__personalization-layer"
+                    data-preview-layer="{{ preview_key | escape }}"
+                    alt=""
+                    width="1200"
+                    height="1200"
+                    hidden>
+                  {%- assign option_preview_keys = option_preview_keys | append: preview_key | append: '|' -%}
+                {%- endunless -%}
+            {%- endcase -%}
           {%- endif -%}
         {%- endfor -%}
       </div>
