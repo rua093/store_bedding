@@ -165,16 +165,29 @@
     {% endif %}
 
     <style>
+      :root {
+        --floating-action-right: clamp(1.15rem, 2vw, 1.65rem);
+        --floating-action-bottom: 1rem;
+        --floating-action-size: 3.45rem;
+        --floating-action-gap: 0.8rem;
+      }
+
+      /* Back to top is aligned to Shopify Chat's launcher using shared floating action variables. Shopify Chat itself is a web component, so we do not wrap/move it. */
       .back-to-top-button {
         position: fixed;
-        right: clamp(1.15rem, 2vw, 1.65rem);
-        bottom: calc(clamp(5.15rem, 6vw, 5.8rem) + env(safe-area-inset-bottom));
+        right: var(--floating-action-right);
+        bottom: calc(
+          var(--floating-action-bottom)
+          + var(--floating-action-size)
+          + var(--floating-action-gap)
+          + env(safe-area-inset-bottom)
+        );
         z-index: 120;
         display: inline-grid;
         place-items: center;
-        width: 3.45rem;
-        height: 3.45rem;
-        min-height: 3.45rem;
+        width: var(--floating-action-size);
+        height: var(--floating-action-size);
+        min-height: var(--floating-action-size);
         padding: 0;
         border: 0;
         border-radius: 999px;
@@ -230,9 +243,14 @@
       }
 
       @media screen and (max-width: 749px) {
+        :root {
+          --floating-action-right: 0.72rem;
+          --floating-action-bottom: 1rem;
+          --floating-action-size: 3rem;
+          --floating-action-gap: 0.72rem;
+        }
+
         .back-to-top-button {
-          right: 1rem;
-          bottom: calc(5.25rem + env(safe-area-inset-bottom));
           width: 3rem;
           height: 3rem;
           min-height: 3rem;
@@ -246,9 +264,11 @@
       }
 
       @media screen and (max-width: 480px) {
-        .back-to-top-button {
-          right: 0.9rem;
-          bottom: calc(4.9rem + env(safe-area-inset-bottom));
+        :root {
+          --floating-action-right: 0.72rem;
+          --floating-action-bottom: 1rem;
+          --floating-action-size: 3rem;
+          --floating-action-gap: 0.72rem;
         }
       }
 
