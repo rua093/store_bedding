@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://marcus-notre-scotland-reminder.trycloudflare.com",
+      "url": "https://permissions-about-mysql-virtue.trycloudflare.com",
       "description": "Replace this with the Public URL printed by agent_api_server.py"
     }
   ],

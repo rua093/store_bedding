@@ -227,6 +227,7 @@
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.7),
       0 1px 0 rgba(0, 0, 0, 0.02);
+    box-sizing: border-box;
   }
 
   .product-details--main-product > .group-block > .group-block-content > .text-block.h2,
@@ -476,6 +477,7 @@
     max-width: 100%;
     min-width: 0;
     box-sizing: border-box;
+    grid-auto-flow: row;
   }
 
   .product-information--main-product .product-details--main-product .buy-buttons-block,
@@ -659,6 +661,18 @@
     padding-top: 0.25rem;
   }
 
+  .product-details--main-product :is(.product-personalizer, .recipient-form, .buy-buttons-block__bar, .shopify-app-block) {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .product-details--main-product :is(.recipient-fields, .gift-card-form-option) {
+    min-width: 0;
+    max-width: 100%;
+  }
+
   .product-details--main-product .product-personalizer__controls {
     gap: 0.9rem;
   }
@@ -711,6 +725,27 @@
     color: #7b6657;
     font-size: 0.88rem;
     line-height: 1.5;
+  }
+
+  .product-details--main-product
+    :is(.product-personalizer__summary-item, .product-personalizer__errors, .personalizer-upload__filename, .recipient-form__message, .quantity-rules, .product-form-text__error) {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .product-details--main-product .quantity-rules__item {
+    max-width: 100%;
+  }
+
+  .product-details--main-product :is(.personalizer-field__input, .recipient-fields__input, .personalizer-upload, .shopify-app-block) {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .product-details--main-product .volume-pricing__table {
+    max-width: 100%;
+    overflow-x: auto;
   }
 
   .product-details--main-product .text-block.rte > * {
@@ -787,6 +822,15 @@
     }
   }
 
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .product-details--main-product > .group-block > .group-block-content {
+      width: 100%;
+      max-width: none;
+      padding-inline: 20px;
+      padding-block-end: 20px;
+    }
+  }
+
   @media screen and (min-width: 990px) {
     .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons {
       display: grid;
@@ -844,6 +888,64 @@
     .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-trust-badges {
       grid-column: 1 / -1;
       grid-row: 3;
+    }
+  }
+
+  @media screen and (min-width: 990px) and (max-width: 1120px) {
+    .product-information--main-product .product-details--main-product > .group-block > .group-block-content {
+      padding-inline: 22px;
+      gap: 12px;
+    }
+
+    .product-information--main-product .product-details--main-product > .group-block > .group-block-content > .text-block.h2 > h1 {
+      font-size: clamp(30px, 3.15vw, 38px);
+      line-height: 1.08;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 12px;
+      column-gap: 0;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .quantity-selector-wrapper,
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > span:has(.add-to-cart-button),
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .accelerated-checkout-block,
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .product-form-trust-badges {
+      grid-column: 1 / -1;
+      grid-row: auto;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .accelerated-checkout-block,
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .accelerated-checkout-block .shopify-payment-button,
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .accelerated-checkout-block .shopify-payment-button__button,
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > span:has(.add-to-cart-button) .add-to-cart-button {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badges {
+      margin-top: 12px;
+      padding-top: 12px;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badges__items {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 12px;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge {
+      align-items: flex-start;
+      gap: 8px;
+      padding-inline: 0;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge__title {
+      font-size: clamp(0.84rem, 1.3vw, 0.94rem);
+      line-height: 1.24;
+      overflow-wrap: anywhere;
     }
   }
 
@@ -962,6 +1064,16 @@
       padding: 0.55rem 0.7rem;
     }
 
+    .product-details--main-product .gift-card-form-option {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .product-details--main-product .gift-card-form-option__button-label {
+      width: 100%;
+      min-width: 0;
+      text-align: center;
+    }
+
     .product-details--main-product .personalizer-option__label {
       width: 3.85rem;
       height: 3.85rem;
@@ -1007,18 +1119,18 @@
     }
 
     .product-information--main-product .product-details--main-product .product-form-trust-badge__title {
-      font-size: clamp(9px, 2.7vw, 10.5px);
-      line-height: 1.15;
+      font-size: clamp(0.82rem, 3.4vw, 0.92rem);
+      line-height: 1.25;
       white-space: normal;
       word-break: normal;
-      overflow-wrap: normal;
-      hyphens: none;
+      overflow-wrap: anywhere;
+      hyphens: auto;
     }
 
     .product-information--main-product .product-details--main-product .product-form-trust-badges__note {
       margin-top: 2px;
       padding: 10px 12px;
-      font-size: clamp(11px, 3vw, 13px);
+      font-size: clamp(0.86rem, 3.5vw, 0.95rem);
       line-height: 1.35;
     }
   }
@@ -1034,17 +1146,18 @@
     }
 
     .product-information--main-product .product-details--main-product .product-form-trust-badge__title {
-      font-size: 9px;
+      font-size: 0.8rem;
     }
   }
 
   @media screen and (max-width: 989px) {
     .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons {
-      grid-template-columns: 112px minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 12px;
     }
 
     .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons::before {
-      margin-bottom: -2px;
+      margin-bottom: 0;
       font-size: 0.92rem;
     }
 
@@ -1056,64 +1169,148 @@
     }
 
     .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .quantity-selector-wrapper {
-      grid-column: 1;
+      grid-column: 1 / -1;
+      margin: 0;
     }
 
     .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > span:has(.add-to-cart-button) {
-      grid-column: 2;
+      grid-column: 1 / -1;
+      margin: 12px 0 0;
     }
 
     .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .accelerated-checkout-block {
       grid-column: 1 / -1;
+      margin-top: 12px;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > span:has(.add-to-cart-button),
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .accelerated-checkout-block,
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .accelerated-checkout-block .shopify-payment-button,
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .accelerated-checkout-block .shopify-payment-button__button {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badges {
+      margin-top: 16px;
+      padding-top: 14px;
     }
   }
 
   @media screen and (max-width: 749px) {
     .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons {
-      display: grid !important;
-      grid-template-columns: 1fr !important;
-      row-gap: 12px !important;
-      column-gap: 0 !important;
-      align-items: stretch !important;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 12px;
+      column-gap: 0;
+      align-items: stretch;
     }
 
     .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons::before {
-      grid-column: 1 / -1 !important;
-      grid-row: 1 !important;
-      margin: 0 0 4px !important;
+      order: 1;
+      grid-column: 1 / -1;
+      margin: 0 0 4px;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > * {
+      grid-column: 1 / -1;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .product-information--main-product
+      .product-details--main-product
+      .buy-buttons-block
+      .product-form-buttons
+      > :is(.quantity-label, .quantity-rules, .volume-pricing, .product-form-text__error, .product-personalizer, .recipient-form, .shopify-app-block) {
+      grid-column: 1 / -1;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .quantity-label {
+      order: 2;
     }
 
     .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .quantity-selector-wrapper {
-      grid-column: 1 / -1 !important;
-      grid-row: 2 !important;
-      width: 100% !important;
-      max-width: none !important;
-      margin: 0 !important;
+      order: 3;
+      width: 100%;
+      max-width: none;
+      margin: 0;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .quantity-rules,
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .volume-pricing {
+      order: 4;
     }
 
     .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > span:has(.add-to-cart-button) {
-      grid-column: 1 / -1 !important;
-      grid-row: 3 !important;
-      width: 100% !important;
-      margin: 2px 0 0 !important;
+      order: 5;
+      width: 100%;
+      margin: 2px 0 0;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .product-form-text__error {
+      order: 6;
     }
 
     .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .accelerated-checkout-block {
-      grid-column: 1 / -1 !important;
-      grid-row: 4 !important;
-      width: 100% !important;
-      margin: 8px 0 0 !important;
+      order: 7;
+      width: 100%;
+      margin: 8px 0 0;
     }
 
     .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .accelerated-checkout-block .shopify-payment-button {
-      margin: 0 !important;
-      width: 100% !important;
+      margin: 0;
+      width: 100%;
     }
 
     .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .product-form-trust-badges {
+      order: 8;
+      margin-top: 16px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons {
+      grid-template-columns: minmax(0, 1fr) !important;
+      align-items: stretch !important;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .quantity-selector-wrapper,
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > span:has(.add-to-cart-button),
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .accelerated-checkout-block,
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .product-form-trust-badges {
       grid-column: 1 / -1 !important;
-      grid-row: 5 !important;
-      margin-top: 16px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > span:has(.add-to-cart-button) .add-to-cart-button,
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .accelerated-checkout-block,
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .accelerated-checkout-block .shopify-payment-button,
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .accelerated-checkout-block .shopify-payment-button__button {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badges {
+      margin-top: 12px;
+      padding-top: 12px;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badges__items {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 12px;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge {
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge__title {
+      font-size: clamp(0.88rem, 3.5vw, 0.96rem);
+      line-height: 1.28;
+      overflow-wrap: anywhere;
     }
   }
 {% endstylesheet %}

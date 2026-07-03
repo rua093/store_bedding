@@ -69,6 +69,12 @@ class StickyAddToCartComponent extends Component {
   /** @type {boolean} */
   #hiddenByBottom = false;
 
+  /** @type {HTMLElement | null} */
+  #buyButtonsBlock = null;
+
+  /** @type {HTMLElement | null} */
+  #footerElement = null;
+
   connectedCallback() {
     super.connectedCallback();
 
@@ -81,8 +87,15 @@ class StickyAddToCartComponent extends Component {
     document.addEventListener(StandardEvents.cartLinesUpdate, this.#handleCartAddComplete, { signal });
     document.addEventListener(StandardEvents.cartError, this.#handleCartAddComplete, { signal });
     document.addEventListener(ThemeEvents.quantitySelectorUpdate, this.#handleQuantityUpdate, { signal });
+    window.addEventListener('scroll', this.#handleViewportChange, { signal, passive: true });
+    window.addEventListener('resize', this.#handleViewportChange, { signal, passive: true });
+    window.addEventListener('pageshow', this.#handleViewportChange, { signal });
+
+    const pageWrapper = document.querySelector('.page-wrapper');
+    pageWrapper?.addEventListener('scroll', this.#handleViewportChange, { signal, passive: true });
 
     this.#getInitialQuantity();
+    requestAnimationFrame(() => this.#evaluateStickyVisibility());
 
     // IntersectionObserver callbacks gate visibility on #isChatActive(), but
     // if the shopper scrolls before the Inbox bundle has upgraded
@@ -111,31 +124,20 @@ class StickyAddToCartComponent extends Component {
     const productForm = this.#getProductForm();
     if (!productForm) return;
 
-    const buyButtonsBlock = productForm.closest('.buy-buttons-block');
-    if (!buyButtonsBlock) return;
+    this.#buyButtonsBlock = productForm.closest('.buy-buttons-block');
+    if (!this.#buyButtonsBlock) return;
 
     // In themes migrated from 2.0, the footer element doesn't exist
-    const footer = document.querySelector('footer') ?? document.querySelector('[class*="footer-group"]');
-    if (!footer) return;
+    this.#footerElement = document.querySelector('footer') ?? document.querySelector('[class*="footer-group"]');
+    if (!this.#footerElement) return;
 
     // Observer for buy buttons visibility
     this.#buyButtonsIntersectionObserver = new IntersectionObserver((entries) => {
       const [entry] = entries;
       if (!entry) return;
 
-      // Only show sticky bar if buy buttons have been scrolled past (above viewport)
-      if (!entry.isIntersecting && !this.#isStuck) {
-        // Check if the element is above the viewport (scrolled past) or below (not yet reached)
-        const rect = entry.target.getBoundingClientRect();
-        if (rect.bottom < 0 || rect.top < 0) {
-          if (this.#isChatActive()) return;
-          this.#showStickyBar();
-        }
-        // If rect.top >= 0, element is below viewport - don't show sticky bar yet
-      } else if (entry.isIntersecting && this.#isStuck) {
-        this.#hiddenByBottom = false;
-        this.#hideStickyBar();
-      }
+      this.#hiddenByBottom = false;
+      this.#evaluateStickyVisibility();
     });
 
     // Observer for footer visibility - hides sticky bar at page bottom
@@ -144,29 +146,47 @@ class StickyAddToCartComponent extends Component {
         const [entry] = entries;
         if (!entry) return;
 
-        if (entry.isIntersecting && this.#isStuck) {
-          this.#hiddenByBottom = true;
-          this.#hideStickyBar();
-        } else if (!entry.isIntersecting && this.#hiddenByBottom) {
-          // Footer out of view - check if we should show sticky bar again
-          const rect = buyButtonsBlock.getBoundingClientRect();
-          // Only show if buy buttons are above the viewport (scrolled past)
-          if (rect.bottom < 0 || rect.top < 0) {
-            this.#hiddenByBottom = false;
-            if (!this.#isChatActive()) {
-              this.#showStickyBar();
-            }
-          }
-        }
+        this.#hiddenByBottom = entry.isIntersecting;
+        this.#evaluateStickyVisibility();
       },
       {
         rootMargin: '200px 0px 0px 0px',
       }
     );
 
-    this.#buyButtonsIntersectionObserver.observe(buyButtonsBlock);
-    this.#mainBottomObserver.observe(footer);
+    this.#buyButtonsIntersectionObserver.observe(this.#buyButtonsBlock);
+    this.#mainBottomObserver.observe(this.#footerElement);
     this.#targetAddToCartButton = productForm.querySelector('[ref="addToCartButton"]');
+  }
+
+  #handleViewportChange = () => {
+    this.#evaluateStickyVisibility();
+  };
+
+  #evaluateStickyVisibility() {
+    if (!this.#buyButtonsBlock || !this.#footerElement) return;
+
+    const buyButtonsRect = this.#buyButtonsBlock.getBoundingClientRect();
+    const footerRect = this.#footerElement.getBoundingClientRect();
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+
+    const buyButtonsScrolledPast = buyButtonsRect.bottom <= 0 || buyButtonsRect.top < 0;
+    const footerInRevealZone = footerRect.top <= viewportHeight + 200 && footerRect.bottom > 0;
+
+    if (footerInRevealZone) {
+      this.#hiddenByBottom = true;
+      this.#hideStickyBar();
+      return;
+    }
+
+    this.#hiddenByBottom = false;
+
+    if (buyButtonsScrolledPast && !this.#isChatActive()) {
+      this.#showStickyBar();
+      return;
+    }
+
+    this.#hideStickyBar();
   }
 
   // Public action handlers

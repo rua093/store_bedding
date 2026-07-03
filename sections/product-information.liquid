@@ -176,6 +176,173 @@
   additional_blocks: additional_blocks
 %}
 
+<script>
+  (() => {
+    const reserveVariable = '--sticky-add-to-cart-reserve';
+    const stickyViewportQuery = window.matchMedia('(max-width: 989px)');
+    let stickyMutationObserver;
+    let stickyVisibilityObserver;
+
+    const getStickyElements = () => {
+      const stickyRoot = document.querySelector('sticky-add-to-cart');
+      const stickyBar = stickyRoot?.querySelector('.sticky-add-to-cart__bar');
+      const sectionElement = stickyRoot?.closest('.shopify-section');
+      const buyButtonsBlock =
+        sectionElement?.querySelector('.product-details--main-product .buy-buttons-block') ||
+        document.querySelector('.product-details--main-product .buy-buttons-block');
+      const footer =
+        document.querySelector('footer') || document.querySelector('[class*="footer-group"]');
+
+      return { stickyRoot, stickyBar, buyButtonsBlock, footer };
+    };
+
+    const syncStickyAddToCartVisibility = () => {
+      const { stickyRoot, stickyBar, buyButtonsBlock, footer } = getStickyElements();
+
+      if (!stickyRoot || !stickyBar || !buyButtonsBlock) return;
+
+      if (stickyRoot.dataset.variantAvailable !== 'true') {
+        stickyBar.setAttribute('data-stuck', 'false');
+        return;
+      }
+
+      const buyButtonsRect = buyButtonsBlock.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+      const footerRect = footer?.getBoundingClientRect();
+      const footerInRevealZone =
+        footerRect != null && footerRect.top <= viewportHeight + 200 && footerRect.bottom > 0;
+      const buyButtonsScrolledPast = buyButtonsRect.bottom <= 0 || buyButtonsRect.top < 0;
+
+      stickyBar.setAttribute(
+        'data-stuck',
+        !footerInRevealZone && buyButtonsScrolledPast ? 'true' : 'false'
+      );
+    };
+
+    const syncStickyAddToCartReserve = () => {
+      const { stickyRoot, stickyBar } = getStickyElements();
+
+      if (!stickyBar || !stickyViewportQuery.matches || stickyRoot.dataset.variantAvailable !== 'true') {
+        document.documentElement.style.setProperty(reserveVariable, '0px');
+        return;
+      }
+
+      const stickyBarStyles = window.getComputedStyle(stickyBar);
+      const stickyBarHeight = stickyBar.offsetHeight || 0;
+      const bottomOffset = parseFloat(stickyBarStyles.bottom || '0') || 0;
+      const reserveHeight = Math.ceil(stickyBarHeight + Math.max(bottomOffset, 0));
+
+      document.documentElement.style.setProperty(reserveVariable, `${reserveHeight}px`);
+    };
+
+    const stickyResizeObserver =
+      'ResizeObserver' in window
+        ? new ResizeObserver(() => {
+            syncStickyAddToCartReserve();
+          })
+        : null;
+
+    const observeStickyBar = () => {
+      const stickyRoot = document.querySelector('sticky-add-to-cart');
+      const stickyBar = document.querySelector('sticky-add-to-cart .sticky-add-to-cart__bar');
+
+      if (stickyResizeObserver) {
+        stickyResizeObserver.disconnect();
+        if (stickyBar) stickyResizeObserver.observe(stickyBar);
+      }
+
+      stickyMutationObserver?.disconnect();
+      if (stickyRoot) {
+        stickyMutationObserver = new MutationObserver(() => {
+          syncStickyAddToCartReserve();
+          window.requestAnimationFrame(syncStickyAddToCartReserve);
+        });
+
+        stickyMutationObserver.observe(stickyRoot, {
+          attributes: true,
+          attributeFilter: ['data-variant-available'],
+          subtree: true,
+        });
+
+        if (stickyBar) {
+          stickyMutationObserver.observe(stickyBar, {
+            attributes: true,
+            attributeFilter: ['data-stuck', 'style', 'class'],
+          });
+        }
+      }
+
+      syncStickyAddToCartReserve();
+      window.requestAnimationFrame(syncStickyAddToCartReserve);
+    };
+
+    const observeStickyBehavior = () => {
+      const pageWrapper = document.querySelector('.page-wrapper');
+
+      stickyVisibilityObserver?.disconnect();
+      stickyVisibilityObserver = new MutationObserver(() => {
+        syncStickyAddToCartVisibility();
+        syncStickyAddToCartReserve();
+      });
+
+      const { stickyRoot, stickyBar } = getStickyElements();
+      if (stickyRoot) {
+        stickyVisibilityObserver.observe(stickyRoot, {
+          attributes: true,
+          attributeFilter: ['data-variant-available'],
+          subtree: false,
+        });
+      }
+
+      if (stickyBar) {
+        stickyVisibilityObserver.observe(stickyBar, {
+          attributes: true,
+          attributeFilter: ['class', 'style'],
+        });
+      }
+
+      const syncStickyUI = () => {
+        syncStickyAddToCartVisibility();
+        syncStickyAddToCartReserve();
+      };
+
+      window.addEventListener('scroll', syncStickyUI, { passive: true });
+      window.addEventListener('resize', syncStickyUI, { passive: true });
+      window.addEventListener('pageshow', syncStickyUI);
+      pageWrapper?.addEventListener('scroll', syncStickyUI, { passive: true });
+
+      syncStickyUI();
+      window.requestAnimationFrame(syncStickyUI);
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener(
+        'DOMContentLoaded',
+        () => {
+          observeStickyBar();
+          observeStickyBehavior();
+        },
+        { once: true }
+      );
+    } else {
+      observeStickyBar();
+      observeStickyBehavior();
+    }
+
+    stickyViewportQuery.addEventListener('change', syncStickyAddToCartReserve);
+    window.addEventListener('resize', syncStickyAddToCartReserve, { passive: true });
+    window.addEventListener('pageshow', syncStickyAddToCartReserve);
+    document.addEventListener('shopify:section:load', () => {
+      observeStickyBar();
+      observeStickyBehavior();
+    });
+    document.addEventListener('shopify:section:reorder', () => {
+      syncStickyAddToCartVisibility();
+      syncStickyAddToCartReserve();
+    });
+  })();
+</script>
+
 {% stylesheet %}
   .sticky-add-to-cart__bar {
     position: fixed;
@@ -197,6 +364,7 @@
     display: flex;
     align-items: center;
     gap: var(--gap-md);
+    box-sizing: border-box;
 
     @starting-style {
       opacity: 0;
@@ -302,6 +470,9 @@
       max-width: none;
       border-radius: 0;
       gap: var(--gap-sm);
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
       padding:
         var(--padding-sm)
         var(--padding-sm)
@@ -310,10 +481,6 @@
       &::before {
         --border: 1px;
       }
-    }
-
-    .sticky-add-to-cart__bar .add-to-cart-text__content {
-      display: none;
     }
 
     .sticky-add-to-cart__info[data-has-image='false'] {
@@ -333,16 +500,36 @@
     }
 
     .sticky-add-to-cart__button {
-      padding: var(--padding-lg);
+      grid-column: 1 / -1;
+      width: 100%;
+      min-width: 0;
+      min-height: 52px;
+      padding: 0.9rem 1rem;
     }
 
     .sticky-add-to-cart__price {
       font-size: var(--font-paragraph-small--size);
+      justify-self: end;
     }
 
-    .sticky-add-to-cart__button {
-      width: var(--height-buy-buttons);
-      min-width: 0;
+    .sticky-add-to-cart__bar .add-to-cart-text {
+      justify-content: center;
+      width: 100%;
+    }
+
+    .sticky-add-to-cart__bar .add-to-cart-text__content {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.15rem;
+      white-space: nowrap;
+    }
+
+    .sticky-add-to-cart__bar .add-to-cart-text__content > span:first-child,
+    .sticky-add-to-cart__variant {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     sticky-add-to-cart:not([data-variant-available='true']) .add-to-cart-text__content {
@@ -350,7 +537,7 @@
     }
 
     sticky-add-to-cart:not([data-variant-available='true']) .sticky-add-to-cart__button {
-      width: auto;
+      width: 100%;
     }
   }
 
@@ -363,6 +550,10 @@
     }
 
     .sticky-add-to-cart__title {
+      display: none;
+    }
+
+    .sticky-add-to-cart__price {
       display: none;
     }
 

@@ -1,0 +1,250 @@
+[
+  {
+    "viewport": "ipad-768x1024-rerun",
+    "ok": true,
+    "top": {
+      "viewport": {
+        "w": 768,
+        "h": 1024
+      },
+      "pdpRect": {
+        "x": 12,
+        "y": 120,
+        "width": 744,
+        "height": 3106.765625,
+        "top": 120,
+        "right": 756,
+        "bottom": 3226.765625,
+        "left": 12
+      },
+      "mediaRect": {
+        "x": 71,
+        "y": 139,
+        "width": 626,
+        "height": 536,
+        "top": 139,
+        "right": 697,
+        "bottom": 675,
+        "left": 71
+      },
+      "slideRect": {
+        "x": 187,
+        "y": 174,
+        "width": 498,
+        "height": 498,
+        "top": 174,
+        "right": 685,
+        "bottom": 672,
+        "left": 187
+      },
+      "thumbsRect": {
+        "x": 71,
+        "y": 174,
+        "width": 94,
+        "height": 501,
+        "top": 174,
+        "right": 165,
+        "bottom": 675,
+        "left": 71
+      },
+      "detailsRect": {
+        "x": 83,
+        "y": 703,
+        "width": 614,
+        "height": 1186.140625,
+        "top": 703,
+        "right": 697,
+        "bottom": 1889.140625,
+        "left": 83
+      },
+      "buyRect": {
+        "x": 104,
+        "y": 1383.109375,
+        "width": 572,
+        "height": 485.03125,
+        "top": 1383.109375,
+        "right": 676,
+        "bottom": 1868.140625,
+        "left": 104
+      },
+      "trustRect": {
+        "x": 104,
+        "y": 1758.0625,
+        "width": 572,
+        "height": 110.078125,
+        "top": 1758.0625,
+        "right": 676,
+        "bottom": 1868.140625,
+        "left": 104
+      },
+      "detailsBelowRect": {
+        "x": 52,
+        "y": 1950.140625,
+        "width": 664,
+        "height": 1160.625,
+        "top": 1950.140625,
+        "right": 716,
+        "bottom": 3110.765625,
+        "left": 52
+      },
+      "buyGridCols": "112px minmax(0px, 1fr)",
+      "htmlScrollWidth": 768,
+      "bodyScrollWidth": 768,
+      "pageWrapperScrollWidth": 768
+    },
+    "scrolled": {
+      "scrollY": 2819,
+      "pageWrapperScrollTop": 0,
+      "sticky": {
+        "rect": {
+          "x": 24,
+          "y": 923.625,
+          "width": 720,
+          "height": 76.375,
+          "top": 923.625,
+          "right": 744,
+          "bottom": 1000,
+          "left": 24
+        },
+        "opacity": "1",
+        "display": "flex",
+        "visibility": "visible",
+        "dataStuck": "true"
+      },
+      "footerRect": {
+        "x": 0,
+        "y": 1661.078125,
+        "width": 768,
+        "height": 814.34375,
+        "top": 1661.078125,
+        "right": 768,
+        "bottom": 2475.421875,
+        "left": 0
+      }
+    }
+  },
+  {
+    "viewport": "ipad-pro-834x1194-rerun",
+    "ok": true,
+    "top": {
+      "viewport": {
+        "w": 834,
+        "h": 1194
+      },
+      "pdpRect": {
+        "x": 12,
+        "y": 120,
+        "width": 810,
+        "height": 3088.78125,
+        "top": 120,
+        "right": 822,
+        "bottom": 3208.78125,
+        "left": 12
+      },
+      "mediaRect": {
+        "x": 71,
+        "y": 139,
+        "width": 692,
+        "height": 602,
+        "top": 139,
+        "right": 763,
+        "bottom": 741,
+        "left": 71
+      },
+      "slideRect": {
+        "x": 187,
+        "y": 174,
+        "width": 564,
+        "height": 564,
+        "top": 174,
+        "right": 751,
+        "bottom": 738,
+        "left": 187
+      },
+      "thumbsRect": {
+        "x": 71,
+        "y": 174,
+        "width": 94,
+        "height": 567,
+        "top": 174,
+        "right": 165,
+        "bottom": 741,
+        "left": 71
+      },
+      "detailsRect": {
+        "x": 83,
+        "y": 769,
+        "width": 680,
+        "height": 1129.671875,
+        "top": 769,
+        "right": 763,
+        "bottom": 1898.671875,
+        "left": 83
+      },
+      "buyRect": {
+        "x": 104,
+        "y": 1392.3125,
+        "width": 638,
+        "height": 485.359375,
+        "top": 1392.3125,
+        "right": 742,
+        "bottom": 1877.671875,
+        "left": 104
+      },
+      "trustRect": {
+        "x": 104,
+        "y": 1767.59375,
+        "width": 638,
+        "height": 110.078125,
+        "top": 1767.59375,
+        "right": 742,
+        "bottom": 1877.671875,
+        "left": 104
+      },
+      "detailsBelowRect": {
+        "x": 52,
+        "y": 1959.671875,
+        "width": 730,
+        "height": 1133.109375,
+        "top": 1959.671875,
+        "right": 782,
+        "bottom": 3092.78125,
+        "left": 52
+      },
+      "buyGridCols": "112px minmax(0px, 1fr)",
+      "htmlScrollWidth": 834,
+      "bodyScrollWidth": 834,
+      "pageWrapperScrollWidth": 834
+    },
+    "scrolled": {
+      "scrollY": 2819,
+      "pageWrapperScrollTop": 0,
+      "sticky": {
+        "rect": {
+          "x": 57,
+          "y": 1093.625,
+          "width": 720,
+          "height": 76.375,
+          "top": 1093.625,
+          "right": 777,
+          "bottom": 1170,
+          "left": 57
+        },
+        "opacity": "1",
+        "display": "flex",
+        "visibility": "visible",
+        "dataStuck": "true"
+      },
+      "footerRect": {
+        "x": 0,
+        "y": 1649.8125,
+        "width": 834,
+        "height": 814.34375,
+        "top": 1649.8125,
+        "right": 834,
+        "bottom": 2464.15625,
+        "left": 0
+      }
+    }
+  }
+]
