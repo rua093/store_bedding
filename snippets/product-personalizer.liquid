@@ -1,119 +1,402 @@
-{%- assign personalization_groups = product.metafields.custom.personalization_groups.value -%}
+{%- liquid
+  assign personalization_fields = product.metafields.custom.personalization_fields.value
+-%}
 
-{%- if personalization_groups != blank -%}
+{%- if personalization_fields != blank -%}
   <div
     class="product-personalizer"
     data-product-personalizer
     data-product-id="{{ product.id }}">
 
     <div class="product-personalizer__controls">
-      {%- for group in personalization_groups -%}
-        {%- assign group_id = group.group_id.value -%}
-        {%- assign group_name = group.name.value -%}
-        {%- assign layer_key = group.layer_key.value -%}
-        {%- assign group_options = group.options.value -%}
-        {%- assign group_required = group.required.value -%}
+      {%- if personalization_fields != blank -%}
+        <div class="product-personalizer__fields">
+          {%- for field in personalization_fields -%}
+            {%- liquid
+              assign field_id = field.field_id.value | default: field.field_id | default: field.id.value | default: field.id
+              assign field_label = field.label.value | default: field.label | default: field.name.value | default: field.name
+              assign field_type = field.type.value | default: field.type | downcase
+              assign field_required = false
+              if field.required.value == true or field.required == true
+                assign field_required = true
+              endif
+              assign field_placeholder = field.placeholder.value | default: field.placeholder
+              assign field_help_text = field.help_text.value | default: field.help_text
+              assign field_max_length = field.max_length.value | default: field.max_length
+              assign field_min_length = field.min_length.value | default: field.min_length
+              assign field_accept = field.accept.value | default: field.accept
+              if field_type == 'image' and field_accept == blank
+                assign field_accept = 'image/*'
+              endif
+              assign field_max_file_size_mb = field.max_file_size_mb.value | default: field.max_file_size_mb
+              assign field_default = field.default.value | default: field.default
+              assign field_options = field.options.value | default: field.options
+              assign field_preview_key = field.preview_key.value | default: field.preview_key
+              assign field_property_name = field.property_name.value | default: field.property_name | default: field_label | default: field_id
+            -%}
 
-        {%- if group_id != blank and group_options != blank -%}
-          <fieldset
-            class="personalizer-group"
-            data-personalizer-group
-            data-group-id="{{ group_id | escape }}"
-            data-group-name="{{ group_name | escape }}"
-            data-layer-key="{{ layer_key | escape }}"
-            {% if group_required %}
-            data-required="true"
-            {% endif %}>
-            <legend class="personalizer-group__legend">
-              {{ group_name | escape }}
+            {%- if field_id != blank and field_label != blank and field_type != blank -%}
+              {%- capture field_input_id -%}
+                PersonalizerField-{{ section.id }}-{{ field_id }}
+              {%- endcapture -%}
 
-              {%- if group_required -%}
-                <span aria-hidden="true">*</span>
-              {%- endif -%}
-            </legend>
+              <div
+                class="personalizer-field personalizer-field--{{ field_type | handle }}"
+                data-personalizer-field
+                data-field-id="{{ field_id | escape }}"
+                data-field-type="{{ field_type | escape }}"
+                data-preview-key="{{ field_preview_key | escape }}"
+                data-property-name="{{ field_property_name | escape }}"
+                {% if field_required %}
+                  data-required="true"
+                {% endif %}
+                {% if field_max_length != blank %}
+                  data-max-length="{{ field_max_length }}"
+                {% endif %}
+                {% if field_min_length != blank %}
+                  data-min-length="{{ field_min_length }}"
+                {% endif %}
+                {% if field_accept != blank %}
+                  data-accept="{{ field_accept | escape }}"
+                {% endif %}
+                {% if field_max_file_size_mb != blank %}
+                  data-max-file-size-mb="{{ field_max_file_size_mb }}"
+                {% endif %}
+              >
+                <div class="personalizer-field__header">
+                  <label
+                    class="personalizer-field__label"
+                    {% unless field_type == 'font' or field_type == 'option' %}
+                      for="{{ field_input_id | escape }}"
+                    {% endunless %}
+                  >
+                    {{ field_label | escape }}
 
-            <div class="personalizer-group__options">
-              {%- for option in group_options -%}
-                {%- assign option_id = option.option_id.value -%}
-                {%- assign option_label = option.label.value -%}
-                {%- assign option_thumbnail = option.thumbnail.value -%}
-                {%- assign option_layer_image = option.layer_image.value -%}
-                {%- assign option_accessible_label = option.accessible_label.value -%}
-                {%- assign option_is_default = option.is_default.value -%}
+                    {%- if field_required -%}
+                      <span aria-hidden="true">*</span>
+                    {%- endif -%}
+                  </label>
 
-                {%- if option_accessible_label == blank -%}
-                  {%- assign option_accessible_label = option_label -%}
-                {%- endif -%}
+                  {%- if field_help_text != blank -%}
+                    <p class="personalizer-field__help">
+                      {{ field_help_text | escape }}
+                    </p>
+                  {%- endif -%}
+                </div>
 
-                {%- assign option_layer_image_url = blank -%}
+                <div class="personalizer-field__control">
+                  {%- case field_type -%}
+                    {%- when 'text' -%}
+                      <input
+                        id="{{ field_input_id | escape }}"
+                        class="personalizer-field__input"
+                        type="text"
+                        name="properties[{{ field_property_name | escape }}]"
+                        value="{{ field_default | escape }}"
+                        placeholder="{{ field_placeholder | escape }}"
+                        data-personalizer-input
+                        data-input-kind="text"
+                        data-field-id="{{ field_id | escape }}"
+                        data-preview-key="{{ field_preview_key | escape }}"
+                        {% if field_required %}
+                          required
+                        {% endif %}
+                        {% if field_max_length != blank %}
+                          maxlength="{{ field_max_length }}"
+                        {% endif %}
+                        {% if field_min_length != blank %}
+                          minlength="{{ field_min_length }}"
+                        {% endif %}
+                      >
 
-                {%- if option_layer_image != blank -%}
-                  {%- assign option_layer_image_url = option_layer_image | image_url: width: 1200 -%}
-                {%- endif -%}
+                    {%- when 'textarea' -%}
+                      <textarea
+                        id="{{ field_input_id | escape }}"
+                        class="personalizer-field__input personalizer-field__input--textarea"
+                        name="properties[{{ field_property_name | escape }}]"
+                        placeholder="{{ field_placeholder | escape }}"
+                        rows="4"
+                        data-personalizer-input
+                        data-input-kind="textarea"
+                        data-field-id="{{ field_id | escape }}"
+                        data-preview-key="{{ field_preview_key | escape }}"
+                        {% if field_required %}
+                          required
+                        {% endif %}
+                        {% if field_max_length != blank %}
+                          maxlength="{{ field_max_length }}"
+                        {% endif %}
+                        {% if field_min_length != blank %}
+                          minlength="{{ field_min_length }}"
+                        {% endif %}
+                      >{{ field_default | escape }}</textarea>
 
-                {%- capture input_id -%}
-                  Personalizer-{{ section.id }}-{{ group_id }}-{{ option_id }}
-                {%- endcapture -%}
-
-                {%- assign input_id = input_id | strip -%}
-
-                {%- if option_id != blank -%}
-                  <div class="personalizer-option">
-                    <input
-                      class="personalizer-option__input"
-                      id="{{ input_id | escape }}"
-                      type="radio"
-                      name="personalizer-{{ section.id }}-{{ group_id | escape }}"
-                      value="{{ option_id | escape }}"
-                      data-option-label="{{ option_label | escape }}"
-                      data-layer-image="{{ option_layer_image_url | escape }}"
-                      {% if option_is_default %}
-                      checked
-                      {% endif %}
-                      {% if group_required %}
-                      required
-                      {% endif %}>
-
-                    <label
-                      class="personalizer-option__label"
-                      for="{{ input_id | escape }}"
-                      title="{{ option_accessible_label | escape }}">
-                      {%- if option_thumbnail != blank -%}
-                        <img
-                          class="personalizer-option__image"
-                          src="{{ option_thumbnail | image_url: width: 160 }}"
-                          width="80"
-                          height="80"
-                          loading="lazy"
-                          alt="{{ option_accessible_label | escape }}">
-                      {%- else -%}
-                        <span class="personalizer-option__text">
-                          {{ option_label | escape }}
+                    {%- when 'image', 'file' -%}
+                      <label
+                        class="personalizer-upload"
+                        for="{{ field_input_id | escape }}"
+                      >
+                        <span class="personalizer-upload__headline">
+                          {%- if field_type == 'image' -%}
+                            Upload image
+                          {%- else -%}
+                            Upload file
+                          {%- endif -%}
                         </span>
-                      {%- endif -%}
-                    </label>
-                  </div>
-                {%- endif -%}
-              {%- endfor -%}
-            </div>
-          </fieldset>
-        {%- endif -%}
-      {%- endfor -%}
+                        <span class="personalizer-upload__hint">
+                          {%- if field_accept != blank -%}
+                            Accepted: {{ field_accept | escape }}
+                          {%- else -%}
+                            Choose a file from your device
+                          {%- endif -%}
+                        </span>
+                        {%- if field_max_file_size_mb != blank -%}
+                          <span class="personalizer-upload__meta">
+                            Max {{ field_max_file_size_mb }} MB
+                          </span>
+                        {%- endif -%}
+                      </label>
+
+                      <input
+                        id="{{ field_input_id | escape }}"
+                        class="personalizer-field__input personalizer-field__input--file"
+                        type="file"
+                        name="properties[{{ field_property_name | escape }}]"
+                        data-personalizer-input
+                        data-input-kind="{{ field_type | escape }}"
+                        data-field-id="{{ field_id | escape }}"
+                        data-preview-key="{{ field_preview_key | escape }}"
+                        {% if field_accept != blank %}
+                          accept="{{ field_accept | escape }}"
+                        {% endif %}
+                        {% if field_required %}
+                          required
+                        {% endif %}
+                      >
+
+                      <div class="personalizer-upload__details">
+                        <span
+                          class="personalizer-upload__filename"
+                          data-personalizer-file-name
+                        >
+                          No file selected
+                        </span>
+                      </div>
+
+                      <div
+                        class="personalizer-upload__preview"
+                        data-personalizer-upload-preview
+                        hidden
+                      >
+                        <img
+                          class="personalizer-upload__preview-image"
+                          src=""
+                          alt=""
+                          data-upload-preview-image
+                          hidden
+                        >
+                      </div>
+
+                    {%- when 'font', 'option' -%}
+                      <div
+                        class="personalizer-choice-grid"
+                        data-selection-kind="radio-field"
+                        {% if field_required %}
+                          data-required="true"
+                        {% endif %}
+                      >
+                        {%- for option in field_options -%}
+                          {%- liquid
+                            assign option_label = option.label.value | default: option.label | default: option.value.value | default: option.value
+                            assign option_value = option.value.value | default: option.value | default: option_label
+                            assign option_css_family = option.css_family.value | default: option.css_family
+                            assign option_thumbnail = option.thumbnail.value | default: option.thumbnail
+                            assign option_thumbnail_url = option.thumbnail_url.value | default: option.thumbnail_url
+                            assign option_layer_image = option.layer_image.value | default: option.layer_image
+                            assign option_layer_image_url = option.layer_image_url.value | default: option.layer_image_url
+                            assign option_is_default = false
+                            if option.is_default.value == true or option.is_default == true
+                              assign option_is_default = true
+                            endif
+                          -%}
+
+                          {%- if option_thumbnail_url == blank and option_thumbnail != blank -%}
+                            {%- capture option_thumbnail_url -%}{{ option_thumbnail | image_url: width: 160 }}{%- endcapture -%}
+                          {%- endif -%}
+
+                          {%- if option_layer_image_url == blank and option_layer_image != blank -%}
+                            {%- capture option_layer_image_url -%}{{ option_layer_image | image_url: width: 1200 }}{%- endcapture -%}
+                          {%- endif -%}
+
+                          {%- capture option_input_id -%}
+                            {{ field_input_id }}-{{ forloop.index0 }}
+                          {%- endcapture -%}
+
+                          <div class="personalizer-choice">
+                            <input
+                              id="{{ option_input_id | escape }}"
+                              class="personalizer-choice__input"
+                              type="radio"
+                              name="properties[{{ field_property_name | escape }}]"
+                              {% if field_type == 'option' %}
+                                value="{{ option_label | escape }}"
+                              {% else %}
+                                value="{{ option_value | escape }}"
+                              {% endif %}
+                              data-personalizer-input
+                              data-input-kind="{{ field_type | escape }}"
+                              data-field-id="{{ field_id | escape }}"
+                              data-preview-key="{{ field_preview_key | escape }}"
+                              data-option-css-family="{{ option_css_family | escape }}"
+                              data-option-value="{{ option_value | escape }}"
+                              data-option-label="{{ option_label | escape }}"
+                              data-layer-image="{{ option_layer_image_url | escape }}"
+                              {% if field_required %}
+                                required
+                              {% endif %}
+                              {% if option_is_default or field_default == option_value %}
+                                checked
+                              {% endif %}
+                            >
+
+                            <label
+                              class="personalizer-choice__label{% if option_thumbnail_url != blank %} personalizer-choice__label--has-image{% endif %}"
+                              for="{{ option_input_id | escape }}"
+                              {% if option_css_family != blank and field_type == 'font' %}
+                                style="font-family: {{ option_css_family }};"
+                              {% endif %}
+                            >
+                              {%- if option_thumbnail_url != blank -%}
+                                <img
+                                  class="personalizer-choice__image"
+                                  src="{{ option_thumbnail_url }}"
+                                  width="80"
+                                  height="80"
+                                  loading="lazy"
+                                  alt="{{ option_label | escape }}"
+                                >
+                              {%- endif -%}
+                              <span class="personalizer-choice__text">
+                                {{ option_label | escape }}
+                              </span>
+                            </label>
+                          </div>
+                        {%- endfor -%}
+                      </div>
+
+                    {%- when 'color' -%}
+                      <div class="personalizer-color">
+                        <input
+                          id="{{ field_input_id | escape }}"
+                          class="personalizer-color__input"
+                          type="color"
+                          name="properties[{{ field_property_name | escape }}]"
+                          value="{% if field_default != blank %}{{ field_default | escape }}{% else %}#b87345{% endif %}"
+                          data-personalizer-input
+                          data-input-kind="color"
+                          data-field-id="{{ field_id | escape }}"
+                          data-preview-key="{{ field_preview_key | escape }}"
+                          {% if field_required %}
+                            required
+                          {% endif %}
+                        >
+
+                        <label
+                          class="personalizer-color__swatch"
+                          for="{{ field_input_id | escape }}"
+                          aria-label="{{ field_label | escape }}"
+                        ></label>
+
+                        <span
+                          class="personalizer-color__value"
+                          data-color-value
+                        >
+                          {% if field_default != blank %}{{ field_default | escape }}{% else %}#B87345{% endif %}
+                        </span>
+                      </div>
+
+                    {%- when 'select' -%}
+                      <select
+                        id="{{ field_input_id | escape }}"
+                        class="personalizer-field__input personalizer-field__input--select"
+                        name="properties[{{ field_property_name | escape }}]"
+                        data-personalizer-input
+                        data-input-kind="select"
+                        data-field-id="{{ field_id | escape }}"
+                        data-preview-key="{{ field_preview_key | escape }}"
+                        {% if field_required %}
+                          required
+                        {% endif %}
+                      >
+                        {%- unless field_required -%}
+                          <option value="">
+                            {% if field_placeholder != blank %}
+                              {{ field_placeholder | escape }}
+                            {% else %}
+                              Select an option
+                            {% endif %}
+                          </option>
+                        {%- endunless -%}
+
+                        {%- for option in field_options -%}
+                          {%- liquid
+                            assign option_label = option.label.value | default: option.label | default: option.value.value | default: option.value
+                            assign option_value = option.value.value | default: option.value | default: option_label
+                            assign option_is_default = false
+                            if option.is_default.value == true or option.is_default == true
+                              assign option_is_default = true
+                            endif
+                          -%}
+
+                          <option
+                            value="{{ option_value | escape }}"
+                            {% if option_is_default or field_default == option_value %}
+                              selected
+                            {% endif %}
+                          >
+                            {{ option_label | escape }}
+                          </option>
+                        {%- endfor -%}
+                      </select>
+                  {%- endcase -%}
+                </div>
+
+                <p
+                  class="personalizer-field__error"
+                  data-personalizer-error
+                  hidden
+                ></p>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
     </div>
 
     <input
       type="hidden"
       name="properties[_personalization_id]"
       value=""
-      data-personalization-id-input>
+      data-personalization-id-input
+    >
 
     <input
       type="hidden"
       name="properties[_personalization_json]"
       value=""
-      data-personalization-json-input>
+      data-personalization-json-input
+    >
 
-    <div class="product-personalizer__summary" data-personalization-properties></div>
+    <div
+      class="product-personalizer__summary"
+      data-personalization-properties
+    ></div>
+
+    <div
+      class="product-personalizer__errors"
+      data-personalizer-errors
+      hidden
+    ></div>
   </div>
 
   {{ 'product-personalizer.css' | asset_url | stylesheet_tag }}

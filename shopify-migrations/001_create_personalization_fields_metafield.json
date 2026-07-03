@@ -1,0 +1,12 @@
+{
+  "metafield_definitions": [
+    {
+      "name": "Personalization fields",
+      "namespace": "custom",
+      "key": "personalization_fields",
+      "ownerType": "PRODUCT",
+      "type": "json",
+      "description": "Configuration for product personalization fields: text, textarea, image, file, font, color, select, option."
+    }
+  ]
+}

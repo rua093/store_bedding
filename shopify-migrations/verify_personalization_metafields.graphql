@@ -1,0 +1,17 @@
+query ProductPersonalization($handle: String!) {
+  productByHandle(handle: $handle) {
+    id
+    title
+    handle
+    personalizationFields: metafield(namespace: "custom", key: "personalization_fields") {
+      id
+      type
+      value
+    }
+    personalizationGroups: metafield(namespace: "custom", key: "personalization_groups") {
+      id
+      type
+      value
+    }
+  }
+}

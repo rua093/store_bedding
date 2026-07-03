@@ -1,0 +1,53 @@
+query LegacyPersonalizationGroups {
+  metaobjects(type: "personalization_group", first: 10) {
+    edges {
+      node {
+        id
+        handle
+        type
+        name: field(key: "name") { value }
+        groupId: field(key: "group_id") { value }
+        layerKey: field(key: "layer_key") { value }
+        required: field(key: "required") { value }
+        sortOrder: field(key: "sort_order") { value }
+        options: field(key: "options") {
+          references(first: 20) {
+            nodes {
+              ... on Metaobject {
+                id
+                handle
+                label: field(key: "label") { value }
+                optionId: field(key: "option_id") { value }
+                isDefault: field(key: "is_default") { value }
+                sortOrder: field(key: "sort_order") { value }
+                accessibleLabel: field(key: "accessible_label") { value }
+                thumbnail: field(key: "thumbnail") {
+                  reference {
+                    ... on MediaImage {
+                      id
+                      image {
+                        url
+                        altText
+                      }
+                    }
+                  }
+                }
+                layerImage: field(key: "layer_image") {
+                  reference {
+                    ... on MediaImage {
+                      id
+                      image {
+                        url
+                        altText
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "metafields": [
+    {
+      "ownerId": "gid://shopify/Product/10389157413186",
+      "namespace": "custom",
+      "key": "personalization_fields",
+      "type": "json",
+      "value": "[{\"field_id\":\"skin-tone\",\"label\":\"Choose Woman's Skin Tone\",\"property_name\":\"Choose Woman's Skin Tone\",\"type\":\"option\",\"required\":true,\"preview_key\":\"skin\",\"sort_order\":10,\"options\":[{\"label\":\"Dark skin\",\"value\":\"skin-dark\",\"thumbnail_url\":\"https://cdn.shopify.com/s/files/1/1016/5233/2866/files/logo_inverse_6701e7b0-32b2-4366-a29f-e31ed892bcba.png?v=1782727932\",\"layer_image_url\":\"https://cdn.shopify.com/s/files/1/1016/5233/2866/files/logo_8e940014-09aa-401d-9c2b-647f8ceac060.png?v=1782727926\",\"is_default\":true,\"sort_order\":30,\"accessible_label\":\"Dark skin tone\"}]}]"
+    },
+    {
+      "ownerId": "gid://shopify/Product/10397100310850",
+      "namespace": "custom",
+      "key": "personalization_fields",
+      "type": "json",
+      "value": "[{\"field_id\":\"skin-tone\",\"label\":\"Choose Woman's Skin Tone\",\"property_name\":\"Choose Woman's Skin Tone\",\"type\":\"option\",\"required\":true,\"preview_key\":\"skin\",\"sort_order\":10,\"options\":[{\"label\":\"Dark skin\",\"value\":\"skin-dark\",\"thumbnail_url\":\"https://cdn.shopify.com/s/files/1/1016/5233/2866/files/logo_inverse_6701e7b0-32b2-4366-a29f-e31ed892bcba.png?v=1782727932\",\"layer_image_url\":\"https://cdn.shopify.com/s/files/1/1016/5233/2866/files/logo_8e940014-09aa-401d-9c2b-647f8ceac060.png?v=1782727926\",\"is_default\":true,\"sort_order\":30,\"accessible_label\":\"Dark skin tone\"}]}]"
+    }
+  ]
+}

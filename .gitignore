@@ -26,3 +26,5 @@ Thumbs.db
 # Shopify local files
 .shopify/
 # Merchant/store-specific theme data
+/shopify_tool/
+/shopify-migrations/
