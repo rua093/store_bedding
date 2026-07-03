@@ -254,10 +254,6 @@ p:empty {
 
 /* view transitions */
 @media (prefers-reduced-motion: no-preference) {
-  @view-transition {
-    navigation: auto;
-  }
-
   /* Keep page interactive while view transitions are running */
   :root {
     view-transition-name: none;
