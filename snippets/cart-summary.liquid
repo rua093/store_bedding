@@ -3,38 +3,52 @@
 
   @param {string} [accelerated_checkout_buttons_layout] - { 'vertical' } Forced layout of the additional checkout buttons, instead of relying on platform's layout.
   @param {string} [section_id] - The section ID for cart discount component.
+  @param {string} [context] - Optional render context. Pass 'drawer' when rendered inside cart drawer.
 {%- enddoc -%}
 
-<div class="cart-totals">
+{%- liquid
+  assign context = context | default: blank
+  assign original_total = 0
+  for item in cart.items
+    assign original_unit_price = item.original_price
+    if item.variant.compare_at_price > item.original_price
+      assign original_unit_price = item.variant.compare_at_price
+    endif
+    assign line_original_total = original_unit_price | times: item.quantity
+    assign original_total = original_total | plus: line_original_total
+  endfor
+
+  assign you_save_amount = original_total | minus: cart.total_price
+
+  if settings.currency_code_enabled_cart_total
+    assign original_total_money = original_total | money_with_currency
+    assign total_price = cart.total_price | money_with_currency
+    assign you_save_money = you_save_amount | money_with_currency
+  else
+    assign original_total_money = original_total | money
+    assign total_price = cart.total_price | money
+    assign you_save_money = you_save_amount | money
+  endif
+-%}
+
+<div class="cart-totals{% if context == 'drawer' %} cart-totals--drawer{% endif %}">
   {% # We need to keep this node in place to allow morphing to work properly # %}
   <div class="cart-totals__original-container cart-primary-typography">
-    {%- if cart.cart_level_discount_applications.size > 0 -%}
-      <span class="cart-totals__item cart-totals__original">
-        <span class="cart-totals__original-label">{{ 'content.cart_subtotal' | t }}</span>
-        <span
-          class="cart-totals__original-value cart-secondary-typography"
-          data-testid="cart-subtotal-value"
-        >
-          {{- cart.items_subtotal_price | money -}}
-        </span>
-      </span>
-      <ul
-        class="cart-discounts"
-        role="list"
-        aria-label="{{ 'content.discounts' | t }}"
+    <span class="cart-totals__item cart-totals__original">
+      <span class="cart-totals__original-label">Original total</span>
+      <span
+        class="cart-totals__original-value cart-secondary-typography"
+        data-testid="cart-subtotal-value"
       >
-        {%- for discount in cart.cart_level_discount_applications -%}
-          <li class="cart-discounts__item">
-            <span class="cart-discounts__label">
-              {{- 'icon-discount.svg' | inline_asset_content -}}
-              {{ discount.title | escape }}
-            </span>
-            <span class="cart-discounts__value cart-secondary-typography"
-              >-{{ discount.total_allocated_amount | money -}}
-            </span>
-          </li>
-        {%- endfor -%}
-      </ul>
+        {{- original_total_money -}}
+      </span>
+    </span>
+
+    {%- if you_save_amount > 0 -%}
+      <span class="cart-totals__item cart-totals__savings">
+        <span class="cart-totals__savings-label">You save</span>
+        <span class="cart-totals__savings-value cart-secondary-typography">-{{ you_save_money }}</span>
+      </span>
     {%- endif -%}
   </div>
 
@@ -120,7 +134,7 @@
             {% endif %}
           >
             <summary class="cart-discount__summary">
-              <span class="cart-discount__label cart-primary-typography">{{ 'content.discount' | t }}</span>
+              <span class="cart-discount__label cart-primary-typography">Discount code or gift card</span>
 
               <span class="cart-totals__icon">
                 {{- 'icon-plus.svg' | inline_asset_content -}}
@@ -216,20 +230,12 @@
     </div>
   {% endif %}
 
-  {%- liquid
-    if settings.currency_code_enabled_cart_total
-      assign total_price = cart.total_price | money_with_currency
-    else
-      assign total_price = cart.total_price | money
-    endif
-  -%}
-
   <div class="cart-totals__container{% if settings.show_installments %} cart-totals__container--has-installments{% endif %}">
     <span
       class="cart-totals__item cart-totals__total"
       role="status"
     >
-      <span class="cart-totals__total-label cart-primary-typography">{{ 'content.cart_estimated_total' | t }}</span>
+      <span class="cart-totals__total-label cart-primary-typography">Estimated total</span>
       <text-component
         ref="cartTotal"
         value="{{ total_price | strip_html }}"
@@ -249,7 +255,7 @@
       </span>
     {% endif %}
     <div class="cart-totals__item cart-totals__tax-note cart-primary-typography">
-      {% render 'tax-info', has_discounts_enabled: settings.show_add_discount_code %}
+      <small>Taxes calculated at checkout.</small>
     </div>
   </div>
 </div>
@@ -326,30 +332,6 @@
     font-size: var(--font-size--2xs);
   }
 
-  .cart-discounts {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .cart-discounts__item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .cart-discounts__label {
-    display: flex;
-    align-items: center;
-    gap: var(--gap-2xs);
-  }
-
-  .cart-discounts__label svg {
-    width: var(--icon-size-sm);
-    height: var(--icon-size-sm);
-    display: inline-block;
-  }
-
   .cart-totals__original-container,
   .cart-totals__container {
     display: flex;
@@ -388,6 +370,11 @@
   .cart-totals__original-container,
   .cart-totals__original-container * {
     font-size: var(--cart-font-size--sm);
+  }
+
+  .cart-totals__savings-label,
+  .cart-totals__savings-value {
+    color: #58714f;
   }
 
   .cart-totals__total {
@@ -606,6 +593,192 @@
     gap: var(--gap-2xs);
     font-size: var(--font-size--2xs);
     font-weight: 500;
+  }
+
+  .cart-totals--drawer .cart-actions {
+    border: 1px solid rgb(var(--color-foreground-rgb) / 0.08);
+    border-radius: 14px;
+    background: rgb(var(--color-background-rgb) / 0.78);
+    padding: 0 0.82rem;
+    margin-block-start: 0;
+  }
+
+  .cart-totals--drawer:not(:has(.cart-actions)) {
+    margin-block-start: 0;
+    border-block-start: none;
+    padding-block-start: 0;
+  }
+
+  .cart-totals--drawer {
+    gap: 0.42rem;
+  }
+
+  .cart-totals--drawer .cart-totals__original-container {
+    gap: 0.2rem;
+  }
+
+  .cart-totals--drawer .cart-totals__original,
+  .cart-totals--drawer .cart-totals__savings {
+    min-height: 1.08rem;
+    font-size: 0.91rem;
+  }
+
+  .cart-totals--drawer .cart-totals__container {
+    row-gap: 0.18rem;
+  }
+
+  .cart-totals--drawer .cart-totals__total {
+    padding-top: 0.42rem;
+    border-top: 1px dashed rgb(252 87 50 / 0.28);
+  }
+
+  .cart-totals--drawer .cart-totals__original-label,
+  .cart-totals--drawer .cart-totals__savings-label {
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .cart-totals--drawer .cart-totals__original-value,
+  .cart-totals--drawer .cart-totals__savings-value {
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .cart-totals--drawer .cart-totals__savings-label,
+  .cart-totals--drawer .cart-totals__savings-value {
+    color: #01763d;
+  }
+
+  .cart-totals--drawer .cart-totals__total-label {
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .cart-totals--drawer .cart-totals__total-value {
+    font-size: 1rem;
+    line-height: 1.25;
+    font-weight: 700;
+  }
+
+  .cart-totals--drawer .cart-totals__tax-note {
+    margin-top: 0;
+  }
+
+  .cart-totals--drawer .cart-totals__tax-note small {
+    font-size: 0.76rem;
+    line-height: 1.3;
+  }
+
+  .cart-totals--drawer .cart-discount__summary {
+    min-height: 39px;
+    padding-inline: 0;
+  }
+
+  .cart-totals--drawer .cart-discount__label {
+    font-size: 0.86rem;
+    font-weight: 600;
+  }
+
+  .cart-totals--drawer .cart-discount__content {
+    height: calc(var(--button-size) + 0.45rem);
+  }
+
+  .cart-totals--drawer .cart-discount__form {
+    gap: 0.65rem;
+    padding-block: 0.18rem 0.45rem;
+  }
+
+  .cart-totals--drawer .cart-discount__input {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .cart-totals--drawer .cart__ctas .cart__checkout-button {
+    min-height: 42px;
+    height: 42px;
+    margin-top: 0.42rem;
+    font-size: 0.94rem;
+    padding-block: 0.55rem;
+    box-shadow: 0 10px 20px rgb(62 51 45 / 0.08);
+  }
+
+  @media screen and (max-width: 749px) {
+    .cart-totals--drawer .cart-actions {
+      padding-inline: 0.78rem;
+      border-radius: 14px;
+    }
+
+    .cart-totals--drawer .cart-discount__summary {
+      min-height: 38px;
+    }
+
+    .cart-totals--drawer .cart-discount__label {
+      font-size: 0.84rem;
+    }
+
+    .cart-totals--drawer {
+      gap: 0.36rem;
+    }
+
+    .cart-totals--drawer .cart-totals__original-container {
+      gap: 0.18rem;
+    }
+
+    .cart-totals--drawer .cart-totals__item {
+      font-size: 0.89rem;
+    }
+
+    .cart-totals--drawer .cart-totals__total {
+      padding-top: 0.36rem;
+    }
+
+    .cart-totals--drawer .cart-totals__original-label,
+    .cart-totals--drawer .cart-totals__savings-label {
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    .cart-totals--drawer .cart-totals__original-value,
+    .cart-totals--drawer .cart-totals__savings-value {
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    .cart-totals--drawer .cart-totals__total-label {
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    .cart-totals--drawer .cart-totals__total-value {
+      font-size: 1rem;
+      line-height: 1.25;
+      font-weight: 700;
+    }
+
+    .cart-totals--drawer .cart-totals__tax-note small {
+      font-size: 0.74rem;
+    }
+
+    .cart-totals--drawer .cart-discount__content {
+      height: calc(var(--button-size) + 0.36rem);
+    }
+
+    .cart-totals--drawer .cart-discount__form {
+      gap: 0.55rem;
+      padding-block: 0.12rem 0.36rem;
+    }
+
+    .cart-totals--drawer .cart-discount__input {
+      padding: 0.55rem 0.72rem;
+      font-size: 0.88rem;
+    }
+
+    .cart-totals--drawer .cart__ctas .cart__checkout-button {
+      min-height: 40px;
+      height: 40px;
+      margin-top: 0.34rem;
+      font-size: 0.92rem;
+    }
   }
 
   @media screen and (min-width: 750px) {

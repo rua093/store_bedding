@@ -15,9 +15,6 @@ import { DrawerOpenEvent } from '@theme/theme-drawer';
  * @extends {Component}
  */
 class CartDrawerComponent extends Component {
-  /** @type {number} */
-  #summaryThreshold = 0.5;
-
   /** @type {import('@theme/theme-drawer').ThemeDrawer | null} */
   get #themeDrawer() {
     return /** @type {import('@theme/theme-drawer').ThemeDrawer | null} */ (this.closest('theme-drawer'));
@@ -124,10 +121,7 @@ class CartDrawerComponent extends Component {
       return;
     }
 
-    const drawerHeight = dialog.getBoundingClientRect().height;
-    const summaryHeight = summary.getBoundingClientRect().height;
-    const ratio = summaryHeight / drawerHeight;
-    dialog.setAttribute('cart-summary-sticky', ratio > this.#summaryThreshold ? 'false' : 'true');
+    dialog.setAttribute('cart-summary-sticky', 'true');
   }
 }
 
