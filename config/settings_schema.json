@@ -1522,7 +1522,7 @@
         "type": "checkbox",
         "id": "auto_open_cart_drawer",
         "label": "t:settings.auto_open_cart_drawer",
-        "default": false,
+        "default": true,
         "visible_if": "{{ settings.cart_type == 'drawer' }}"
       },
       {
