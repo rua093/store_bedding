@@ -24,9 +24,17 @@ class ProductPersonalizer {
     this.idInput = this.#getInput('[data-personalization-id-input]');
     this.summary = this.#getElement('[data-personalization-properties]');
     this.errors = this.#getElement('[data-personalizer-errors]');
+    this.modal = this.#getElement('[data-personalizer-modal]');
+    this.trigger = this.#getElement('[data-personalizer-trigger]');
+    this.closeButtons = this.#getElements('[data-personalizer-close]');
     this.form = /** @type {HTMLFormElement | null} */ (root.closest('form'));
     this.personalizationId = '';
     this.objectUrls = new Map();
+    this.lastActiveElement = null;
+    this.previousBodyOverflow = '';
+    this.previousHtmlOverflow = '';
+    this.cleanupObserver = null;
+    this.isDestroyed = false;
 
     if (!this.jsonInput || !this.idInput || !this.fields.length) {
       return;
@@ -35,7 +43,9 @@ class ProductPersonalizer {
     this.personalizationId = this.idInput.value || this.createId();
     this.idInput.value = this.personalizationId;
 
+    this.prepareModalPortal();
     this.bindEvents();
+    this.watchForRootRemoval();
     this.ensureDefaults();
     this.update();
 
@@ -75,6 +85,52 @@ class ProductPersonalizer {
   }
 
   /**
+   * @param {string} fieldId
+   * @returns {HTMLElement | null}
+   */
+  getFieldById(fieldId) {
+    return this.fields.find((field) => field.dataset.fieldId === fieldId) || null;
+  }
+
+  /**
+   * @param {HTMLElement} container
+   * @returns {HTMLElement[]}
+   */
+  getFocusableElements(container) {
+    const selector = [
+      'a[href]',
+      'button:not([disabled])',
+      'input:not([disabled]):not([type="hidden"])',
+      'select:not([disabled])',
+      'textarea:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])'
+    ].join(',');
+
+    return [...container.querySelectorAll(selector)].filter(
+      /**
+       * @param {Element} element
+       * @returns {element is HTMLElement}
+       */
+      (element) => {
+        if (!(element instanceof HTMLElement)) {
+          return false;
+        }
+
+        if (element.matches('.product-personalizer-popup__backdrop')) {
+          return false;
+        }
+
+        if (element.hidden || element.getAttribute('aria-hidden') === 'true') {
+          return false;
+        }
+
+        const styles = window.getComputedStyle(element);
+        return styles.display !== 'none' && styles.visibility !== 'hidden';
+      }
+    );
+  }
+
+  /**
    * @returns {string}
    */
   createId() {
@@ -89,12 +145,116 @@ class ProductPersonalizer {
    * @returns {void}
    */
   bindEvents() {
-    this.root.addEventListener('click', this.handleClick);
-    this.root.addEventListener('change', this.handleChange);
-    this.root.addEventListener('input', this.handleInput);
+    this.trigger?.addEventListener('click', this.handleClick);
+    this.modal?.addEventListener('click', this.handleClick);
+    this.modal?.addEventListener('change', this.handleChange);
+    this.modal?.addEventListener('input', this.handleInput);
+    document.addEventListener('keydown', this.handleKeydown);
 
     this.form?.addEventListener('click', this.handleFormClick, true);
     this.form?.addEventListener('submit', this.handleSubmit, true);
+  }
+
+  /**
+   * @returns {void}
+   */
+  prepareModalPortal() {
+    if (!(this.modal instanceof HTMLElement)) {
+      return;
+    }
+
+    if (this.modal.id) {
+      document.querySelectorAll(`[data-personalizer-modal][id="${CSS.escape(this.modal.id)}"]`).forEach((existingModal) => {
+        if (existingModal !== this.modal) {
+          existingModal.remove();
+        }
+      });
+    }
+
+    if (this.modal.parentElement !== document.body) {
+      document.body.appendChild(this.modal);
+    }
+
+    if (!(this.form instanceof HTMLFormElement)) {
+      return;
+    }
+
+    let formId = this.form.getAttribute('id');
+
+    if (!formId) {
+      formId = `ProductPersonalizerForm-${this.root.dataset.productId || Date.now()}`;
+      this.form.setAttribute('id', formId);
+    }
+
+    this.modal.querySelectorAll('input, select, textarea').forEach((field) => {
+      if (!(field instanceof HTMLElement)) {
+        return;
+      }
+
+      if (field.getAttribute('form') !== formId) {
+        field.setAttribute('form', formId);
+      }
+    });
+  }
+
+  /**
+   * @returns {void}
+   */
+  watchForRootRemoval() {
+    if (this.cleanupObserver instanceof MutationObserver || !document.documentElement.contains(this.root)) {
+      return;
+    }
+
+    this.cleanupObserver = new MutationObserver(() => {
+      if (!document.documentElement.contains(this.root)) {
+        this.destroy();
+      }
+    });
+
+    this.cleanupObserver.observe(document.documentElement, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  /**
+   * @returns {void}
+   */
+  destroy() {
+    if (this.isDestroyed) {
+      return;
+    }
+
+    this.isDestroyed = true;
+
+    if (this.modal instanceof HTMLElement && !this.modal.hidden) {
+      this.closeDialog();
+    }
+
+    this.trigger?.removeEventListener('click', this.handleClick);
+    this.modal?.removeEventListener('click', this.handleClick);
+    this.modal?.removeEventListener('change', this.handleChange);
+    this.modal?.removeEventListener('input', this.handleInput);
+    document.removeEventListener('keydown', this.handleKeydown);
+    this.form?.removeEventListener('click', this.handleFormClick, true);
+    this.form?.removeEventListener('submit', this.handleSubmit, true);
+    this.cleanupObserver?.disconnect();
+    this.cleanupObserver = null;
+
+    this.objectUrls.forEach((entry) => {
+      if (entry?.url) {
+        URL.revokeObjectURL(entry.url);
+      }
+    });
+    this.objectUrls.clear();
+
+    if (this.modal instanceof HTMLElement && this.modal.parentElement === document.body) {
+      this.modal.remove();
+    }
+
+    if (this.root.dataset.initialized === 'true') {
+      delete this.root.dataset.initialized;
+    }
   }
 
   /**
@@ -103,6 +263,24 @@ class ProductPersonalizer {
    */
   handleClick = (event) => {
     const target = event.target;
+
+    if (!(target instanceof Element)) {
+      return;
+    }
+
+    const modalTrigger = target.closest('[data-personalizer-trigger]');
+    if (modalTrigger instanceof HTMLElement) {
+      event.preventDefault();
+      this.openDialog();
+      return;
+    }
+
+    const modalClose = target.closest('[data-personalizer-close]');
+    if (modalClose instanceof HTMLElement) {
+      event.preventDefault();
+      this.closeDialog();
+      return;
+    }
 
     if (!(target instanceof HTMLInputElement) || target.type !== 'radio') {
       return;
@@ -131,7 +309,8 @@ class ProductPersonalizer {
     }
 
     if (target.name) {
-      const radios = this.root.querySelectorAll(`input[type="radio"][name="${CSS.escape(target.name)}"]`);
+      const radioScope = this.modal instanceof HTMLElement ? this.modal : this.root;
+      const radios = radioScope.querySelectorAll(`input[type="radio"][name="${CSS.escape(target.name)}"]`);
       radios.forEach((radio) => {
         if (radio instanceof HTMLInputElement) {
           radio.dataset.wasChecked = radio === target ? 'true' : 'false';
@@ -175,6 +354,65 @@ class ProductPersonalizer {
       this.update();
     }
   };
+
+  /**
+   * @param {KeyboardEvent} event
+   * @returns {void}
+   */
+  handleKeydown = (event) => {
+    if (!(this.modal instanceof HTMLElement) || this.modal.hidden) {
+      return;
+    }
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closeDialog();
+      return;
+    }
+
+    if (event.key === 'Tab') {
+      this.trapFocus(event);
+    }
+  };
+
+  /**
+   * @param {KeyboardEvent} event
+   * @returns {void}
+   */
+  trapFocus(event) {
+    if (!(this.modal instanceof HTMLElement)) {
+      return;
+    }
+
+    const focusableElements = this.getFocusableElements(this.modal);
+
+    if (!focusableElements.length) {
+      event.preventDefault();
+      this.modal.focus();
+      return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+    const activeElement = document.activeElement;
+
+    if (!(activeElement instanceof HTMLElement) || !this.modal.contains(activeElement)) {
+      event.preventDefault();
+      firstElement.focus();
+      return;
+    }
+
+    if (event.shiftKey && activeElement === firstElement) {
+      event.preventDefault();
+      lastElement.focus();
+      return;
+    }
+
+    if (!event.shiftKey && activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  }
 
   /**
    * @param {Event} event
@@ -371,16 +609,76 @@ class ProductPersonalizer {
     }
 
     if (!isValid && options.focusFirstError && firstInvalid instanceof HTMLElement) {
+      this.openDialog();
       const focusTarget = firstInvalid.querySelector('[data-personalizer-input], input, textarea, select, button, label');
 
       if (focusTarget instanceof HTMLElement) {
-        focusTarget.focus();
+        window.requestAnimationFrame(() => {
+          focusTarget.focus();
+        });
       } else {
-        firstInvalid.focus();
+        window.requestAnimationFrame(() => {
+          firstInvalid.focus();
+        });
       }
     }
 
     return isValid;
+  }
+
+  /**
+   * @returns {void}
+   */
+  openDialog() {
+    if (!(this.modal instanceof HTMLElement) || !this.modal.hidden) {
+      return;
+    }
+
+    this.lastActiveElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    this.modal.hidden = false;
+    this.modal.setAttribute('open', '');
+    this.previousBodyOverflow = document.body.style.overflow;
+    this.previousHtmlOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    const focusTarget =
+      this.modal.querySelector('.product-personalizer-popup__close, [data-personalizer-input], input, textarea, select, button') ||
+      this.closeButtons.find((button) => !button.hasAttribute('hidden')) ||
+      this.modal.querySelector('[data-personalizer-input], input, textarea, select, button');
+
+    if (focusTarget instanceof HTMLElement) {
+      window.requestAnimationFrame(() => {
+        focusTarget.focus();
+      });
+    }
+  }
+
+  /**
+   * @returns {void}
+   */
+  closeDialog() {
+    if (!(this.modal instanceof HTMLElement) || this.modal.hidden) {
+      return;
+    }
+
+    this.modal.hidden = true;
+    this.modal.removeAttribute('open');
+    document.body.style.overflow = this.previousBodyOverflow;
+    document.documentElement.style.overflow = this.previousHtmlOverflow;
+
+    const focusTarget =
+      this.trigger instanceof HTMLElement && document.documentElement.contains(this.trigger)
+        ? this.trigger
+        : this.lastActiveElement instanceof HTMLElement && document.documentElement.contains(this.lastActiveElement)
+          ? this.lastActiveElement
+          : null;
+
+    if (focusTarget instanceof HTMLElement) {
+      window.requestAnimationFrame(() => {
+        focusTarget.focus();
+      });
+    }
   }
 
   /**
@@ -583,10 +881,9 @@ class ProductPersonalizer {
 
       previews.forEach((preview) => {
         if (fieldValue.type === 'image') {
-          const image = this.root.querySelector(
-            `[data-personalizer-field][data-field-id="${CSS.escape(fieldValue.fieldId)}"] input[type="file"]`
-          );
-          const fileInput = image instanceof HTMLInputElement ? image : null;
+          const field = this.getFieldById(fieldValue.fieldId);
+          const input = field?.querySelector('input[type="file"]');
+          const fileInput = input instanceof HTMLInputElement ? input : null;
           const file = fileInput?.files?.[0];
           const objectUrl = file ? this.getObjectUrl(fieldValue.fieldId, file) : '';
 
@@ -805,6 +1102,10 @@ class ProductPersonalizer {
     }
 
     this.summary.querySelectorAll('[data-personalizer-summary-row]').forEach((node) => node.remove());
+
+    if (this.summary.hidden || this.summary.getAttribute('aria-hidden') === 'true') {
+      return;
+    }
 
     const summaryRows = [];
 

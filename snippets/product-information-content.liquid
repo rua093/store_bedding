@@ -145,8 +145,16 @@
     --product-surface-alt: #fff9f2;
     --product-border: rgba(92, 61, 42, 0.12);
     --product-shadow: 0 22px 44px rgba(47, 36, 29, 0.08);
+    --product-accent-strong: #FC5732;
     max-width: min(1440px, calc(100vw - clamp(24px, 4vw, 48px)));
     margin-inline: auto;
+  }
+
+  .product-information--main-product product-price .price,
+  .product-information--main-product product-price .price-item--sale.price,
+  .product-information--main-product .sticky-add-to-cart__price .price,
+  .product-information--main-product .sticky-add-to-cart__price .price-item--sale.price {
+    color: var(--product-accent-strong);
   }
 
   .product-information--main-product,

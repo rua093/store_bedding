@@ -9,6 +9,12 @@
     assign has_hero_image = true
   endif
 
+  assign uses_all_collection_fallback_bg = false
+  if has_hero_image == false and collection.handle == 'all'
+    assign uses_all_collection_fallback_bg = true
+    assign all_collection_fallback_bg = 'bg-product.png' | asset_url
+  endif
+
   assign hero_description = collection.description | strip_html | strip
   assign hero_widths = '750, 1100, 1500, 1800, 2100, 2400, 2880, 3200, 3840'
 %}
@@ -19,7 +25,10 @@
   aria-labelledby="CollectionHeroTitle-{{ section.id }}"
 >
   <div
-    class="collection-hero{% unless has_hero_image %} collection-hero--no-media{% endunless %}"
+    class="collection-hero{% if has_hero_image == false and uses_all_collection_fallback_bg == false %} collection-hero--no-media{% endif %}{% if uses_all_collection_fallback_bg %} collection-hero--all-fallback-bg{% endif %}"
+    {% if uses_all_collection_fallback_bg %}
+      style="--collection-hero-fallback-bg: url('{{ all_collection_fallback_bg }}');"
+    {% endif %}
   >
     {% if has_hero_image %}
       <div class="collection-hero__media">
@@ -37,6 +46,9 @@
             class: 'collection-hero__image'
         }}
       </div>
+      <div class="collection-hero__overlay"></div>
+    {% elsif uses_all_collection_fallback_bg %}
+      <div class="collection-hero__fallback-media" aria-hidden="true"></div>
       <div class="collection-hero__overlay"></div>
     {% else %}
       <div class="collection-hero__placeholder" aria-hidden="true"></div>
@@ -79,7 +91,8 @@
 
   .collection-hero__media,
   .collection-hero__overlay,
-  .collection-hero__placeholder {
+  .collection-hero__placeholder,
+  .collection-hero__fallback-media {
     position: absolute;
     inset: 0;
   }
@@ -92,9 +105,25 @@
     object-position: center center;
   }
 
+  .collection-hero__fallback-media {
+    z-index: 0;
+    background-image: var(--collection-hero-fallback-bg);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
+
   .collection-hero__overlay {
     z-index: 1;
     background: linear-gradient(180deg, rgb(0 0 0 / 0.16), rgb(0 0 0 / 0.34));
+  }
+
+  .collection-hero--all-fallback-bg .collection-hero__overlay {
+    display: none;
+  }
+
+  .collection-hero--all-fallback-bg .collection-hero__content-inner::before {
+    display: none;
   }
 
   .collection-hero__placeholder {
@@ -146,7 +175,8 @@
   pointer-events: none;
 }
 
-.collection-hero--no-media .collection-hero__content {
+.collection-hero--no-media .collection-hero__content,
+.collection-hero--all-fallback-bg .collection-hero__content {
   color: #2f241d;
 }
 
@@ -207,14 +237,16 @@
   background-size: calc(50% - 0.9rem) 1px, calc(50% - 0.9rem) 1px;
 }
 
-.collection-hero--no-media .collection-hero__eyebrow {
+.collection-hero--no-media .collection-hero__eyebrow,
+.collection-hero--all-fallback-bg .collection-hero__eyebrow {
   color: rgb(76 58 44 / 0.86);
   text-shadow:
     0 1px 0 rgb(255 250 244 / 0.5),
     0 8px 24px rgb(255 250 244 / 0.35);
 }
 
-.collection-hero--no-media .collection-hero__title {
+.collection-hero--no-media .collection-hero__title,
+.collection-hero--all-fallback-bg .collection-hero__title {
   color: #2f241d;
   -webkit-text-stroke: 0;
   text-shadow:
@@ -222,7 +254,8 @@
     0 8px 24px rgb(255 250 244 / 0.35);
 }
 
-.collection-hero--no-media .collection-hero__title::after {
+.collection-hero--no-media .collection-hero__title::after,
+.collection-hero--all-fallback-bg .collection-hero__title::after {
   color: rgb(47 36 29 / 0.72);
   text-shadow: none;
   background-image:

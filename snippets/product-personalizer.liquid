@@ -3,11 +3,7 @@
 -%}
 
 {%- if personalization_fields != blank -%}
-  <div
-    class="product-personalizer"
-    data-product-personalizer
-    data-product-id="{{ product.id }}">
-
+  {%- capture personalizer_fields_markup -%}
     <div class="product-personalizer__controls">
       {%- if personalization_fields != blank -%}
         <div class="product-personalizer__fields">
@@ -305,7 +301,10 @@
                           class="personalizer-color__swatch"
                           for="{{ field_input_id | escape }}"
                           aria-label="{{ field_label | escape }}"
-                        ></label>
+                        >
+                          <span class="personalizer-color__swatch-chip" aria-hidden="true"></span>
+                          <span class="personalizer-color__swatch-text">Choose color</span>
+                        </label>
 
                         <span
                           class="personalizer-color__value"
@@ -372,6 +371,160 @@
         </div>
       {%- endif -%}
     </div>
+  {%- endcapture -%}
+
+  {%- assign personalizer_modal_id = 'PersonalizerModal-' | append: section.id | append: '-' | append: product.id -%}
+  {%- assign personalizer_heading_id = 'PersonalizerHeading-' | append: section.id | append: '-' | append: product.id -%}
+  {%- assign personalizer_preview_image = product.selected_or_first_available_variant.featured_image | default: product.featured_image -%}
+  {%- capture personalizer_preview_markup -%}
+    {%- if personalizer_preview_image != blank -%}
+      <div class="product-personalizer-popup__preview-card">
+        <p class="product-personalizer-popup__preview-label">Live preview</p>
+        <div
+          class="product-personalizer-popup__preview-stage"
+          data-personalizer-preview="{{ product.id }}"
+          style="--ratio: {{ personalizer_preview_image.aspect_ratio | default: 1 }};"
+        >
+          {{
+            personalizer_preview_image
+            | image_url: width: 1400
+            | image_tag:
+              loading: 'lazy',
+              class: 'product-personalizer-popup__preview-image',
+              alt: product.title,
+              widths: '480, 720, 960, 1400',
+              sizes: '(min-width: 990px) 360px, 100vw'
+          }}
+
+          <div
+            class="product-media__personalization-dynamic-preview"
+            data-personalizer-dynamic-preview
+            aria-hidden="true"
+          >
+            {%- assign option_preview_keys = '|' -%}
+            {%- for field in personalization_fields -%}
+              {%- liquid
+                assign field_type = field.type.value | default: field.type | downcase
+                assign preview_key = field.preview_key.value | default: field.preview_key
+              -%}
+
+              {%- if preview_key != blank -%}
+                {%- case field_type -%}
+                  {%- when 'image' -%}
+                    <img
+                      class="product-media__preview-upload"
+                      data-preview-upload="{{ preview_key | escape }}"
+                      alt=""
+                      width="1200"
+                      height="1200"
+                      hidden
+                    >
+                  {%- when 'text', 'textarea' -%}
+                    <span
+                      class="product-media__preview-text"
+                      data-preview-text="{{ preview_key | escape }}"
+                      hidden
+                    ></span>
+                  {%- when 'option' -%}
+                    {%- capture option_preview_token -%}|{{ preview_key }}|{%- endcapture -%}
+                    {%- unless option_preview_keys contains option_preview_token -%}
+                      <img
+                        class="product-media__personalization-layer"
+                        data-preview-layer="{{ preview_key | escape }}"
+                        alt=""
+                        width="1200"
+                        height="1200"
+                        hidden
+                      >
+                      {%- assign option_preview_keys = option_preview_keys | append: preview_key | append: '|' -%}
+                    {%- endunless -%}
+                {%- endcase -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+  {%- endcapture -%}
+
+  <div
+    class="product-personalizer"
+    data-product-personalizer
+    data-product-id="{{ product.id }}">
+    <button
+      type="button"
+      class="button button-unstyled product-personalizer__trigger"
+      data-personalizer-trigger
+      aria-haspopup="dialog"
+      aria-controls="{{ personalizer_modal_id }}"
+    >
+      Customize now
+    </button>
+
+    <div
+      id="{{ personalizer_modal_id }}"
+      class="product-personalizer-popup"
+      data-personalizer-modal
+      hidden
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="{{ personalizer_heading_id }}"
+    >
+      <button
+        type="button"
+        class="product-personalizer-popup__backdrop"
+        data-personalizer-close
+        tabindex="-1"
+        aria-label="{{ 'accessibility.close_dialog' | t }}"
+      ></button>
+
+      <div class="product-personalizer-popup__panel" data-personalizer-panel>
+        <div class="product-personalizer-popup__inner">
+          <div class="product-personalizer-popup__header">
+            <div>
+              <p class="product-personalizer-popup__eyebrow">Personalization</p>
+              <h2
+                id="{{ personalizer_heading_id }}"
+                class="product-personalizer-popup__heading"
+              >
+                Customize your order
+              </h2>
+            </div>
+            <button
+              type="button"
+              class="button button-unstyled close-button product-personalizer-popup__close"
+              data-personalizer-close
+              aria-label="{{ 'accessibility.close_dialog' | t }}"
+            >
+              {{- 'icon-close.svg' | inline_asset_content -}}
+            </button>
+          </div>
+
+          <div class="product-personalizer-popup__body">
+            {{ personalizer_preview_markup }}
+            <div class="product-personalizer-popup__form">
+              {{ personalizer_fields_markup }}
+            </div>
+          </div>
+
+          <div
+            class="product-personalizer__errors"
+            data-personalizer-errors
+            hidden
+          ></div>
+
+          <div class="product-personalizer-popup__footer">
+            <button
+              type="button"
+              class="button product-personalizer-popup__done"
+              data-personalizer-close
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <input
       type="hidden"
@@ -390,14 +543,329 @@
     <div
       class="product-personalizer__summary"
       data-personalization-properties
-    ></div>
-
-    <div
-      class="product-personalizer__errors"
-      data-personalizer-errors
       hidden
+      aria-hidden="true"
     ></div>
   </div>
+
+  {% style %}
+    .product-personalizer__trigger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0;
+      color: #000;
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.2;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.18em;
+      cursor: pointer;
+    }
+
+    .product-personalizer-popup {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      display: grid;
+      place-items: center;
+      padding: 0.75rem;
+      box-sizing: border-box;
+      isolation: isolate;
+    }
+
+    .product-personalizer-popup[hidden] {
+      display: none;
+    }
+
+    .product-personalizer-popup__backdrop {
+      appearance: none;
+      display: block;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: rgba(53, 37, 27, 0.38) !important;
+      box-shadow: none;
+      opacity: 1;
+      pointer-events: auto;
+      cursor: default;
+    }
+
+    .product-personalizer-popup__backdrop:hover,
+    .product-personalizer-popup__backdrop:focus,
+    .product-personalizer-popup__backdrop:active {
+      background: rgba(53, 37, 27, 0.38) !important;
+      opacity: 1;
+      outline: none;
+    }
+
+    .product-personalizer-popup[open] {
+      display: grid;
+    }
+
+    .product-personalizer-popup__panel {
+      position: relative;
+      z-index: 1;
+      width: min(68rem, calc(100vw - 1.5rem));
+      max-height: min(88dvh, calc(100dvh - 1.5rem));
+      border: 1px solid rgba(92, 61, 42, 0.14);
+      border-radius: 24px;
+      background: linear-gradient(180deg, #fffdfb 0%, #fbf5ed 100%);
+      box-shadow:
+        0 28px 60px rgba(47, 36, 29, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.78);
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    .product-personalizer-popup__inner {
+      display: grid;
+      gap: 1rem;
+      max-height: inherit;
+      padding: 1.2rem;
+      overflow: auto;
+      box-sizing: border-box;
+    }
+
+    .product-personalizer-popup__header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-right: 3.25rem;
+    }
+
+    .product-personalizer-popup__eyebrow {
+      margin: 0 0 0.2rem;
+      color: #7b6657;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .product-personalizer-popup__heading {
+      margin: 0;
+      color: #000;
+      font-size: clamp(1.25rem, 2vw, 1.6rem);
+      line-height: 1.08;
+    }
+
+    .product-personalizer-popup__close {
+      position: absolute;
+      top: 0.95rem;
+      right: 0.95rem;
+      z-index: 3;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      width: 2.5rem;
+      height: 2.5rem;
+      padding: 0;
+      border: 1px solid rgba(92, 61, 42, 0.14);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.94);
+      color: #000;
+      box-shadow: 0 8px 18px rgba(47, 36, 29, 0.12);
+    }
+
+    .product-personalizer-popup__close:hover,
+    .product-personalizer-popup__close:focus-visible {
+      background: #ffffff;
+      color: #000;
+    }
+
+    .product-personalizer-popup__close svg {
+      width: 1rem;
+      height: 1rem;
+      color: currentColor;
+    }
+
+    .product-personalizer-popup__body {
+      display: grid;
+      grid-template-columns: minmax(16rem, 0.85fr) minmax(0, 1.25fr);
+      gap: 1.15rem;
+      align-items: start;
+    }
+
+    .product-personalizer-popup__body > * {
+      min-width: 0;
+    }
+
+    .product-personalizer-popup__preview-card {
+      position: sticky;
+      top: 0;
+      display: grid;
+      gap: 0.75rem;
+      padding: 0.85rem;
+      border: 1px solid rgba(92, 61, 42, 0.12);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.82),
+        0 14px 26px rgba(47, 36, 29, 0.06);
+    }
+
+    .product-personalizer-popup__preview-label {
+      margin: 0;
+      color: #000;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .product-personalizer-popup__preview-stage {
+      position: relative;
+      display: block;
+      width: 100%;
+      aspect-ratio: var(--ratio, 1);
+      min-height: 0;
+      max-height: none;
+      border-radius: 18px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #fffdf9 0%, #f6efe6 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.82),
+        0 12px 24px rgba(47, 36, 29, 0.08);
+    }
+
+    .product-personalizer-popup__preview-image {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      background: #f6efe6;
+    }
+
+    .product-personalizer-popup__preview-stage .product-media__personalization-dynamic-preview {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      overflow: hidden;
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    .product-personalizer-popup__form {
+      display: grid;
+      gap: 1rem;
+      align-content: start;
+    }
+
+    .product-personalizer-popup .personalizer-field__control {
+      display: block;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .product-personalizer-popup .personalizer-upload {
+      display: grid;
+      width: 100%;
+      min-width: 0;
+      min-height: 0;
+      box-sizing: border-box;
+    }
+
+    .product-personalizer-popup .personalizer-color {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+      align-items: center;
+      gap: 0.75rem;
+      width: fit-content;
+      max-width: 100%;
+    }
+
+    .product-personalizer-popup .personalizer-color__swatch {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      position: relative;
+      width: auto;
+      height: auto;
+      padding: 0.55rem 0.8rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.92),
+        0 8px 16px rgba(47, 36, 29, 0.05);
+    }
+
+    .product-personalizer-popup .personalizer-color__swatch-chip {
+      display: inline-block;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 999px;
+      border: 1px solid rgba(120, 84, 58, 0.18);
+      background: var(--personalizer-color, #b87345);
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.9);
+      flex: 0 0 auto;
+    }
+
+    .product-personalizer-popup .personalizer-color__swatch-text {
+      color: #000;
+      font-size: 0.9rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    @media screen and (min-width: 1400px) {
+      .product-personalizer-popup__panel {
+        width: min(72rem, calc(100vw - 2rem));
+      }
+    }
+
+    .product-personalizer-popup__footer {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .product-personalizer-popup__done {
+      min-width: 9rem;
+      min-height: 2.9rem;
+    }
+
+    @media screen and (max-width: 749px) {
+      .product-personalizer-popup {
+        padding: 0.5rem;
+      }
+
+      .product-personalizer-popup__panel {
+        width: min(32rem, calc(100vw - 1rem));
+        border-radius: 18px;
+      }
+
+      .product-personalizer-popup__body {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .product-personalizer-popup__preview-card {
+        position: static;
+      }
+
+      .product-personalizer-popup__preview-stage {
+        min-height: 0;
+        max-height: none;
+      }
+
+      .product-personalizer-popup__inner {
+        padding: 1rem;
+      }
+
+      .product-personalizer-popup__done {
+        width: 100%;
+      }
+    }
+  {% endstyle %}
 
   {{ 'product-personalizer.css' | asset_url | stylesheet_tag }}
 

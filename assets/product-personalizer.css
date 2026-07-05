@@ -8,7 +8,7 @@
   --personalizer-danger: #b85252;
   display: grid;
   gap: 1rem;
-  margin: 0;
+  margin: 0 0 0.9rem;
 }
 
 .product-personalizer__controls,
@@ -19,6 +19,7 @@
 
 .personalizer-group,
 .personalizer-field {
+  position: relative;
   min-width: 0;
   margin: 0;
   padding: 1rem 1rem 1.05rem;
@@ -77,6 +78,8 @@
 .personalizer-choice__input,
 .personalizer-field__input--file {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 1px;
   height: 1px;
   overflow: hidden;
@@ -239,6 +242,7 @@
 }
 
 .personalizer-color {
+  position: relative;
   display: inline-grid;
   grid-template-columns: auto auto auto;
   align-items: center;
@@ -247,6 +251,8 @@
 
 .personalizer-color__input {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 1px;
   height: 1px;
   overflow: hidden;
@@ -285,6 +291,10 @@
 .product-personalizer__summary {
   display: grid;
   gap: 0.32rem;
+}
+
+.product-personalizer__summary[hidden] {
+  display: none !important;
 }
 
 .product-personalizer__summary-item {
