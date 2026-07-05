@@ -27,15 +27,28 @@
       class="cart-drawer__content"
       aria-label="{{ 'accessibility.cart' | t }}"
     >
-      <h2
-        class="theme-drawer__title h4"
-        id="cart-drawer-heading"
-      >
-        {{ 'content.your_cart_is_empty' | t }}
-      </h2>
+      <div class="cart-drawer__empty-state">
+        <span
+          class="cart-drawer__empty-icon"
+          aria-hidden="true"
+        >
+          {{ 'icon-cart.svg' | inline_asset_content }}
+        </span>
 
-      <div class="cart-drawer__items">
-        {% render 'cart-products', force_empty: true, context: 'drawer' %}
+        <h2
+          class="theme-drawer__title h4 cart-drawer__empty-title"
+          id="cart-drawer-heading"
+        >
+          {{ 'content.your_cart_is_empty' | t }}
+        </h2>
+
+        <p class="cart-drawer__empty-subtitle">
+          Personalized blankets, quilts, and comforters are waiting for you.
+        </p>
+
+        <div class="cart-drawer__items">
+          {% render 'cart-products', force_empty: true, context: 'drawer' %}
+        </div>
       </div>
     </div>
     {% endcapture %}
@@ -321,14 +334,67 @@
   }
 
   .cart-drawer--empty .cart-drawer__content {
-    text-align: center;
+    display: flex;
     align-items: center;
     justify-content: center;
-    min-height: auto;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    text-align: center;
+    overflow-y: auto;
   }
 
   .cart-drawer--empty .cart-drawer__items {
     padding-inline: 0;
+  }
+
+  .cart-drawer__empty-state {
+    width: 100%;
+    max-width: 22rem;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    transform: translateY(-2vh);
+  }
+
+  .cart-drawer__empty-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    padding: 0.7rem;
+    border-radius: 999px;
+    color: #7a6252;
+    background: rgb(255 249 242 / 0.92);
+    border: 1px solid rgb(var(--color-foreground-rgb) / 0.08);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.8),
+      0 10px 24px rgb(62 51 45 / 0.06);
+  }
+
+  .cart-drawer__empty-icon .svg-wrapper,
+  .cart-drawer__empty-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .cart-drawer__empty-title {
+    margin: 0;
+    color: #3e2f28;
+    line-height: 1.08;
+  }
+
+  .cart-drawer__empty-subtitle {
+    margin: 0;
+    color: #8b7464;
+    font-size: 0.96rem;
+    line-height: 1.55;
+  }
+
+  .cart-items__wrapper--drawer-empty .cart-items__empty-button {
+    width: min(100%, 16.5rem);
+    margin-top: 0.35rem;
   }
 
   cart-drawer-component:not(:has(.cart-form)) .cart-drawer__content {
