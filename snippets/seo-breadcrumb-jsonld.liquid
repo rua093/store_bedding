@@ -4,8 +4,15 @@
   assign render_breadcrumbs = false
 
   if breadcrumb_page_type == 'product' and product != blank
-    assign breadcrumb_collection = collection | default: product.collections.first
     assign render_breadcrumbs = true
+    if collection != blank and collection.handle != blank and collection.handle != 'all'
+      for product_collection in product.collections
+        if product_collection.handle == collection.handle
+          assign breadcrumb_collection = collection
+          break
+        endif
+      endfor
+    endif
   elsif breadcrumb_page_type == 'collection' and collection != blank
     assign render_breadcrumbs = true
   elsif breadcrumb_page_type == 'article' and article != blank and blog != blank

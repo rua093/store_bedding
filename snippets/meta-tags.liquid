@@ -58,6 +58,22 @@
     echo '?q='
     echo '{search_term_string}'
   endcapture
+
+  if social_image
+    assign social_image_raw_url = social_image | image_url
+    assign social_image_protocol_prefix = social_image_raw_url | slice: 0, 2
+    assign social_image_path_prefix = social_image_raw_url | slice: 0, 1
+
+    if social_image_raw_url contains 'http://' or social_image_raw_url contains 'https://'
+      assign social_image_absolute_url = social_image_raw_url
+    elsif social_image_protocol_prefix == '//'
+      assign social_image_absolute_url = 'https:' | append: social_image_raw_url
+    elsif social_image_path_prefix == '/'
+      assign social_image_absolute_url = request.origin | append: social_image_raw_url
+    else
+      assign social_image_absolute_url = request.origin | append: '/' | append: social_image_raw_url
+    endif
+  endif
 %}
 
 <meta
@@ -84,11 +100,11 @@
 {%- if social_image -%}
   <meta
     property="og:image"
-    content="http:{{ social_image | image_url }}"
+    content="{{ social_image_absolute_url | escape }}"
   >
   <meta
     property="og:image:secure_url"
-    content="https:{{ social_image | image_url }}"
+    content="{{ social_image_absolute_url | escape }}"
   >
   <meta
     property="og:image:width"
@@ -100,7 +116,7 @@
   >
   <meta
     name="twitter:image"
-    content="https:{{ social_image | image_url }}"
+    content="{{ social_image_absolute_url | escape }}"
   >
 {%- endif -%}
 
@@ -150,6 +166,13 @@
   <meta
     name="description"
     content="{{ meta_description | escape }}"
+  >
+{% endif %}
+
+{% if request.page_type == 'search' %}
+  <meta
+    name="robots"
+    content="noindex,follow"
   >
 {% endif %}
 
