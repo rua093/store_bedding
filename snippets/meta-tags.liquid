@@ -22,7 +22,28 @@
   assign og_title = page_title | default: shop.name
   assign og_url = canonical_url | default: request.origin
   assign og_type = 'website'
-  assign og_description = page_description | default: shop.description | default: shop.name
+  assign meta_description = page_description | strip
+  assign fallback_shop_description = shop.description | strip | default: shop.name
+  assign social_image = page_image | default: settings.logo
+
+  if meta_description == blank
+    case request.page_type
+      when 'product'
+        assign meta_description = product.description | strip_html | strip | truncate: 160
+      when 'collection'
+        assign meta_description = collection.description | strip_html | strip | truncate: 160
+      when 'article'
+        assign meta_description = article.excerpt_or_content | strip_html | strip | truncate: 160
+      when 'page'
+        assign meta_description = page.content | strip_html | strip | truncate: 160
+    endcase
+  endif
+
+  if meta_description == blank
+    assign meta_description = fallback_shop_description | truncate: 160
+  endif
+
+  assign og_description = meta_description | default: fallback_shop_description
 
   if request.page_type == 'product'
     assign og_type = 'product'
@@ -30,6 +51,28 @@
     assign og_type = 'article'
   elsif request.page_type == 'password'
     assign og_url = request.origin
+  endif
+
+  capture website_search_target
+    echo request.origin | append: routes.search_url
+    echo '?q='
+    echo '{search_term_string}'
+  endcapture
+
+  if social_image
+    assign social_image_raw_url = social_image | image_url
+    assign social_image_protocol_prefix = social_image_raw_url | slice: 0, 2
+    assign social_image_path_prefix = social_image_raw_url | slice: 0, 1
+
+    if social_image_raw_url contains 'http://' or social_image_raw_url contains 'https://'
+      assign social_image_absolute_url = social_image_raw_url
+    elsif social_image_protocol_prefix == '//'
+      assign social_image_absolute_url = 'https:' | append: social_image_raw_url
+    elsif social_image_path_prefix == '/'
+      assign social_image_absolute_url = request.origin | append: social_image_raw_url
+    else
+      assign social_image_absolute_url = request.origin | append: '/' | append: social_image_raw_url
+    endif
   endif
 %}
 
@@ -54,22 +97,26 @@
   content="{{ og_description | escape }}"
 >
 
-{%- if page_image -%}
+{%- if social_image -%}
   <meta
     property="og:image"
-    content="http:{{ page_image | image_url }}"
+    content="{{ social_image_absolute_url | escape }}"
   >
   <meta
     property="og:image:secure_url"
-    content="https:{{ page_image | image_url }}"
+    content="{{ social_image_absolute_url | escape }}"
   >
   <meta
     property="og:image:width"
-    content="{{ page_image.width }}"
+    content="{{ social_image.width }}"
   >
   <meta
     property="og:image:height"
-    content="{{ page_image.height }}"
+    content="{{ social_image.height }}"
+  >
+  <meta
+    name="twitter:image"
+    content="{{ social_image_absolute_url | escape }}"
   >
 {%- endif -%}
 
@@ -115,9 +162,32 @@
   href="{{ canonical_url }}"
 >
 
-{% if page_description %}
+{% if meta_description != blank %}
   <meta
     name="description"
-    content="{{ page_description | escape }}"
+    content="{{ meta_description | escape }}"
   >
 {% endif %}
+
+{% if request.page_type == 'search' %}
+  <meta
+    name="robots"
+    content="noindex,follow"
+  >
+{% endif %}
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": {{ shop.name | json }},
+    "url": {{ request.origin | json }},
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {{ website_search_target | strip | json }},
+      "query-input": "required name=search_term_string"
+    }
+  }
+</script>
+
+{% render 'seo-breadcrumb-jsonld' %}

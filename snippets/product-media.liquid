@@ -19,6 +19,7 @@
   endif
 
   assign focal_point_style = ''
+  assign media_alt = media.alt | default: preview_product.title | default: ''
   if media.presentation.focal_point != blank
     assign focal_point_style = '--focal-point: ' | append: media.presentation.focal_point | append: ';'
   endif
@@ -32,7 +33,7 @@
   data-personalizer-preview="{{ preview_product.id }}"
   {% endif %}>
   {{
-    media.preview_image | image_url: width: 3840 | image_tag: widths: widths, alt: media.alt, sizes: sizes, loading: loading, class: 'product-media__image', ref: ref_image_to_transition, data_max_resolution: high_res_url, fetchpriority: fetch_priority, style: focal_point_style, ref: image_ref
+    media.preview_image | image_url: width: 3840 | image_tag: widths: widths, alt: media_alt, sizes: sizes, loading: loading, class: 'product-media__image', ref: ref_image_to_transition, data_max_resolution: high_res_url, fetchpriority: fetch_priority, style: focal_point_style, ref: image_ref
   }}
 
   {%- if is_main_product_media and preview_product != blank -%}
@@ -94,7 +95,7 @@
             ref="deferredMediaPlayButton"
             on:click="/showDeferredMedia">
             {{
-              media.preview_image | image_url: width: 3840 | image_tag: widths: widths, alt: media.alt, sizes: sizes, loading: loading, class: 'deferred-media__poster-image'
+              media.preview_image | image_url: width: 3840 | image_tag: widths: widths, alt: media_alt, sizes: sizes, loading: loading, class: 'deferred-media__poster-image'
             }}
 
             <span class="deferred-media__poster-icon">

@@ -1,6 +1,10 @@
 
-
-{% render 'contrast-override', background_color: section.settings.background_color, section_id: section.id %}
+<link
+  rel="preload"
+  as="image"
+  href="{{ 'bg-announcement.webp' | asset_url }}"
+  type="image/webp"
+>
 
 {%- capture announcement_marquee_items -%}
   <span class="announcement-bar__marquee-item">Made From Your Ideas</span>
@@ -12,11 +16,9 @@
   <span class="announcement-bar__marquee-item announcement-bar__marquee-item--promo">10% Off Your First Order</span>
   <span class="announcement-bar__marquee-separator" aria-hidden="true">•</span>
 {%- endcapture -%}
-
-<div class="section-background color-custom-{{ section.id }}"></div>
 <aside
-  class="announcement-bar spacing-style section section--{{ section.settings.section_width }} color-custom-{{ section.id }}"
-  style="{% render 'spacing-padding', settings: section.settings %}; --border-bottom-width: {{ section.settings.divider_width }}px; --announcement-bg-image: url('{{ "bg-anoucement.png" | asset_url }}');{% if section.settings.divider_color != blank %} --color-border: {{ section.settings.divider_color }};{% endif %}"
+  class="announcement-bar spacing-style section section--{{ section.settings.section_width }}"
+  style="{% render 'spacing-padding', settings: section.settings %}; --border-bottom-width: {{ section.settings.divider_width }}px; --announcement-bg-image: url('{{ "bg-announcement.webp" | asset_url }}');{% if section.settings.divider_color != blank %} --color-border: {{ section.settings.divider_color }};{% endif %}"
 >
   <div class="announcement-bar__slider" aria-live="polite">
     <div class="announcement-bar__marquee" aria-label="Store announcements">
@@ -33,13 +35,20 @@
 
 {% stylesheet %}
   .announcement-bar {
+    --announcement-text-color: #2f2119;
+    --announcement-text-rgb: 47 33 25;
+    --announcement-promo-color: #8f3f24;
+
     position: relative;
     min-height: 32px;
     display: flex;
     align-items: center;
     border-block-end: var(--border-bottom-width) solid var(--color-border);
-    background-color: {{ section.settings.background_color | default: '#445958' }};
-    border-bottom-color: rgb(var(--color-foreground-rgb) / 0.16);
+    background:
+      radial-gradient(circle at top center, rgb(255 251 245 / 0.92), transparent 58%),
+      linear-gradient(180deg, #fff7ea 0%, #f7ead9 52%, #efd9c3 100%);
+    color: var(--announcement-text-color);
+    border-bottom-color: rgb(var(--announcement-text-rgb) / 0.16);
     overflow: hidden;
     isolation: isolate;
   }
@@ -67,7 +76,7 @@
     bottom: 0;
     z-index: 0;
     height: 1px;
-    background: rgb(var(--color-foreground-rgb) / 0.16);
+    background: rgb(var(--announcement-text-rgb) / 0.16);
   }
 
   .announcement-bar__slider {
@@ -120,11 +129,11 @@
   }
 
   .announcement-bar__marquee-item {
-    color: #2f2119;
+    color: var(--announcement-text-color);
   }
 
   .announcement-bar__marquee-item--promo {
-    color: #8f3f24;
+    color: var(--announcement-promo-color);
     font-weight: 800;
     letter-spacing: 0.018em;
     padding: 0.08rem 0.4rem;
@@ -136,7 +145,7 @@
   }
 
   .announcement-bar__marquee-separator {
-    color: rgb(47 33 25 / 0.48);
+    color: rgb(var(--announcement-text-rgb) / 0.48);
     font-size: 0.9em;
   }
 

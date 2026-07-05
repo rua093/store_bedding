@@ -789,8 +789,7 @@
         transform var(--animation-speed-fast) var(--animation-easing);
     }
 
-    .menu-list .menu-list__list-item:where(:hover, :focus-within) .menu-list__link-title::after,
-    .menu-list__list-item[slot='overflow'] .menu-list__link[aria-expanded='true'] .menu-list__link-title::after {
+    .menu-list .menu-list__list-item:hover .menu-list__link-title::after {
       opacity: 1;
       transform: scaleX(1);
     }

@@ -4,10 +4,23 @@
   assign section_collections = collections
   assign max_items = 20
   assign compact_banner_image = section.settings.compact_banner_image
+  assign compact_banner_image_srcset = ''
   if compact_banner_image != blank
     assign compact_banner_image_url = compact_banner_image | image_url: width: 1600
+    capture compact_banner_image_srcset
+      echo compact_banner_image | image_url: width: 1600
+      echo ' 1600w, '
+      echo compact_banner_image | image_url: width: 2400
+      echo ' 2400w'
+    endcapture
   else
-    assign compact_banner_image_url = 'brand-intro-bedroom.png' | asset_url
+    assign compact_banner_image_url = 'media-brand-intro-1600.webp' | asset_url
+    capture compact_banner_image_srcset
+      echo 'media-brand-intro-1600.webp' | asset_url
+      echo ' 1600w, '
+      echo 'media-brand-intro-2400.webp' | asset_url
+      echo ' 2400w'
+    endcapture
   endif
   if section.settings.background_color != blank
     render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
@@ -40,8 +53,11 @@
       <div class="collection-list-compact-banner__media">
         <img
           src="{{ compact_banner_image_url }}"
+          srcset="{{ compact_banner_image_srcset }}"
+          sizes="(min-width: 990px) 1600px, 100vw"
           alt="{{ section.settings.compact_banner_heading | default: 'All Collections' | escape }}"
           loading="eager"
+          fetchpriority="high"
           width="1600"
           height="960"
         >
