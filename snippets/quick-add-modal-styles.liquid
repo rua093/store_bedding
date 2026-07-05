@@ -708,6 +708,132 @@
     line-height: 1.4;
   }
 
+  .quick-add-modal__content .variant-option__legend-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .quick-add-modal__content .variant-option__legend-content {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+
+  .quick-add-modal__content .size-guide-dialog {
+    display: contents;
+  }
+
+  .quick-add-modal__content .size-guide-trigger {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1.9rem;
+    padding: 0.32rem 0.72rem;
+    border: 1px solid rgba(107, 82, 63, 0.18);
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255, 252, 247, 0.96) 0%, rgba(249, 242, 233, 0.98) 100%);
+    color: #6d5443;
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.72),
+      0 1px 0 rgba(84, 58, 39, 0.04);
+    transition:
+      color var(--animation-speed) var(--animation-easing),
+      border-color var(--animation-speed) var(--animation-easing),
+      background var(--animation-speed) var(--animation-easing);
+  }
+
+  .quick-add-modal__content .size-guide-trigger:hover {
+    color: #4d392d;
+    border-color: rgba(107, 82, 63, 0.28);
+    background: linear-gradient(180deg, #fffdf9 0%, #f7eee4 100%);
+  }
+
+  .quick-add-modal__content .size-guide-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: min(34rem, calc(100vw - 2rem));
+    max-height: min(82dvh, calc(100dvh - 2rem));
+    padding: 0;
+    margin: 0;
+    border: 1px solid rgba(107, 82, 63, 0.16);
+    border-radius: 24px;
+    background: linear-gradient(180deg, #fffdfb 0%, #fbf5ed 100%);
+    color: #43342b;
+    box-shadow:
+      0 28px 60px rgba(68, 45, 30, 0.16),
+      inset 0 1px 0 rgba(255, 255, 255, 0.78);
+    overflow: hidden;
+    isolation: isolate;
+    translate: -50% -50%;
+    z-index: 1001;
+  }
+
+  .quick-add-modal__content .size-guide-modal::backdrop {
+    backdrop-filter: blur(3px);
+    background: rgba(53, 37, 27, 0.34);
+  }
+
+  .quick-add-modal__content .size-guide-modal__content {
+    display: grid;
+    gap: 1rem;
+    max-height: inherit;
+    padding: 1.4rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+  }
+
+  .quick-add-modal__content .size-guide-modal__heading {
+    margin: 0;
+    padding-inline-end: 2.5rem;
+    color: #3f2f26;
+    font-size: clamp(1.15rem, 1.3vw, 1.4rem);
+    line-height: 1.1;
+  }
+
+  .quick-add-modal__content .size-guide-modal__helper {
+    margin: 0;
+    color: #765f4f;
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .quick-add-modal__content .size-guide-modal__image-wrap {
+    margin-top: 1rem;
+    max-width: 100%;
+  }
+
+  .quick-add-modal__content .size-guide-modal__image {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 16px;
+    background: transparent;
+    box-shadow: 0 14px 30px rgba(68, 45, 30, 0.08);
+  }
+
+  .quick-add-modal__content .size-guide-modal__close {
+    position: absolute;
+    inset-block-start: 0.85rem;
+    inset-inline-end: 0.85rem;
+    z-index: 2;
+    color: #7b6657;
+  }
+
   .quick-add-modal__content .product-details .variant-option--buttons {
     gap: 8px;
   }
@@ -1188,6 +1314,34 @@
     .quick-add-modal__content .product-details .variant-picker,
     .quick-add-modal__content .product-details .buy-buttons-block {
       padding-top: 14px;
+    }
+
+    .quick-add-modal__content .variant-option__legend-row {
+      gap: 0.65rem;
+    }
+
+    .quick-add-modal__content .size-guide-trigger {
+      padding: 0.28rem 0.62rem;
+      font-size: 0.78rem;
+    }
+
+    .quick-add-modal__content .size-guide-modal {
+      top: auto;
+      left: 0;
+      inset-inline: 0;
+      inset-block-end: 0;
+      width: 100%;
+      max-height: 88dvh;
+      border-radius: 22px 22px 0 0;
+      translate: 0 0;
+    }
+
+    .quick-add-modal__content .size-guide-modal__content {
+      padding: 1.15rem 1rem 1rem;
+    }
+
+    .quick-add-modal__content .size-guide-modal__image-wrap {
+      margin-top: 0.85rem;
     }
 
     .quick-add-modal__content .product-details .buy-buttons-block {

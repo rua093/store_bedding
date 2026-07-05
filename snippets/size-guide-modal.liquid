@@ -1,0 +1,132 @@
+{%- doc -%}
+  Renders a PDP-only size guide trigger and modal for supported product types.
+
+  @param {object} product_resource - The product object.
+  @param {object} section - The current section object.
+  @param {string} size_guide_type - Supported values: blanket, quilt, comforter.
+  @param {string} [mode] - Optional render mode: trigger, dialog, or all.
+{%- enddoc -%}
+
+{%- liquid
+  assign product_resource = product_resource | default: empty
+  assign section = section | default: empty
+  assign size_guide_type = size_guide_type | default: blank | downcase | strip
+  assign mode = mode | default: 'all'
+  assign guide_image = blank
+  assign guide_image_alt = blank
+  assign supported_guide = true
+
+  case size_guide_type
+    when 'blanket'
+      assign guide_image = 'size-guide-blanket.png'
+      assign guide_image_alt = 'Blanket size guide'
+    when 'quilt'
+      assign guide_image = 'size-guide-quilt.png'
+      assign guide_image_alt = 'Quilt size guide'
+    when 'comforter'
+      assign guide_image = 'size-guide-comforter.png'
+      assign guide_image_alt = 'Comforter size guide'
+    else
+      assign supported_guide = false
+  endcase
+
+  assign unique_id = product_resource.id | append: '-' | append: section.id
+  assign dialog_component_id = 'SizeGuideDialog-' | append: unique_id
+  assign dialog_id = 'SizeGuideModal-' | append: unique_id
+  assign heading_id = 'SizeGuideHeading-' | append: unique_id
+  assign description_id = 'SizeGuideDescription-' | append: unique_id
+-%}
+{%- if product_resource != empty and section != empty and size_guide_type != blank and supported_guide -%}
+  {%- assign render_trigger = true -%}
+  {%- assign render_dialog = true -%}
+  {%- if mode == 'trigger' -%}
+    {%- assign render_dialog = false -%}
+  {%- elsif mode == 'dialog' -%}
+    {%- assign render_trigger = false -%}
+  {%- endif -%}
+
+  {%- if render_trigger -%}
+    <button
+      type="button"
+      class="button button-unstyled size-guide-trigger"
+      aria-haspopup="dialog"
+      aria-controls="{{ dialog_id }}"
+      on:click="#{{ dialog_component_id }}/showDialog"
+    >
+      Size Guide
+    </button>
+  {%- endif -%}
+
+  {%- if render_dialog -%}
+    {% style %}
+      .product-details--main-product .size-guide-modal__image-wrap {
+        margin-top: 1rem;
+        max-width: 100%;
+      }
+
+      .product-details--main-product .size-guide-modal__image {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        border-radius: 16px;
+        background: transparent;
+        box-shadow: 0 14px 30px rgba(68, 45, 30, 0.08);
+      }
+
+      @media screen and (max-width: 749px) {
+        .product-details--main-product .size-guide-modal__image-wrap {
+          margin: 0.85rem 0 1rem;
+        }
+      }
+    {% endstyle %}
+
+    <dialog-component
+      id="{{ dialog_component_id }}"
+      class="size-guide-dialog"
+    >
+      <dialog
+        id="{{ dialog_id }}"
+        ref="dialog"
+        class="size-guide-modal dialog-modal"
+        scroll-lock
+        aria-labelledby="{{ heading_id }}"
+        aria-describedby="{{ description_id }}"
+      >
+        <button
+          type="button"
+          ref="closeButton"
+          on:click="/closeDialog"
+          class="button button-unstyled close-button size-guide-modal__close"
+          aria-label="{{ 'accessibility.close_dialog' | t }}"
+        >
+          {{- 'icon-close.svg' | inline_asset_content -}}
+        </button>
+
+        <div class="size-guide-modal__content">
+          <h2
+            id="{{ heading_id }}"
+            class="size-guide-modal__heading h4"
+          >
+            Size Guide
+          </h2>
+          <p
+            id="{{ description_id }}"
+            class="size-guide-modal__helper"
+          >
+            Choose the size that fits your needs best.
+          </p>
+
+          <div class="size-guide-modal__image-wrap">
+            <img
+              src="{{ guide_image | asset_url }}"
+              alt="{{ guide_image_alt }}"
+              class="size-guide-modal__image"
+              loading="lazy"
+            >
+          </div>
+        </div>
+      </dialog>
+    </dialog-component>
+  {%- endif -%}
+{%- endif -%}
