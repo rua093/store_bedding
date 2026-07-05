@@ -1,9 +1,4 @@
 
-
-<script type="application/ld+json">
-  {{ section.settings.product | structured_data }}
-</script>
-
 {%- liquid
   assign product = section.settings.product
   assign gallery_aspect_ratio = product.featured_media.preview_image.aspect_ratio | default: 1

@@ -78,9 +78,8 @@
 >
   {% for link in parent_link.links %}
     {% liquid
-      assign mega_link_url = link.url | strip
       assign is_locked_parent_link = false
-      if link.links != blank and mega_link_url == '#'
+      if link.links != blank
         assign is_locked_parent_link = true
       endif
 

@@ -230,6 +230,79 @@ class HeaderMenu extends Component {
   }
 
   /**
+   * Whether the last known pointer position still lands inside the provided submenu.
+   * This guards against blur caused by clicking non-focusable whitespace inside an open submenu.
+   * @param {HTMLElement | null} submenu
+   * @returns {boolean}
+   */
+  #isPointerWithinSubmenu(submenu) {
+    if (!submenu) return false;
+
+    const pointerTarget = document.elementFromPoint(this.#lastPointer.x, this.#lastPointer.y);
+    return pointerTarget instanceof Node && submenu.contains(pointerTarget);
+  }
+
+  /**
+   * Get the submenu's natural content height without trusting the clipped wrapper height.
+   * @param {HTMLElement} submenu
+   * @returns {number}
+   */
+  #getSubmenuContentHeight(submenu) {
+    const submenuInner = submenu.querySelector('.menu-list__submenu-inner');
+
+    if (submenuInner instanceof HTMLElement) {
+      return Math.ceil(Math.max(submenuInner.scrollHeight, submenuInner.getBoundingClientRect().height));
+    }
+
+    return Math.ceil(Math.max(submenu.scrollHeight, submenu.offsetHeight));
+  }
+
+  /**
+   * Measure submenu height and sync the header CSS vars once layout is stable.
+   * @param {HTMLElement} submenu
+   * @param {HTMLElement} item
+   * @param {boolean} isDefaultSlot
+   * @param {boolean} hasSubmenu
+   */
+  #syncSubmenuHeight(submenu, item, isDefaultSlot, hasSubmenu) {
+    if (this.#state.activeItem !== item) return;
+
+    const activeSubmenu = findSubmenu(item);
+    if (!activeSubmenu || activeSubmenu !== submenu) return;
+
+    let finalHeight = this.#getSubmenuContentHeight(submenu);
+
+    if (!isDefaultSlot) {
+      const overflowListHeight = this.#getOverflowListLinksHeight();
+      if (hasSubmenu) {
+        const overflowHeight = this.overflowMenu?.offsetHeight || 0;
+        finalHeight = Math.max(overflowHeight, overflowListHeight);
+      } else {
+        finalHeight = overflowListHeight;
+      }
+    }
+
+    const headerVisibleHeight = this.#getHeaderVisibleHeight();
+    this.headerComponent?.style.setProperty('--submenu-height', `${finalHeight}px`);
+    this.#setFullOpenHeaderHeight(finalHeight, headerVisibleHeight);
+  }
+
+  /**
+   * Wait until submenu layout settles after content-visibility changes, then re-measure.
+   * @param {HTMLElement} submenu
+   * @param {HTMLElement} item
+   * @param {boolean} isDefaultSlot
+   * @param {boolean} hasSubmenu
+   */
+  #scheduleSubmenuHeightSync(submenu, item, isDefaultSlot, hasSubmenu) {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        this.#syncSubmenuHeight(submenu, item, isDefaultSlot, hasSubmenu);
+      });
+    });
+  }
+
+  /**
    * Get the overflow menu
    */
   get overflowMenu() {
@@ -314,17 +387,17 @@ class HeaderMenu extends Component {
 
       // Mark submenu as active for content-visibility optimization
       submenu.dataset.active = '';
+      this.#scheduleSubmenuHeightSync(submenu, item, isDefaultSlot, hasSubmenu);
 
       // Cleanup any existing mutation observer from previous menu activations
       this.#cleanupMutationObserver();
 
       // Monitor DOM mutations to catch deferred content injection (from section hydration)
       this.#submenuMutationObserver = new MutationObserver(() => {
+        this.#scheduleSubmenuHeightSync(submenu, item, isDefaultSlot, hasSubmenu);
         requestAnimationFrame(() => {
-          // Double requestAnimationFrame to ensure the height is properly calculated and not defaulting to the contain-intrinsic-size
           requestAnimationFrame(() => {
             if (submenu.offsetHeight > 0) {
-              this.headerComponent?.style.setProperty('--submenu-height', `${submenu.offsetHeight}px`);
               this.#cleanupMutationObserver();
             }
           });
@@ -338,30 +411,12 @@ class HeaderMenu extends Component {
       }, 500);
     }
 
-    let finalHeight = submenu?.offsetHeight || 0;
-
-    // For overflow menu, the height needs to be either content of the submenu or the total height of the menu list links
-    if (!isDefaultSlot) {
-      const overflowListHeight = this.#getOverflowListLinksHeight();
-      if (hasSubmenu) {
-        /* Note: When the submenu is inside the overflow menu, its offsetHeight is not valid due to the lack of padding
-         * we could add the padding variables to the submenu.offsetHeight, but measuring the overflowMenu.offsetHeight is just easier */
-        const overflowHeight = this.overflowMenu?.offsetHeight || 0;
-        finalHeight = Math.max(overflowHeight, overflowListHeight);
-      } else {
-        finalHeight = overflowListHeight;
-      }
+    if (submenu) {
+      this.#syncSubmenuHeight(submenu, item, isDefaultSlot, hasSubmenu);
+    } else {
+      this.headerComponent.style.setProperty('--submenu-height', '0px');
+      this.#setFullOpenHeaderHeight(0, 0);
     }
-
-    if (!submenu) {
-      // If there is no content to open, don't try to open it
-      finalHeight = 0;
-    }
-
-    const headerVisibleHeight = this.#getHeaderVisibleHeight();
-
-    this.headerComponent.style.setProperty('--submenu-height', `${finalHeight}px`);
-    this.#setFullOpenHeaderHeight(finalHeight, headerVisibleHeight);
     this.style.setProperty('--submenu-opacity', '1');
     this.#startPointerTracking(item, previouslyActiveItem);
   };
@@ -377,14 +432,16 @@ class HeaderMenu extends Component {
     const menu = findSubmenu(activeItem);
     const relatedTarget = event.relatedTarget instanceof Node ? event.relatedTarget : null;
     const isPointerLeave = event instanceof PointerEvent || event.type === 'pointerleave';
+    const isBlurEvent = event instanceof FocusEvent || event.type === 'blur' || event.type === 'focusout';
     const isMovingWithinMenu = document.activeElement instanceof Node && menu?.contains(document.activeElement);
     const isMovingToSubmenu =
       relatedTarget instanceof Node && event.type === 'blur' && menu?.contains(relatedTarget);
     const isMovingToOverflowMenu =
       relatedTarget instanceof Node &&
       (relatedTarget.parentElement?.matches('[slot="overflow"]') || this.overflowMenu?.contains(relatedTarget));
+    const isPointerInsideActiveSubmenu = isBlurEvent && this.#isPointerWithinSubmenu(menu);
 
-    if (isMovingWithinMenu || isMovingToOverflowMenu || isMovingToSubmenu) {
+    if (isMovingWithinMenu || isMovingToOverflowMenu || isMovingToSubmenu || isPointerInsideActiveSubmenu) {
       if (activeItem) {
         this.#stopPointerTracking(activeItem);
       }

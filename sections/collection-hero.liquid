@@ -11,7 +11,6 @@
 
   assign hero_description = collection.description | strip_html | strip
   assign hero_widths = '750, 1100, 1500, 1800, 2100, 2400, 2880, 3200, 3840'
-  assign fallback_hero_bg = 'bg-product.png' | asset_url
 %}
 
 <section
@@ -21,7 +20,6 @@
 >
   <div
     class="collection-hero{% unless has_hero_image %} collection-hero--no-media{% endunless %}"
-    style="--collection-hero-bg: url('{{ fallback_hero_bg }}');"
   >
     {% if has_hero_image %}
       <div class="collection-hero__media">
@@ -68,11 +66,15 @@
     min-height: 520px;
     max-height: 560px;
     overflow: hidden;
-    background: var(--collection-hero-bg) center / cover no-repeat;
+    background:
+      radial-gradient(circle at top center, rgb(255 249 242 / 0.92), transparent 58%),
+      linear-gradient(135deg, #f8efe5 0%, #efdfd0 48%, #e4ceb7 100%);
   }
 
   .collection-hero--no-media {
-    background: var(--collection-hero-bg) center / cover no-repeat;
+    background:
+      radial-gradient(circle at top center, rgb(255 249 242 / 0.92), transparent 58%),
+      linear-gradient(135deg, #f8efe5 0%, #efdfd0 48%, #e4ceb7 100%);
   }
 
   .collection-hero__media,

@@ -51,3 +51,4 @@
 {"time":"2026-07-03T17:36:08.156089+00:00","action":"replace","detail":{"ok":true,"path":"snippets/product-media-gallery-content.liquid","replacements":2,"newSha256":"664c86444a029891dbc84c8728835e37bb401385b197d13850e9fef91ea97d29"}}
 {"time":"2026-07-03T17:36:11.072394+00:00","action":"replace","detail":{"ok":true,"path":"snippets/product-media-gallery-content.liquid","replacements":1,"newSha256":"1d43d848690f6066e139b1f4469dd6dc1e1363a0c565582b608e469b0271f553"}}
 {"time":"2026-07-03T17:36:26.673815+00:00","action":"replace","detail":{"ok":true,"path":"snippets/product-details-custom-styles.liquid","replacements":1,"newSha256":"5dc99b615298253d71123046e11a77a7f4dc5d5a6e627399e4a9157f57afb845"}}
+{"time":"2026-07-05T04:30:07.327830+00:00","action":"replace","detail":{"ok":true,"path":"assets/header-menu.js","replacements":1,"newSha256":"6b956d0d53b66313dc707ad6fb1b3d32336250648e938f31f47fdf35eee6f78e"}}

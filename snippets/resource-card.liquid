@@ -89,6 +89,7 @@
       {%- if featured_image != blank -%}
         {% liquid
           assign ref_image_to_transition = ''
+          assign featured_image_alt = featured_image.alt | default: resource.title
           if settings.transition_to_main_product
             assign ref_image_to_transition = 'imagesToTransition[]'
           endif
@@ -98,16 +99,19 @@
           | image_url: width: image_width
           | image_tag:
             loading: 'lazy',
+            fetchpriority: 'low',
             class: 'resource-card__image',
             widths: widths,
             sizes: image_sizes,
             ref: ref_image_to_transition,
             data-media-id: featured_image.id,
+            alt: featured_image_alt,
             style: primary_focal_point_style
         }}
         {%- if image_hover and resource.media.size > 1 -%}
           {% liquid
             assign secondary_focal_point_style = ''
+            assign secondary_image_alt = resource.media[1].alt | default: resource.title
             if resource.media[1].presentation.focal_point != blank
               assign secondary_focal_point_style = 'object-position: ' | append: resource.media[1].presentation.focal_point | append: ';'
             endif
@@ -117,11 +121,13 @@
             | image_url: width: image_width
             | image_tag:
               loading: 'lazy',
+              fetchpriority: 'low',
               class: 'resource-card__image resource-card__image--secondary',
               widths: widths,
               sizes: image_sizes,
               ref: ref_image_to_transition,
               data-media-id: resource.media[1].id,
+              alt: secondary_image_alt,
               style: secondary_focal_point_style
           }}
         {%- endif -%}
@@ -141,7 +147,7 @@
             {{
               product.featured_image
               | image_url: width: image_width
-              | image_tag: loading: 'lazy', class: 'resource-card__collection-image', sizes: image_sizes, widths: widths
+              | image_tag: loading: 'lazy', fetchpriority: 'low', alt: '', class: 'resource-card__collection-image', sizes: image_sizes, widths: widths
             }}
           {% endfor %}
         </div>
