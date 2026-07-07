@@ -206,4 +206,29 @@
       }
     }
   }
+
+  .quick-add--customizer .quick-add__button--customize {
+    width: auto;
+    min-width: max-content;
+    padding: 0 16px;
+    justify-content: center;
+    gap: 6px;
+    text-decoration: none;
+    white-space: nowrap;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .quick-add--customizer .quick-add__customize-text {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media screen and (max-width: 749px) {
+    .quick-add--customizer .quick-add__button--customize {
+      padding: 0 12px;
+      font-size: 12px;
+    }
+  }
 {% endstylesheet %}
