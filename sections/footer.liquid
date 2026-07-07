@@ -2,6 +2,17 @@
   if section.settings.background_color != blank
     render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
   endif
+
+  assign instagram_url = settings.social_instagram_link | default: blank | strip
+  assign facebook_url = 'https://www.facebook.com/profile.php?id=61591443914131'
+  assign pinterest_url = 'https://www.pinterest.com/bedding779/'
+  assign tiktok_url = 'https://www.tiktok.com/@jeminisebedding'
+  assign youtube_url = 'https://www.youtube.com/@Jeminise'
+
+  assign has_instagram_url = false
+  if instagram_url != blank and instagram_url != '#' and instagram_url contains 'instagram.com'
+    assign has_instagram_url = true
+  endif
 %}
 
 <div class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"></div>
@@ -104,7 +115,7 @@
                       rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                   </svg>
                 </span>
-                <a href="mailto:hello@jeminise.com">hello@jeminise.com</a>
+                <a href="mailto:bedding779@gmail.com">bedding779@gmail.com</a>
               </li>
               <li>
                 <span class="contact-icon">
@@ -120,7 +131,7 @@
                     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                   </svg>
                 </span>
-                <a href="tel:+15551234567">+1 (555) 123-4567</a>
+                <a href="tel:+15551234567">+1 (000) 000-0000</a>
               </li>
               <li>
                 <span class="contact-icon">
@@ -139,7 +150,7 @@
                       r="3" />
                   </svg>
                 </span>
-                <span>123 Cozy Lane, Irvine, CA 92618</span>
+                <span>Coming soon</span>
               </li>
             </ul>
           </div>
@@ -288,51 +299,53 @@
     <div class="footer-bottom-group">
       <!-- 4. Social row riêng -->
       <div class="footer-social">
-        <a href="#" class="footer-social__item">
-          <div class="footer-social__icon">
-            <img
-              src="{{ 'ig.svg' | asset_url }}"
-              alt=""
-              class="footer-icon footer-icon--social"
-              loading="lazy">
-          </div>
-        </a>
-        <div class="footer-social__divider"></div>
-        <a href="#" class="footer-social__item">
+        {% if has_instagram_url %}
+          <a href="{{ instagram_url }}" class="footer-social__item" target="_blank" rel="noopener noreferrer">
+            <div class="footer-social__icon">
+              <img
+                src="{{ 'ig.svg' | asset_url }}"
+                alt="Instagram"
+                class="footer-icon footer-icon--social"
+                loading="lazy">
+            </div>
+          </a>
+          <div class="footer-social__divider"></div>
+        {% endif %}
+        <a href="{{ facebook_url }}" class="footer-social__item" target="_blank" rel="noopener noreferrer">
           <div class="footer-social__icon">
             <img
               src="{{ 'fb.svg' | asset_url }}"
-              alt=""
+              alt="Facebook"
               class="footer-icon footer-icon--social"
               loading="lazy">
           </div>
         </a>
         <div class="footer-social__divider"></div>
-        <a href="#" class="footer-social__item">
+        <a href="{{ pinterest_url }}" class="footer-social__item" target="_blank" rel="noopener noreferrer">
           <div class="footer-social__icon">
             <img
               src="{{ 'pinterest.svg' | asset_url }}"
-              alt=""
+              alt="Pinterest"
               class="footer-icon footer-icon--social"
               loading="lazy">
           </div>
         </a>
         <div class="footer-social__divider"></div>
-        <a href="#" class="footer-social__item">
+        <a href="{{ tiktok_url }}" class="footer-social__item" target="_blank" rel="noopener noreferrer">
           <div class="footer-social__icon">
             <img
               src="{{ 'tiktok.svg' | asset_url }}"
-              alt=""
+              alt="TikTok"
               class="footer-icon footer-icon--social"
               loading="lazy">
           </div>
         </a>
         <div class="footer-social__divider"></div>
-        <a href="#" class="footer-social__item">
+        <a href="{{ youtube_url }}" class="footer-social__item" target="_blank" rel="noopener noreferrer">
           <div class="footer-social__icon">
             <img
               src="{{ 'ytb.svg' | asset_url }}"
-              alt=""
+              alt="YouTube"
               class="footer-icon footer-icon--social"
               loading="lazy">
           </div>
