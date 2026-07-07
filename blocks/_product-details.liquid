@@ -359,34 +359,42 @@
     display: contents;
   }
 
+  .product-details--main-product .variant-picker__size-guide {
+    display: block;
+    margin: 0 0 12px;
+    padding: 0;
+    line-height: 1;
+  }
+
   .product-details--main-product .size-guide-trigger {
-    flex: 0 0 auto;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.3rem 0.68rem;
-    border: 1px solid rgba(107, 82, 63, 0.18);
-    border-radius: 8px;
-    background: linear-gradient(180deg, rgba(255, 252, 247, 0.96) 0%, rgba(249, 242, 233, 0.98) 100%);
-    color: #000000;
-    font-size: 0.82rem;
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: 0.01em;
-    white-space: nowrap;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.72),
-      0 1px 0 rgba(84, 58, 39, 0.04);
-    transition:
-      color var(--animation-speed) var(--animation-easing),
-      border-color var(--animation-speed) var(--animation-easing),
-      background var(--animation-speed) var(--animation-easing);
+    display: inline;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: #777777;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.25;
+    letter-spacing: 0;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    white-space: normal;
+    cursor: pointer;
   }
 
   .product-details--main-product .size-guide-trigger:hover {
-    color: #000000;
-    border-color: rgba(107, 82, 63, 0.28);
-    background: linear-gradient(180deg, #fffdf9 0%, #f7eee4 100%);
+    color: #4a3a32;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .product-details--main-product .variant-picker__size-guide + .variant-option {
+    margin-top: 0;
   }
 
   .product-details--main-product .size-guide-modal {
@@ -1428,9 +1436,12 @@
       gap: 0.65rem;
     }
 
+    .product-details--main-product .variant-picker__size-guide {
+      margin-bottom: 10px;
+    }
+
     .product-details--main-product .size-guide-trigger {
-      padding: 0.28rem 0.62rem;
-      font-size: 0.78rem;
+      font-size: 13.5px;
     }
 
     .product-details--main-product .size-guide-modal {

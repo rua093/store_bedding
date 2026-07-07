@@ -67,10 +67,6 @@
           ref="variantId"
           value="{{ product.selected_or_first_available_variant.id }}"
         >
-        {% render 'product-personalizer',
-          product: product,
-          section: section
-        %}
         {%- if block_settings.gift_card_form and product.gift_card? -%}
           {%- render 'gift-card-recipient-form', product: product, form: form, section: section, block: block -%}
           <span class="buy-buttons-block__bar">

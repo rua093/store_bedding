@@ -183,6 +183,46 @@
     gap: 12px !important;
   }
 
+  .product-details--main-product .variant-picker__size-guide {
+    display: block;
+    margin: 0 0 16px;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .product-details--main-product .size-guide-trigger {
+    display: inline;
+    margin: 0;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    outline: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    color: #777777 !important;
+    font-size: 14px;
+    font-weight: 400 !important;
+    line-height: 1.25;
+    text-decoration: underline !important;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
+
+  .product-details--main-product .size-guide-trigger:hover {
+    color: #4a3a32 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .product-details--main-product .variant-picker__size-guide + .variant-option {
+    margin-top: 0;
+  }
+
   .product-details--main-product variant-picker fieldset legend {
     font-size: 0.9rem !important;
     text-transform: uppercase !important;
@@ -387,7 +427,6 @@
 
   .product-details--main-product .product-form-trust-badge__title,
   .product-details--main-product .product-form-trust-badge__meta,
-  .product-details--main-product .size-guide-trigger,
   .product-details--main-product .variant-option__legend-content,
   .product-details--main-product variant-picker .variant-option__button-label__text {
     color: #000000 !important;
@@ -529,6 +568,14 @@
 
   /* Mobile responsive styling rules */
   @media screen and (max-width: 749px) {
+    .product-details--main-product .variant-picker__size-guide {
+      margin-bottom: 14px;
+    }
+
+    .product-details--main-product .size-guide-trigger {
+      font-size: 13.5px;
+    }
+
     .product-information--main-product .product-information__grid {
       display: flex !important;
       flex-direction: column !important;

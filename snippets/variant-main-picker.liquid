@@ -22,7 +22,38 @@
     assign has_custom_variant_buttons = true
   endif
   assign fieldset_index = 0
+  assign size_guide_type = product_resource.metafields.custom.size_guide_type.value | default: blank | downcase | strip
+  assign show_size_guide = false
+
+  if size_guide_type == 'blanket' or size_guide_type == 'quilt' or size_guide_type == 'comforter'
+    assign show_size_guide = true
+  endif
 %}
+
+{% if product_resource.has_only_default_variant and show_size_guide %}
+  <div
+    class="variant-picker spacing-style variant-picker--{{ block_settings.alignment }}{% if has_custom_variant_buttons %} variant-picker--custom-{{ block.id }}{% endif %}"
+    style="
+      {% render 'spacing-style', settings: block_settings %}
+      {% if block_settings.option_label_text_color != blank %}
+        --variant-option-label-color: rgba({{ block_settings.option_label_text_color.rgba }});
+        --variant-option-label-color-subdued: rgba({{ block_settings.option_label_text_color.rgb }} / var(--opacity-subdued-text));
+      {% endif %}
+    "
+    {{ block.shopify_attributes }}
+  >
+    <div class="variant-picker__form">
+      <div class="variant-picker__size-guide">
+        {% render 'size-guide-modal',
+          product_resource: product_resource,
+          section: section,
+          size_guide_type: size_guide_type,
+          mode: 'all'
+        %}
+      </div>
+    </div>
+  </div>
+{% endif %}
 
 {% unless product_resource.has_only_default_variant %}
   {% if has_custom_variant_buttons %}
@@ -53,22 +84,22 @@
     {% endif %}
   >
     <form class="variant-picker__form">
+      {% if show_size_guide %}
+        <div class="variant-picker__size-guide">
+          {% render 'size-guide-modal',
+            product_resource: product_resource,
+            section: section,
+            size_guide_type: size_guide_type,
+            mode: 'all'
+          %}
+        </div>
+      {% endif %}
       {%- for product_option in product_resource.options_with_values -%}
         {%- liquid
           assign swatch_count = product_option.values | map: 'swatch' | compact | size
           assign variant_style = block_settings.variant_style
           assign display_option_name = product_option.name | strip
           assign display_option_name_downcase = display_option_name | downcase
-          assign normalized_option_label = display_option_name | handleize
-          assign size_guide_type = product_resource.metafields.custom.size_guide_type.value | default: blank | downcase | strip
-          assign is_supported_size_guide = false
-          if size_guide_type == 'blanket' or size_guide_type == 'quilt' or size_guide_type == 'comforter'
-            assign is_supported_size_guide = true
-          endif
-          assign show_size_guide = false
-          if normalized_option_label == 'size' and is_supported_size_guide
-            assign show_size_guide = true
-          endif
 
           if display_option_name_downcase contains ' from '
             if display_option_name_downcase contains 'vnd' or display_option_name_downcase contains 'usd' or display_option_name_downcase contains '$'
@@ -128,40 +159,13 @@
             {{ option_id_attribute }}
           >
             <legend>
-              {% if show_size_guide %}
-                <span class="variant-option__legend-row">
-                  <span class="variant-option__legend-content">
-                    {% if display_option_name != blank %}
-                      {{ display_option_name | escape -}}
-                    {% endif %}
-                    {%- if variant_style == 'swatch' -%}
-                      <span class="variant-option__swatch-value">{{ display_selected_value }}</span>
-                    {%- endif %}
-                  </span>
-                  {% render 'size-guide-modal',
-                    product_resource: product_resource,
-                    section: section,
-                    size_guide_type: size_guide_type,
-                    mode: 'trigger'
-                  %}
-                </span>
-              {% else %}
-                {% if display_option_name != blank %}
-                  {{ display_option_name | escape -}}
-                {% endif %}
-                {%- if variant_style == 'swatch' -%}
-                  <span class="variant-option__swatch-value">{{ display_selected_value }}</span>
-                {%- endif %}
+              {% if display_option_name != blank %}
+                {{ display_option_name | escape -}}
               {% endif %}
+              {%- if variant_style == 'swatch' -%}
+                <span class="variant-option__swatch-value">{{ display_selected_value }}</span>
+              {%- endif %}
             </legend>
-            {% if show_size_guide %}
-              {% render 'size-guide-modal',
-                product_resource: product_resource,
-                section: section,
-                size_guide_type: size_guide_type,
-                mode: 'dialog'
-              %}
-            {% endif %}
             {%- for product_option_value in product_option.values -%}
               {% liquid
                 assign display_option_value = product_option_value | strip
@@ -280,27 +284,7 @@
 
           <div class="variant-option variant-option--dropdowns">
             {% if display_option_name != blank %}
-              {% if show_size_guide %}
-                <div class="variant-option__legend-row">
-                  <label for="Option-{{ block.id }}-{{ forloop.index0 }}" class="variant-option__legend-content">
-                    {{ display_option_name | escape }}
-                  </label>
-                  {% render 'size-guide-modal',
-                    product_resource: product_resource,
-                    section: section,
-                    size_guide_type: size_guide_type,
-                    mode: 'trigger'
-                  %}
-                </div>
-                {% render 'size-guide-modal',
-                  product_resource: product_resource,
-                  section: section,
-                  size_guide_type: size_guide_type,
-                  mode: 'dialog'
-                %}
-              {% else %}
-                <label for="Option-{{ block.id }}-{{ forloop.index0 }}">{{ display_option_name | escape }}</label>
-              {% endif %}
+              <label for="Option-{{ block.id }}-{{ forloop.index0 }}">{{ display_option_name | escape }}</label>
             {% endif %}
             <div
               class="variant-option__select-wrapper"

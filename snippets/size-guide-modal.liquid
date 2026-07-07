@@ -46,15 +46,16 @@
   {%- endif -%}
 
   {%- if render_trigger -%}
-    <button
-      type="button"
-      class="button button-unstyled size-guide-trigger"
+    <span
+      class="size-guide-trigger"
+      role="button"
+      tabindex="0"
       aria-haspopup="dialog"
       aria-controls="{{ dialog_id }}"
       on:click="#{{ dialog_component_id }}/showDialog"
     >
       Size Guide
-    </button>
+    </span>
   {%- endif -%}
 
   {%- if render_dialog -%}
