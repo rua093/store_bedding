@@ -87,13 +87,6 @@
             "padding-inline-end": 20
           },
           "blocks": {
-            "jeminise_customizer_customizer_button_ArF7bQ": {
-              "type": "shopify://apps/jeminise-customizer/blocks/customizer-button/019f3342-835a-7e85-9c3d-8a4c24bb716c",
-              "settings": {
-                "button_label": "Customize",
-                "upload_path": "/apps/amazon-customizer/upload"
-              }
-            },
             "text_GnyQiN": {
               "type": "text",
               "name": "t:names.title",
@@ -175,6 +168,13 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
+            },
+            "jeminise_customizer_customizer_button_ArF7bQ": {
+              "type": "shopify://apps/jeminise-customizer/blocks/customizer-button/019f3342-835a-7e85-9c3d-8a4c24bb716c",
+              "settings": {
+                "button_label": "Customize",
+                "upload_path": "/apps/amazon-customizer/upload"
+              }
             },
             "buy_buttons_eYQEYi": {
               "type": "buy-buttons",
@@ -843,11 +843,11 @@
             }
           },
           "block_order": [
-            "jeminise_customizer_customizer_button_ArF7bQ",
             "text_GnyQiN",
             "reviews",
             "price_a7krng",
             "variant_picker_R3rGDr",
+            "jeminise_customizer_customizer_button_ArF7bQ",
             "buy_buttons_eYQEYi",
             "product_description_LfDYCg",
             "group_X39hBc",
