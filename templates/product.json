@@ -236,6 +236,16 @@
               },
               "block_order": []
             },
+            "choose_other_styles_ArF7bQ": {
+              "type": "choose-other-styles",
+              "settings": {
+                "heading": "Choose other styles",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              }
+            },
             "product_description_LfDYCg": {
               "type": "product-description",
               "name": "t:names.product_description",
@@ -848,6 +858,7 @@
             "price_a7krng",
             "variant_picker_R3rGDr",
             "jeminise_customizer_customizer_button_ArF7bQ",
+            "choose_other_styles_ArF7bQ",
             "buy_buttons_eYQEYi",
             "product_description_LfDYCg",
             "group_X39hBc",

@@ -32,7 +32,7 @@
 
 {% if product_resource.has_only_default_variant and show_size_guide %}
   <div
-    class="variant-picker spacing-style variant-picker--{{ block_settings.alignment }}{% if has_custom_variant_buttons %} variant-picker--custom-{{ block.id }}{% endif %}"
+    class="variant-picker spacing-style variant-picker--size-guide-only variant-picker--{{ block_settings.alignment }}{% if has_custom_variant_buttons %} variant-picker--custom-{{ block.id }}{% endif %}"
     style="
       {% render 'spacing-style', settings: block_settings %}
       {% if block_settings.option_label_text_color != blank %}

@@ -1,4 +1,3 @@
-
 {% render 'theme-drawer-styles' %}
 {% liquid
   assign block_settings = block.settings
@@ -17,6 +16,16 @@
 
   assign can_add_to_cart = false
   assign add_to_cart_text = 'products.product.unavailable' | t
+  assign amazon_customizer_metafield = product.metafields.custom.amazon_customizer
+  assign has_amazon_customizer = false
+
+  if amazon_customizer_metafield != blank and amazon_customizer_metafield.value != blank
+    assign amazon_customizer_json = amazon_customizer_metafield.value | json
+
+    unless amazon_customizer_json == '{}' or amazon_customizer_json == '[]' or amazon_customizer_json == 'null' or amazon_customizer_json == '""'
+      assign has_amazon_customizer = true
+    endunless
+  endif
 
   if variant
     if variant.quantity_rule.min > variant.inventory_quantity and inventory_managed and inventory_policy == 'deny'
@@ -37,7 +46,8 @@
 %}
 
 <span
-  class="buy-buttons-block buy-buttons-block--{{ block.id }}"
+  class="buy-buttons-block buy-buttons-block--{{ block.id }}{% if has_amazon_customizer %} buy-buttons-block--has-customizer{% endif %}"
+  data-has-amazon-customizer="{{ has_amazon_customizer }}"
   {% if block_settings.text_color != blank %}
     style="--color: {{ block_settings.text_color }}; --color-rgb: {{ block_settings.text_color.rgb  }}"
   {% endif %}
@@ -221,19 +231,32 @@
               </div>
             </volume-pricing>
           {%- endif -%}
-          {% content_for 'block',
-            type: 'add-to-cart',
-            id: 'add-to-cart',
-            can_add_to_cart: can_add_to_cart,
-            add_to_cart_text: add_to_cart_text
-          %}
+          {% if has_amazon_customizer %}
+            <div class="product-form-customize">
+              <button
+                type="button"
+                class="button product-form-customize__button"
+                data-customize-trigger-proxy
+                disabled
+              >
+                Customize
+              </button>
+            </div>
+          {% else %}
+            {% content_for 'block',
+              type: 'add-to-cart',
+              id: 'add-to-cart',
+              can_add_to_cart: can_add_to_cart,
+              add_to_cart_text: add_to_cart_text
+            %}
 
-          {% content_for 'block',
-            type: 'accelerated-checkout',
-            id: 'accelerated-checkout',
-            can_add_to_cart: can_add_to_cart,
-            form_obj: form
-          %}
+            {% content_for 'block',
+              type: 'accelerated-checkout',
+              id: 'accelerated-checkout',
+              can_add_to_cart: can_add_to_cart,
+              form_obj: form
+            %}
+          {% endif %}
 
           <div
             class="product-form-trust-badges"

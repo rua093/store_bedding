@@ -1,0 +1,254 @@
+{% comment %}
+  Renders a row of other products in the same collections as the current product.
+{% endcomment %}
+
+{% liquid
+  assign current_product = closest.product
+  if current_product == blank
+    assign current_product = product
+  endif
+%}
+
+{% if current_product != blank %}
+  {% comment %} Find the first collection that contains other products {% endcomment %}
+  {% assign target_collection = blank %}
+  {% for collection in current_product.collections %}
+    {% if collection.handle == 'all' or collection.handle == 'frontpage' or collection.handle == 'best-selling' or collection.handle == 'best-sellers' or collection.handle == 'new-arrivals' %}
+      {% continue %}
+    {% endif %}
+    
+    {% assign other_products_count = 0 %}
+    {% for prod in collection.products %}
+      {% if prod.id != current_product.id %}
+        {% assign other_products_count = other_products_count | plus: 1 %}
+      {% endif %}
+    {% endfor %}
+    
+    {% if other_products_count > 0 %}
+      {% assign target_collection = collection %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+  
+  {% if target_collection != blank %}
+    <div class="choose-other-styles-block" style="padding-block-start: {{ block.settings.padding-block-start }}px; padding-block-end: {{ block.settings.padding-block-end }}px; padding-inline-start: {{ block.settings.padding-inline-start }}px; padding-inline-end: {{ block.settings.padding-inline-end }}px;">
+      <span class="other-styles__heading">{{ block.settings.heading | default: 'Choose other styles' }}</span>
+      
+      <div class="other-styles__products-grid">
+        {% assign displayed = 0 %}
+        {% for prod in target_collection.products %}
+          {% if prod.id == current_product.id %}
+            {% continue %}
+          {% endif %}
+          
+          {% if displayed >= 5 %}
+            {% break %}
+          {% endif %}
+          
+          {% assign displayed = displayed | plus: 1 %}
+          
+          <a href="{{ prod.url }}" class="other-styles__product-card" title="{{ prod.title | escape }}">
+            <div class="other-styles__image-wrapper">
+              {% if prod.featured_image %}
+                <img src="{{ prod.featured_image | image_url: width: 180, height: 180, crop: 'center' }}" 
+                     alt="{{ prod.title | escape }}" 
+                     loading="lazy" 
+                     width="90" 
+                     height="90">
+              {% else %}
+                {{ 'product-1' | placeholder_svg_tag }}
+              {% endif %}
+            </div>
+          </a>
+        {% endfor %}
+        
+        {% comment %} Load more / View all card {% endcomment %}
+        {% assign total_other = target_collection.all_products_count | minus: 1 %}
+        {% assign remaining = total_other | minus: displayed %}
+        
+        {% if remaining > 0 %}
+          <a href="{{ target_collection.url }}" class="other-styles__load-more-card">
+            <span>+{{ remaining }} MORE</span>
+          </a>
+        {% else %}
+          <a href="{{ target_collection.url }}" class="other-styles__load-more-card other-styles__load-more-card--view-all">
+            <span>VIEW ALL</span>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+    
+    <style>
+      .choose-other-styles-block {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      
+      .other-styles__heading {
+        display: block !important;
+        font-size: 0.98rem !important;
+        font-weight: 700 !important;
+        color: #000000 !important;
+        margin: 0 0 8px 0 !important;
+        line-height: 1.25 !important;
+        letter-spacing: -0.01em !important;
+      }
+      
+      .other-styles__products-grid {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+        box-sizing: border-box;
+      }
+      
+      .other-styles__products-grid::-webkit-scrollbar {
+        display: none;
+      }
+      
+      .other-styles__product-card {
+        flex: 0 0 85px;
+        width: 85px;
+        height: 85px;
+        aspect-ratio: 1;
+        text-decoration: none;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 2px solid #5c4d43;
+        background-color: #FAF7F2;
+        transition: border-color 0.2s ease;
+        box-sizing: border-box;
+      }
+      
+      .other-styles__product-card:hover {
+        border-color: #bd7442;
+      }
+      
+      .other-styles__image-wrapper {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .other-styles__image-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .other-styles__load-more-card {
+        flex: 0 0 85px;
+        width: 85px;
+        height: 85px;
+        aspect-ratio: 1;
+        text-decoration: none;
+        border-radius: 8px;
+        background-color: #FAF7F2;
+        border: 2px solid #5c4d43;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px;
+        box-sizing: border-box;
+        text-align: center;
+        transition: border-color 0.2s ease, background-color 0.2s ease;
+      }
+      
+      .other-styles__load-more-card span {
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-size: 0.7rem !important;
+        font-weight: 800 !important;
+        color: #000000 !important;
+        line-height: 1.1;
+        letter-spacing: 0.02em;
+      }
+      
+      .other-styles__load-more-card:hover {
+        border-color: #bd7442;
+        background-color: #ebdcd0;
+      }
+      
+      @media screen and (max-width: 749px) {
+        .other-styles__products-grid {
+          gap: 6px;
+        }
+        .other-styles__product-card,
+        .other-styles__load-more-card {
+          flex: 0 0 70px;
+          width: 70px;
+          height: 70px;
+          border-width: 2px;
+        }
+      }
+    </style>
+  {% endif %}
+{% endif %}
+
+{% schema %}
+{
+  "name": "Choose Other Styles",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Choose other styles"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "Left Padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "Right Padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Choose Other Styles"
+    }
+  ]
+}
+{% endschema %}
