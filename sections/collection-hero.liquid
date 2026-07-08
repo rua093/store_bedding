@@ -12,7 +12,7 @@
   assign uses_all_collection_fallback_bg = false
   if has_hero_image == false and collection.handle == 'all'
     assign uses_all_collection_fallback_bg = true
-    assign all_collection_fallback_bg = 'bg-product.png' | asset_url
+    assign all_collection_fallback_bg = 'bg-product.webp' | asset_url
   endif
 
   assign hero_description = collection.description | strip_html | strip

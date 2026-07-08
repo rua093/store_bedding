@@ -40,7 +40,7 @@
   data-recommendations-performed="{{ recommendations.performed }}"
   data-hydration-key="product-recommendations-{{ section.id }}"
   {% if section.settings.recommendation_type == 'related' %}
-    style="--pdp-related-bg-image: url('{{ 'bg_new_arrivals.png' | asset_url }}');"
+    style="--pdp-related-bg-image: url('{{ 'bg_new_arrivals.webp' | asset_url }}');"
   {% endif %}
   {{ section.shopify_attributes }}
 >
