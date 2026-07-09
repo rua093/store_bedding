@@ -13,6 +13,10 @@
 
 {% liquid
   assign block_settings = block.settings
+  capture visible_item_count
+    render 'cart-visible-item-count'
+  endcapture
+  assign visible_item_count = visible_item_count | strip | plus: 0
 %}
 
 {%- if block_settings.input_style == 'custom' -%}
@@ -76,7 +80,7 @@
       ref="cartItemCount"
       aria-hidden="true"
     >
-      {{- cart.item_count -}}
+      {{- visible_item_count -}}
     </span>
     <form
       action="{{ routes.cart_url }}"
@@ -141,6 +145,35 @@
 
           <tbody role="rowgroup">
             {% for item in cart.items %}
+              {%- if item.properties['_customization_fee_component'] != blank -%}
+                {% continue %}
+              {%- endif -%}
+
+              {%- liquid
+                assign customization_id = item.properties['_customization_id']
+                assign customization_preview = item.properties['_customization_preview']
+                assign customization_manifest = item.properties['_customization_manifest']
+                assign grouped_customization_fee = 0
+                assign grouped_customization_fee_original = 0
+                assign has_grouped_customization_fee = false
+
+                if customization_id != blank
+                  for related_item in cart.items
+                    if related_item.key != item.key and related_item.properties['_customization_fee_component'] != blank
+                      if related_item.properties['_customization_id'] == customization_id
+                        assign grouped_customization_fee = grouped_customization_fee | plus: related_item.final_line_price
+                        assign grouped_customization_fee_original = grouped_customization_fee_original | plus: related_item.original_line_price
+                        assign has_grouped_customization_fee = true
+                      endif
+                    endif
+                  endfor
+                endif
+
+                assign is_customized_item = false
+                if customization_id != blank or customization_preview != blank or customization_manifest != blank or has_grouped_customization_fee
+                  assign is_customized_item = true
+                endif
+              -%}
               {%- capture item_product_display_title -%}{% render 'product-display-title', product: item.product %}{%- endcapture -%}
               <tr
                 id="CartItem-{{ item.key }}"
@@ -149,13 +182,47 @@
                 ref="cartItemRows[]"
                 data-parent-key="{{ item.parent_relationship.parent.key }}"
                 data-key="{{ item.key }}"
+                {% if customization_id != blank %}
+                  data-customization-id="{{ customization_id | escape }}"
+                {% endif %}
+                {% if has_grouped_customization_fee %}
+                  data-customization-grouped="true"
+                {% endif %}
               >
                 <td
                   class="cart-items__media"
                   role="cell"
                   headers="productImage"
                 >
-                  {% if item.image -%}
+                  {% if customization_preview != blank -%}
+                    {% liquid
+                      assign ratio = 1
+                      assign border_opacity = settings.cart_thumbnail_border_opacity | divided_by: 100.0
+                      assign border_override = '--border-width: [cart_thumbnail_border_width]px; --border-style: [cart_thumbnail_border_style]; --border-color: rgb(var(--color-border-rgb) / [cart_thumbnail_border_opacity]); --border-radius: [cart_thumbnail_border_radius]px;' | replace: '[cart_thumbnail_border_width]', settings.cart_thumbnail_border_width | replace: '[cart_thumbnail_border_style]', settings.cart_thumbnail_border | replace: '[cart_thumbnail_border_opacity]', border_opacity | replace: '[cart_thumbnail_border_radius]', settings.cart_thumbnail_border_radius
+
+                      if settings.cart_thumbnail_border_radius > 0
+                        assign border_override = border_override | append: ' overflow: hidden;'
+                      endif
+                      if block_settings.image_ratio == 'portrait'
+                        assign ratio = 0.8
+                      endif
+                    %}
+                    <a
+                      href="{{ item.url }}"
+                      class="cart-items__media-container"
+                      style="--ratio:{{ ratio }};"
+                    >
+                      <img
+                        src="{{ customization_preview | escape }}"
+                        alt="{{ item_product_display_title | strip | escape }} custom preview"
+                        class="cart-items__media-image border-style"
+                        style="{{ border_override }}"
+                        loading="lazy"
+                        width="250"
+                        height="250"
+                      >
+                    </a>
+                  {%- elsif item.image -%}
                     {% liquid
                       assign ratio = 1
                       assign border_opacity = settings.cart_thumbnail_border_opacity | divided_by: 100.0
@@ -192,13 +259,15 @@
                       if context == 'drawer'
                         assign cart_disclosure_unique_id = 'drawer-' | append: item.index
                       endif
+                      assign nested_product_title = item_product_display_title | strip
+                      assign nested_parent_title = item.parent_relationship.parent.title | escape
                     -%}
                     <div class="cart-items__title-row">
                       <a
                         href="{{ item.url }}"
                         class="cart-items__title"
                         {% if item.parent_relationship.parent != null %}
-                          aria-label="{{ 'accessibility.nested_product' | t: product_title: item_product_display_title | strip, parent_title: item.parent_relationship.parent.title | escape }}"
+                          aria-label="{{ 'accessibility.nested_product' | t: product_title: nested_product_title, parent_title: nested_parent_title }}"
                         {% endif %}
                       >
                         {{- item_product_display_title | strip -}}
@@ -230,6 +299,22 @@
                   </div>
 
                   <div class="cart-items__variants-wrapper">
+                    {%- if is_customized_item -%}
+                      <div
+                        class="cart-items__customization-summary"
+                        aria-label="Customization details"
+                      >
+                        <span class="cart-items__customization-badge">Customized</span>
+                        {%- if has_grouped_customization_fee and grouped_customization_fee > 0 -%}
+                          <p class="cart-items__customization-note">
+                            Customization fee included (+{{ grouped_customization_fee | money }})
+                          </p>
+                        {%- elsif item.properties['_customization_fee'] != blank -%}
+                          <p class="cart-items__customization-note">Customization fee included</p>
+                        {%- endif -%}
+                      </div>
+                    {%- endif -%}
+
                     {%- if item.product.has_only_default_variant == false
                       or item.properties.size != 0
                       or item.selling_plan_allocation != null
@@ -296,11 +381,11 @@
                   </div>
 
                   {% liquid
-                    assign drawer_line_price = item.final_line_price
-                    assign drawer_compare_price = item.original_line_price
+                    assign drawer_line_price = item.final_line_price | plus: grouped_customization_fee
+                    assign drawer_compare_price = item.original_line_price | plus: grouped_customization_fee_original
 
                     if item.variant.compare_at_price > item.original_price
-                      assign drawer_compare_price = item.variant.compare_at_price | times: item.quantity
+                      assign drawer_compare_price = item.variant.compare_at_price | times: item.quantity | plus: grouped_customization_fee_original
                     endif
                   %}
                   <div class="cart-items__unit-price-wrapper">
@@ -380,11 +465,12 @@
                   </div>
                 </td>
                 {%- liquid
+                  assign display_line_total = item.final_line_price | plus: grouped_customization_fee
                   if settings.currency_code_enabled_cart_items
-                    assign price = item.final_line_price | money_with_currency
+                    assign price = display_line_total | money_with_currency
                     assign unit_price = item.unit_price | money_with_currency
                   else
-                    assign price = item.final_line_price | money
+                    assign price = display_line_total | money
                     assign unit_price = item.unit_price | money
                   endif
                 -%}
@@ -405,6 +491,9 @@
           </tbody>
         </table>
         {% for item in cart.items %}
+          {%- if item.properties['_customization_fee_component'] != blank -%}
+            {% continue %}
+          {%- endif -%}
           {%- liquid
             assign cart_disclosure_unique_id = 'page-' | append: item.index
             if context == 'drawer'
@@ -961,6 +1050,35 @@
     display: inline;
     margin: 0;
     overflow-wrap: break-word;
+  }
+
+  .cart-items__customization-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem 0.65rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .cart-items__customization-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.6rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: rgb(var(--color-foreground-rgb) / 0.08);
+    color: rgb(var(--color-foreground-rgb));
+    font-size: var(--font-size--2xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .cart-items__customization-note {
+    margin: 0;
+    color: rgb(var(--color-foreground-rgb) / 0.72);
+    font-size: var(--font-size--2xs);
+    line-height: 1.4;
   }
 
   #cart-drawer .cart-items__table-row {

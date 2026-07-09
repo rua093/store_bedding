@@ -16,6 +16,19 @@ import { StandardEvents, CartLinesUpdateEvent } from '@shopify/events';
 class CartIcon extends Component {
   requiredRefs = ['cartBubble', 'cartBubbleText', 'cartBubbleCount'];
 
+  /**
+   * @param {Array<any> | undefined} items
+   * @returns {number | null}
+   */
+  getVisibleItemCount(items) {
+    if (!Array.isArray(items)) return null;
+
+    return items.reduce((total, item) => {
+      if (item?.properties?._customization_fee_component) return total;
+      return total + (Number(item?.quantity) || 0);
+    }, 0);
+  }
+
   /** @type {number} */
   get currentCartCount() {
     return parseInt(this.refs.cartBubbleCount.textContent ?? '0', 10);
@@ -57,7 +70,8 @@ class CartIcon extends Component {
   onCartUpdate = (event) => {
     event.promise
       ?.then(({ cart, detail }) => {
-        const itemCount = cart?.totalQuantity ?? detail?.itemCount ?? 0;
+        const visibleItemCount = this.getVisibleItemCount(detail?.items);
+        const itemCount = visibleItemCount ?? detail?.itemCount ?? cart?.totalQuantity ?? 0;
 
         this.renderCartBubble(itemCount);
       })

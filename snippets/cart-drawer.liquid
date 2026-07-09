@@ -6,6 +6,10 @@
 
 {%- liquid
   assign render_wrapper = render_wrapper | default: true, allow_false: true
+  capture visible_item_count
+    render 'cart-visible-item-count'
+  endcapture
+  assign visible_item_count = visible_item_count | strip | plus: 0
 -%}
 
 {%- if settings.cart_type == 'drawer' and template.name != 'cart' -%}
@@ -99,8 +103,8 @@
                   <span class="cart-drawer__title-text cart-drawer__title-text--desktop">Your cart</span>
                   <span class="cart-drawer__title-text cart-drawer__title-text--mobile">Cart</span>
                   <span class="cart-drawer__inline-count">
-                    {{ cart.item_count }}
-                    {% if cart.item_count == 1 %}
+                    {{ visible_item_count }}
+                    {% if visible_item_count == 1 %}
                       item
                     {% else %}
                       items

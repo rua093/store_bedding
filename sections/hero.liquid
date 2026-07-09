@@ -17,14 +17,14 @@
   assign hero_secondary_label = section.settings.secondary_label | strip
   assign hero_secondary_link = section.settings.secondary_link
   assign hero_heading_is_editorial_default = false
-  assign hero_heading_normalized = hero_heading | newline_to_br | strip_newlines | replace: '<br />', '' | replace: '<br/>', '' | replace: '<br>', ''
+  assign hero_heading_normalized = hero_heading | newline_to_br | strip_newlines | replace: '<br />', '' | replace: '<br/>', '' | replace: '<br>', '' | replace: ' ', '' | downcase
   assign hero_heading_is_custom_split = false
 
   if hero_heading == 'Sleep Better Every Night'
     assign hero_heading_is_editorial_default = true
   endif
 
-  if hero_heading_normalized == 'Your Ideas,Made Cozy'
+  if hero_heading_normalized == 'yourideas,madecozy'
     assign hero_heading_is_custom_split = true
   endif
 
@@ -228,22 +228,22 @@
           {% if hero_heading_is_editorial_default %}
             <h1 class="hero__heading hero__heading--editorial">
               <span
-                class="hero__heading-line homepage-reveal"
+                class="hero__heading-line homepage-reveal amzcustom-count-processed"
                 data-reveal-preset="premium-hero-reveal"
                 style="--reveal-delay: 300ms;">Sleep Better</span>
               <span
-                class="hero__heading-line hero__heading-line--accent homepage-reveal"
+                class="hero__heading-line hero__heading-line--accent homepage-reveal amzcustom-count-processed"
                 data-reveal-preset="premium-hero-reveal"
                 style="--reveal-delay: 450ms;">Every Night</span>
             </h1>
           {% elsif hero_heading_is_custom_split %}
             <h1 class="hero__heading hero__heading--stacked">
               <span
-                class="hero__heading-line homepage-reveal"
+                class="hero__heading-line homepage-reveal amzcustom-count-processed"
                 data-reveal-preset="premium-hero-reveal"
                 style="--reveal-delay: 300ms;">Your Ideas,</span>
               <span
-                class="hero__heading-line homepage-reveal"
+                class="hero__heading-line homepage-reveal amzcustom-count-processed"
                 data-reveal-preset="premium-hero-reveal"
                 style="--reveal-delay: 450ms;">Made Cozy</span>
             </h1>
