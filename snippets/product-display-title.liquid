@@ -1,0 +1,4 @@
+{%- liquid
+  assign product_display_title = product.metafields.custom.short_title.value | default: product.metafields.custom.short_title | default: product.title
+  echo product_display_title | escape
+-%}

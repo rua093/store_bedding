@@ -26,6 +26,7 @@
     assign filter_by_cart_surface = true
     assign cart_disclosure_symbol_aspect_ratio = 1
   -%}
+  {%- capture product_display_title -%}{% render 'product-display-title', product: product %}{%- endcapture -%}
 
   {%- for disclosure in disclosures -%}
     {%- liquid
@@ -185,7 +186,7 @@
         <button
           type="button"
           class="cart-disclosure-tooltip__button button-unstyled"
-          aria-label="{{ 'accessibility.view_disclosure_information_for_product' | t: product_title: product.title | escape }}"
+          aria-label="{{ 'accessibility.view_disclosure_information_for_product' | t: product_title: product_display_title | strip | escape }}"
           aria-haspopup="dialog"
           aria-controls="{{ dialog_id }}"
           ref="trigger"

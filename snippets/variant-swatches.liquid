@@ -80,12 +80,13 @@
     assign allow_preselection = true
   endif
 %}
+{%- capture product_display_title -%}{% render 'product-display-title', product: product_resource %}{%- endcapture -%}
 
 <swatches-variant-picker-component
   data-product-id="{{ product_resource.id }}"
   data-product-url="{{ product_resource.url }}"
   data-product-handle="{{ product_resource.handle }}"
-  data-product-title="{{ product_resource.title | escape }}"
+  data-product-title="{{ product_display_title | strip }}"
   ref="swatchesVariantPicker"
 >
   <form>

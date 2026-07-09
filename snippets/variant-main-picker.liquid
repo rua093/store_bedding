@@ -8,6 +8,7 @@
 {%- enddoc -%}
 
 {% assign block_settings = block.settings %}
+{%- capture product_display_title -%}{% render 'product-display-title', product: product_resource %}{%- endcapture -%}
 
 {% liquid
   # Custom styling applies to:
@@ -71,7 +72,7 @@
     data-section-id="{{ section.id }}"
     data-product-id="{{ product_resource.id }}"
     data-product-handle="{{ product_resource.handle }}"
-    data-product-title="{{ product_resource.title | escape }}"
+    data-product-title="{{ product_display_title | strip }}"
     data-block-id="{{ block.id }}"
     data-product-url="{{ product_resource.url }}"
     ref="mainVariantPicker"

@@ -27,6 +27,7 @@
 {% if section.settings.enable_sticky_add_to_cart %}
   {% liquid
     assign current_variant = product.selected_or_first_available_variant
+    assign product_display_title = product.metafields.custom.short_title.value | default: product.metafields.custom.short_title | default: product.title
     # Get the initial quantity based on quantity rules
     assign initial_quantity = current_variant.quantity_rule.min | default: 1
   %}
@@ -91,7 +92,7 @@
           class="sticky-add-to-cart__title"
           data-testid="sticky-product-title"
         >
-          {{ product.title | escape }}
+          {{ product_display_title | escape }}
         </p>
         <div
           class="sticky-add-to-cart__variant"

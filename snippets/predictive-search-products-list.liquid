@@ -56,6 +56,9 @@
               assign selected_variant = product.selected_or_first_available_variant
               assign current_price = selected_variant.price
               assign compare_price = selected_variant.compare_at_price
+              capture product_display_title
+                render 'product-display-title', product: product
+              endcapture
               assign max_safe_compare_price = current_price | times: 5
               assign show_compare_price = false
               if compare_price > current_price and compare_price <= max_safe_compare_price
@@ -84,7 +87,7 @@
                   {% endif %}
                 </div>
                 <div class="jem-search-product-card__content">
-                  <span class="jem-search-product-card__title">{{ product.title }}</span>
+                  <span class="jem-search-product-card__title">{{ product_display_title | strip }}</span>
                   <div class="jem-search-product-card__price-row">
                     <span class="jem-search-product-card__price">{{ current_price | money }}</span>
                     {% if show_compare_price %}
@@ -101,6 +104,9 @@
               assign selected_variant = product.selected_or_first_available_variant
               assign current_price = selected_variant.price
               assign compare_price = selected_variant.compare_at_price
+              capture product_display_title
+                render 'product-display-title', product: product
+              endcapture
               assign max_safe_compare_price = current_price | times: 5
               assign show_compare_price = false
               if compare_price > current_price and compare_price <= max_safe_compare_price
@@ -129,7 +135,7 @@
                   {% endif %}
                 </div>
                 <div class="jem-search-product-card__content">
-                  <span class="jem-search-product-card__title">{{ product.title }}</span>
+                  <span class="jem-search-product-card__title">{{ product_display_title | strip }}</span>
                   <div class="jem-search-product-card__price-row">
                     <span class="jem-search-product-card__price">{{ current_price | money }}</span>
                     {% if show_compare_price %}
@@ -163,6 +169,9 @@
           assign selected_variant = product.selected_or_first_available_variant
           assign current_price = selected_variant.price
           assign compare_price = selected_variant.compare_at_price
+          capture product_display_title
+            render 'product-display-title', product: product
+          endcapture
           assign max_safe_compare_price = current_price | times: 5
           assign show_compare_price = false
           if compare_price > current_price and compare_price <= max_safe_compare_price
@@ -191,7 +200,7 @@
               {% endif %}
             </div>
             <div class="jem-search-product-card__content">
-              <span class="jem-search-product-card__title">{{ product.title }}</span>
+              <span class="jem-search-product-card__title">{{ product_display_title | strip }}</span>
               <div class="jem-search-product-card__price-row">
                 <span class="jem-search-product-card__price">{{ current_price | money }}</span>
                 {% if show_compare_price %}

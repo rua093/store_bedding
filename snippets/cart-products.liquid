@@ -141,6 +141,7 @@
 
           <tbody role="rowgroup">
             {% for item in cart.items %}
+              {%- capture item_product_display_title -%}{% render 'product-display-title', product: item.product %}{%- endcapture -%}
               <tr
                 id="CartItem-{{ item.key }}"
                 role="row"
@@ -197,10 +198,10 @@
                         href="{{ item.url }}"
                         class="cart-items__title"
                         {% if item.parent_relationship.parent != null %}
-                          aria-label="{{ 'accessibility.nested_product' | t: product_title: item.product.title, parent_title: item.parent_relationship.parent.title | escape }}"
+                          aria-label="{{ 'accessibility.nested_product' | t: product_title: item_product_display_title | strip, parent_title: item.parent_relationship.parent.title | escape }}"
                         {% endif %}
                       >
-                        {{- item.product.title -}}
+                        {{- item_product_display_title | strip -}}
                       </a>
                       {% render 'cart-disclosure-tooltip',
                         product: item.product,
@@ -347,7 +348,7 @@
                     <button
                       class="button cart-items__remove"
                       type="button"
-                      aria-label="{{ 'accessibility.remove_item' | t: title: item.title | escape }}"
+                      aria-label="{{ 'accessibility.remove_item' | t: title: item_product_display_title | strip | escape }}"
                       on:click="/onLineItemRemove/{{ item.index | plus: 1 }}"
                       {% assign can_remove = item.instructions.can_remove | default: true, allow_false: true %}
                       {% if can_remove == false %}

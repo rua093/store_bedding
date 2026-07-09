@@ -25,6 +25,11 @@
     assign show_sale_badge = true
   endif
 
+  assign discount_percent = 0
+  if show_compare_price and compare_price > current_price and compare_price > 0
+    assign discount_percent = compare_price | minus: current_price | times: 100.0 | divided_by: compare_price | round
+  endif
+
   assign has_quick_add = false
   if settings.quick_add and product.available
     assign has_quick_add = true
@@ -76,6 +81,26 @@
   if product == blank or product.id == empty
     assign onboarding = true
   endif
+
+  assign rating = product.metafields.reviews.rating.value.rating
+  assign scale_max = product.metafields.reviews.rating.value.scale_max | default: 5
+  assign rating_count = product.metafields.reviews.rating_count
+  assign decimal_rating = 0
+  assign decimal_rounded = 0
+  assign svg_filled_stars = 0
+
+  if rating != blank
+    assign decimal = rating | modulo: 1
+
+    if decimal >= 0.3 and decimal <= 0.7
+      assign decimal_rating = 0.5
+    elsif decimal > 0.7
+      assign decimal_rating = 1
+    endif
+
+    assign decimal_rounded = decimal_rating | ceil
+    assign svg_filled_stars = rating | floor | plus: decimal_rounded
+  endif
 %}
 
 <product-card
@@ -105,7 +130,7 @@
     {% endunless %}
     ref="productCardLink"
   >
-    <span class="visually-hidden">{{ product.title }}</span>
+    <span class="visually-hidden">{% render 'product-display-title', product: product %}</span>
   </a>
 
   <div class="custom-product-card__card{% if contextual_card_class != blank %} {{ contextual_card_class }}{% endif %}">
@@ -145,7 +170,7 @@
 
       {% if show_sale_badge %}
         <span class="custom-product-card__badge custom-product-card__badge--sale{% if contextual_badge_class != blank %} {{ contextual_badge_class }} {{ contextual_badge_class }}--sale{% endif %}">
-          Sale
+          -{{ discount_percent }}%
         </span>
       {% endif %}
 
@@ -155,8 +180,9 @@
     </div>
 
     <div class="custom-product-card__content{% if contextual_content_class != blank %} {{ contextual_content_class }}{% endif %}">
+      {%- capture product_display_title -%}{% render 'product-display-title', product: product %}{%- endcapture -%}
       <h3 class="custom-product-card__title{% if contextual_title_class != blank %} {{ contextual_title_class }}{% endif %}">
-        {{ product.title | escape }}
+        {{ product_display_title | strip }}
       </h3>
       <div class="custom-product-card__price-row{% if contextual_price_row_class != blank %} {{ contextual_price_row_class }}{% endif %}">
         <span class="custom-product-card__price{% if contextual_price_class != blank %} {{ contextual_price_class }}{% endif %}">
@@ -168,6 +194,40 @@
           </span>
         {% endif %}
       </div>
+      {% if rating != blank %}
+        <div
+          class="custom-product-card__rating"
+          aria-label="{{ rating | round: 1 }} out of {{ scale_max }} stars{% if rating_count != blank %} from {{ rating_count }} reviews{% endif %}"
+        >
+          <svg
+            class="visually-hidden"
+            style="width: 0; height: 0;"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 32 32"
+            role="presentation"
+          >
+            <defs>
+              <linearGradient id="custom-product-card-half-{{ product.id }}" x1="0" x2="100%" y1="0" y2="0">
+                <stop offset="50%" stop-color="#f4b400"></stop>
+                <stop offset="50%" stop-color="rgba(244, 180, 0, 0.2)"></stop>
+              </linearGradient>
+              <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" id="custom-product-card-star-{{ product.id }}">
+                <path d="M31.547 12a.848.848 0 00-.677-.577l-9.427-1.376-4.224-8.532a.847.847 0 00-1.516 0l-4.218 8.534-9.427 1.355a.847.847 0 00-.467 1.467l6.823 6.664-1.612 9.375a.847.847 0 001.23.893l8.428-4.434 8.432 4.432a.847.847 0 001.229-.894l-1.615-9.373 6.822-6.665a.845.845 0 00.214-.869z" />
+              </symbol>
+            </defs>
+          </svg>
+          <div class="custom-product-card__rating-stars" aria-hidden="true">
+            {%- for star in (1..scale_max) -%}
+              <svg class="custom-product-card__rating-star {% if star <= svg_filled_stars %}is-filled{% endif %}" viewBox="0 0 32 32" role="presentation">
+                <use xlink:href="#custom-product-card-star-{{ product.id }}"{% if decimal_rating == 0.5 and star == svg_filled_stars %} fill="url(#custom-product-card-half-{{ product.id }})"{% endif %}></use>
+              </svg>
+            {%- endfor -%}
+          </div>
+          {% if rating_count != blank %}
+            <span class="custom-product-card__rating-count">({{ rating_count }})</span>
+          {% endif %}
+        </div>
+      {% endif %}
     </div>
   </div>
 </product-card>
@@ -280,7 +340,7 @@
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    background: rgba(154, 79, 43, 0.96);
+    background: #fc5732;
     color: #fff8f1;
     box-shadow: 0 10px 22px rgba(108, 55, 29, 0.22);
     border: 1px solid transparent;
@@ -291,6 +351,37 @@
     align-content: start;
     gap: 0.42rem;
     min-width: 0;
+  }
+
+  .custom-product-card__rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28rem;
+  }
+
+  .custom-product-card__rating-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.05rem;
+  }
+
+  .custom-product-card__rating-star {
+    width: 0.78rem;
+    height: 0.78rem;
+    fill: rgba(244, 180, 0, 0.22);
+  }
+
+  .custom-product-card__rating-star.is-filled {
+    fill: #f4b400;
+  }
+
+  .custom-product-card__rating-count {
+    font-family: var(--font-body--family);
+    font-style: var(--font-body--style);
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1;
+    color: #8d6a00;
   }
 
   .custom-product-card__title {
@@ -389,6 +480,15 @@
       min-height: 1.55rem;
       padding: 0.18rem 0.56rem;
       font-size: 0.62rem;
+    }
+
+    .custom-product-card__rating-star {
+      width: 0.68rem;
+      height: 0.68rem;
+    }
+
+    .custom-product-card__rating-count {
+      font-size: 0.7rem;
     }
 
     .custom-product-card__title {

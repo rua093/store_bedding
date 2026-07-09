@@ -406,7 +406,7 @@
         </h2>
         <div class="theme-drawer__header pickup-availability__header-container">
           <div class="pickup-availability__column">
-            <h4 class="pickup-location__h4">{{ closest.product.title }}</h4>
+            <h4 class="pickup-location__h4">{% render 'product-display-title', product: closest.product %}</h4>
             {% unless closest.product.has_only_default_variant %}
               <p class="pickup-location__text-sm">
                 {{ closest.product.selected_or_first_available_variant.title }}

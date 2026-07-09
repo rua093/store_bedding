@@ -11,6 +11,9 @@
   assign add_to_cart_text = 'actions.add' | t
   assign choose_options_text = 'actions.choose' | t
   assign customize_now_text = 'Customize now'
+  capture product_display_title
+    render 'product-display-title', product: product
+  endcapture
 
   assign amazon_customizer_metafield = product.metafields.custom.amazon_customizer
   assign has_amazon_customizer = false
@@ -43,12 +46,12 @@
 {% if quick_add_button == 'customize' %}
   <div
     class="quick-add custom-color-quick-add quick-add--customizer"
-    data-product-title="{{ product.title | escape }}"
+    data-product-title="{{ product_display_title | strip }}"
   >
     <a
       href="{{ product_detail_url }}"
       class="button quick-add__button quick-add__button--customize"
-      aria-label="Customize now {{ product.title | escape }}"
+      aria-label="Customize now {{ product_display_title | strip }}"
     >
       <span class="quick-add__customize-text">
         {{ customize_now_text }}
@@ -59,7 +62,7 @@
   <quick-add-component
     class="quick-add custom-color-quick-add"
     ref="quickAdd"
-    data-product-title="{{ product.title }}"
+    data-product-title="{{ product_display_title | strip }}"
     data-quick-add-button="{{ quick_add_button }}"
     data-product-options-count="{{ product.options.size }}"
   >

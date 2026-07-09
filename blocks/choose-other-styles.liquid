@@ -46,12 +46,13 @@
           {% endif %}
           
           {% assign displayed = displayed | plus: 1 %}
+          {%- capture product_display_title -%}{% render 'product-display-title', product: prod %}{%- endcapture -%}
           
-          <a href="{{ prod.url }}" class="other-styles__product-card" title="{{ prod.title | escape }}">
+          <a href="{{ prod.url }}" class="other-styles__product-card" title="{{ product_display_title | strip }}">
             <div class="other-styles__image-wrapper">
               {% if prod.featured_image %}
                 <img src="{{ prod.featured_image | image_url: width: 180, height: 180, crop: 'center' }}" 
-                     alt="{{ prod.title | escape }}" 
+                     alt="{{ product_display_title | strip }}" 
                      loading="lazy" 
                      width="90" 
                      height="90">

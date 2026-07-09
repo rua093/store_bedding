@@ -11,6 +11,7 @@
     endunless
   endif
 -%}
+{%- capture product_display_title -%}{% render 'product-display-title', product: closest.product %}{%- endcapture -%}
 <div
   id="ProductInformation-{{ section.id }}"
   class="
@@ -32,7 +33,7 @@
       <a
         href="{{ closest.product.selected_or_first_available_variant.url }}"
       >
-        {{- closest.product.title }}
+        {{- product_display_title | strip -}}
       </a>
     </div>
     {% content_for 'blocks' %}

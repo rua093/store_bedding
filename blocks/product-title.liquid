@@ -5,7 +5,8 @@
   {% assign product_title = '<p role="heading" aria-level="3">' | append: text | append: '</p>' %}
   {% render 'text', fallback_text: product_title, block: block %}
 {% else %}
-  {% assign product_title = '<p role="heading" aria-level="3">' | append: closest.product.title | append: '</p>' %}
+  {%- capture product_display_title -%}{% render 'product-display-title', product: closest.product %}{%- endcapture -%}
+  {% assign product_title = '<p role="heading" aria-level="3">' | append: product_display_title | append: '</p>' %}
   <a
     class="contents user-select-text"
     ref="productTitleLink"

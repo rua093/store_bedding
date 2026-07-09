@@ -4,6 +4,7 @@
   assign items_in_cart = cart | line_items_for: product
   assign quick_order_form_id = 'QuickOrder-ProductForm-' | append: product.id | append: '-' | append: section.id
 %}
+{%- capture product_display_title -%}{% render 'product-display-title', product: product %}{%- endcapture -%}
 
 <script
   src="{{ 'quick-order-list.js' | asset_url }}"
@@ -138,7 +139,7 @@
 
                   assign variant_display_name = variant.title
                   if product.variants_count == 1
-                    assign variant_display_name = product.title
+                    assign variant_display_name = product_display_title | strip
                   endif
 
                   assign remove_button_aria_label = 'accessibility.remove_item' | t: title: variant.title | escape

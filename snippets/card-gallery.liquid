@@ -11,6 +11,9 @@
 {% liquid
   assign product = closest.product
   assign block_settings = block.settings
+  capture product_display_title
+    render 'product-display-title', product: product
+  endcapture
   assign image_sizes = '(min-width: 750px) 50vw, 100vw'
   assign disable_pointer_preview = false
   if section and section.type == 'product-list'
@@ -166,7 +169,7 @@
       class="contents"
       ref="cardGalleryLink"
       href="{{ product.selected_or_first_available_variant.url }}"
-      aria-label="{{- product.title -}}"
+      aria-label="{{- product_display_title | strip -}}"
     >
       {% render 'slideshow',
         ref: 'slideshow',
@@ -194,7 +197,7 @@
         ref="cardGalleryLink"
         href="{{ product.selected_or_first_available_variant.url }}"
       >
-        <span class="title-text">{{- product.title -}}</span>
+        <span class="title-text">{{- product_display_title | strip -}}</span>
       </a>
     </div>
   {% elsif product == blank %}

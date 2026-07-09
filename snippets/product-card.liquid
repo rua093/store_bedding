@@ -78,6 +78,7 @@
     view-event-payload="{{ product | standard_event_data: 'view', context: product_view_context | escape }}"
   {%- endunless -%}
 >
+  {%- capture product_display_title -%}{% render 'product-display-title', product: product %}{%- endcapture -%}
   <a
     id="{{ product_card_id | md5 }}"
     {% unless onboarding %}
@@ -87,7 +88,7 @@
     ref="productCardLink"
   >
     <span class="visually-hidden">
-      {{ product.title }}
+      {{ product_display_title | strip }}
     </span>
   </a>
   <div

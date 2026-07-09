@@ -9,9 +9,26 @@
 
 {% liquid
   assign block_settings = block.settings
-  assign plain_text = block_settings.text | strip_newlines | strip
+  assign rendered_text = block_settings.text
+  assign plain_text = rendered_text | strip_newlines | strip
   assign visible_text = plain_text | strip_html
   assign text_width = width | default: block_settings.width
+
+  if closest.product != blank
+    assign short_title = closest.product.metafields.custom.short_title.value | default: closest.product.metafields.custom.short_title
+
+    if short_title != blank and short_title != closest.product.title
+      assign stripped_product_title = closest.product.title | strip
+
+      if visible_text == stripped_product_title
+        assign escaped_product_title = closest.product.title | escape
+        assign escaped_short_title = short_title | escape
+        assign rendered_text = rendered_text | replace: escaped_product_title, escaped_short_title
+        assign plain_text = rendered_text | strip_newlines | strip
+        assign visible_text = plain_text | strip_html
+      endif
+    endif
+  endif
 
   if block_settings.font_size contains 'heading-lg' or block_settings.font_size contains 'heading-xl'
     assign type = 'display'
@@ -94,7 +111,7 @@
   </div>
 {% elsif plain_text != blank %}
   <{{ element }} {{ attributes | strip_newlines | strip }}>
-    {{ block.settings.text }}
+    {{ rendered_text }}
   </{{ element }}>
 {% endif %}
 
