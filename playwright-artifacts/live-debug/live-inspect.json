@@ -1,0 +1,123 @@
+{
+  "title": "Jeminise Cute Baby Dragon Comforter Set | Fantasy Bedding",
+  "hasButtons": true,
+  "buttonsHtml": "<div class=\"product-form-buttons spacing-style\" style=\"--padding-block-start: 0px;--padding-block-end: 0px;--padding-inline-start: 0px;--padding-inline-end: 0px;\" ref=\"productFormButtons\"><span class=\"product-form-text__error hidden\" ref=\"addToCartTextError\">\n              <span class=\"svg-wrapper\"><svg aria-hidden=\"true\" class=\"icon icon-error\" viewBox=\"0 0 13 13\">\n  <circle cx=\"6.5\" cy=\"6.5\" r=\"5.5\" stroke=\"#fff\" stroke-width=\"var(--icon-stroke-width)\"></circle>\n  <circle cx=\"6.5\" cy=\"6.5\" r=\"5.5\" fill=\"#EB001B\" stroke=\"#EB001B\" stroke-width=\".7\"></circle>\n  <path fill=\"#fff\" d=\"m5.874 3.528.1 4.044h1.053l.1-4.044zm.627 6.133c.38 0 .68-.288.68-.656s-.3-.656-.68-.656-.681.288-.681.656.3.656.68.656\"></path>\n  <path fill=\"#fff\" stroke=\"#EB001B\" stroke-width=\".7\" d=\"M5.874 3.178h-.359l.01.359.1 4.044.008.341h1.736l.008-.341.1-4.044.01-.359H5.873Zm.627 6.833c.56 0 1.03-.432 1.03-1.006s-.47-1.006-1.03-1.006-1.031.432-1.031 1.006.47 1.006 1.03 1.006Z\"></path>\n</svg>\n</span>\n            </span>\n\n\n<div class=\"quantity-selector-wrapper\" ref=\"quantitySelectorWrapper\">\n  <quantity-selector-component class=\"quantity-selector\" data-variant-id=\"46747819606215\" ref=\"quantitySelector\">\n    <button class=\"button quantity-minus button-unstyled\" type=\"button\" name=\"minus\" on:click=\"/decreaseQuantity\" ref=\"minusButton\" disabled=\"\">\n      <span class=\"visually-hidden\">Decrease quantity</span><span class=\"svg-wrapper icon-plus\"><svg aria-hidden=\"true\" width=\"14\" height=\"14\" viewBox=\"0 0 14 14\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n  <path d=\"M2.75 7H11.25\" stroke=\"currentColor\" stroke-width=\"var(--icon-stroke-width)\" stroke-linecap=\"round\"></path>\n</svg>\n</span>\n    </button>\n    <input type=\"number\" name=\"quantity\" value=\"1\" data-cart-quantity=\"0\" min=\"1\" data-min=\"1\" on:blur=\"/setQuantity\" on:focus=\"/selectInputValue\" ref=\"quantityInput\" aria-live=\"polite\" aria-label=\"Quantity\" step=\"1\">\n    <button class=\"button quantity-plus button-unstyled\" type=\"button\" name=\"plus\" on:click=\"/increaseQuantity\" ref=\"plusButton\">\n      <span class=\"visually-hidden\">Increase quantity</span><span class=\"svg-wrapper icon-plus\"><svg aria-hidden=\"true\" width=\"14\" height=\"14\" viewBox=\"0 0 14 14\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n  <path class=\"vertical\" d=\"M2.75 7H11.25\" stroke=\"currentColor\" stroke-width=\"var(--icon-stroke-width)\" stroke-linecap=\"round\"></path>\n  <path class=\"horizontal\" d=\"M7 2.75L7 11.25\" stroke=\"currentColor\" stroke-width=\"var(--icon-stroke-width)\" stroke-linecap=\"round\"></path>\n</svg>\n</span>\n    </button>\n  </quantity-selector-component></div>\n\n\n\n\n\n\n            <div class=\"product-form-customize\">\n              <button type=\"button\" class=\"button product-form-customize__button\" data-customize-trigger-proxy=\"\" disabled=\"\">\n                Customize\n              </button>\n            </div>\n          \n\n          <div class=\"product-form-trust-badges\" aria-label=\"Product purchase assurances\">\n            <div class=\"product-form-trust-badges__items\">\n              <div class=\"product-form-trust-badge\">\n                <span class=\"product-form-trust-badge__icon\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"currentColor\" aria-hidden=\"true\">\n  <g>\n    <path d=\"M21.47,11.185l-1.03-1.43a2.5,2.5,0,0,0-2.03-1.05H14.03V6.565a2.5,2.5,0,0,0-2.5-2.5H4.56a2.507,2.507,0,0,0-2.5,2.5v9.94a1.5,1.5,0,0,0,1.5,1.5H4.78a2.242,2.242,0,0,0,4.44,0h5.56a2.242,2.242,0,0,0,4.44,0h1.22a1.5,1.5,0,0,0,1.5-1.5v-3.87A2.508,2.508,0,0,0,21.47,11.185ZM7,18.935a1.25,1.25,0,1,1,1.25-1.25A1.25,1.25,0,0,1,7,18.935Zm6.03-1.93H9.15a2.257,2.257,0,0,0-4.3,0H3.56a.5.5,0,0,1-.5-.5V6.565a1.5,1.5,0,0,1,1.5-1.5h6.97a1.5,1.5,0,0,1,1.5,1.5ZM17,18.935a1.25,1.25,0,1,1,1.25-1.25A1.25,1.25,0,0,1,17,18.935Zm3.94-2.43a.5.5,0,0,1-.5.5H19.15a2.257,2.257,0,0,0-4.3,0h-.82v-7.3h4.38a1.516,1.516,0,0,1,1.22.63l1.03,1.43a1.527,1.527,0,0,1,.28.87Z\"></path>\n    <path d=\"M18.029,12.205h-2a.5.5,0,0,1,0-1h2a.5.5,0,0,1,0,1Z\"></path>\n  </g>\n</svg>\n</span>\n                <span class=\"product-form-trust-badge__content\">\n                  <span class=\"product-form-trust-badge__title\">Free shipping</span>\n                </span>\n              </div>\n              <div class=\"product-form-trust-badge\">\n                <span class=\"product-form-trust-badge__icon\" aria-hidden=\"true\"><svg viewBox=\"0 0 64 64\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" aria-hidden=\"true\">\n  <path d=\"M31.74,7.19,13.36,14.85a1,1,0,0,0-.62.93V32.11h0A22.89,22.89,0,0,0,23.93,51.78l8.18,4.86,8.06-4.85a22.87,22.87,0,0,0,11.09-19.6V14.84a1,1,0,0,0-.65-.94L32.48,7.18A1,1,0,0,0,31.74,7.19Z\"></path>\n  <polyline points=\"22.01 33.5 29.44 39.12 42.56 20.69\"></polyline>\n</svg>\n</span>\n                <span class=\"product-form-trust-badge__content\">\n                  <span class=\"product-form-trust-badge__title\">Secure checkout</span>\n                </span>\n              </div>\n              <div class=\"product-form-trust-badge",
+  "customize": {
+    "disabled": true,
+    "text": "Customize",
+    "html": "<button type=\"button\" class=\"button product-form-customize__button\" data-customize-trigger-proxy=\"\" disabled=\"\">\n                Customize\n              </button>",
+    "rect": {
+      "x": 933.046875,
+      "y": 573.640625,
+      "width": 408.15625,
+      "height": 48,
+      "top": 573.640625,
+      "right": 1341.203125,
+      "bottom": 621.640625,
+      "left": 933.046875
+    },
+    "computed": {
+      "display": "grid",
+      "opacity": "0.5",
+      "pointerEvents": "auto",
+      "cursor": "not-allowed",
+      "height": "48px",
+      "minHeight": "48px"
+    }
+  },
+  "accelerated": null,
+  "acceleratedButton": null,
+  "addToCart": {
+    "text": "Add to cart\n             (1)",
+    "rect": {
+      "x": 874.203125,
+      "y": 1428.1875,
+      "width": 192,
+      "height": 52,
+      "top": 1428.1875,
+      "right": 1066.203125,
+      "bottom": 1480.1875,
+      "left": 874.203125
+    },
+    "computed": {
+      "height": "52px",
+      "minHeight": "auto",
+      "borderRadius": "10px"
+    }
+  },
+  "quantity": {
+    "rect": {
+      "x": 797.046875,
+      "y": 573.640625,
+      "width": 124,
+      "height": 48,
+      "top": 573.640625,
+      "right": 921.046875,
+      "bottom": 621.640625,
+      "left": 797.046875
+    },
+    "computed": {
+      "height": "48px"
+    }
+  },
+  "appBlocks": [
+    {
+      "index": 0,
+      "id": "shopify-block-ASVE4UEdqY01yWHlQN__judge_me_reviews_review_widget_YzQVAU",
+      "classes": "shopify-block shopify-app-block jdgm-horizon-widget",
+      "text": "Customer ReviewsBe the first to write a reviewWrite a review\n\n\n\n  jdgm.data ||= {}; jdgm.data.reviewWidget ||= {};\n  \n  jdgm.data.reviewWidget[8762669662407] = {\"number_of_reviews\":0,\"average_rating\":",
+      "html": "\n\n\n<div style=\"clear:both\"></div>\n<div id=\"judgeme_product_reviews\" class=\"jdgm-widget jdgm-review-widget jdgm--done-setup-widget jdgm-widget-revamp\" data-product-title=\"Jeminise Cute Baby Dragon Comforter Set, Fantasy Bedding - Cute Baby Dragon\" data-id=\"8762669662407\" data-product-id=\"8762669662407\" data-widget=\"review\" data-shop-reviews=\"false\" data-shop-reviews-count=\"0\" data-cart-eligible-template=\"false\" data-shop-average-rating=\"0.00\" data-shop-review-count=\"0\" data-empty-state=\"empty_widget\" data-entry-point=\"review_widget.js\" data-entry-key=\"review-widget/main.js\" data-block-id=\"ASVE4UEdqY01yWHlQN__judge_me_reviews_review_widget_YzQVAU\" data-customer-logged-in=\"false\" style=\"max-width: 1200px; margin: 0 auto;\" data-v-app=\"\" data-widget-name=\"review_widget\" data-impressions-tracked=\"true\"><div data-v-417c96d2=\"\" data-v-7a993789=\"\" class=\"jm-stack jm-stack--space-300 jm-review-widget jm-review-widget--standard-header\" data-image-url=\"https://cdn.shopify.com/s/files/1/0792/5098/1",
+      "rect": {
+        "x": 40,
+        "y": 1824.265625,
+        "width": 1360,
+        "height": 249,
+        "top": 1824.265625,
+        "right": 1400,
+        "bottom": 2073.265625,
+        "left": 40
+      },
+      "style": "",
+      "hasButton": true
+    },
+    {
+      "index": 1,
+      "id": "shopify-block-AZFd6aGFnS21FS1hVa__13768625480086291342",
+      "classes": "shopify-block shopify-app-block",
+      "text": "window['ShopifyForms'] = {\n    ...window['ShopifyForms'],\n    currentPageType: \"product\"\n  };",
+      "html": "<script>\n  window['ShopifyForms'] = {\n    ...window['ShopifyForms'],\n    currentPageType: \"product\"\n  };\n</script>\n\n\n",
+      "rect": {
+        "x": 0,
+        "y": 1400,
+        "width": 1440,
+        "height": 0,
+        "top": 1400,
+        "right": 1440,
+        "bottom": 1400,
+        "left": 0
+      },
+      "style": "",
+      "hasButton": false
+    },
+    {
+      "index": 2,
+      "id": "shopify-block-AMkdPR1kzUnJkYjB1T__13047258039897440615",
+      "classes": "shopify-block shopify-app-block jdgm-horizon-widget",
+      "text": "",
+      "html": "<div id=\"jdgm-cart-drawer-source\" class=\"jdgm-widget\" style=\"display:none\" data-widget=\"cart-drawer\" data-entry-point=\"cart_drawer.js\" data-entry-key=\"cart-drawer/main.js\" data-shop-reviews=\"true\" data-shop-average-rating=\"0.00\" data-shop-review-count=\"0\" data-widget-type=\"review-widget\" data-widget-name=\"unknown\" data-impressions-tracked=\"true\"></div>\n\n\n\n\n",
+      "rect": {
+        "x": 0,
+        "y": 1400,
+        "width": 1440,
+        "height": 0,
+        "top": 1400,
+        "right": 1440,
+        "bottom": 1400,
+        "left": 0
+      },
+      "style": "",
+      "hasButton": false
+    }
+  ],
+  "bodySnippet": "<div class=\"jdgm-review-widget-modal jdgm-write-review-modal\" data-current-page=\"1\" role=\"dialog\" aria-modal=\"true\" style=\"display: none;\">\n  <div class=\"jdgm-write-review-modal__overlay\"></div>\n  <div class=\"jdgm-write-review-modal__container\">\n    <div class=\"jdgm-write-review-modal__content\">\n      <button class=\"jdgm-write-review-modal__close-btn\" aria-label=\"Close review form\">\n        <svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\">\n          <path d=\"M19 5L5 19\" stroke=\"#202223\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n          <path d=\"M5 5L19 19\" stroke=\"#202223\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n        </svg>\n      </button>\n\n      <div class=\"jdgm-write-review-modal__sections\" role=\"region\" aria-label=\"Review form pages\">\n        <div class=\"jdgm-write-review-modal__section jdgm-write-review-modal__section--review-form-intro\"><div class=\"jdgm-write-review-modal__page jdgm-write-review-modal__page--review-form-intro\" data-page=\"1\">\n  <div class=\"jdgm-write-review-modal__page-header\">\n    <div class=\"jdgm-write-review-modal__title\">\n      \n        How would you rate this product?\n      \n    </div>\n    <div class=\"jdgm-write-review-modal__intro\">\n      \n        We would love it if you would share a bit about your experience.\n      \n    </div>\n  </div>\n\n  <div class=\"jdgm-write-review-modal__form\">\n    <div class=\"jdgm-coupon-banner-container\"></div>\n    \n      <!-- Product Review: Show product image and title -->\n      \n        <div class=\"jdgm-write-review-modal__product-image\">\n          <img src=\"https://cdn.shopify.com/s/files/1/0792/5098/1063/files/35698c55c763bd1f8986a1411bf5572920abe617c83f994ad7fe7b1fcd9ec9f3.jpg?v=1783651216\" alt=\"Jeminise Cute Baby Dragon Comforter Set, Fantasy Bedding - Cute Baby Dragon\">\n        </div>\n      \n      \n        <div class=\"jdgm-write-review-modal__product-title\">\n          Jeminise "
+}

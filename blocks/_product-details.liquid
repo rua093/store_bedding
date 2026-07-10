@@ -157,6 +157,8 @@
 
     const initCustomizeTriggerProxy = () => {
       const triggerSelectors = [
+        '.shopify-app-block .amzcustom-open',
+        '[data-amzcustom-root] .amzcustom-open',
         '[id*="jeminise_customizer"] button',
         '[id*="jeminise_customizer"] a',
         '.shopify-app-block [id*="jeminise_customizer"] button',
@@ -1853,6 +1855,25 @@
     > .group-block
     > .group-block-content
     > .shopify-app-block {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    clip: auto !important;
+    clip-path: none !important;
+    white-space: normal !important;
+    border: 0 !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .product-information--main-product
+    .product-details--main-product.product-details--has-amazon-customizer
+    > .group-block
+    > .group-block-content
+    > .shopify-app-block
+    .amzcustom-open {
     position: absolute !important;
     width: 1px !important;
     height: 1px !important;

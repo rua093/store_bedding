@@ -43,6 +43,113 @@ export class CartItemsComponent extends createViewEventElement(Component) {
   #pendingCartFetch = null;
 
   /**
+   * Finds the rendered cart row for a Shopify cart line number.
+   * Hidden surcharge rows are intentionally not rendered, so we cannot rely on
+   * the visible row index matching the real cart line position.
+   * @param {number} line
+   * @returns {HTMLTableRowElement | undefined}
+   */
+  #getCartItemRowByLine(line) {
+    return this.refs.cartItemRows?.find((row) => Number(row.dataset.cartLine) === line);
+  }
+
+  /**
+   * Finds the quantity selector associated with a Shopify cart line number.
+   * @param {number} line
+   * @returns {HTMLElement | undefined}
+   */
+  #getQuantitySelectorByLine(line) {
+    return this.refs.quantitySelectors?.find((selector) => {
+      const input = selector.querySelector('input[data-cart-line]');
+      return Number(input?.dataset.cartLine) === line;
+    });
+  }
+
+  /**
+   * Returns the Shopify cart item JSON for a line number.
+   * @param {number} line
+   * @param {{ items?: Array<any> } | null} cart
+   * @returns {any | null}
+   */
+  #getCartItemByLine(line, cart) {
+    if (!cart?.items || line < 1 || line > cart.items.length) return null;
+    return cart.items[line - 1] ?? null;
+  }
+
+  /**
+   * Builds a batch update payload so customized main lines and their surcharge
+   * addon lines move in lockstep, then the theme rerenders once from the final cart.
+   * @param {number} line
+   * @param {number} quantity
+   * @returns {Promise<{endpoint: string, body: string, lineIds: Array<{id: string, quantity: number}>}>}
+   */
+  async #buildCartUpdateRequest(line, quantity) {
+    const cart = await this.fetchCartData();
+    const cartItem = this.#getCartItemByLine(line, cart);
+    const sections = this.#getSectionsToUpdate();
+
+    const customizationId = cartItem?.properties?._customization_id;
+    const isMainCustomizedItem =
+      customizationId && !cartItem?.properties?._customization_fee_component;
+
+    if (!isMainCustomizedItem) {
+      return {
+        endpoint: Theme.routes.cart_change_url,
+        body: JSON.stringify({
+          line,
+          quantity,
+          sections,
+          sections_url: window.location.pathname,
+        }),
+        lineIds: [{ id: this.#getCartItemRowByLine(line)?.dataset.key ?? '', quantity }],
+      };
+    }
+
+    /** @type {Record<string, number>} */
+    const updates = {};
+    /** @type {Array<{id: string, quantity: number}>} */
+    const lineIds = [];
+
+    for (const item of cart.items ?? []) {
+      if (item.key === cartItem.key || item.properties?._customization_id === customizationId) {
+        const isFeeComponent = Boolean(item.properties?._customization_fee_component);
+        const nextQuantity = isFeeComponent ? quantity : item.key === cartItem.key ? quantity : item.quantity;
+        updates[item.key] = nextQuantity;
+        lineIds.push({ id: item.key, quantity: nextQuantity });
+      }
+    }
+
+    if (!updates[cartItem.key]) {
+      updates[cartItem.key] = quantity;
+      lineIds.push({ id: cartItem.key, quantity });
+    }
+
+    return {
+      endpoint: `${Theme.routes.cart_url}/update.js`,
+      body: JSON.stringify({
+        updates,
+        sections,
+        sections_url: window.location.pathname,
+      }),
+      lineIds,
+    };
+  }
+
+  /**
+   * @returns {string}
+   */
+  #getSectionsToUpdate() {
+    const cartItemsComponents = document.querySelectorAll('cart-items-component');
+    const sectionsToUpdate = new Set([this.sectionId]);
+    cartItemsComponents.forEach((item) => {
+      if (item instanceof HTMLElement && item.dataset.sectionId) {
+        sectionsToUpdate.add(item.dataset.sectionId);
+      }
+    });
+    return Array.from(sectionsToUpdate).join(',');
+  }
+
+  /**
    * True when the event was dispatched from outside this cart-items-component (e.g.
    * `Shopify.actions.updateCart(...)` from an external app, or the SFAPI default
    * handler). Internal dispatchers (cart-discount-component, cart-note) live inside
@@ -140,7 +247,7 @@ export class CartItemsComponent extends createViewEventElement(Component) {
       quantity,
       action: 'change',
     });
-    const lineItemRow = this.refs.cartItemRows[line - 1];
+    const lineItemRow = this.#getCartItemRowByLine(line);
 
     if (!lineItemRow) return;
 
@@ -159,7 +266,7 @@ export class CartItemsComponent extends createViewEventElement(Component) {
       action: 'clear',
     });
 
-    const cartItemRowToRemove = this.refs.cartItemRows[line - 1];
+    const cartItemRowToRemove = this.#getCartItemRowByLine(line);
 
     if (!cartItemRowToRemove) return;
 
@@ -205,7 +312,7 @@ export class CartItemsComponent extends createViewEventElement(Component) {
    * @param {number} config.quantity - The quantity.
    * @param {string} config.action - The action.
    */
-  updateQuantity(config) {
+  async updateQuantity(config) {
     const cartPerformaceUpdateMarker = cartPerformance.createStartingMarker(`${config.action}:user-action`);
 
     this.#disableCartItems();
@@ -213,35 +320,36 @@ export class CartItemsComponent extends createViewEventElement(Component) {
     const { line, quantity } = config;
     const { cartTotal } = this.refs;
 
-    const cartItemsComponents = document.querySelectorAll('cart-items-component');
-    const sectionsToUpdate = new Set([this.sectionId]);
-    cartItemsComponents.forEach((item) => {
-      if (item instanceof HTMLElement && item.dataset.sectionId) {
-        sectionsToUpdate.add(item.dataset.sectionId);
-      }
-    });
-
-    const body = JSON.stringify({
-      line: line,
-      quantity: quantity,
-      sections: Array.from(sectionsToUpdate).join(','),
-      sections_url: window.location.pathname,
-    });
-
     cartTotal?.shimmer();
 
     const deferredUpdatePromise = CartLinesUpdateEvent.createPromise();
-    const lineId = this.refs.cartItemRows[line - 1]?.dataset.key ?? '';
+    let request;
+    try {
+      request = await this.#buildCartUpdateRequest(line, quantity);
+    } catch (error) {
+      console.error(error);
+      deferredUpdatePromise.reject(error);
+      this.dispatchEvent(
+        new CartErrorEvent({
+          error: error?.message || 'Failed to prepare cart update',
+          code: 'SERVICE_UNAVAILABLE',
+        })
+      );
+      this.#enableCartItems();
+      cartPerformance.measureFromMarker(cartPerformaceUpdateMarker);
+      return;
+    }
+
     this.dispatchEvent(
       new CartLinesUpdateEvent({
         action: config.action === 'change' && quantity > 0 ? 'update' : 'remove',
         context: 'cart',
-        lines: [{ id: lineId, quantity }],
+        lines: request.lineIds,
         promise: deferredUpdatePromise.promise,
       })
     );
 
-    fetch(`${Theme.routes.cart_change_url}`, fetchConfig('json', { body }))
+    fetch(request.endpoint, fetchConfig('json', { body: request.body }))
       .then((response) => {
         return response.text();
       })
@@ -256,13 +364,13 @@ export class CartItemsComponent extends createViewEventElement(Component) {
           return;
         }
 
-        const newSectionHTML = new DOMParser().parseFromString(
-          parsedResponseText.sections[this.sectionId],
-          'text/html'
-        );
+        const sectionMarkup = parsedResponseText.sections?.[this.sectionId];
+        const newSectionHTML = sectionMarkup
+          ? new DOMParser().parseFromString(sectionMarkup, 'text/html')
+          : null;
 
         // Grab the new cart item count from a hidden element
-        const newCartHiddenItemCount = newSectionHTML.querySelector('[ref="cartItemCount"]')?.textContent;
+        const newCartHiddenItemCount = newSectionHTML?.querySelector('[ref="cartItemCount"]')?.textContent;
         const newCartItemCount = newCartHiddenItemCount ? parseInt(newCartHiddenItemCount, 10) : 0;
 
         // Update data-cart-quantity for all matching variants
@@ -279,9 +387,16 @@ export class CartItemsComponent extends createViewEventElement(Component) {
           },
         });
 
-        morphSection(this.sectionId, parsedResponseText.sections[this.sectionId], {
-          mode: this.isDrawer ? 'hydration' : 'full',
-        });
+        if (sectionMarkup) {
+          morphSection(this.sectionId, sectionMarkup, {
+            mode: this.isDrawer ? 'hydration' : 'full',
+          });
+        } else {
+          sectionRenderer.renderSection(this.sectionId, {
+            cache: false,
+            mode: this.isDrawer ? 'hydration' : 'full',
+          });
+        }
 
         this.#updateCartQuantitySelectorButtonStates();
       })
@@ -309,7 +424,7 @@ export class CartItemsComponent extends createViewEventElement(Component) {
    * @param {string} parsedResponseText.errors - The errors.
    */
   #handleCartError = (line, parsedResponseText) => {
-    const quantitySelector = this.refs.quantitySelectors[line - 1];
+    const quantitySelector = this.#getQuantitySelectorByLine(line);
     const quantityInput = quantitySelector?.querySelector('input');
 
     if (!quantityInput) throw new Error('Quantity input not found');

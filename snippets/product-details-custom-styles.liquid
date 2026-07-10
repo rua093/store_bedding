@@ -270,7 +270,10 @@
     display: none !important;
   }
 
-  /* For customizable products, hide the original app button and use the inline proxy button in buy buttons */
+  /* For customizable products, keep the app block mounted and only hide the app's own trigger button. */
+  .product-details--main-product.product-details--has-amazon-customizer
+    .shopify-app-block
+    .amzcustom-open,
   .product-details--main-product.product-details--has-amazon-customizer
     [id*='jeminise_customizer'] {
     position: absolute !important;

@@ -180,6 +180,7 @@
                 role="row"
                 class="cart-items__table-row{% if item.parent_relationship.parent != null %} cart-items__nested-line{% endif %}{% if context == 'drawer' %}{% unless item.unit_price_measurement %} cart-items__table-row--full-width-variants{% endunless %}{% endif %}"
                 ref="cartItemRows[]"
+                data-cart-line="{{ item.index | plus: 1 }}"
                 data-parent-key="{{ item.parent_relationship.parent.key }}"
                 data-key="{{ item.key }}"
                 {% if customization_id != blank %}
@@ -309,7 +310,11 @@
                           <p class="cart-items__customization-note">
                             Customization fee included (+{{ grouped_customization_fee | money }})
                           </p>
-                        {%- elsif item.properties['_customization_fee'] != blank -%}
+                        {%- elsif item.properties['_customization_fee'] != blank
+                          and item.properties['_customization_fee'] != '0'
+                          and item.properties['_customization_fee'] != '0.0'
+                          and item.properties['_customization_fee'] != '0.00'
+                        -%}
                           <p class="cart-items__customization-note">Customization fee included</p>
                         {%- endif -%}
                       </div>
