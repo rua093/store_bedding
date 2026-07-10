@@ -434,7 +434,15 @@
     min-width: 0;
   }
 
+  .product-information--main-product .product-form-buttons :is(shopify-accelerated-checkout, .shopify-payment-button) {
+    --shopify-accelerated-checkout-button-block-size: clamp(50px, 5vw, 54px);
+    --shopify-accelerated-checkout-button-border-radius: 13px;
+    width: 100%;
+    min-width: 0;
+  }
+
   .product-information--main-product .product-form-buttons button,
+  .product-information--main-product .product-form-buttons shopify-accelerated-checkout,
   .product-information--main-product .product-form-buttons .shopify-payment-button__button,
   .product-information--main-product .product-form-buttons .shopify-payment-button__more-options {
     min-height: clamp(50px, 5vw, 54px);

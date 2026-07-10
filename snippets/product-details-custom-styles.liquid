@@ -542,7 +542,15 @@
     min-width: 0 !important;
   }
 
+  .product-details--main-product :is(shopify-accelerated-checkout, .shopify-payment-button) {
+    --shopify-accelerated-checkout-button-block-size: 48px !important;
+    --shopify-accelerated-checkout-button-border-radius: 10px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
   /* Buy it Now / Accelerated checkout button (filled caramel) */
+  .product-details--main-product shopify-accelerated-checkout,
   .product-details--main-product .shopify-payment-button__button,
   .product-details--main-product .shopify-payment-button__button--unbranded {
     width: 100% !important;

@@ -156,20 +156,34 @@
     };
 
     const initCustomizeTriggerProxy = () => {
+      const triggerSelectors = [
+        '[id*="jeminise_customizer"] button',
+        '[id*="jeminise_customizer"] a',
+        '.shopify-app-block [id*="jeminise_customizer"] button',
+        '.shopify-app-block [id*="jeminise_customizer"] a',
+        '.shopify-app-block button[data-shopify-app-trigger]',
+        '.shopify-app-block a[data-shopify-app-trigger]'
+      ].join(', ');
+
       document.querySelectorAll('.product-details--main-product[data-has-amazon-customizer="true"]').forEach((detailsContainer) => {
         const proxyButton = detailsContainer.querySelector('[data-customize-trigger-proxy]');
         if (!proxyButton) return;
 
-        const bindProxy = () => {
-          const originalTrigger = detailsContainer.querySelector('[id*="jeminise_customizer"] button, [id*="jeminise_customizer"] a');
+        const enableProxy = (originalTrigger) => {
           if (!originalTrigger) return false;
+
+          const href = originalTrigger.getAttribute('href');
+          const isUsableLink = originalTrigger.tagName === 'A' && href && href !== '#';
+          const isUsableButton = originalTrigger.tagName === 'BUTTON' && !originalTrigger.disabled;
+
+          if (!isUsableLink && !isUsableButton) return false;
 
           proxyButton.disabled = false;
 
           if (proxyButton.dataset.customizeProxyBound === 'true') return true;
 
           proxyButton.addEventListener('click', () => {
-            if (originalTrigger.tagName === 'A' && originalTrigger.href) {
+            if (isUsableLink) {
               if (originalTrigger.target === '_blank') {
                 window.open(originalTrigger.href, '_blank', 'noopener');
                 return;
@@ -186,15 +200,33 @@
           return true;
         };
 
+        const bindProxy = () => enableProxy(detailsContainer.querySelector(triggerSelectors));
+
         if (bindProxy()) return;
 
         let attempts = 0;
         const interval = setInterval(() => {
           attempts++;
-          if (bindProxy() || attempts > 50) {
+          if (bindProxy() || attempts > 75) {
             clearInterval(interval);
           }
         }, 200);
+
+        const observer = new MutationObserver(() => {
+          if (bindProxy()) {
+            observer.disconnect();
+            clearInterval(interval);
+          }
+        });
+
+        observer.observe(detailsContainer, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['href', 'disabled']
+        });
+
+        window.setTimeout(() => observer.disconnect(), 20000);
       });
     };
 
@@ -1821,7 +1853,18 @@
     > .group-block
     > .group-block-content
     > .shopify-app-block {
-    display: none !important;
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 
   .product-information--main-product
