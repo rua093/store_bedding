@@ -1171,7 +1171,7 @@
 
   #cart-drawer .cart-items__table-row {
     --cart-item-price-width: auto;
-    grid-template-columns: 4.25rem minmax(0, 1fr);
+    grid-template-columns: 5rem minmax(0, 1fr);
     grid-template-rows: auto auto auto auto;
     grid-template-areas:
       'media details'
@@ -1179,13 +1179,13 @@
       'media unit_price'
       'media quantity'
       'media error';
-    gap: 0.16rem 0.68rem;
+    gap: 0.14rem 0.62rem;
     align-items: start;
     margin-bottom: 0;
   }
 
   #cart-drawer .cart-items__table-row--full-width-variants {
-    grid-template-columns: 4.25rem minmax(0, 1fr);
+    grid-template-columns: 5rem minmax(0, 1fr);
     grid-template-rows: auto auto auto auto;
     grid-template-areas:
       'media details'
@@ -1201,7 +1201,7 @@
 
   #cart-drawer .cart-items__details {
     display: contents;
-    gap: 0.22rem;
+    gap: 0.18rem;
     min-width: 0;
   }
 
@@ -1233,7 +1233,7 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     font-size: 0.94rem;
-    line-height: 1.22;
+    line-height: 1.24;
     color: #332721;
     width: 100%;
     max-width: 100%;
@@ -1247,7 +1247,7 @@
   #cart-drawer .cart-items__variants * {
     color: #857163;
     font-size: 0.8rem;
-    line-height: 1.2;
+    line-height: 1.18;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1265,6 +1265,7 @@
     color: #fc5732;
     font-size: 0.92rem;
     font-weight: 700;
+    line-height: 1.2;
   }
 
   #cart-drawer .cart-items__unit-price-wrapper .cart-items__compare-price {
@@ -1272,23 +1273,23 @@
     text-decoration-color: rgb(159 140 128 / 0.7);
     font-size: 0.84rem;
     font-weight: 400;
-    margin-inline-start: 0.35rem;
+    margin-inline-start: 0.3rem;
   }
 
   #cart-drawer .cart-items__quantity {
     grid-area: quantity;
     width: 100%;
-    margin-top: 0.12rem;
+    margin-top: 0.08rem;
   }
 
   #cart-drawer .cart-items__quantity-controls {
     width: 100%;
     justify-content: space-between;
-    gap: 0.42rem;
+    gap: 0.38rem;
   }
 
   #cart-drawer .cart-items__quantity .quantity-selector {
-    --quantity-selector-width: 6.9rem;
+    --quantity-selector-width: 6.6rem;
     min-width: var(--quantity-selector-width);
     height: 2.12rem;
     border-radius: 11px;
@@ -1321,7 +1322,7 @@
   @media screen and (min-width: 750px) {
     #cart-drawer .cart-items__table-row,
     #cart-drawer .cart-items__table-row--full-width-variants {
-      grid-template-columns: 4.25rem minmax(0, 1fr);
+      grid-template-columns: 5rem minmax(0, 1fr);
     }
 
     #cart-drawer .cart-items__quantity-controls {
@@ -1332,8 +1333,8 @@
   @media screen and (max-width: 749px) {
     #cart-drawer .cart-items__table-row,
     #cart-drawer .cart-items__table-row--full-width-variants {
-      grid-template-columns: 3.55rem minmax(0, 1fr);
-      gap: 0.14rem 0.62rem;
+      grid-template-columns: 4.75rem minmax(0, 1fr);
+      gap: 0.12rem 0.56rem;
     }
 
     #cart-drawer .cart-items__media-container {
@@ -1343,7 +1344,7 @@
     #cart-drawer .cart-items__title {
       -webkit-line-clamp: 2;
       font-size: 0.88rem;
-      line-height: 1.18;
+      line-height: 1.2;
     }
 
     #cart-drawer .cart-items__variants-wrapper,
@@ -1362,20 +1363,40 @@
     }
 
     #cart-drawer .cart-items__quantity {
-      margin-top: 0.1rem;
+      margin-top: 0.06rem;
     }
 
     #cart-drawer .cart-items__quantity-controls {
-      gap: 0.4rem;
+      gap: 0.36rem;
     }
 
     #cart-drawer .cart-items__quantity .quantity-selector {
-      --quantity-selector-width: 6.15rem;
+      --quantity-selector-width: 6.25rem;
+      display: grid;
+      grid-template-columns: 2.125rem minmax(1.75rem, 1fr) 2.125rem;
+      align-items: center;
+      width: var(--quantity-selector-width);
       min-width: var(--quantity-selector-width);
-      height: 2rem;
+      height: 2.375rem;
+      flex: 0 0 auto;
+      overflow: visible;
     }
 
-    #cart-drawer .cart-items__quantity .quantity-selector button,
+    #cart-drawer .cart-items__quantity .quantity-selector button {
+      width: 2.125rem;
+      height: 2.125rem;
+    }
+
+    #cart-drawer .cart-items__quantity .quantity-selector input {
+      min-width: 0;
+      max-width: none;
+      width: 100%;
+      padding: 0;
+      font-size: 0.92rem;
+      line-height: 1;
+      text-align: center;
+    }
+
     #cart-drawer .cart-items__remove {
       width: 1.92rem;
       height: 1.92rem;

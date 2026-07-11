@@ -1,38 +1,175 @@
-<div class="product-delivery-estimate" data-delivery-estimate aria-label="Estimated delivery">
-  <span class="product-delivery-estimate__icon" aria-hidden="true">
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="1.8"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <path d="M14 16H9m10 0h2v-3.6a1 1 0 0 0-.2-.6l-1.8-2.4a1 1 0 0 0-.8-.4H14" />
-      <path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h8A1.5 1.5 0 0 1 14 6.5V17H3z" />
-      <circle cx="7.5" cy="17.5" r="1.5" />
-      <circle cx="17.5" cy="17.5" r="1.5" />
-    </svg>
-  </span>
+{%- liquid
+  assign delivery_country_form_id = 'pdp-delivery-' | append: product.id | append: '-' | append: section.id
+  assign delivery_country_panel_id = 'pdp-delivery-panel-' | append: product.id | append: '-' | append: section.id
+  assign show_delivery_country_selector = false
+  if localization.available_countries.size > 1
+    assign show_delivery_country_selector = true
+  endif
+-%}
 
-  <span class="product-delivery-estimate__copy">
-    <span class="product-delivery-estimate__label">Estimated delivery:</span>
-    <strong class="product-delivery-estimate__range" data-delivery-date-range></strong>
-  </span>
+<div
+  class="product-delivery-estimate"
+  data-delivery-estimate
+  data-country-code="{{ localization.country.iso_code }}"
+  aria-label="Estimated delivery"
+>
+  {%- if show_delivery_country_selector -%}
+    <dropdown-localization-component class="product-delivery-estimate__localization">
+      <button
+        type="button"
+        class="product-delivery-estimate__country-button"
+        aria-expanded="false"
+        aria-controls="{{ delivery_country_panel_id }}"
+        ref="button"
+        on:click="/toggleSelector"
+      >
+        <span class="product-delivery-estimate__country-label">Deliver to:</span>
+        <span class="product-delivery-estimate__country-name">{{ localization.country.name }}</span>
+        <span class="product-delivery-estimate__country-caret" aria-hidden="true">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
+      </button>
+
+      <div
+        id="{{ delivery_country_panel_id }}"
+        class="product-delivery-estimate__localization-panel color-custom-popover"
+        hidden
+        ref="panel"
+      >
+        {% render 'localization-form',
+          show_country: true,
+          show_language: false,
+          localization_style: 'dropdown',
+          form_id: delivery_country_form_id,
+          back: request.path
+        %}
+      </div>
+    </dropdown-localization-component>
+  {%- else -%}
+    <div class="product-delivery-estimate__country-static">
+      <span class="product-delivery-estimate__country-label">Deliver to:</span>
+      <span class="product-delivery-estimate__country-name">{{ localization.country.name }}</span>
+    </div>
+  {%- endif -%}
+
+  <div class="product-delivery-estimate__shipping-line">
+    <span class="product-delivery-estimate__icon" aria-hidden="true">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M14 16H9m10 0h2v-3.6a1 1 0 0 0-.2-.6l-1.8-2.4a1 1 0 0 0-.8-.4H14" />
+        <path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h8A1.5 1.5 0 0 1 14 6.5V17H3z" />
+        <circle cx="7.5" cy="17.5" r="1.5" />
+        <circle cx="17.5" cy="17.5" r="1.5" />
+      </svg>
+    </span>
+
+    <span class="product-delivery-estimate__copy">
+      <span class="product-delivery-estimate__label">Estimated delivery:</span>
+      <strong class="product-delivery-estimate__range" data-delivery-date-range></strong>
+    </span>
+  </div>
 </div>
 
 {% style %}
   .product-delivery-estimate {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
+    display: grid;
+    gap: 0.38rem;
     width: fit-content;
     max-width: 100%;
     color: #7a675a;
     font-size: 0.9rem;
     line-height: 1.35;
+  }
+
+  .product-delivery-estimate__localization {
+    position: relative;
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .product-delivery-estimate__country-button,
+  .product-delivery-estimate__country-static {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    width: fit-content;
+    max-width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #7a675a;
+    font: inherit;
+    line-height: 1.3;
+    text-align: left;
+  }
+
+  .product-delivery-estimate__country-button {
+    cursor: pointer;
+  }
+
+  .product-delivery-estimate__country-label,
+  .product-delivery-estimate__label {
+    font-weight: 400;
+  }
+
+  .product-delivery-estimate__country-name {
+    font-weight: 600;
+  }
+
+  .product-delivery-estimate__country-caret {
+    display: inline-flex;
+    width: 0.85rem;
+    height: 0.85rem;
+    color: #7a675a;
+    flex: 0 0 auto;
+    transition: transform 180ms ease;
+  }
+
+  .product-delivery-estimate__country-caret :is(svg, img) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .product-delivery-estimate__country-button[aria-expanded='true'] .product-delivery-estimate__country-caret {
+    transform: rotate(180deg);
+  }
+
+  .product-delivery-estimate__localization-panel {
+    position: absolute;
+    top: calc(100% + 0.45rem);
+    left: 0;
+    z-index: 25;
+    width: min(24rem, calc(100vw - 2rem));
+    min-width: 18rem;
+    border: 1px solid rgba(104, 79, 61, 0.12);
+    border-radius: 16px;
+    background: #fffdfb;
+    box-shadow: 0 18px 42px rgba(62, 51, 45, 0.12);
+    overflow: hidden;
+  }
+
+  .product-delivery-estimate__localization-panel localization-form-component {
+    width: 100%;
+  }
+
+  .product-delivery-estimate__localization-panel .country-selector-form__wrapper {
+    max-height: min(24rem, 60vh);
+  }
+
+  .product-delivery-estimate__shipping-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: fit-content;
+    max-width: 100%;
     flex-wrap: wrap;
   }
 
@@ -43,7 +180,7 @@
     width: 1rem;
     height: 1rem;
     flex: 0 0 auto;
-    color: #6f9b91;
+    color: #8f603e;
   }
 
   .product-delivery-estimate__icon svg {
@@ -55,10 +192,6 @@
     min-width: 0;
   }
 
-  .product-delivery-estimate__label {
-    font-weight: 400;
-  }
-
   .product-delivery-estimate__range {
     color: #456a63;
     font-weight: 700;
@@ -68,6 +201,15 @@
   @media screen and (max-width: 749px) {
     .product-delivery-estimate {
       width: 100%;
+    }
+
+    .product-delivery-estimate__localization-panel {
+      min-width: 0;
+      width: min(24rem, calc(100vw - 2.5rem));
+    }
+
+    .product-delivery-estimate__range {
+      white-space: normal;
     }
   }
 {% endstyle %}

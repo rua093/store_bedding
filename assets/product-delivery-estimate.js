@@ -2,8 +2,6 @@
   const ROOT_SELECTOR = '[data-delivery-estimate]';
   const RANGE_SELECTOR = '[data-delivery-date-range]';
   const TIME_ZONE = 'America/New_York';
-  const EARLIEST_BUSINESS_DAYS = 10;
-  const LATEST_BUSINESS_DAYS = 17;
 
   const nyDateFormatter = new Intl.DateTimeFormat('en-US', {
     timeZone: TIME_ZONE,
@@ -21,6 +19,22 @@
     timeZone: 'UTC',
     month: 'long',
   });
+
+  const getDeliveryWindow = (countryCode) => {
+    const normalizedCountryCode = String(countryCode || '').toUpperCase();
+
+    if (normalizedCountryCode === 'US' || normalizedCountryCode === 'CA') {
+      return {
+        minimumBusinessDays: 10,
+        maximumBusinessDays: 17,
+      };
+    }
+
+    return {
+      minimumBusinessDays: 17,
+      maximumBusinessDays: 24,
+    };
+  };
 
   const getTodayInNewYork = () => {
     const parts = nyDateFormatter.formatToParts(new Date());
@@ -95,9 +109,10 @@
     const rangeElement = root.querySelector(RANGE_SELECTOR);
     if (!rangeElement) return;
 
+    const { minimumBusinessDays, maximumBusinessDays } = getDeliveryWindow(root.dataset.countryCode);
     const baseDate = getTodayInNewYork();
-    const earliestDate = addBusinessDays(baseDate, EARLIEST_BUSINESS_DAYS);
-    const latestDate = addBusinessDays(baseDate, LATEST_BUSINESS_DAYS);
+    const earliestDate = addBusinessDays(baseDate, minimumBusinessDays);
+    const latestDate = addBusinessDays(baseDate, maximumBusinessDays);
 
     rangeElement.textContent = formatDateRange(earliestDate, latestDate);
     root.setAttribute('aria-label', formatAriaLabel(earliestDate, latestDate));
