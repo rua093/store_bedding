@@ -35,6 +35,11 @@
   fetchpriority="low"
 ></script>
 <script
+  src="{{ 'cart-customization-preview.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
   src="{{ 'component-cart-quantity-selector.js' | asset_url }}"
   type="module"
   fetchpriority="low"
@@ -153,6 +158,9 @@
                 assign customization_id = item.properties['_customization_id']
                 assign customization_preview = item.properties['_customization_preview']
                 assign customization_manifest = item.properties['_customization_manifest']
+                assign customization_payload_count = item.properties['_customization_payload_count'] | default: '0'
+                assign customization_payload_encoding = item.properties['_customization_payload_encoding']
+                assign customization_payload = ''
                 assign grouped_customization_fee = 0
                 assign grouped_customization_fee_original = 0
                 assign has_grouped_customization_fee = false
@@ -171,6 +179,15 @@
 
                 assign is_customized_item = false
                 if customization_id != blank or customization_preview != blank or customization_manifest != blank or has_grouped_customization_fee
+                  assign is_customized_item = true
+                endif
+
+                if customization_payload_count != blank and customization_payload_count != '0'
+                  assign customization_payload_total = customization_payload_count | plus: 0
+                  for index in (1..customization_payload_total)
+                    assign payload_key = '_customization_payload_' | append: index
+                    assign customization_payload = customization_payload | append: item.properties[payload_key]
+                  endfor
                   assign is_customized_item = true
                 endif
               -%}
@@ -195,7 +212,42 @@
                   role="cell"
                   headers="productImage"
                 >
-                  {% if customization_preview != blank -%}
+                  {% if customization_payload != blank and customization_payload_encoding == 'base64-json' -%}
+                    {% liquid
+                      assign ratio = 1
+                      assign border_opacity = settings.cart_thumbnail_border_opacity | divided_by: 100.0
+                      assign border_override = '--border-width: [cart_thumbnail_border_width]px; --border-style: [cart_thumbnail_border_style]; --border-color: rgb(var(--color-border-rgb) / [cart_thumbnail_border_opacity]); --border-radius: [cart_thumbnail_border_radius]px;' | replace: '[cart_thumbnail_border_width]', settings.cart_thumbnail_border_width | replace: '[cart_thumbnail_border_style]', settings.cart_thumbnail_border | replace: '[cart_thumbnail_border_opacity]', border_opacity | replace: '[cart_thumbnail_border_radius]', settings.cart_thumbnail_border_radius
+
+                      if settings.cart_thumbnail_border_radius > 0
+                        assign border_override = border_override | append: ' overflow: hidden;'
+                      endif
+                      if block_settings.image_ratio == 'portrait'
+                        assign ratio = 0.8
+                      endif
+                    %}
+                    <a
+                      href="{{ item.url }}"
+                      class="cart-items__media-container cart-items__media-container--customized"
+                      style="--ratio:{{ ratio }}; {{ border_override }}"
+                    >
+                      <cart-customization-preview
+                        class="cart-items__custom-preview"
+                        data-customization-preview-root
+                        data-customization-id="{{ customization_id | escape }}"
+                        data-render-context="{{ context | default: 'page' | escape }}"
+                      >
+                        <div
+                          class="cart-items__custom-preview-frame border-style"
+                          data-customization-preview-frame
+                          aria-label="{{ item_product_display_title | strip | escape }} custom preview"
+                        ></div>
+                        <script
+                          type="application/json"
+                          data-customization-payload
+                        >{{ customization_payload | json }}</script>
+                      </cart-customization-preview>
+                    </a>
+                  {% elsif customization_preview != blank -%}
                     {% liquid
                       assign ratio = 1
                       assign border_opacity = settings.cart_thumbnail_border_opacity | divided_by: 100.0
@@ -835,6 +887,37 @@
     object-position: center center;
     width: 100%;
     height: auto;
+  }
+
+  .cart-items__media-container--customized {
+    background: rgb(var(--color-background-rgb) / 0.72);
+  }
+
+  .cart-items__custom-preview {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .cart-items__custom-preview-frame {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    background:
+      radial-gradient(circle at top, rgb(255 255 255 / 0.95), rgb(246 239 232 / 0.92)),
+      linear-gradient(180deg, rgb(250 247 242), rgb(241 233 224));
+  }
+
+  .cart-items__custom-preview[data-rendered='ready'] .cart-items__custom-preview-frame {
+    background: transparent;
+  }
+
+  .cart-items__custom-preview-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .cart-items__empty-button {
