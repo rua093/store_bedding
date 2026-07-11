@@ -84,7 +84,9 @@
 
   assign rating = product.metafields.reviews.rating.value.rating
   assign scale_max = product.metafields.reviews.rating.value.scale_max | default: 5
-  assign rating_count = product.metafields.reviews.rating_count
+  assign rating_count = product.metafields.reviews.rating_count | default: 0
+  assign custom_product_rating_count = product.metafields.custom.product_rating_count.value | default: product.metafields.custom.product_rating_count | default: 0
+  assign total_rating_count = custom_product_rating_count | plus: rating_count
   assign decimal_rating = 0
   assign decimal_rounded = 0
   assign svg_filled_stars = 0
@@ -194,10 +196,10 @@
           </span>
         {% endif %}
       </div>
-      {% if rating != blank %}
+      {% if total_rating_count > 0 %}
         <div
           class="custom-product-card__rating"
-          aria-label="{{ rating | round: 1 }} out of {{ scale_max }} stars{% if rating_count != blank %} from {{ rating_count }} reviews{% endif %}"
+          aria-label="4.5 out of 5 stars from {{ total_rating_count }} reviews"
         >
           <svg
             class="visually-hidden"
@@ -217,15 +219,16 @@
             </defs>
           </svg>
           <div class="custom-product-card__rating-stars" aria-hidden="true">
-            {%- for star in (1..scale_max) -%}
-              <svg class="custom-product-card__rating-star {% if star <= svg_filled_stars %}is-filled{% endif %}" viewBox="0 0 32 32" role="presentation">
-                <use xlink:href="#custom-product-card-star-{{ product.id }}"{% if decimal_rating == 0.5 and star == svg_filled_stars %} fill="url(#custom-product-card-half-{{ product.id }})"{% endif %}></use>
+            {%- for star in (1..4) -%}
+              <svg class="custom-product-card__rating-star is-filled" viewBox="0 0 32 32" role="presentation">
+                <use xlink:href="#custom-product-card-star-{{ product.id }}"></use>
               </svg>
             {%- endfor -%}
+            <svg class="custom-product-card__rating-star is-filled" viewBox="0 0 32 32" role="presentation">
+              <use xlink:href="#custom-product-card-star-{{ product.id }}" fill="url(#custom-product-card-half-{{ product.id }})"></use>
+            </svg>
           </div>
-          {% if rating_count != blank %}
-            <span class="custom-product-card__rating-count">({{ rating_count }})</span>
-          {% endif %}
+          <span class="custom-product-card__rating-count">({{ total_rating_count }})</span>
         </div>
       {% endif %}
     </div>

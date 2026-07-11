@@ -263,6 +263,11 @@
     type="module"
     fetchpriority="low"
   ></script>
+  <script
+    src="{{ 'product-delivery-estimate.js' | asset_url }}"
+    defer
+    fetchpriority="low"
+  ></script>
   <script type="module">
     import { RecentlyViewed } from '@theme/recently-viewed-products';
     RecentlyViewed.addProduct('{{ product.id }}');

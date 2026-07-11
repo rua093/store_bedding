@@ -166,6 +166,7 @@
       </span>
       <span>Extra 10% off at checkout · Use code WELCOME10</span>
     </div>
+    {% render 'product-delivery-estimate', product: product_resource, section: section %}
   </div>
 {%- endif -%}
 {%- if has_volume_pricing -%}
