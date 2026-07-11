@@ -401,7 +401,7 @@
                           endif
                         endfor
                       -%}
-                      {%- if visible_properties_count > 0 -%}
+                        {%- if visible_properties_count > 0 -%}
                         <div class="cart-items__properties-wrapper" data-cart-properties-wrapper>
                         <p class="cart-items__properties-heading">Customizations:</p>
                         <dl class="cart-items__properties">
@@ -410,7 +410,7 @@
                             {%- assign property_first_char = property.first | slice: 0 -%}
                             {%- if property.last != blank and property_first_char != '_' and property.first != 'Customization' -%}
                               {%- assign visible_property_index = visible_property_index | plus: 1 -%}
-                              <div class="cart-items__property{% if visible_property_index > 3 %} is-collapsed{% endif %}"{% if visible_property_index > 3 %} hidden{% endif %}>
+                              <div class="cart-items__property{% if visible_property_index > 2 %} is-collapsed{% endif %}"{% if visible_property_index > 2 %} hidden{% endif %}>
                                 <dt>{{ property.first }}:</dt>
                                 <dd>
                                   {%- if property.last contains '/uploads/' -%}
@@ -423,7 +423,7 @@
                             {%- endif -%}
                           {%- endfor -%}
                         </dl>
-                        {%- if visible_properties_count > 3 -%}
+                        {%- if visible_properties_count > 2 -%}
                           <button type="button" class="cart-items__properties-toggle" data-cart-properties-toggle aria-expanded="false">
                             <span class="cart-items__properties-toggle-more">More</span>
                             <span class="cart-items__properties-toggle-less">Less</span>
@@ -457,22 +457,24 @@
                       assign drawer_compare_price = item.variant.compare_at_price | times: item.quantity | plus: grouped_customization_fee_original
                     endif
                   %}
-                  <div class="cart-items__unit-price-wrapper">
-                    <div class="cart-items__price-inline">
-                      {% if drawer_compare_price > drawer_line_price %}
-                        <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
-                      {% else %}
-                        <span class="visually-hidden">{{ 'content.price' | t }}</span>
-                      {% endif %}
+                  {% unless is_customized_item and context != 'drawer' %}
+                    <div class="cart-items__unit-price-wrapper">
+                      <div class="cart-items__price-inline">
+                        {% if drawer_compare_price > drawer_line_price %}
+                          <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
+                        {% else %}
+                          <span class="visually-hidden">{{ 'content.price' | t }}</span>
+                        {% endif %}
 
-                      <span class="cart-items__sale-price">{{ drawer_line_price | money }}</span>
+                        <span class="cart-items__sale-price">{{ drawer_line_price | money }}</span>
 
-                      {% if drawer_compare_price > drawer_line_price %}
-                        <span class="visually-hidden">{{ 'content.price_regular' | t }}</span>
-                        <s class="compare-at-price cart-items__compare-price">{{ drawer_compare_price | money }}</s>
-                      {% endif %}
+                        {% if drawer_compare_price > drawer_line_price %}
+                          <span class="visually-hidden">{{ 'content.price_regular' | t }}</span>
+                          <s class="compare-at-price cart-items__compare-price">{{ drawer_compare_price | money }}</s>
+                        {% endif %}
+                      </div>
                     </div>
-                  </div>
+                  {% endunless %}
                 </td>
                 <td
                   class="cart-items__quantity"
@@ -1156,6 +1158,10 @@
     display: block;
   }
 
+  .cart-items__property[hidden] {
+    display: none !important;
+  }
+
   .cart-items__properties dt,
   .cart-items__properties dd {
     display: inline;
@@ -1520,23 +1526,32 @@
 {% endstylesheet %}
 <script>
   (() => {
-    const bindCustomizationPropertyToggles = () => {
-      document.querySelectorAll('[data-cart-properties-toggle]').forEach((button) => {
-        if (button.dataset.bound === 'true') return;
-        button.dataset.bound = 'true';
-        button.addEventListener('click', () => {
-          const wrapper = button.closest('[data-cart-properties-wrapper]');
-          if (!wrapper) return;
-          const expanded = wrapper.classList.toggle('is-expanded');
-          wrapper.querySelectorAll('.cart-items__property.is-collapsed').forEach((item) => {
-            item.hidden = !expanded;
-          });
-          button.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    const initializeCustomizationPropertyToggles = () => {
+      document.querySelectorAll('[data-cart-properties-wrapper]').forEach((wrapper) => {
+        if (wrapper.dataset.initialized === 'true') return;
+        wrapper.dataset.initialized = 'true';
+        wrapper.classList.remove('is-expanded');
+        wrapper.querySelectorAll('.cart-items__property.is-collapsed').forEach((item) => {
+          item.hidden = true;
         });
+        const button = wrapper.querySelector('[data-cart-properties-toggle]');
+        if (button) button.setAttribute('aria-expanded', 'false');
       });
     };
 
-    bindCustomizationPropertyToggles();
-    new MutationObserver(bindCustomizationPropertyToggles).observe(document.body, { childList: true, subtree: true });
+    document.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-cart-properties-toggle]');
+      if (!button) return;
+      const wrapper = button.closest('[data-cart-properties-wrapper]');
+      if (!wrapper) return;
+      const expanded = wrapper.classList.toggle('is-expanded');
+      wrapper.querySelectorAll('.cart-items__property.is-collapsed').forEach((item) => {
+        item.hidden = !expanded;
+      });
+      button.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    });
+
+    initializeCustomizationPropertyToggles();
+    new MutationObserver(initializeCustomizationPropertyToggles).observe(document.body, { childList: true, subtree: true });
   })();
 </script>
