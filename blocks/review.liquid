@@ -6,12 +6,14 @@
   assign rating = product.metafields.reviews.rating.value.rating
   assign scale_max = product.metafields.reviews.rating.value.scale_max
   assign rating_count = product.metafields.reviews.rating_count
+  assign custom_product_rating_count = product.metafields.custom.product_rating_count.value | default: product.metafields.custom.product_rating_count | default: 0
 
   if request.visual_preview_mode and product == blank
     assign product = collections.all.products.first
     assign rating = product.metafields.reviews.rating.value | default: 4
     assign scale_max = product.metafields.reviews.rating.value.scale_max | default: 5
     assign rating_count = product.metafields.reviews.rating_count | default: 3
+    assign custom_product_rating_count = product.metafields.custom.product_rating_count.value | default: product.metafields.custom.product_rating_count | default: 0
   endif
 -%}
 
@@ -26,7 +28,52 @@
   {% endstyle %}
 {% endif %}
 
-{%- if rating != blank -%}
+{%- if request.page_type == 'product' -%}
+  {% liquid
+    assign custom_product_rating_count = custom_product_rating_count | default: 0
+    assign rating_count = rating_count | default: 0
+    assign jeminise_design_score_count = custom_product_rating_count | plus: rating_count
+  %}
+  {%- if jeminise_design_score_count > 0 -%}
+    <div
+      class="jeminise-design-score justify-{{ block_settings.alignment }} size-style"
+      style="{% render 'size-style', settings: block_settings %}"
+      {{ block.shopify_attributes }}
+    >
+      <span class="jeminise-design-score__stars" aria-hidden="true">
+        <svg
+          class="visually-hidden"
+          style="width: 0; height: 0;"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 32 32"
+          role="presentation"
+        >
+          <defs>
+            <linearGradient id="jeminise-design-score-half-{{ block.id }}" x1="0" x2="100%" y1="0" y2="0">
+              <stop offset="50%" stop-color="currentColor"></stop>
+              <stop offset="50%" stop-color="rgb(216 164 58 / 0.22)"></stop>
+            </linearGradient>
+            <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" id="jeminise-design-score-star-{{ block.id }}">
+              <path d="M31.547 12a.848.848 0 00-.677-.577l-9.427-1.376-4.224-8.532a.847.847 0 00-1.516 0l-4.218 8.534-9.427 1.355a.847.847 0 00-.467 1.467l6.823 6.664-1.612 9.375a.847.847 0 001.23.893l8.428-4.434 8.432 4.432a.847.847 0 001.229-.894l-1.615-9.373 6.822-6.665a.845.845 0 00.214-.869z" />
+            </symbol>
+          </defs>
+        </svg>
+        {%- for star in (1..4) -%}
+          <svg class="jeminise-design-score__star" viewBox="0 0 32 32" role="presentation">
+            <use xlink:href="#jeminise-design-score-star-{{ block.id }}"></use>
+          </svg>
+        {%- endfor -%}
+        <svg class="jeminise-design-score__star" viewBox="0 0 32 32" role="presentation">
+          <use
+            xlink:href="#jeminise-design-score-star-{{ block.id }}"
+            fill="url(#jeminise-design-score-half-{{ block.id }})"
+          ></use>
+        </svg>
+      </span>
+      <p class="jeminise-design-score__label paragraph">({{ jeminise_design_score_count }} Review)</p>
+    </div>
+  {%- endif -%}
+{%- elsif rating != blank -%}
   {% liquid
     assign star_count_rating = scale_max
     assign decimal_rating = 0
@@ -116,6 +163,40 @@
 {%- endif -%}
 
 {% stylesheet %}
+  .jeminise-design-score {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: fit-content;
+    color: #bd7442;
+  }
+
+  .jeminise-design-score.justify-right {
+    flex-direction: row-reverse;
+  }
+
+  .jeminise-design-score__stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    color: #d8a43a;
+    line-height: 1;
+  }
+
+  .jeminise-design-score__star {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+    flex: 0 0 14px;
+  }
+
+  .jeminise-design-score__label {
+    margin: 0;
+    color: #8c7667;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
   .rating-wrapper {
     --star-fill-color: var(--color-foreground);
     --star-fill-color-rgb: var(--color-foreground-rgb);

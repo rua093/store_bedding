@@ -1,0 +1,73 @@
+<div class="product-delivery-estimate" data-delivery-estimate aria-label="Estimated delivery">
+  <span class="product-delivery-estimate__icon" aria-hidden="true">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M14 16H9m10 0h2v-3.6a1 1 0 0 0-.2-.6l-1.8-2.4a1 1 0 0 0-.8-.4H14" />
+      <path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h8A1.5 1.5 0 0 1 14 6.5V17H3z" />
+      <circle cx="7.5" cy="17.5" r="1.5" />
+      <circle cx="17.5" cy="17.5" r="1.5" />
+    </svg>
+  </span>
+
+  <span class="product-delivery-estimate__copy">
+    <span class="product-delivery-estimate__label">Estimated delivery:</span>
+    <strong class="product-delivery-estimate__range" data-delivery-date-range></strong>
+  </span>
+</div>
+
+{% style %}
+  .product-delivery-estimate {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: fit-content;
+    max-width: 100%;
+    color: #7a675a;
+    font-size: 0.9rem;
+    line-height: 1.35;
+    flex-wrap: wrap;
+  }
+
+  .product-delivery-estimate__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+    color: #6f9b91;
+  }
+
+  .product-delivery-estimate__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .product-delivery-estimate__copy {
+    min-width: 0;
+  }
+
+  .product-delivery-estimate__label {
+    font-weight: 400;
+  }
+
+  .product-delivery-estimate__range {
+    color: #456a63;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-delivery-estimate {
+      width: 100%;
+    }
+  }
+{% endstyle %}
