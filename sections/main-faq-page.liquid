@@ -1,10 +1,14 @@
 {% liquid
   assign faq_items_count = 0
   assign benefit_items_count = 0
+  assign faq_schema_items_count = 0
 
   for block in section.blocks
     if block.type == 'faq_item'
       assign faq_items_count = faq_items_count | plus: 1
+      if block.settings.question != blank and block.settings.answer != blank
+        assign faq_schema_items_count = faq_schema_items_count | plus: 1
+      endif
     elsif block.type == 'benefit_item'
       assign benefit_items_count = benefit_items_count | plus: 1
     endif
@@ -500,6 +504,31 @@
     {% endif %}
   </div>
 </section>
+
+{% if faq_schema_items_count > 0 %}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {% assign rendered_faq_schema_items = 0 %}
+        {% for block in section.blocks %}
+          {% if block.type == 'faq_item' and block.settings.question != blank and block.settings.answer != blank %}
+            {% assign rendered_faq_schema_items = rendered_faq_schema_items | plus: 1 %}
+            {
+              "@type": "Question",
+              "name": {{ block.settings.question | strip_html | strip | json }},
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": {{ block.settings.answer | strip_html | strip | json }}
+              }
+            }{% unless rendered_faq_schema_items == faq_schema_items_count %},{% endunless %}
+          {% endif %}
+        {% endfor %}
+      ]
+    }
+  </script>
+{% endif %}
 
 {% schema %}
 {

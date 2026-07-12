@@ -78,13 +78,40 @@
           {% endfor %}
         {% endcapture %}
 
-        {% render 'product-grid',
+      {% render 'product-grid',
           section: section,
           children: children,
           products: collection.products,
           paginate: paginate,
           enable_infinite_scroll: section.settings.enable_infinite_scroll
         %}
+
+        <script type="application/ld+json">
+          {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": {{ collection.title | json }},
+            "url": {{ request.origin | append: collection.url | json }},
+            {% if collection.description != blank %}
+              "description": {{ collection.description | strip_html | strip | json }},
+            {% endif %}
+            "mainEntity": {
+              "@type": "ItemList",
+              "numberOfItems": {{ paginate.items }},
+              "itemListElement": [
+                {% for product in collection.products %}
+                  {% assign item_position = paginate.current_offset | plus: forloop.index %}
+                  {
+                    "@type": "ListItem",
+                    "position": {{ item_position }},
+                    "url": {{ request.origin | append: product.url | json }},
+                    "name": {{ product.title | json }}
+                  }{% unless forloop.last %},{% endunless %}
+                {% endfor %}
+              ]
+            }
+          }
+        </script>
       {% endpaginate %}
     </div>
   </results-list>

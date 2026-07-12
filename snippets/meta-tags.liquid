@@ -15,7 +15,7 @@
 >
 <meta
   name="theme-color"
-  content=""
+  content="{{ settings.color_palette.background | default: '#ffffff' }}"
 >
 
 {%- liquid
@@ -25,6 +25,9 @@
   assign meta_description = page_description | strip
   assign fallback_shop_description = shop.description | strip | default: shop.name
   assign social_image = page_image | default: settings.logo
+  assign social_image_alt = ''
+  assign robots_directives = 'max-image-preview:large'
+  assign query_string = request.query_string | default: ''
 
   if meta_description == blank
     case request.page_type
@@ -53,6 +56,14 @@
     assign og_url = request.origin
   endif
 
+  if request.page_type == 'search'
+    assign robots_directives = 'noindex,follow,max-image-preview:large'
+  elsif request.page_type == 'collection' or request.page_type == 'blog'
+    if query_string contains 'filter.' or query_string contains 'sort_by=' or query_string contains 'view='
+      assign robots_directives = 'noindex,follow,max-image-preview:large'
+    endif
+  endif
+
   capture website_search_target
     echo request.origin | append: routes.search_url
     echo '?q='
@@ -60,6 +71,7 @@
   endcapture
 
   if social_image
+    assign social_image_alt = social_image.alt | default: og_title
     assign social_image_raw_url = social_image | image_url
     assign social_image_protocol_prefix = social_image_raw_url | slice: 0, 2
     assign social_image_path_prefix = social_image_raw_url | slice: 0, 1
@@ -115,8 +127,16 @@
     content="{{ social_image.height }}"
   >
   <meta
+    property="og:image:alt"
+    content="{{ social_image_alt | escape }}"
+  >
+  <meta
     name="twitter:image"
     content="{{ social_image_absolute_url | escape }}"
+  >
+  <meta
+    name="twitter:image:alt"
+    content="{{ social_image_alt | escape }}"
   >
 {%- endif -%}
 
@@ -128,6 +148,17 @@
   <meta
     property="og:price:currency"
     content="{{ cart.currency.iso_code }}"
+  >
+{%- endif -%}
+
+{%- if request.page_type == 'article' and article != blank -%}
+  <meta
+    property="article:published_time"
+    content="{{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%:z' }}"
+  >
+  <meta
+    property="article:modified_time"
+    content="{{ article.updated_at | date: '%Y-%m-%dT%H:%M:%S%:z' }}"
   >
 {%- endif -%}
 
@@ -169,12 +200,10 @@
   >
 {% endif %}
 
-{% if request.page_type == 'search' %}
-  <meta
-    name="robots"
-    content="noindex,follow"
-  >
-{% endif %}
+<meta
+  name="robots"
+  content="{{ robots_directives }}"
+>
 
 <script type="application/ld+json">
   {

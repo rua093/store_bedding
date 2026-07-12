@@ -315,9 +315,13 @@
   {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": {{ request.origin | append: "#organization" | json }},
     "name": {{ shop.name | json }},
     {% if settings.logo %}
       "logo": {{ settings.logo | image_url: width: 500 | prepend: "https:" | json }},
+    {% endif %}
+    {% if shop.description != blank %}
+      "description": {{ shop.description | strip_html | strip | json }},
     {% endif %}
     "url": {{ request.origin | json }}
   }
