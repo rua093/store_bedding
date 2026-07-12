@@ -1,4 +1,5 @@
 {%- liquid
+  assign free_shipping_context = context | default: 'drawer'
   assign free_shipping_threshold = 10000
   assign amount_remaining = free_shipping_threshold | minus: cart.total_price
 
@@ -20,7 +21,10 @@
   endif
 -%}
 
-<div class="cart-drawer-free-shipping" data-free-shipping-progress>
+<div
+  class="cart-drawer-free-shipping cart-drawer-free-shipping--{{ free_shipping_context }}"
+  data-free-shipping-progress
+>
   <div class="cart-drawer-free-shipping__copy">
     <span class="cart-drawer-free-shipping__title">Free shipping</span>
     {%- if amount_remaining > 0 -%}
@@ -36,7 +40,11 @@
 
   <div
     class="cart-drawer-free-shipping__bar"
-    aria-hidden="true"
+    role="progressbar"
+    aria-label="Free shipping progress"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="{{ progress_value | round }}"
   >
     <span
       class="cart-drawer-free-shipping__progress"
@@ -49,77 +57,3 @@
     <span>{{ progress_value | round }}%</span>
   </div>
 </div>
-
-{% style %}
-  .cart-drawer-free-shipping {
-    display: grid;
-    gap: 0.35rem;
-    padding: 0.62rem 1.25rem 0.72rem;
-    border-bottom: 1px solid rgb(var(--color-foreground-rgb) / 0.08);
-    background: linear-gradient(180deg, rgb(255 251 245 / 0.98), rgb(255 248 239 / 0.94));
-  }
-
-  .cart-drawer-free-shipping__copy {
-    display: grid;
-    gap: 0.12rem;
-  }
-
-  .cart-drawer-free-shipping__title {
-    color: #2f241d;
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  .cart-drawer-free-shipping__message {
-    margin: 0;
-    color: #6d594b;
-    font-size: 0.9rem;
-    line-height: 1.32;
-  }
-
-  .cart-drawer-free-shipping__message strong {
-    color: #b55f3d;
-    font-weight: 700;
-  }
-
-  .cart-drawer-free-shipping__message--success {
-    color: #446b57;
-    font-weight: 600;
-  }
-
-  .cart-drawer-free-shipping__bar {
-    position: relative;
-    width: 100%;
-    height: 0.48rem;
-    overflow: hidden;
-    border-radius: 999px;
-    background: rgb(222 210 199 / 0.7);
-  }
-
-  .cart-drawer-free-shipping__progress {
-    display: block;
-    height: 100%;
-    border-radius: inherit;
-    background: linear-gradient(90deg, #d97d4f 0%, #f0a44f 100%);
-    transition: width 220ms ease;
-  }
-
-  .cart-drawer-free-shipping__meta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    color: #8a7466;
-    font-size: 0.76rem;
-    line-height: 1.2;
-  }
-
-  @media screen and (max-width: 749px) {
-    .cart-drawer-free-shipping {
-      gap: 0.32rem;
-      padding: 0.62rem 1rem 0.68rem;
-    }
-  }
-{% endstyle %}

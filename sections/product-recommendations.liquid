@@ -23,27 +23,48 @@
     echo '--column-count: ' | append: section.settings.columns | append: ';'
     echo '--column-count-mobile: ' | append: section.settings.mobile_columns | append: ';'
   endcapture
+
+  assign recommendation_product = section.settings.product | default: product
+
+  if recommendation_product == blank and request.page_type == 'cart'
+    for item in cart.items
+      unless item.properties._customization_fee_component
+        assign recommendation_product = item.product
+        break
+      endunless
+    endfor
+  endif
+
+  assign should_render_recommendations = true
+  if request.page_type == 'cart' and recommendation_product == blank
+    assign should_render_recommendations = false
+  endif
 %}
 
 {% render 'quick-add-styles' %}
 {% render 'quick-add-modal-styles' %}
 {% render 'variant-picker-styles' %}
 {% render 'product-badges-styles' %}
-<product-recommendations
-  id="product-recommendations-{{ section.id }}"
-  class="product-recommendations{% if section.settings.recommendation_type == 'related' %} product-recommendations--pdp-related-skin{% endif %}"
-  data-url="{{ routes.product_recommendations_url }}?limit={{ section.settings.max_products }}"
-  data-section-id="{{ section.id }}"
-  data-product-id="{{ section.settings.product.id | default: product.id }}"
-  data-intent="{{ section.settings.recommendation_type }}"
-  data-testid="product-recommendations-section"
-  data-recommendations-performed="{{ recommendations.performed }}"
-  data-hydration-key="product-recommendations-{{ section.id }}"
-  {% if section.settings.recommendation_type == 'related' %}
-    style="--pdp-related-bg-image: url('{{ 'bg_new_arrivals.webp' | asset_url }}');"
-  {% endif %}
-  {{ section.shopify_attributes }}
->
+{% if should_render_recommendations %}
+  <product-recommendations
+    id="product-recommendations-{{ section.id }}"
+    class="product-recommendations{% if section.settings.recommendation_type == 'related' %} product-recommendations--pdp-related-skin{% endif %}"
+    data-url="{{ routes.product_recommendations_url }}?limit={{ section.settings.max_products }}"
+    data-section-id="{{ section.id }}"
+    data-product-id="{{ recommendation_product.id }}"
+    data-intent="{{ section.settings.recommendation_type }}"
+    data-testid="product-recommendations-section"
+    data-recommendations-performed="{{ recommendations.performed }}"
+    data-hydration-key="product-recommendations-{{ section.id }}"
+    {% if request.page_type == 'cart' %}
+      data-cart-dependent-section
+      data-cart-recommendations-section-id="{{ section.id }}"
+    {% endif %}
+    {% if section.settings.recommendation_type == 'related' %}
+      style="--pdp-related-bg-image: url('{{ 'bg_new_arrivals.webp' | asset_url }}');"
+    {% endif %}
+    {{ section.shopify_attributes }}
+  >
   {% liquid
     if section.settings.background_color != blank
       render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
@@ -72,9 +93,9 @@
       {% content_for 'blocks' %}
     </div>
 
-    {%- if recommendations.performed or section.settings.product == blank -%}
+    {%- if recommendations.performed or recommendation_product == blank -%}
       {% liquid
-        if section.settings.product == blank
+        if recommendation_product == blank
           assign products = null
           # Onboarding mode: Show placeholder products
           for i in (1..section.settings.max_products)
@@ -84,7 +105,7 @@
         elsif recommendations.performed and recommendations.products_count == 0
           # No recommendations found, pull from catalog
           if section.settings.recommendation_type == 'related'
-            assign products = collections.all.products | reject: 'id', section.settings.product.id
+            assign products = collections.all.products | reject: 'id', recommendation_product.id
           elsif section.settings.recommendation_type == 'complementary'
             # Do not recommend the All collection as complementary products
             assign products = null
@@ -145,7 +166,7 @@
             {% render 'resource-list-carousel',
               ref: 'resourceListCarousel',
               slides: slides,
-              slide_count: recommendations.products.size,
+              slide_count: products.size,
               settings: section.settings
             %}
         {% endcase %}
@@ -169,7 +190,7 @@
           {% render 'resource-list-carousel',
             ref: 'resourceListCarouselMobile',
             slides: slides,
-            slide_count: recommendations.products.size,
+            slide_count: products.size,
             settings: section.settings
           %}
         </div>
@@ -187,7 +208,14 @@
       </div>
     {%- endif -%}
   </div>
-</product-recommendations>
+  </product-recommendations>
+{% elsif request.page_type == 'cart' %}
+  <script
+    type="application/json"
+    data-cart-dependent-section
+    data-cart-recommendations-section-id="{{ section.id }}"
+  ></script>
+{% endif %}
 
 {% stylesheet %}
   .product-recommendations--pdp-related-skin {

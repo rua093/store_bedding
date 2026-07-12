@@ -146,7 +146,69 @@ export class CartItemsComponent extends createViewEventElement(Component) {
         sectionsToUpdate.add(item.dataset.sectionId);
       }
     });
+
+    document
+      .querySelectorAll('[data-cart-dependent-section][data-cart-recommendations-section-id]')
+      .forEach((element) => {
+        const sectionId = element.getAttribute('data-cart-recommendations-section-id');
+
+        if (sectionId) {
+          sectionsToUpdate.add(sectionId);
+        }
+      });
+
     return Array.from(sectionsToUpdate).join(',');
+  }
+
+  /**
+   * Updates all sections that depend on cart contents but live outside cart-items-component.
+   * @param {Record<string, string> | undefined} sections
+   */
+  async #updateCartDependentSections(sections) {
+    if (!sections) return;
+
+    const dependentSections = document.querySelectorAll(
+      '[data-cart-dependent-section][data-cart-recommendations-section-id]'
+    );
+    const handledSectionIds = new Set();
+
+    for (const element of dependentSections) {
+      const sectionId = element.getAttribute('data-cart-recommendations-section-id');
+      const sectionMarkup = sectionId ? sections[sectionId] : null;
+
+      if (!sectionId || handledSectionIds.has(sectionId)) continue;
+
+      handledSectionIds.add(sectionId);
+
+      if (sectionMarkup?.trim().length) {
+        await morphSection(sectionId, sectionMarkup, {
+          mode: 'full',
+          injectStylesheet: true,
+        });
+      } else {
+        document.getElementById(`shopify-section-${sectionId}`)?.remove();
+      }
+    }
+
+    for (const [sectionId, sectionMarkup] of Object.entries(sections)) {
+      if (handledSectionIds.has(sectionId) || !sectionMarkup?.trim().length) continue;
+
+      const parsedSection = new DOMParser().parseFromString(sectionMarkup, 'text/html');
+      const nextSection = parsedSection.body.firstElementChild;
+
+      if (
+        !(nextSection instanceof HTMLElement) ||
+        !nextSection.querySelector('[data-cart-dependent-section][data-cart-recommendations-section-id]')
+      ) {
+        continue;
+      }
+
+      const existingWrapper = document.getElementById(`shopify-section-${sectionId}`);
+      if (existingWrapper) continue;
+
+      const cartSectionWrapper = document.getElementById('shopify-section-cart-section');
+      cartSectionWrapper?.insertAdjacentHTML('afterend', sectionMarkup);
+    }
   }
 
   /**
@@ -166,6 +228,7 @@ export class CartItemsComponent extends createViewEventElement(Component) {
     const external = this.#isExternalCartUpdate(event);
     event.promise
       ?.then(({ detail }) => {
+        const sections = /** @type {Record<string, string> | undefined} */ (detail?.sections);
         const sectionsHtml = detail?.sections?.[this.sectionId];
         if (sectionsHtml) {
           morphSection(this.sectionId, sectionsHtml, { mode: this.isDrawer ? 'hydration' : 'full' });
@@ -179,6 +242,8 @@ export class CartItemsComponent extends createViewEventElement(Component) {
             mode: this.isDrawer ? 'hydration' : 'full',
           });
         }
+
+        return this.#updateCartDependentSections(sections);
       })
       .catch((error) => {
         if (error?.name !== 'AbortError') console.warn('[cart-items] Event promise rejected:', error);
@@ -202,6 +267,8 @@ export class CartItemsComponent extends createViewEventElement(Component) {
             mode: this.isDrawer ? 'hydration' : 'full',
           });
         }
+
+        return this.#updateCartDependentSections(sections);
       })
       .catch((error) => {
         if (error?.name !== 'AbortError') console.warn('[cart-items] Event promise rejected:', error);
@@ -353,7 +420,7 @@ export class CartItemsComponent extends createViewEventElement(Component) {
       .then((response) => {
         return response.text();
       })
-      .then((responseText) => {
+      .then(async (responseText) => {
         const parsedResponseText = JSON.parse(responseText);
 
         resetShimmer(this);
@@ -388,16 +455,17 @@ export class CartItemsComponent extends createViewEventElement(Component) {
         });
 
         if (sectionMarkup) {
-          morphSection(this.sectionId, sectionMarkup, {
+          await morphSection(this.sectionId, sectionMarkup, {
             mode: this.isDrawer ? 'hydration' : 'full',
           });
         } else {
-          sectionRenderer.renderSection(this.sectionId, {
+          await sectionRenderer.renderSection(this.sectionId, {
             cache: false,
             mode: this.isDrawer ? 'hydration' : 'full',
           });
         }
 
+        await this.#updateCartDependentSections(parsedResponseText.sections);
         this.#updateCartQuantitySelectorButtonStates();
       })
       .catch((error) => {
@@ -495,8 +563,10 @@ export class CartItemsComponent extends createViewEventElement(Component) {
           // Update button states for all cart quantity selectors after morph
           this.#updateCartQuantitySelectorButtonStates();
         } else {
-          sectionRenderer.renderSection(this.sectionId, { cache: false, ...morphOptions });
+          await sectionRenderer.renderSection(this.sectionId, { cache: false, ...morphOptions });
         }
+
+        await this.#updateCartDependentSections(sections);
       })
       .catch((error) => {
         if (error?.name !== 'AbortError') console.warn('[cart-items] Event promise rejected:', error);

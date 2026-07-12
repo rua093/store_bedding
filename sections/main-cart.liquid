@@ -47,6 +47,12 @@
         {%- content_for 'block', id: 'cart-page-title', type: '_cart-title' %}
       </div>
 
+      {%- unless cart.empty? -%}
+        <div class="cart-page__free-shipping">
+          {% render 'cart-drawer-free-shipping', context: 'page' %}
+        </div>
+      {%- endunless -%}
+
       <div class="cart-page__items">
         {%- content_for 'block', id: 'cart-page-items', type: '_cart-products' %}
       </div>
@@ -99,6 +105,15 @@
   }
 
   .cart-page__title + .cart-page__items {
+    margin-block-start: var(--margin-lg);
+  }
+
+  .cart-page__free-shipping {
+    grid-column: 1;
+    margin-block-start: var(--margin-lg);
+  }
+
+  .cart-page__free-shipping + .cart-page__items {
     margin-block-start: var(--margin-lg);
   }
 
