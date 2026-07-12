@@ -28,8 +28,8 @@ import { StandardEvents, ProductSelectEvent, CartLinesUpdateEvent, CartErrorEven
  * @typedef {Object} StickyAddToCartRefs
  * @property {HTMLElement} stickyBar - The floating bar container
  * @property {HTMLButtonElement} addToCartButton - Sticky bar's button
- * @property {HTMLElement} quantityDisplay - Quantity display container
- * @property {HTMLElement} quantityNumber - Quantity number element
+ * @property {HTMLElement | undefined} quantityDisplay - Quantity display container
+ * @property {HTMLElement | undefined} quantityNumber - Quantity number element
  * @property {HTMLImageElement} productImage - Product image element
  */
 
@@ -40,7 +40,7 @@ import { StandardEvents, ProductSelectEvent, CartLinesUpdateEvent, CartErrorEven
  * @extends {Component<StickyAddToCartRefs>}
  */
 class StickyAddToCartComponent extends Component {
-  requiredRefs = ['stickyBar', 'addToCartButton', 'quantityDisplay', 'quantityNumber'];
+  requiredRefs = ['stickyBar', 'addToCartButton'];
 
   /** @type {IntersectionObserver | null} */
   #buyButtonsIntersectionObserver = null;
@@ -62,6 +62,12 @@ class StickyAddToCartComponent extends Component {
 
   /** @type {HTMLButtonElement | null} */
   #targetAddToCartButton = null;
+
+  /** @type {HTMLButtonElement | null} */
+  #targetCustomizeButton = null;
+
+  /** @type {MutationObserver | null} */
+  #customizeButtonObserver = null;
 
   /** @type {number} */
   #currentQuantity = 1;
@@ -95,6 +101,7 @@ class StickyAddToCartComponent extends Component {
     pageWrapper?.addEventListener('scroll', this.#handleViewportChange, { signal, passive: true });
 
     this.#getInitialQuantity();
+    this.#refreshActionTargets();
     requestAnimationFrame(() => this.#evaluateStickyVisibility());
 
     // IntersectionObserver callbacks gate visibility on #isChatActive(), but
@@ -111,6 +118,7 @@ class StickyAddToCartComponent extends Component {
     super.disconnectedCallback();
     this.#buyButtonsIntersectionObserver?.disconnect();
     this.#mainBottomObserver?.disconnect();
+    this.#customizeButtonObserver?.disconnect();
     this.#abortController.abort();
     if (this.#animationTimeout) {
       clearTimeout(this.#animationTimeout);
@@ -156,7 +164,6 @@ class StickyAddToCartComponent extends Component {
 
     this.#buyButtonsIntersectionObserver.observe(this.#buyButtonsBlock);
     this.#mainBottomObserver.observe(this.#footerElement);
-    this.#targetAddToCartButton = productForm.querySelector('[ref="addToCartButton"]');
   }
 
   #handleViewportChange = () => {
@@ -194,6 +201,9 @@ class StickyAddToCartComponent extends Component {
    * Handles the add to cart button click in the sticky bar
    */
   handleAddToCartClick = async () => {
+    if (this.#isCustomizerMode() || !this.dataset.variantAvailable || this.dataset.variantAvailable !== 'true') return;
+
+    this.#targetAddToCartButton = this.#getTargetAddToCartButton();
     if (!this.#targetAddToCartButton) return;
     this.#targetAddToCartButton.dataset.puppet = 'true';
     this.#targetAddToCartButton.click();
@@ -221,6 +231,19 @@ class StickyAddToCartComponent extends Component {
     this.#resetTimeout = setTimeout(() => {
       this.refs.addToCartButton.removeAttribute('data-added');
     }, 800);
+  };
+
+  /**
+   * Handles the customize button click in the sticky bar.
+   */
+  handleCustomizeClick = () => {
+    if (!this.#isCustomizerMode() || this.dataset.variantAvailable !== 'true') return;
+
+    const targetCustomizeButton = this.#getTargetCustomizeButton();
+    if (!targetCustomizeButton || targetCustomizeButton.disabled) return;
+
+    this.#targetCustomizeButton = targetCustomizeButton;
+    targetCustomizeButton.click();
   };
 
   /**
@@ -262,17 +285,14 @@ class StickyAddToCartComponent extends Component {
         // Restore visibility state after morphing
         this.refs.stickyBar.setAttribute('data-stuck', currentStuck);
         this.dataset.variantAvailable = variantAvailable;
+        this.dataset.hasAmazonCustomizer = newStickyAddToCart.dataset.hasAmazonCustomizer ?? 'false';
 
         // Update the dataset attributes with new variant info
         if (variant && variant.id) {
           this.dataset.currentVariantId = variant.id;
         }
 
-        // Re-cache the target add to cart button after morphing
-        const productForm = this.#getProductForm();
-        if (productForm) {
-          this.#targetAddToCartButton = productForm.querySelector('[ref="addToCartButton"]');
-        }
+        this.#refreshActionTargets();
 
         if (variant == null) {
           this.#handleVariantUnavailable();
@@ -391,6 +411,117 @@ class StickyAddToCartComponent extends Component {
   }
 
   /**
+   * @returns {boolean}
+   */
+  #isCustomizerMode() {
+    return this.dataset.hasAmazonCustomizer === 'true';
+  }
+
+  /**
+   * @returns {HTMLElement | null}
+   */
+  #getSectionElement() {
+    return this.closest('.shopify-section');
+  }
+
+  /**
+   * @returns {HTMLButtonElement | null}
+   */
+  #getTargetAddToCartButton() {
+    const productForm = this.#getProductForm();
+    return productForm?.querySelector('[ref="addToCartButton"]') ?? null;
+  }
+
+  /**
+   * @returns {HTMLButtonElement | null}
+   */
+  #getTargetCustomizeButton() {
+    const productId = this.dataset.productId;
+    const sectionElement = this.#getSectionElement();
+    if (!productId || !sectionElement) return null;
+
+    const productForm = sectionElement.querySelector(
+      `product-form-component[data-product-id="${productId}"]`
+    );
+    const targetButton = productForm?.querySelector('[data-customize-trigger-proxy]');
+
+    return targetButton instanceof HTMLButtonElement ? targetButton : null;
+  }
+
+  #refreshActionTargets() {
+    if (this.#isCustomizerMode()) {
+      this.#targetAddToCartButton = null;
+      this.#observeCustomizeButton();
+      this.#syncCustomizeButtonState();
+      return;
+    }
+
+    this.#customizeButtonObserver?.disconnect();
+    this.#customizeButtonObserver = null;
+    this.#targetCustomizeButton = null;
+    this.#targetAddToCartButton = this.#getTargetAddToCartButton();
+  }
+
+  #syncCustomizeButtonState() {
+    if (!this.#isCustomizerMode()) return;
+
+    this.#targetCustomizeButton = this.#getTargetCustomizeButton();
+
+    const isAvailable = this.dataset.variantAvailable === 'true';
+    const isReady = Boolean(
+      isAvailable &&
+        this.#targetCustomizeButton &&
+        !this.#targetCustomizeButton.disabled
+    );
+    const shouldDisable = !isReady;
+    const stickyButton = this.refs.addToCartButton;
+
+    if (stickyButton.disabled !== shouldDisable) {
+      stickyButton.disabled = shouldDisable;
+    }
+  }
+
+  #observeCustomizeButton() {
+    const sectionElement = this.#getSectionElement();
+    if (!sectionElement) return;
+
+    this.#customizeButtonObserver?.disconnect();
+    this.#customizeButtonObserver = new MutationObserver((mutations) => {
+      const shouldSync = mutations.some((mutation) => {
+        if (mutation.type === 'attributes') {
+          return (
+            mutation.attributeName === 'disabled' &&
+            mutation.target instanceof Element &&
+            mutation.target.matches('[data-customize-trigger-proxy]')
+          );
+        }
+
+        if (mutation.type !== 'childList') return false;
+
+        return [...mutation.addedNodes, ...mutation.removedNodes].some((node) => {
+          if (!(node instanceof Element)) return false;
+
+          return (
+            node.matches('[data-customize-trigger-proxy], product-form-component') ||
+            node.querySelector('[data-customize-trigger-proxy]') !== null
+          );
+        });
+      });
+
+      if (shouldSync) {
+        this.#syncCustomizeButtonState();
+      }
+    });
+
+    this.#customizeButtonObserver.observe(sectionElement, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['disabled'],
+    });
+  }
+
+  /**
    * Gets the initial quantity from the data attribute
    */
   #getInitialQuantity() {
@@ -403,6 +534,8 @@ class StickyAddToCartComponent extends Component {
    */
   #updateButtonText() {
     const { addToCartButton, quantityDisplay, quantityNumber } = this.refs;
+    if (this.#isCustomizerMode()) return;
+    if (!quantityDisplay || !quantityNumber) return;
 
     const available = !addToCartButton.disabled;
 
