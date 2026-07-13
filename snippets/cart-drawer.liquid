@@ -171,10 +171,36 @@
   #cart-drawer .theme-drawer__dialog {
     width: min(31rem, 92vw);
     overflow: hidden;
+    --backdrop-opacity: 0.42;
+    --backdrop-color-rgb: 38 27 20;
+    --animation-speed: 0.38s;
+    --animation-timing-fade-in: cubic-bezier(0.18, 0.92, 0.22, 1);
+    --animation-timing-fade-out: cubic-bezier(0.26, 0.96, 0.32, 1);
     background:
       radial-gradient(circle at top center, rgb(252 248 242 / 0.98), transparent 36%),
       linear-gradient(180deg, rgb(var(--color-background-rgb) / 1), rgb(var(--color-background-rgb) / 0.96));
     border-inline-start: 1px solid var(--cart-drawer-panel-border);
+  }
+
+  #cart-drawer .theme-drawer__dialog::backdrop {
+    backdrop-filter: none;
+    background: rgb(var(--backdrop-color-rgb) / var(--backdrop-opacity));
+    transition: opacity 0.38s cubic-bezier(0.26, 0.96, 0.32, 1);
+  }
+
+  #cart-drawer .theme-drawer__dialog.theme-drawer__dialog--opening,
+  #cart-drawer .theme-drawer__dialog.theme-drawer__dialog--opening-inline-start {
+    animation-duration: 0.38s;
+    animation-timing-function: cubic-bezier(0.18, 0.92, 0.22, 1);
+  }
+
+  #cart-drawer .theme-drawer__dialog.theme-drawer__dialog--closing {
+    animation-duration: 0.38s;
+    animation-timing-function: cubic-bezier(0.26, 0.96, 0.32, 1);
+  }
+
+  #cart-drawer .theme-drawer__dialog.theme-drawer__dialog--closing::backdrop {
+    opacity: 0;
   }
 
   .cart-drawer__inner {
@@ -400,6 +426,16 @@
   .cart-items__wrapper--drawer-empty .cart-items__empty-button {
     width: min(100%, 16.5rem);
     margin-top: 0.35rem;
+    --button-color: #fff;
+    --button-background-color: #e56a45;
+    --button-border-color: #e56a45;
+    --button-focus-outline-color: #e56a45;
+  }
+
+  .cart-items__wrapper--drawer-empty .cart-items__empty-button:hover:not([disabled]) {
+    --button-color: #fff;
+    --button-background-color: #e56a45;
+    --button-border-color: #e56a45;
   }
 
   cart-drawer-component:not(:has(.cart-form)) .cart-drawer__content {

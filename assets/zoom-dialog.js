@@ -4,7 +4,6 @@ import {
   startViewTransition,
   onAnimationEnd,
   prefersReducedMotion,
-  debounce,
   preloadImage,
   isLowPowerDevice,
 } from '@theme/utilities';
@@ -28,12 +27,11 @@ export class ZoomDialog extends Component {
 
   connectedCallback() {
     super.connectedCallback();
-    this.refs.dialog.addEventListener('scroll', this.handleScroll);
+    this.#syncActiveMediaFromSelection();
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.refs.dialog.removeEventListener('scroll', this.handleScroll);
   }
 
   /**
@@ -50,11 +48,9 @@ export class ZoomDialog extends Component {
     const targetThumbnail = thumbnails.children[index];
 
     const open = () => {
+      this.#setActiveMedia(index);
       dialog.showModal();
-
-      for (const target of [targetThumbnail, targetImage]) {
-        target?.scrollIntoView({ behavior: 'instant' });
-      }
+      targetThumbnail?.scrollIntoView({ behavior: 'instant', block: 'nearest', inline: 'nearest' });
     };
 
     /** @type {HTMLElement | null} */
@@ -113,27 +109,6 @@ export class ZoomDialog extends Component {
   }
 
   /**
-   * Handles the scroll event of the dialog, which is used to update the active thumbnail when the corresponding image is visible in the main view.
-   * @param {Event} event - The scroll event.
-   */
-  handleScroll = debounce(async () => {
-    const { media, thumbnails } = this.refs;
-
-    const mostVisibleElement = await getMostVisibleElement(media);
-    const activeIndex = media.indexOf(mostVisibleElement);
-    const targetThumbnail = thumbnails.children[activeIndex];
-
-    if (!targetThumbnail || !(targetThumbnail instanceof HTMLElement)) return;
-
-    Array.from(thumbnails.querySelectorAll('button')).forEach((button, i) => {
-      button.setAttribute('aria-selected', `${i === activeIndex}`);
-    });
-
-    this.loadHighResolutionImage(mostVisibleElement);
-    this.dispatchEvent(new ZoomMediaSelectedEvent(activeIndex));
-  }, 50);
-
-  /**
    * Closes the zoom dialog.
    */
   async close() {
@@ -141,11 +116,10 @@ export class ZoomDialog extends Component {
 
     if (!supportsViewTransitions() || isLowPowerDevice()) return this.closeDialog();
 
-    // Find the most visible image using IntersectionObserver
-    const mostVisibleElement = await getMostVisibleElement(media);
+    const activeIndex = this.#getActiveIndex();
+    const mostVisibleElement = media[activeIndex];
+    if (!mostVisibleElement) return this.closeDialog();
 
-    // Get the index and set up transition
-    const activeIndex = media.indexOf(mostVisibleElement);
     const itemTransitionName = `gallery-item-close`;
 
     const mediaGallery = /** @type {import('./media-gallery').MediaGallery | undefined} */ (
@@ -238,6 +212,8 @@ export class ZoomDialog extends Component {
       button.setAttribute('aria-selected', `${i === index}`);
     });
 
+    this.#setActiveMedia(index);
+
     scrollIntoView(targetThumbnail, {
       ancestor: thumbnails,
       behavior: options.behavior,
@@ -248,42 +224,36 @@ export class ZoomDialog extends Component {
     const targetImage = media[index];
 
     if (targetImage) {
-      targetImage.scrollIntoView({
-        behavior: options.behavior,
-      });
-
       this.loadHighResolutionImage(targetImage);
     }
     this.dispatchEvent(new ZoomMediaSelectedEvent(index));
+  }
+
+  #getActiveIndex() {
+    const selectedIndex = Array.from(this.refs.thumbnails.querySelectorAll('button')).findIndex(
+      (button) => button.getAttribute('aria-selected') === 'true'
+    );
+
+    return selectedIndex >= 0 ? selectedIndex : 0;
+  }
+
+  #setActiveMedia(index) {
+    this.refs.media.forEach((item, mediaIndex) => {
+      const isActive = mediaIndex === index;
+      if (!isActive) {
+        item.querySelector('drag-zoom-wrapper')?.resetZoomState?.();
+      }
+      item.toggleAttribute('hidden', !isActive);
+      item.setAttribute('aria-hidden', `${!isActive}`);
+      item.dataset.active = `${isActive}`;
+    });
+  }
+
+  #syncActiveMediaFromSelection() {
+    this.#setActiveMedia(this.#getActiveIndex());
   }
 }
 
 if (!customElements.get('zoom-dialog')) {
   customElements.define('zoom-dialog', ZoomDialog);
-}
-
-/**
- * Get the most visible element from a list of elements.
- * @param {HTMLElement[]} elements - The elements to get the most visible element from.
- * @returns {Promise<HTMLElement>} A promise that resolves to the most visible element.
- */
-function getMostVisibleElement(elements) {
-  return new Promise((resolve) => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const mostVisible = entries.reduce((prev, current) =>
-          current.intersectionRatio > prev.intersectionRatio ? current : prev
-        );
-        observer.disconnect();
-        resolve(/** @type {HTMLElement} */ (mostVisible.target));
-      },
-      {
-        threshold: Array.from({ length: 100 }, (_, i) => i / 100),
-      }
-    );
-
-    for (const element of elements) {
-      observer.observe(element);
-    }
-  });
 }

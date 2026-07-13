@@ -49,6 +49,70 @@
       href="{{ 'site.webmanifest' | asset_url }}"
     >
 
+    {%- if request.page_type == 'collection' and collection != blank -%}
+      {%- liquid
+        assign collection_hero_preload_image = collection.metafields.custom.banner_img.value
+        if collection_hero_preload_image == blank
+          assign collection_hero_preload_image = collection.image
+        endif
+      -%}
+      {%- if collection_hero_preload_image != blank -%}
+        <link
+          rel="preload"
+          as="image"
+          href="{{ collection_hero_preload_image | image_url: width: 1920 }}"
+          imagesrcset="
+            {{ collection_hero_preload_image | image_url: width: 750 }} 750w,
+            {{ collection_hero_preload_image | image_url: width: 1100 }} 1100w,
+            {{ collection_hero_preload_image | image_url: width: 1500 }} 1500w,
+            {{ collection_hero_preload_image | image_url: width: 1800 }} 1800w,
+            {{ collection_hero_preload_image | image_url: width: 2100 }} 2100w,
+            {{ collection_hero_preload_image | image_url: width: 2400 }} 2400w,
+            {{ collection_hero_preload_image | image_url: width: 2880 }} 2880w,
+            {{ collection_hero_preload_image | image_url: width: 3200 }} 3200w,
+            {{ collection_hero_preload_image | image_url: width: 3840 }} 3840w
+          "
+          imagesizes="100vw"
+          fetchpriority="high"
+        >
+      {%- elsif collection.handle == 'all' -%}
+        <link
+          rel="preload"
+          as="image"
+          href="{{ 'bg-product.webp' | asset_url }}"
+          fetchpriority="high"
+        >
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- if request.page_type == 'product' and product != blank -%}
+      {%- liquid
+        assign product_media_preload_image = product.selected_or_first_available_variant.featured_media.preview_image
+        if product_media_preload_image == blank
+          assign product_media_preload_image = product.featured_media.preview_image
+        endif
+      -%}
+      {%- if product_media_preload_image != blank -%}
+        <link
+          rel="preload"
+          as="image"
+          href="{{ product_media_preload_image | image_url: width: 1920 }}"
+          imagesrcset="
+            {{ product_media_preload_image | image_url: width: 352 }} 352w,
+            {{ product_media_preload_image | image_url: width: 832 }} 832w,
+            {{ product_media_preload_image | image_url: width: 1200 }} 1200w,
+            {{ product_media_preload_image | image_url: width: 1600 }} 1600w,
+            {{ product_media_preload_image | image_url: width: 1920 }} 1920w,
+            {{ product_media_preload_image | image_url: width: 2560 }} 2560w,
+            {{ product_media_preload_image | image_url: width: 3200 }} 3200w,
+            {{ product_media_preload_image | image_url: width: 3840 }} 3840w
+          "
+          imagesizes="(min-width: 750px) 50vw, 100vw"
+          fetchpriority="high"
+        >
+      {%- endif -%}
+    {%- endif -%}
+
     {%- render 'meta-tags' -%}
     {%- render 'stylesheets' -%}
     {%- render 'fonts' -%}

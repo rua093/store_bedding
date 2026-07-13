@@ -25,7 +25,7 @@
   aria-labelledby="CollectionHeroTitle-{{ section.id }}"
 >
   <div
-    class="collection-hero{% if has_hero_image == false and uses_all_collection_fallback_bg == false %} collection-hero--no-media{% endif %}{% if uses_all_collection_fallback_bg %} collection-hero--all-fallback-bg{% endif %}"
+    class="collection-hero{% if has_hero_image %} collection-hero--has-media{% endif %}{% if has_hero_image == false and uses_all_collection_fallback_bg == false %} collection-hero--no-media{% endif %}{% if uses_all_collection_fallback_bg %} collection-hero--all-fallback-bg{% endif %}"
     {% if uses_all_collection_fallback_bg %}
       style="--collection-hero-fallback-bg: url('{{ all_collection_fallback_bg }}');"
     {% endif %}
@@ -34,7 +34,7 @@
       <div class="collection-hero__media">
         {{
           hero_image
-          | image_url: width: 3840
+          | image_url: width: 1920
           | image_tag:
             width: hero_image.width,
             height: hero_image.height,
@@ -42,6 +42,7 @@
             sizes: '100vw',
             loading: 'eager',
             fetchpriority: 'high',
+            decoding: 'sync',
             alt: collection.title,
             class: 'collection-hero__image'
         }}
@@ -87,6 +88,10 @@
     background:
       radial-gradient(circle at top center, rgb(255 249 242 / 0.92), transparent 58%),
       linear-gradient(135deg, #f8efe5 0%, #efdfd0 48%, #e4ceb7 100%);
+  }
+
+  .collection-hero--has-media {
+    background: none;
   }
 
   .collection-hero__media,
@@ -152,36 +157,9 @@
   animation: collection-hero-fade-up 450ms ease-out both;
 }
 
-.collection-hero__content-inner::before {
-  content: '';
-  position: absolute;
-  inset: -0.35rem clamp(0.75rem, 4vw, 3rem);
-  z-index: -1;
-  border-radius: 999px;
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgb(18 12 8 / 0.36) 0%,
-      rgb(18 12 8 / 0.24) 38%,
-      rgb(18 12 8 / 0.1) 64%,
-      transparent 80%
-    );
-  backdrop-filter: blur(7px) saturate(108%);
-  -webkit-backdrop-filter: blur(7px) saturate(108%);
-  box-shadow:
-    0 18px 60px rgb(0 0 0 / 0.2),
-    inset 0 1px 0 rgb(255 255 255 / 0.08);
-  opacity: 0.96;
-  pointer-events: none;
-}
-
 .collection-hero--no-media .collection-hero__content,
 .collection-hero--all-fallback-bg .collection-hero__content {
   color: #2f241d;
-}
-
-.collection-hero--no-media .collection-hero__content-inner::before {
-  display: none;
 }
 
 .collection-hero__eyebrow {
@@ -321,20 +299,6 @@
     .collection-hero__content-inner {
       width: min(100%, 92vw);
       padding: 1.55rem 1.1rem;
-    }
-
-    .collection-hero__content-inner::before {
-      inset: -0.2rem 0;
-      border-radius: 28px;
-      background:
-        radial-gradient(
-          ellipse at center,
-          rgb(18 12 8 / 0.34) 0%,
-          rgb(18 12 8 / 0.2) 50%,
-          transparent 78%
-        );
-      backdrop-filter: blur(4px) saturate(104%);
-      -webkit-backdrop-filter: blur(4px) saturate(104%);
     }
 
     .collection-hero__eyebrow {

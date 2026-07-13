@@ -337,9 +337,9 @@
 
   .product-information--main-product .product-information__media .media-gallery--carousel {
     --product-gallery-max-media-size: clamp(
-      280px,
-      calc(100vh - var(--header-group-height, 0px) - 110px),
-      700px
+      320px,
+      calc(100vh - var(--header-group-height, 0px) - 88px),
+      740px
     );
   }
 
@@ -397,12 +397,12 @@
 
   .product-information--main-product .product-information__media .media-gallery--carousel .product-media-container {
     background: linear-gradient(180deg, #ffffff 0%, #fffaf4 58%, #fff6ee 100%);
-    border: 1px solid rgba(120, 84, 58, 0.16);
-    border-radius: 22px;
+    border: 1px solid rgba(120, 84, 58, 0.22);
+    border-radius: 12px;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.94),
       inset 0 0 0 1px rgba(255, 255, 255, 0.54),
-      0 16px 30px rgba(47, 36, 29, 0.08);
+      0 18px 34px rgba(47, 36, 29, 0.1);
   }
 
   .product-information--main-product .product-information__media .product-media {
@@ -430,9 +430,9 @@
       --product-gallery-max-media-size: min(
         100%,
         clamp(
-          280px,
-          calc(100vh - var(--header-group-height, 0px) - 110px),
-          700px
+          320px,
+          calc(100vh - var(--header-group-height, 0px) - 88px),
+          740px
         )
       );
     }
@@ -499,7 +499,7 @@
     min-width: var(--thumbnail-width);
     aspect-ratio: 1 / 1;
     padding: 4px;
-    border-radius: 18px;
+    border-radius: 10px;
     background: linear-gradient(180deg, #ffffff 0%, #fff8f0 100%);
     border: 1px solid rgba(120, 84, 58, 0.18);
     box-shadow:
@@ -545,7 +545,7 @@
     .product-information--main-product .product-information__media .media-gallery--carousel slideshow-container,
     .product-information--main-product .product-information__media .media-gallery--carousel .product-media-container {
       margin: 0 !important;
-      border-radius: 18px !important;
+      border-radius: 12px !important;
       max-height: var(--product-gallery-max-media-size);
     }
 
@@ -622,6 +622,12 @@
       {% for media in sorted_media %}
         {% capture children %}
           {%- liquid
+              assign media_loading = 'lazy'
+
+              if forloop.first
+                assign media_loading = 'eager'
+              endif
+
               if needs_both_sizes and forloop.first
                 assign media_sizes = sizes_single
               else
@@ -631,10 +637,10 @@
           {% if block_settings.aspect_ratio != 'adapt' and block_settings.constrain_to_viewport %}
             <div
               class="product-media-constraint-wrapper">
-              {%- render 'product-media', media: media, sizes: media_sizes, is_main_product_media: forloop.first -%}
+              {%- render 'product-media', media: media, sizes: media_sizes, loading: media_loading, is_main_product_media: forloop.first -%}
             </div>
           {% else %}
-            {%- render 'product-media', media: media, sizes: media_sizes, is_main_product_media: forloop.first -%}
+            {%- render 'product-media', media: media, sizes: media_sizes, loading: media_loading, is_main_product_media: forloop.first -%}
           {% endif %}
         {% endcapture %}
         {% capture class %}
@@ -699,7 +705,7 @@
 
     {% if render_slideshow_arrows %}
       {% capture slideshow_arrows %}
-        {% render 'slideshow-arrows', class: 'mobile:hidden', icon_style: block_settings.icons_style %}
+        {% render 'slideshow-arrows', class: 'mobile:hidden', icon_style: block_settings.icons_style, icon_shape: 'circle' %}
       {% endcapture %}
     {% endif %}
 
@@ -719,6 +725,13 @@
         data-testid="media-gallery-grid"
       >
         {% for media in sorted_media %}
+          {%- liquid
+            assign media_loading = 'lazy'
+
+            if forloop.first
+              assign media_loading = 'eager'
+            endif
+          -%}
           <li
             ref="media[]"
             class="{{ product_media_container_class }} product-media-container--{{ media.media_type }} {% unless block_settings.aspect_ratio == 'adapt' %}product-media-container--force-aspect{% endunless %}"
@@ -750,10 +763,10 @@
             -%}
             {% if block_settings.aspect_ratio != 'adapt' and block_settings.constrain_to_viewport %}
               <div class="product-media-constraint-wrapper">
-                {%- render 'product-media', media: media, sizes: media_sizes, is_main_product_media: forloop.first -%}
+                {%- render 'product-media', media: media, sizes: media_sizes, loading: media_loading, is_main_product_media: forloop.first -%}
               </div>
             {% else %}
-              {%- render 'product-media', media: media, sizes: media_sizes, is_main_product_media: forloop.first -%}
+              {%- render 'product-media', media: media, sizes: media_sizes, loading: media_loading, is_main_product_media: forloop.first -%}
             {% endif %}
           </li>
         {% endfor %}
@@ -835,9 +848,6 @@
                 class="{{ product_media_container_class | remove: 'media-fit-cover' }} product-media-container--{{ media.media_type }}{% if media.media_type == 'image' %} product-media-container--zoomable{% endif %}"
                 style="{% if block_settings.aspect_ratio == 'adapt' %} --media-preview-ratio: {{ media.preview_image.aspect_ratio | default: 1.0 }};{% endif %}"
                 ref="media[]"
-                {% if media.media_type == 'image' %}
-                  on:click="/close"
-                {% endif %}
               >
                 {% if media.media_type == 'image' %}
                   <drag-zoom-wrapper class="product-media__drag-zoom-wrapper">
@@ -1046,6 +1056,60 @@
     cursor: zoom-out;
   }
 
+  @media screen and (min-width: 750px) {
+    .dialog-zoomed-gallery {
+      display: grid;
+      place-items: center;
+      padding:
+        var(--padding-lg)
+        calc(var(--thumbnail-width) + var(--padding-lg) * 3)
+        var(--padding-lg)
+        var(--padding-lg);
+      box-sizing: border-box;
+      min-height: 100vh;
+    }
+
+    .dialog-zoomed-gallery .product-media-container {
+      width: min(100%, calc(100vw - var(--thumbnail-width) - var(--padding-lg) * 4));
+      max-height: calc(100vh - var(--padding-lg) * 2);
+      margin-inline: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .dialog-zoomed-gallery .product-media-container[hidden] {
+      display: none !important;
+    }
+
+    .dialog-zoomed-gallery .product-media {
+      width: 100%;
+      max-height: calc(100vh - var(--padding-lg) * 2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .dialog-zoomed-gallery .product-media__drag-zoom-wrapper {
+      width: 100%;
+      height: min(100%, calc(100vh - var(--padding-lg) * 2));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .dialog-zoomed-gallery .product-media__drag-zoom-wrapper .product-media__image {
+      margin-inline: auto;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .dialog-zoomed-gallery .product-media__drag-zoom-wrapper:active .product-media__image {
+      cursor: grabbing;
+    }
+  }
+
   .dialog--preloading {
     opacity: 0;
   }
@@ -1151,7 +1215,7 @@
   }
 
   .dialog-zoomed-gallery .product-media-container--zoomable.product-media-container--image {
-    cursor: zoom-out;
+    cursor: default;
   }
 
   .dialog-zoomed-gallery .product-media-container--video deferred-media,
@@ -1293,8 +1357,23 @@
   }
 
   .media-gallery--carousel slideshow-arrows .slideshow-control {
-    padding-inline: 0 var(--padding-md);
+    padding: 0;
     opacity: 1;
+  }
+
+  .product-information--main-product .product-information__media .media-gallery--carousel slideshow-arrows .slideshow-control {
+    background: #fff;
+    color: #111;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    box-shadow: 0 8px 22px rgb(17 17 17 / 14%);
+    border: 1px solid rgb(120 84 58 / 14%);
+  }
+
+  .product-information--main-product .product-information__media .media-gallery--carousel slideshow-arrows[position='center'] {
+    padding-inline: 18px;
   }
 
   @media screen and (max-width: 749px) {

@@ -485,6 +485,11 @@
     --header-padding: var(--padding-sm);
     --font-paragraph--line-height: 1;
     --header-content-transition-timing: 0s;
+    --header-sticky-transition-duration: 420ms;
+    --header-sticky-hide-duration: 560ms;
+    --header-sticky-transition-easing: cubic-bezier(0.22, 1, 0.36, 1);
+    --header-sticky-hide-easing: cubic-bezier(0.16, 1, 0.3, 1);
+    --header-sticky-offset: 6px;
 
     display: block;
     contain: layout style;
@@ -681,8 +686,12 @@
   }
 
   .header[data-sticky-state] {
-    transition: opacity var(--animation-speed) var(--animation-easing);
+    transition:
+      opacity var(--header-sticky-transition-duration) var(--header-sticky-transition-easing),
+      transform var(--header-sticky-transition-duration) var(--header-sticky-transition-easing);
     opacity: 1;
+    transform: translateY(0);
+    will-change: opacity, transform;
   }
 
   .header[data-sticky-state='active'] {
@@ -701,6 +710,9 @@
 
   .header[data-sticky-state='idle'] {
     opacity: 0;
+    transform: translateY(calc(-1 * var(--header-sticky-offset)));
+    transition-duration: var(--header-sticky-hide-duration);
+    transition-timing-function: var(--header-sticky-hide-easing);
   }
 
   @media screen and (max-width: 749px) {
@@ -727,7 +739,16 @@
       var(--color-background-top-row) 0 var(--top-row-height),
       var(--color-background-bottom-row) var(--top-row-height) var(--header-height)
     );
-    transition: height var(--animation-speed-slow) var(--ease-out-cubic);
+    transition:
+      height var(--header-sticky-transition-duration) var(--header-sticky-transition-easing),
+      backdrop-filter var(--header-sticky-transition-duration) var(--header-sticky-transition-easing),
+      -webkit-backdrop-filter var(--header-sticky-transition-duration) var(--header-sticky-transition-easing),
+      box-shadow var(--header-sticky-transition-duration) var(--header-sticky-transition-easing);
+  }
+
+  .header[data-sticky-state='idle'] .header__underlay-closed {
+    transition-duration: var(--header-sticky-hide-duration);
+    transition-timing-function: var(--header-sticky-hide-easing);
   }
 
   .header__underlay-open {

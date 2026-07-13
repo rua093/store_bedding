@@ -128,8 +128,23 @@
     </product-component>
   </div>
 
-  {% if is_main_product_page %}
-    <div class="product-information__details-below" data-product-details-below hidden></div>
+  {% if is_main_product_page and product.description != blank %}
+    <div class="product-information__details-below" data-product-details-below>
+      <details class="product-description-collapsible">
+        <summary class="product-description-collapsible__summary">
+          <span>Product Details</span>
+          <span class="product-description-collapsible__icon" aria-hidden="true">+</span>
+        </summary>
+        <div class="product-description-collapsible__content">
+          <rte-formatter
+            class="product-description-rich"
+            style="--width: 100%; --max-width: 100%;"
+          >
+            {{ product.description }}
+          </rte-formatter>
+        </div>
+      </details>
+    </div>
   {% endif %}
 
   {{ additional_blocks }}
@@ -220,7 +235,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 26px;
+    border-radius: 14px;
     background:
       radial-gradient(circle at top left, rgba(255, 241, 225, 0.98), transparent 34%),
       radial-gradient(circle at bottom right, rgba(255, 247, 238, 0.86), transparent 28%),
@@ -249,7 +264,7 @@
     max-width: 100%;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 249, 242, 0.93) 100%);
     border: 1px solid rgba(120, 84, 58, 0.18);
-    border-radius: 22px;
+    border-radius: 12px;
     padding: clamp(18px, 1.8vw, 24px);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.94),
@@ -329,7 +344,7 @@
   }
 
   .product-information--main-product .product-description-rich__section--intro {
-    max-width: 68ch;
+    max-width: none;
   }
 
   .product-information--main-product .product-description-rich__section--intro > p:first-child {
@@ -737,7 +752,7 @@
 
     .product-information--main-product .product-description-rich__section--intro {
       grid-column: 1 / -1;
-      max-width: 72ch;
+      max-width: none;
     }
   }
 
@@ -807,7 +822,7 @@
     .product-information--main-product .product-information__details-below > .product-description-collapsible,
     .product-information--main-product .product-information__details-below > .accordion,
     .product-information--main-product .product-information__details-below > .shopify-app-block {
-      border-radius: 18px;
+      border-radius: 12px;
       padding: 18px;
     }
 

@@ -13,9 +13,11 @@
 
   assign high_res_url = media.preview_image | image_url: width: 3840
   assign fetch_priority = 'auto'
+  assign decoding_mode = 'async'
 
   if is_main_product_media
     assign fetch_priority = 'high'
+    assign decoding_mode = 'sync'
   endif
 
   assign focal_point_style = ''
@@ -33,7 +35,7 @@
   data-personalizer-preview="{{ preview_product.id }}"
   {% endif %}>
   {{
-    media.preview_image | image_url: width: 3840 | image_tag: widths: widths, alt: media_alt, sizes: sizes, loading: loading, class: 'product-media__image', ref: ref_image_to_transition, data_max_resolution: high_res_url, fetchpriority: fetch_priority, style: focal_point_style, ref: image_ref
+    media.preview_image | image_url: width: 3840 | image_tag: widths: widths, alt: media_alt, sizes: sizes, loading: loading, class: 'product-media__image', ref: ref_image_to_transition, data_max_resolution: high_res_url, fetchpriority: fetch_priority, decoding: decoding_mode, style: focal_point_style, ref: image_ref
   }}
 
   {%- if is_main_product_media and preview_product != blank -%}
@@ -175,11 +177,7 @@
 
   .product-media__image {
     object-position: var(--focal-point, center center);
-    transition: transform var(--animation-speed-slow) var(--animation-easing);
-  }
-
-  .product-media:hover .product-media__image {
-    transform: scale(1.02);
+    transition: none;
   }
 
   @media screen and (min-width: 750px) {

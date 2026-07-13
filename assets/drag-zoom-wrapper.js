@@ -4,10 +4,12 @@ import { Component } from '@theme/component';
 
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 5;
-const DEFAULT_ZOOM = 1.5;
+const DEFAULT_ZOOM = 1;
+const DESKTOP_TOGGLE_ZOOM = 2;
 const DOUBLE_TAP_DELAY = 300;
 const DOUBLE_TAP_DISTANCE = 50;
 const DRAG_THRESHOLD = 10;
+const WHEEL_ZOOM_STEP = 0.25;
 
 /**
  * @typedef {object} Refs
@@ -46,6 +48,12 @@ export class DragZoomWrapper extends Component {
 
   /** @type {boolean} */
   #hasManualZoom = false;
+  /** @type {number | null} */
+  #activePointerId = null;
+  /** @type {boolean} */
+  #pointerMoved = false;
+  /** @type {boolean} */
+  #desktopEnabled = false;
 
   get #image() {
     return this.refs.image;
@@ -57,10 +65,7 @@ export class DragZoomWrapper extends Component {
 
     this.#initResizeListener();
     window.addEventListener(DialogCloseEvent.eventName, this.#resetZoom);
-
-    if (!isMobileBreakpoint()) return;
-
-    this.#initEventListeners();
+    this.#setupInteractionMode();
     this.#updateTransform();
   }
 
@@ -74,12 +79,35 @@ export class DragZoomWrapper extends Component {
     const { signal } = this.#controller;
     const options = { passive: false, signal };
 
-    this.addEventListener('touchstart', this.#handleTouchStart, options);
-    this.addEventListener('touchmove', this.#handleTouchMove, options);
-    this.addEventListener('touchend', this.#handleTouchEnd, options);
+    if (this.#desktopEnabled) {
+      this.addEventListener('pointerdown', this.#handlePointerDown, options);
+      this.addEventListener('pointermove', this.#handlePointerMove, options);
+      this.addEventListener('pointerup', this.#handlePointerUp, options);
+      this.addEventListener('pointercancel', this.#handlePointerUp, options);
+      this.addEventListener('wheel', this.#handleWheel, options);
+      this.addEventListener('click', this.#handleDesktopClick, options);
+    } else {
+      this.addEventListener('touchstart', this.#handleTouchStart, options);
+      this.addEventListener('touchmove', this.#handleTouchMove, options);
+      this.addEventListener('touchend', this.#handleTouchEnd, options);
+    }
 
     // Initialize transform immediately
     this.#updateTransform();
+  }
+
+  #setupInteractionMode() {
+    const shouldUseDesktop = !isMobileBreakpoint();
+
+    if (this.#initialized && this.#desktopEnabled === shouldUseDesktop) {
+      return;
+    }
+
+    this.#controller.abort();
+    this.#controller = new AbortController();
+    this.#initialized = false;
+    this.#desktopEnabled = shouldUseDesktop;
+    this.#initEventListeners();
   }
 
   disconnectedCallback() {
@@ -91,9 +119,7 @@ export class DragZoomWrapper extends Component {
   }
 
   #handleResize = () => {
-    if (!this.#initialized && isMobileBreakpoint()) {
-      this.#initEventListeners();
-    }
+    this.#setupInteractionMode();
 
     if (this.#initialized) {
       this.#requestUpdateTransform();
@@ -204,14 +230,14 @@ export class DragZoomWrapper extends Component {
       this.#hasManualZoom = false; // Reset the flag
       this.#translate = { x: 0, y: 0 }; // Center the image
     } else {
-      // Toggle between zoom levels: 1x ↔ 1.5x
+      // Toggle between zoom levels: 1x ↔ 2x
       const tolerance = 0.05; // Small tolerance for floating point comparison
 
       if (Math.abs(this.#scale - MIN_ZOOM) < tolerance) {
-        // Currently at 1x, go to 1.5x
-        targetZoom = DEFAULT_ZOOM;
+        // Currently at 1x, go to zoomed state
+        targetZoom = DESKTOP_TOGGLE_ZOOM;
       } else {
-        // Currently at 1.5x or any other level, go to 1x
+        // Currently zoomed, go back to 1x
         targetZoom = MIN_ZOOM;
       }
     }
@@ -341,6 +367,118 @@ export class DragZoomWrapper extends Component {
   };
 
   /**
+   * @param {PointerEvent} event
+   */
+  #handlePointerDown = (event) => {
+    if (event.pointerType !== 'mouse' || event.button !== 0) return;
+
+    this.#activePointerId = event.pointerId;
+    this.#pointerMoved = false;
+    this.#isDragging = this.#scale > MIN_ZOOM;
+    this.#startPosition = { x: event.clientX, y: event.clientY };
+    this.#startTranslate = { x: this.#translate.x, y: this.#translate.y };
+
+    this.setPointerCapture?.(event.pointerId);
+  };
+
+  /**
+   * @param {PointerEvent} event
+   */
+  #handlePointerMove = (event) => {
+    if (event.pointerType !== 'mouse' || this.#activePointerId !== event.pointerId || !this.#isDragging) return;
+
+    preventDefault(event);
+
+    const dx = event.clientX - this.#startPosition.x;
+    const dy = event.clientY - this.#startPosition.y;
+
+    if (!this.#pointerMoved && Math.hypot(dx, dy) < DRAG_THRESHOLD) {
+      return;
+    }
+
+    this.#pointerMoved = true;
+    this.#translate.x = this.#startTranslate.x + dx / this.#scale;
+    this.#translate.y = this.#startTranslate.y + dy / this.#scale;
+    this.#requestUpdateTransform();
+  };
+
+  /**
+   * @param {PointerEvent} event
+   */
+  #handlePointerUp = (event) => {
+    if (this.#activePointerId !== event.pointerId) return;
+
+    this.releasePointerCapture?.(event.pointerId);
+    this.#activePointerId = null;
+    this.#isDragging = false;
+    this.#requestUpdateTransform();
+  };
+
+  /**
+   * @param {WheelEvent} event
+   */
+  #handleWheel = (event) => {
+    if (!this.#desktopEnabled) return;
+
+    preventDefault(event);
+
+    const nextScale = clamp(this.#scale + (event.deltaY < 0 ? WHEEL_ZOOM_STEP : -WHEEL_ZOOM_STEP), MIN_ZOOM, MAX_ZOOM);
+    this.#zoomAroundPoint(nextScale, event.clientX, event.clientY);
+  };
+
+  /**
+   * @param {MouseEvent} event
+   */
+  #handleDesktopClick = (event) => {
+    if (!this.#desktopEnabled || event.button !== 0) return;
+
+    if (this.#pointerMoved) {
+      this.#pointerMoved = false;
+      return;
+    }
+
+    this.#toggleDesktopZoom(event.clientX, event.clientY);
+  };
+
+  #toggleDesktopZoom(clientX, clientY) {
+    const tolerance = 0.05;
+    const targetZoom = Math.abs(this.#scale - MIN_ZOOM) < tolerance ? DESKTOP_TOGGLE_ZOOM : MIN_ZOOM;
+    this.#zoomAroundPoint(targetZoom, clientX, clientY);
+  }
+
+  #zoomAroundPoint(nextScale, clientX, clientY) {
+    const oldScale = this.#scale;
+    const targetScale = clamp(nextScale, MIN_ZOOM, MAX_ZOOM);
+
+    if (Math.abs(targetScale - oldScale) < 0.001) return;
+
+    if (targetScale <= MIN_ZOOM) {
+      this.#scale = MIN_ZOOM;
+      this.#translate = { x: 0, y: 0 };
+      this.#hasManualZoom = false;
+      this.#requestUpdateTransform();
+      return;
+    }
+
+    const rect = this.getBoundingClientRect();
+    const containerCenter = {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+    };
+    const distanceFromCenter = {
+      x: clientX - containerCenter.x,
+      y: clientY - containerCenter.y,
+    };
+    const scaleDelta = targetScale / oldScale - 1;
+
+    this.#scale = targetScale;
+    this.#hasManualZoom = true;
+    this.#translate.x -= (distanceFromCenter.x * scaleDelta) / this.#scale;
+    this.#translate.y -= (distanceFromCenter.y * scaleDelta) / this.#scale;
+    this.#requestUpdateTransform();
+  }
+
+  /**
    * Constrain image translation to keep it within the viewport
    */
   #constrainTranslation() {
@@ -446,7 +584,7 @@ export class DragZoomWrapper extends Component {
   };
 
   /**
-   * Reset zoom to default state (1.5x scale, centered position)
+   * Reset zoom to default state (1x scale, centered position)
    * Called when zoom is exited/closed
    */
   #resetZoom = () => {
@@ -463,12 +601,19 @@ export class DragZoomWrapper extends Component {
     this.#lastTapTime = 0;
     this.#lastTapPosition = null;
     this.#hasDraggedBeyondThreshold = false;
+    this.#activePointerId = null;
+    this.#pointerMoved = false;
+    this.#hasManualZoom = false;
 
     // Update CSS properties to reflect reset state
     this.style.setProperty('--drag-zoom-scale', DEFAULT_ZOOM.toString());
     this.style.setProperty('--drag-zoom-translate-x', '0px');
     this.style.setProperty('--drag-zoom-translate-y', '0px');
   };
+
+  resetZoomState() {
+    this.#resetZoom();
+  }
 
   destroy() {
     this.#controller.abort();

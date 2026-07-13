@@ -26,14 +26,13 @@
   data-free-shipping-progress
 >
   <div class="cart-drawer-free-shipping__copy">
-    <span class="cart-drawer-free-shipping__title">Free shipping</span>
     {%- if amount_remaining > 0 -%}
       <p class="cart-drawer-free-shipping__message">
-        You're only <strong>{{ amount_remaining_money }}</strong> away from free shipping.
+        Free shipping at <strong>{{ threshold_money }}</strong> · add <strong>{{ amount_remaining_money }}</strong> more.
       </p>
     {%- else -%}
       <p class="cart-drawer-free-shipping__message cart-drawer-free-shipping__message--success">
-        You unlocked free shipping on this order.
+        Free shipping unlocked on this order.
       </p>
     {%- endif -%}
   </div>
@@ -50,10 +49,5 @@
       class="cart-drawer-free-shipping__progress"
       style="width: {{ progress_value }}%;"
     ></span>
-  </div>
-
-  <div class="cart-drawer-free-shipping__meta">
-    <span>Goal: {{ threshold_money }}</span>
-    <span>{{ progress_value | round }}%</span>
   </div>
 </div>

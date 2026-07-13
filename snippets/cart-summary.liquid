@@ -261,25 +261,51 @@
 </div>
 
 <div class="cart__ctas">
-  <button
-    type="submit"
-    id="checkout"
-    class="cart__checkout-button button"
-    name="checkout"
-    {% if cart == empty %}
-      disabled
-    {% endif %}
-    form="cart-form"
-  >
-    <span class="button-text">
-      {{ 'content.checkout' | t }}
-    </span>
-  </button>
+  {% if context == 'drawer' %}
+    <div class="cart__primary-actions">
+      <a
+        href="{{ routes.cart_url }}"
+        class="cart__view-cart-button button-secondary"
+      >
+        <span class="button-text">View cart</span>
+      </a>
+
+      <button
+        type="submit"
+        id="checkout"
+        class="cart__checkout-button button"
+        name="checkout"
+        {% if cart == empty %}
+          disabled
+        {% endif %}
+        form="cart-form"
+      >
+        <span class="button-text">
+          {{ 'content.checkout' | t }}
+        </span>
+      </button>
+    </div>
+  {% else %}
+    <button
+      type="submit"
+      id="checkout"
+      class="cart__checkout-button button"
+      name="checkout"
+      {% if cart == empty %}
+        disabled
+      {% endif %}
+      form="cart-form"
+    >
+      <span class="button-text">
+        {{ 'content.checkout' | t }}
+      </span>
+    </button>
+  {% endif %}
 
   {% if additional_checkout_buttons and settings.show_accelerated_checkout_buttons %}
     <div
       class="
-        additional-checkout-buttons
+        additional-checkout-buttons cart__additional-checkout-buttons
         {% if accelerated_checkout_buttons_layout == 'vertical' %}additional-checkout-buttons--vertical{% endif %}
       "
     >
@@ -461,11 +487,32 @@
     grid-template-columns: 1fr;
   }
 
+  .cart__primary-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0.68rem;
+  }
+
   .cart__ctas .cart__checkout-button {
     width: 100%;
     height: clamp(25px, var(--height-buy-buttons), 55px);
     padding-inline: var(--padding-4xl);
+    --button-color: #fff;
+    --button-background-color: #e56a45;
+    --button-border-color: #e56a45;
+    --button-focus-outline-color: #e56a45;
     box-shadow: 0 16px 32px rgb(62 51 45 / 0.12);
+  }
+
+  .cart__ctas .cart__checkout-button:hover:not([disabled]) {
+    --button-color: #fff;
+    --button-background-color: #e56a45;
+    --button-border-color: #e56a45;
+  }
+
+  .cart__view-cart-button {
+    width: 100%;
+    min-width: 0;
   }
 
   .cart-drawer__summary .cart-totals:not(:has(.cart-totals__original-container:empty)) {
@@ -491,10 +538,16 @@
     flex-grow: 1;
     min-width: 0;
     font-size: var(--font-size--sm);
+    box-shadow: none;
+    outline: none;
   }
 
   .cart-discount__input::placeholder {
     color: rgb(var(--color-input-text-rgb) / var(--opacity-subdued-text));
+  }
+
+  .cart-discount__input:focus {
+    box-shadow: inset 0 0 0 1px var(--color-input-border);
   }
 
   .cart-discount__pill-code {
@@ -524,6 +577,19 @@
 
   .cart-discount__button {
     height: 100%;
+  }
+
+  .cart-drawer__summary .cart-discount__button {
+    --button-color: #fff;
+    --button-background-color: #e56a45;
+    --button-border-color: #e56a45;
+    --button-focus-outline-color: #e56a45;
+  }
+
+  .cart-drawer__summary .cart-discount__button:hover:not([disabled]) {
+    --button-color: #fff;
+    --button-background-color: #e56a45;
+    --button-border-color: #e56a45;
   }
 
   .cart-discount__content {
@@ -693,13 +759,53 @@
     font-size: 0.9rem;
   }
 
-  .cart-totals--drawer .cart__ctas .cart__checkout-button {
-    min-height: 56px;
-    height: 56px;
-    margin-top: 0.28rem;
-    font-size: 0.94rem;
-    padding-block: 0.7rem;
-    box-shadow: 0 10px 20px rgb(62 51 45 / 0.08);
+  .cart-drawer__summary .cart__ctas .cart__checkout-button {
+    min-height: 48px;
+    height: 48px;
+    margin-top: 0.18rem;
+    font-size: 0.92rem;
+    padding-block: 0.56rem;
+    --button-color: #fff;
+    --button-background-color: #e56a45;
+    --button-border-color: #e56a45;
+    --button-focus-outline-color: #e56a45;
+    box-shadow: 0 10px 20px rgb(201 64 54 / 0.22);
+  }
+
+  .cart-drawer__summary .cart__ctas .cart__checkout-button:hover:not([disabled]) {
+    --button-color: #fff;
+    --button-background-color: #e56a45;
+    --button-border-color: #e56a45;
+    box-shadow: 0 12px 22px rgb(201 64 54 / 0.24);
+  }
+
+  .cart-drawer__summary .cart__view-cart-button {
+    min-height: 48px;
+    height: 48px;
+    margin-top: 0.18rem;
+    font-size: 0.92rem;
+    padding-block: 0.56rem;
+    --button-color: #5f4638;
+    --button-background-color: #fff7f1;
+    --button-border-color: #e56a45;
+    --button-focus-outline-color: #e56a45;
+    --button-border-width: 1px;
+  }
+
+  .cart-drawer__summary .cart__view-cart-button:hover {
+    --button-color: #5f4638;
+    --button-background-color: #fff7f1;
+    --button-border-color: #e56a45;
+  }
+
+  .cart-drawer__summary .cart__additional-checkout-buttons {
+    margin-top: 0.12rem;
+  }
+
+  .cart-drawer__summary .cart__additional-checkout-buttons shopify-accelerated-checkout-cart {
+    --shopify-accelerated-checkout-button-block-size: 44px;
+    --shopify-accelerated-checkout-button-border-radius: 12px;
+    --shopify-accelerated-checkout-row-gap: 6px;
   }
 
   @media screen and (max-width: 749px) {
@@ -773,11 +879,25 @@
       font-size: 0.88rem;
     }
 
-    .cart-totals--drawer .cart__ctas .cart__checkout-button {
-      min-height: 56px;
-      height: 56px;
-      margin-top: 0.24rem;
-      font-size: 0.92rem;
+    .cart__primary-actions {
+      gap: 0.56rem;
+    }
+
+    .cart-drawer__summary .cart__ctas .cart__checkout-button,
+    .cart-drawer__summary .cart__view-cart-button {
+      min-height: 46px;
+      height: 46px;
+      margin-top: 0.16rem;
+      font-size: 0.88rem;
+    }
+
+    .cart-drawer__summary .cart__additional-checkout-buttons {
+      margin-top: 0.08rem;
+    }
+
+    .cart-drawer__summary .cart__additional-checkout-buttons shopify-accelerated-checkout-cart {
+      --shopify-accelerated-checkout-button-block-size: 42px;
+      --shopify-accelerated-checkout-row-gap: 6px;
     }
   }
 
