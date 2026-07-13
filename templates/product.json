@@ -170,7 +170,7 @@
               "blocks": {}
             },
             "jeminise_customizer_customizer_button_ArF7bQ": {
-              "type": "shopify://apps/jeminise-customizer/blocks/customizer-button/019f3342-835a-7e85-9c3d-8a4c24bb716c",
+              "type": "shopify://apps/crawl_app/blocks/customizer-button/019f3342-835a-7e85-9c3d-8a4c24bb716c",
               "settings": {
                 "button_label": "Customize",
                 "upload_path": "/apps/amazon-customizer/upload"
@@ -891,7 +891,7 @@
             "review_data": "real_data",
             "max_width": 1200,
             "show_shop_reviews": false,
-            "empty_state": "empty_widget"
+            "empty_state": "other_products_reviews"
           }
         }
       },
