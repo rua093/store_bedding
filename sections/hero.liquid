@@ -615,6 +615,17 @@
   }
 
   @media screen and (max-width: 749px) {
+    main[data-template*='index'].homepage-motion-ready #Hero-{{ section.id }} .homepage-reveal,
+    main[data-template*='index'].homepage-motion-ready #Hero-{{ section.id }} .homepage-reveal--pending,
+    html.homepage-motion-booting main[data-template*='index'] #Hero-{{ section.id }} .homepage-reveal {
+      opacity: 1;
+      translate: 0 0;
+      transform: none;
+      transition: none;
+      transition-delay: 0ms;
+      will-change: auto;
+    }
+
     .hero--readability-scrim .hero__background::after {
       background: linear-gradient(180deg, rgb(26 19 14 / 0.28) 0%, rgb(26 19 14 / 0.12) 20%, transparent 38%), radial-gradient(100% 78% at 28% 70%, rgb(26 19 14 / 0.36) 0%, rgb(26 19 14 / 0.2) 42%, transparent 75%);
     }
