@@ -39,6 +39,11 @@
   if request.page_type == 'cart' and recommendation_product == blank
     assign should_render_recommendations = false
   endif
+
+  assign eager_load_recommendations = false
+  if request.page_type == 'product' and section.settings.recommendation_type == 'related'
+    assign eager_load_recommendations = true
+  endif
 %}
 
 {% render 'quick-add-styles' %}
@@ -55,6 +60,7 @@
     data-intent="{{ section.settings.recommendation_type }}"
     data-testid="product-recommendations-section"
     data-recommendations-performed="{{ recommendations.performed }}"
+    data-eager-load="{{ eager_load_recommendations }}"
     data-hydration-key="product-recommendations-{{ section.id }}"
     {% if request.page_type == 'cart' %}
       data-cart-dependent-section

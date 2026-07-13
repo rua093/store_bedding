@@ -23,14 +23,36 @@
           <div class="bestselling-bedding__visual-frame">
             {% if section.settings.promo_image != blank %}
               {{
-                section.settings.promo_image | image_url: width: 1800 | image_tag: class: 'bestselling-bedding__visual-image', widths: '480, 720, 960, 1280, 1600, 1800', sizes: '(min-width: 990px) 38vw, (min-width: 750px) 46vw, 100vw', loading: 'lazy', alt: promo_alt
+                section.settings.promo_image | image_url: width: 1800 | image_tag: class: 'bestselling-bedding__visual-image', widths: '480, 720, 960, 1280, 1600, 1800', sizes: '(min-width: 990px) 38vw, (min-width: 750px) 46vw, 86vw', loading: 'lazy', alt: promo_alt, decoding: 'async'
               }}
             {% else %}
-              <img
-                class="bestselling-bedding__visual-image"
-                src="{{ 'best_seller.webp' | asset_url }}"
-                loading="lazy"
-                alt="{{ promo_alt | escape }}">
+              <picture>
+                <source
+                  srcset="
+                    {{ 'best_seller-720.webp' | asset_url }} 720w,
+                    {{ 'best_seller-960.webp' | asset_url }} 960w,
+                    {{ 'best_seller-1280.webp' | asset_url }} 1280w,
+                    {{ 'best_seller.webp' | asset_url }} 2244w
+                  "
+                  sizes="(min-width: 990px) 38vw, (min-width: 750px) 46vw, 86vw"
+                >
+                <img
+                  class="bestselling-bedding__visual-image"
+                  src="{{ 'best_seller-960.webp' | asset_url }}"
+                  srcset="
+                    {{ 'best_seller-720.webp' | asset_url }} 720w,
+                    {{ 'best_seller-960.webp' | asset_url }} 960w,
+                    {{ 'best_seller-1280.webp' | asset_url }} 1280w,
+                    {{ 'best_seller.webp' | asset_url }} 2244w
+                  "
+                  sizes="(min-width: 990px) 38vw, (min-width: 750px) 46vw, 86vw"
+                  width="2244"
+                  height="2804"
+                  loading="lazy"
+                  decoding="async"
+                  alt="{{ promo_alt | escape }}"
+                >
+              </picture>
             {% endif %}
 
             <div class="bestselling-bedding__visual-overlay"></div>
@@ -59,7 +81,9 @@
                   section_id: section.id,
                   product_view_context: 'home-bestselling-bedding',
                   show_badge: true,
-                  card_class: 'bestselling-bedding-card'
+                  card_class: 'bestselling-bedding-card',
+                  image_widths: '160, 220, 320, 440, 560',
+                  image_sizes: '(min-width: 1400px) 240px, (min-width: 990px) 17vw, (min-width: 750px) 30vw, 44vw'
                 %}
               {% endfor %}
             {% else %}

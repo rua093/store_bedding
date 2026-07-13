@@ -4411,6 +4411,8 @@ main[data-template*='index'] [data-jeminise-home-judgeme] {
   width: min(calc(100% - 3rem), 112rem) !important;
   max-width: none !important;
   margin: 0 auto;
+  content-visibility: auto;
+  contain-intrinsic-size: 960px;
   padding: clamp(38px, 5vw, 60px) clamp(18px, 4vw, 48px) clamp(42px, 5vw, 66px);
   border-radius: 32px;
   background:

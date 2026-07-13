@@ -58,7 +58,12 @@ class ProductRecommendations extends Component {
 
   connectedCallback() {
     super.connectedCallback();
-    this.#intersectionObserver.observe(this);
+    if (this.dataset.eagerLoad === 'true') {
+      this.#intersectionObserver.disconnect();
+      this.#loadRecommendations();
+    } else {
+      this.#intersectionObserver.observe(this);
+    }
     this.#mutationObserver.observe(this, { attributes: true });
   }
 

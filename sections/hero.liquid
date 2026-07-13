@@ -6,8 +6,8 @@
   assign hero_has_visual_preview = request.visual_preview_mode
   assign hero_is_auto_height = false
   assign hero_text_align = 'left'
-  assign desktop_widths = '832, 1200, 1600, 1920, 2560, 3840'
-  assign mobile_widths = '416, 600, 800, 1200, 1600'
+  assign desktop_widths = '768, 1024, 1280, 1600, 1920, 2560'
+  assign mobile_widths = '360, 480, 640, 800, 960'
   assign mobile_widths_array = mobile_widths | split: ', '
   assign hero_eyebrow = section.settings.eyebrow | strip
   assign hero_heading = section.settings.heading | strip
@@ -222,6 +222,7 @@
           <p
             class="hero__eyebrow homepage-reveal"
             data-reveal-preset="premium-hero-reveal"
+            data-reveal-disable-mobile
             style="--reveal-delay: 150ms;">{{ hero_eyebrow | escape }}</p>
         {% endif %}
         {% if hero_heading != blank %}
@@ -230,10 +231,12 @@
               <span
                 class="hero__heading-line homepage-reveal amzcustom-count-processed"
                 data-reveal-preset="premium-hero-reveal"
+                data-reveal-disable-mobile
                 style="--reveal-delay: 300ms;">Sleep Better</span>
               <span
                 class="hero__heading-line hero__heading-line--accent homepage-reveal amzcustom-count-processed"
                 data-reveal-preset="premium-hero-reveal"
+                data-reveal-disable-mobile
                 style="--reveal-delay: 450ms;">Every Night</span>
             </h1>
           {% elsif hero_heading_is_custom_split %}
@@ -241,16 +244,19 @@
               <span
                 class="hero__heading-line homepage-reveal amzcustom-count-processed"
                 data-reveal-preset="premium-hero-reveal"
+                data-reveal-disable-mobile
                 style="--reveal-delay: 300ms;">Your Ideas,</span>
               <span
                 class="hero__heading-line homepage-reveal amzcustom-count-processed"
                 data-reveal-preset="premium-hero-reveal"
+                data-reveal-disable-mobile
                 style="--reveal-delay: 450ms;">Made Cozy</span>
             </h1>
           {% else %}
             <h1
               class="hero__heading homepage-reveal"
               data-reveal-preset="premium-hero-reveal"
+              data-reveal-disable-mobile
               style="--reveal-delay: 300ms;">{{ hero_heading | escape | newline_to_br }}</h1>
           {% endif %}
         {% endif %}
@@ -258,12 +264,14 @@
           <p
             class="hero__description homepage-reveal"
             data-reveal-preset="premium-hero-reveal"
+            data-reveal-disable-mobile
             style="--reveal-delay: 650ms;">{{ hero_description | escape }}</p>
         {% endif %}
         {% if hero_primary_label != blank %}
           <div
             class="hero__actions homepage-reveal"
             data-reveal-preset="premium-hero-reveal"
+            data-reveal-disable-mobile
             style="--reveal-delay: 850ms;">
             {% if hero_primary_label != blank %}
               <a
@@ -615,9 +623,9 @@
   }
 
   @media screen and (max-width: 749px) {
-    main[data-template*='index'].homepage-motion-ready #Hero-{{ section.id }} .homepage-reveal,
-    main[data-template*='index'].homepage-motion-ready #Hero-{{ section.id }} .homepage-reveal--pending,
-    html.homepage-motion-booting main[data-template*='index'] #Hero-{{ section.id }} .homepage-reveal {
+    main[data-template*='index'].homepage-motion-ready #Hero-{{ section.id }} [data-reveal-disable-mobile],
+    main[data-template*='index'].homepage-motion-ready #Hero-{{ section.id }} [data-reveal-disable-mobile].homepage-reveal--pending,
+    html.homepage-motion-booting main[data-template*='index'] #Hero-{{ section.id }} [data-reveal-disable-mobile] {
       opacity: 1;
       translate: 0 0;
       transform: none;

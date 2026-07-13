@@ -539,7 +539,7 @@
     z-index: var(--layer-overlay);
 
     &[transparent='not-sticky'][data-sticky-state='active'],
-    &:has(.menu-list__link:not([aria-haspopup]):hover) {
+    &[data-menu-hover] {
       --header-logo-display: unset;
       --header-logo-inverse-display: unset;
       --color-foreground: inherit;
@@ -552,7 +552,7 @@
     }
 
     /** For transparent header, apply transparent text color to rows when menu is not hovered */
-    &:not([data-sticky-state='active']):not(:has(.menu-list__link:is(:hover, [aria-expanded='true']))) .header__row {
+    &:not([data-sticky-state='active']):not([data-menu-hover]) .header__row {
       --color-foreground: var(--color-transparent-text);
       --color-foreground-rgb: var(--color-transparent-text-rgb);
       --color-border: var(--color-transparent-text);
@@ -563,18 +563,13 @@
 
     /* Swap the cart bubble in transparent state only when using the default
        style. Custom bubble colors apply unchanged across header states. */
-    &[data-bubble-style='default']:not([data-sticky-state='active']):not(
-        :has(.menu-list__link:is(:hover, [aria-expanded='true']))
-      )
+    &[data-bubble-style='default']:not([data-sticky-state='active']):not([data-menu-hover])
       .header__row {
       --cart-bubble-background: var(--color-transparent-text, var(--cart-bubble-background-fallback));
       --cart-bubble-text: var(--color-transparent-text-contrast, var(--cart-bubble-text-fallback));
     }
 
-    /* Multiple selectors for performance: each simple :has() check is faster than one complex selector with multiple conditions */
-    &:has(.mega-menu__list:hover),
-    &:has(.menu-list__link:is(:hover, [aria-expanded='true'])),
-    &:has(.menu-list__list-item[slot='overflow'] .menu-list__link:is(:hover, [aria-expanded='true'])) {
+    &[data-menu-hover] {
       --header-logo-display: unset;
       --header-logo-inverse-display: unset;
       --color-foreground: inherit;
@@ -588,9 +583,7 @@
     }
   }
 
-  .header[transparent]:not([data-sticky-state='active']):not(
-      :has(.menu-list__link:is(:hover, [aria-expanded='true']))
-    ) {
+  .header[transparent]:not([data-sticky-state='active']):not([data-menu-hover]) {
     .header-actions__action,
     .header__icon--menu,
     .dropdown-localization__button,
@@ -624,9 +617,7 @@
       height: 22px;
     }
 
-    .header[transparent]:not([data-sticky-state='active']):not(
-        :has(.menu-list__link:is(:hover, [aria-expanded='true']))
-      ) {
+    .header[transparent]:not([data-sticky-state='active']):not([data-menu-hover]) {
       .header__column--center .menu-list__link {
         color: #fff8ee;
         text-shadow: 0 1px 10px rgb(0 0 0 / 0.25);
@@ -712,6 +703,15 @@
     opacity: 0;
   }
 
+  @media screen and (max-width: 749px) {
+    .header[data-sticky-state='active'] {
+      .header__underlay-closed {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+    }
+  }
+
   /* ================================
      * Underlays
      * ================================ */
@@ -795,9 +795,7 @@
     /* stylelint-disable-next-line declaration-no-important */
     background-color: transparent !important;
 
-    &:has(.mega-menu__list:hover),
-    &:has(.menu-list__link[aria-haspopup]:is(:hover, [aria-expanded='true'])),
-    &:has(.menu-list__list-item[slot='overflow'] .menu-list__link:is(:hover, [aria-expanded='true'])) {
+    .header[data-menu-hover] & {
       /* Only elevate the row when the submenu is open to avoid overlapping other elevated content */
       z-index: var(--layer-heightened);
     }

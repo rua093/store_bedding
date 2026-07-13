@@ -6,6 +6,9 @@
   @param {string} [product_view_context]
   @param {boolean} [show_badge]
   @param {string} [card_class]
+  @param {string} [image_widths]
+  @param {string} [image_sizes]
+  @param {string} [hover_image_sizes]
 {%- enddoc -%}
 
 {% liquid
@@ -57,6 +60,9 @@
   assign featured_image_classes = 'custom-product-card__image'
   assign hover_image_classes = 'custom-product-card__image custom-product-card__image--hover'
   assign placeholder_svg_classes = 'custom-product-card__placeholder-svg'
+  assign card_image_widths = image_widths | default: '160, 220, 320, 440, 640'
+  assign card_image_sizes = image_sizes | default: '(min-width: 1400px) 300px, (min-width: 990px) 21vw, (min-width: 750px) 30vw, 44vw'
+  assign card_hover_image_sizes = hover_image_sizes | default: card_image_sizes
 
   if root_card_class != blank
     assign contextual_link_class = root_card_class | append: '__card-link'
@@ -140,11 +146,11 @@
       {% if product.featured_media != blank %}
         {{
           product.featured_media
-          | image_url: width: 960
+          | image_url: width: 640
           | image_tag:
             class: featured_image_classes,
-            widths: '220, 320, 480, 640, 960',
-            sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw',
+            widths: card_image_widths,
+            sizes: card_image_sizes,
             loading: 'lazy',
             fetchpriority: 'low',
             decoding: 'async',
@@ -153,11 +159,11 @@
         {% if product.media.size > 1 %}
           {{
             product.media[1]
-            | image_url: width: 960
+            | image_url: width: 640
             | image_tag:
               class: hover_image_classes,
-              widths: '220, 320, 480, 640, 960',
-              sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw',
+              widths: card_image_widths,
+              sizes: card_hover_image_sizes,
               loading: 'lazy',
               fetchpriority: 'low',
               decoding: 'async',

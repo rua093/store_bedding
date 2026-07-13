@@ -4,6 +4,7 @@ const REVEAL_SELECTOR = '.homepage-reveal';
 const STAGGER_PARENT_SELECTOR = '[data-homepage-reveal-children]';
 const STAGGER_STEP_MS = 55;
 const REVEAL_DURATION_MS = 480;
+const mobileRevealDisabledQuery = window.matchMedia('(max-width: 749px)');
 
 /** @type {IntersectionObserver | null} */
 let observer = null;
@@ -14,6 +15,14 @@ const cleanupTimeouts = new Map();
 
 function getHomepageMain() {
   return document.querySelector('main[data-template*="index"]');
+}
+
+/**
+ * @param {Element} element
+ * @returns {boolean}
+ */
+function shouldSkipReveal(element) {
+  return mobileRevealDisabledQuery.matches && element.hasAttribute('data-reveal-disable-mobile');
 }
 
 /**
@@ -166,7 +175,7 @@ function applyStaggerTargets(scope) {
  */
 function getRevealElements(scope = document) {
   applyStaggerTargets(scope);
-  return Array.from(scope.querySelectorAll(REVEAL_SELECTOR));
+  return Array.from(scope.querySelectorAll(REVEAL_SELECTOR)).filter((element) => !shouldSkipReveal(element));
 }
 
 function cleanupObserver() {
@@ -256,6 +265,10 @@ reducedMotionQuery.addEventListener('change', () => {
 });
 
 scrollContainerMediaQuery.addEventListener('change', () => {
+  refreshReveals();
+});
+
+mobileRevealDisabledQuery.addEventListener('change', () => {
   refreshReveals();
 });
 

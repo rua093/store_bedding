@@ -55,12 +55,6 @@ class HeaderComponent extends Component {
   #lastScrollTop = 0;
 
   /**
-   * A timeout to allow for hiding animation, when sticky behavior is 'scroll-up'
-   * @type {number | null}
-   */
-  #timeout = null;
-
-  /**
    * RAF ID for scroll handler throttling
    * @type {number | null}
    */
@@ -176,14 +170,8 @@ class HeaderComponent extends Component {
     if (!this.#offscreen && stickyMode !== 'always') return;
 
     const scrollTop = getScrollTop();
-    const headerTop = this.getBoundingClientRect().top;
     const isScrollingUp = scrollTop < this.#lastScrollTop;
-    const isAtTop = headerTop >= 0;
-
-    if (this.#timeout) {
-      clearTimeout(this.#timeout);
-      this.#timeout = null;
-    }
+    const isAtTop = scrollTop <= 1;
 
     if (stickyMode === 'always') {
       if (isAtTop) {

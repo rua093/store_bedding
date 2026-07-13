@@ -755,17 +755,26 @@ export class ResizeNotifier extends ResizeObserver {
 /**
  * Sets the menuStyle dataset attribute on the header component element.
  */
+const headerMenuBreakpointQuery = window.matchMedia('(max-width: 989px)');
+let headerMenuStyleRafId = null;
+
 export function setHeaderMenuStyle() {
   const headerComponent = /** @type {HTMLElement} | null */ (document.querySelector('#header-component'));
-  if (headerComponent) {
-    window.requestAnimationFrame(() => {
-      const overflowList = headerComponent?.querySelector('overflow-list');
-      const hasReachedMinimum = overflowList && overflowList.hasAttribute('minimum-reached');
-      const useDrawerBreakpoint = window.matchMedia('(max-width: 989px)').matches;
-      headerComponent.dataset.menuStyle =
-        isTouchDevice() || useDrawerBreakpoint || hasReachedMinimum ? 'drawer' : 'menu';
-    });
-  }
+  if (!headerComponent) return;
+  if (headerMenuStyleRafId !== null) return;
+
+  headerMenuStyleRafId = window.requestAnimationFrame(() => {
+    headerMenuStyleRafId = null;
+
+    const overflowList = headerComponent.querySelector('overflow-list');
+    const hasReachedMinimum = overflowList?.hasAttribute('minimum-reached');
+    const nextMenuStyle =
+      isTouchDevice() || headerMenuBreakpointQuery.matches || hasReachedMinimum ? 'drawer' : 'menu';
+
+    if (headerComponent.dataset.menuStyle !== nextMenuStyle) {
+      headerComponent.dataset.menuStyle = nextMenuStyle;
+    }
+  });
 }
 
 /**

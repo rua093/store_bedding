@@ -1,5 +1,5 @@
 import { Component } from '@theme/component';
-import { debounce, onDocumentLoaded, setHeaderMenuStyle } from '@theme/utilities';
+import { debounce, setHeaderMenuStyle } from '@theme/utilities';
 import { MegaMenuHoverEvent } from '@theme/events';
 
 /** Skim filter: pointer must dwell this long before MegaMenuHoverEvent fires. */
@@ -35,9 +35,12 @@ class HeaderMenu extends Component {
   connectedCallback() {
     super.connectedCallback();
 
-    onDocumentLoaded(this.#preloadImages);
     window.addEventListener('resize', this.#resizeListener);
     this.overflowMenu?.addEventListener('pointerleave', this.#overflowSubmenuListener);
+    this.addEventListener('mouseenter', this.#handleMenuEnter);
+    this.addEventListener('mouseleave', this.#handleMenuLeave);
+    this.addEventListener('focusin', this.#handleMenuEnter);
+    this.addEventListener('focusout', this.#handleMenuFocusOut);
   }
 
   disconnectedCallback() {
@@ -48,11 +51,16 @@ class HeaderMenu extends Component {
       this.#stopPointerTracking(this.#state.activeItem);
     }
     this.overflowMenu?.removeEventListener('pointerleave', this.#overflowSubmenuListener);
+    this.removeEventListener('mouseenter', this.#handleMenuEnter);
+    this.removeEventListener('mouseleave', this.#handleMenuLeave);
+    this.removeEventListener('focusin', this.#handleMenuEnter);
+    this.removeEventListener('focusout', this.#handleMenuFocusOut);
     this.#cleanupMutationObserver();
     clearTimeout(this.#hoverDispatchTimer);
     this.#hoverDispatchTimer = undefined;
     clearTimeout(this.#closeIntentTimer);
     this.#closeIntentTimer = undefined;
+    this.#setHeaderMenuHover(false);
   }
 
   /**
@@ -321,6 +329,31 @@ class HeaderMenu extends Component {
     return /** @type {HTMLElement | null} */ (this.closest('header-component'));
   }
 
+  #handleMenuEnter = () => {
+    this.#setHeaderMenuHover(true);
+  };
+
+  #handleMenuLeave = () => {
+    this.#setHeaderMenuHover(false);
+  };
+
+  #handleMenuFocusOut = () => {
+    queueMicrotask(() => {
+      const activeElement = document.activeElement;
+      if (activeElement instanceof Node && this.contains(activeElement)) return;
+      if (this.matches(':hover')) return;
+      this.#setHeaderMenuHover(false);
+    });
+  };
+
+  /**
+   * Mirrors expensive CSS hover ancestry checks with a cheap dataset flag.
+   * @param {boolean} isHovering
+   */
+  #setHeaderMenuHover(isHovering) {
+    this.headerComponent?.toggleAttribute('data-menu-hover', isHovering);
+  }
+
   /**
    * Activate the selected menu item immediately
    * @param {PointerEvent | FocusEvent} event
@@ -387,6 +420,7 @@ class HeaderMenu extends Component {
 
       // Mark submenu as active for content-visibility optimization
       submenu.dataset.active = '';
+      this.#preloadImagesIn(submenu);
       this.#scheduleSubmenuHeightSync(submenu, item, isDefaultSlot, hasSubmenu);
 
       // Cleanup any existing mutation observer from previous menu activations
@@ -546,12 +580,17 @@ class HeaderMenu extends Component {
   }
 
   /**
-   * Preload images that are set to load lazily.
+   * Promote submenu images from lazy-loading only when the shopper opens that menu.
+   * This avoids decoding hidden menu media during the initial page load.
+   * @param {HTMLElement} submenu
    */
-  #preloadImages = () => {
-    const images = this.querySelectorAll('img[loading="lazy"]');
-    images?.forEach((image) => image.removeAttribute('loading'));
-  };
+  #preloadImagesIn(submenu) {
+    if (submenu.dataset.imagesPreloaded === 'true') return;
+
+    const images = submenu.querySelectorAll('img[loading="lazy"]');
+    images.forEach((image) => image.removeAttribute('loading'));
+    submenu.dataset.imagesPreloaded = 'true';
+  }
 
   #cleanupMutationObserver() {
     this.#submenuMutationObserver?.disconnect();

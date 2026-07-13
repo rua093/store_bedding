@@ -66,21 +66,6 @@
   href="{{ 'component.js' | asset_url }}"
   fetchpriority="low"
 >
-<link
-  rel="modulepreload"
-  href="{{ 'section-renderer.js' | asset_url }}"
-  fetchpriority="low"
->
-<link
-  rel="modulepreload"
-  href="{{ 'section-hydration.js' | asset_url }}"
-  fetchpriority="low"
->
-<link
-  rel="modulepreload"
-  href="{{ 'morph.js' | asset_url }}"
-  fetchpriority="low"
->
 
 {% if template.name == 'collection' or template.name == 'search' %}
   <link
@@ -98,11 +83,6 @@
 <link
   rel="modulepreload"
   href="{{ 'focus.js' | asset_url }}"
-  fetchpriority="low"
->
-<link
-  rel="modulepreload"
-  href="{{ 'recently-viewed-products.js' | asset_url }}"
   fetchpriority="low"
 >
 <link

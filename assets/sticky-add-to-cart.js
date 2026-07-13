@@ -57,6 +57,9 @@ class StickyAddToCartComponent extends Component {
   /** @type {number | null} */
   #animationTimeout = null;
 
+  /** @type {number | null} */
+  #viewportRafId = null;
+
   /** @type {AbortController} */
   #abortController = new AbortController();
 
@@ -71,9 +74,6 @@ class StickyAddToCartComponent extends Component {
 
   /** @type {number} */
   #currentQuantity = 1;
-
-  /** @type {boolean} */
-  #hiddenByBottom = false;
 
   /** @type {HTMLElement | null} */
   #buyButtonsBlock = null;
@@ -123,6 +123,10 @@ class StickyAddToCartComponent extends Component {
     if (this.#animationTimeout) {
       clearTimeout(this.#animationTimeout);
     }
+    if (this.#viewportRafId !== null) {
+      cancelAnimationFrame(this.#viewportRafId);
+      this.#viewportRafId = null;
+    }
   }
 
   /**
@@ -144,7 +148,6 @@ class StickyAddToCartComponent extends Component {
       const [entry] = entries;
       if (!entry) return;
 
-      this.#hiddenByBottom = false;
       this.#evaluateStickyVisibility();
     });
 
@@ -154,7 +157,6 @@ class StickyAddToCartComponent extends Component {
         const [entry] = entries;
         if (!entry) return;
 
-        this.#hiddenByBottom = entry.isIntersecting;
         this.#evaluateStickyVisibility();
       },
       {
@@ -167,7 +169,12 @@ class StickyAddToCartComponent extends Component {
   }
 
   #handleViewportChange = () => {
-    this.#evaluateStickyVisibility();
+    if (this.#viewportRafId !== null) return;
+
+    this.#viewportRafId = requestAnimationFrame(() => {
+      this.#viewportRafId = null;
+      this.#evaluateStickyVisibility();
+    });
   };
 
   #evaluateStickyVisibility() {
@@ -181,12 +188,9 @@ class StickyAddToCartComponent extends Component {
     const footerInRevealZone = footerRect.top <= viewportHeight + 200 && footerRect.bottom > 0;
 
     if (footerInRevealZone) {
-      this.#hiddenByBottom = true;
       this.#hideStickyBar();
       return;
     }
-
-    this.#hiddenByBottom = false;
 
     if (buyButtonsScrolledPast && !this.#isChatActive()) {
       this.#showStickyBar();
@@ -217,8 +221,6 @@ class StickyAddToCartComponent extends Component {
     if (this.#resetTimeout) clearTimeout(this.#resetTimeout);
 
     const flyToCartElement = /** @type {FlyToCart} */ (document.createElement('fly-to-cart'));
-    const sourceStyles = getComputedStyle(this.refs.productImage);
-
     flyToCartElement.classList.add('fly-to-cart--sticky');
     flyToCartElement.style.setProperty('background-image', `url(${this.refs.productImage.src})`);
     flyToCartElement.useSourceSize = 'true';
