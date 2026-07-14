@@ -232,6 +232,8 @@
       <span class="back-to-top-button__icon" aria-hidden="true">↑</span>
     </button>
 
+    {{ 'dialog-modal.css' | asset_url | stylesheet_tag }}
+
     {% render 'cart-drawer', render_wrapper: true %}
     {% render 'theme-drawer' %}
 
@@ -368,28 +370,9 @@
         const pageWrapper = document.querySelector('.page-wrapper');
         if (!button) return;
 
-        const threshold = 360;
-
-        const getWindowScrollTop = () => Math.max(
-          window.pageYOffset || 0,
-          document.documentElement?.scrollTop || 0,
-          document.body?.scrollTop || 0
-        );
-
-        const getPageWrapperScrollTop = () => pageWrapper?.scrollTop || 0;
-
-        const getScrollTop = () => Math.max(
-          getPageWrapperScrollTop(),
-          getWindowScrollTop()
-        );
-
         const setVisible = (visible) => {
           button.classList.toggle('is-visible', Boolean(visible));
           button.setAttribute('aria-hidden', visible ? 'false' : 'true');
-        };
-
-        const toggleVisibility = () => {
-          setVisible(getScrollTop() > threshold);
         };
 
         const scrollToTop = () => {
@@ -405,20 +388,46 @@
 
         button.style.removeProperty('opacity');
         button.style.removeProperty('visibility');
-
         button.addEventListener('click', scrollToTop);
 
-        toggleVisibility();
-        requestAnimationFrame(toggleVisibility);
+        // Create sentinel for IntersectionObserver to avoid scroll listeners
+        const sentinel = document.createElement('div');
+        sentinel.style.cssText = 'position: absolute; top: 360px; left: 0; width: 1px; height: 1px; visibility: hidden; pointer-events: none; z-index: -999;';
 
         if (pageWrapper) {
-          pageWrapper.addEventListener('scroll', toggleVisibility, { passive: true });
+          pageWrapper.appendChild(sentinel);
+        } else {
+          document.body.appendChild(sentinel);
         }
 
-        window.addEventListener('scroll', toggleVisibility, { passive: true });
-        document.addEventListener('scroll', toggleVisibility, { passive: true });
-        window.addEventListener('resize', toggleVisibility);
-        window.addEventListener('pageshow', toggleVisibility);
+        let observer = null;
+        const mediaQuery = window.matchMedia('(min-width: 990px)');
+
+        const setupObserver = () => {
+          if (observer) {
+            observer.disconnect();
+          }
+
+          const root = (mediaQuery.matches && pageWrapper) ? pageWrapper : null;
+
+          observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              setVisible(!entry.isIntersecting);
+            });
+          }, {
+            root: root,
+            threshold: 0
+          });
+
+          observer.observe(sentinel);
+        };
+
+        setupObserver();
+        if (typeof mediaQuery.addEventListener === 'function') {
+          mediaQuery.addEventListener('change', setupObserver);
+        } else {
+          mediaQuery.addListener(setupObserver);
+        }
       })();
     </script>
   </body>

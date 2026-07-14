@@ -150,10 +150,6 @@
 
           <tbody role="rowgroup">
             {% for item in cart.items %}
-              {%- if item.properties['_customization_fee_component'] != blank -%}
-                {% continue %}
-              {%- endif -%}
-
               {%- liquid
                 assign customization_id = item.properties['_customization_id']
                 assign customization_preview = item.properties['_customization_preview']
@@ -161,24 +157,9 @@
                 assign customization_payload_count = item.properties['_customization_payload_count'] | default: '0'
                 assign customization_payload_encoding = item.properties['_customization_payload_encoding']
                 assign customization_payload = ''
-                assign grouped_customization_fee = 0
-                assign grouped_customization_fee_original = 0
-                assign has_grouped_customization_fee = false
-
-                if customization_id != blank
-                  for related_item in cart.items
-                    if related_item.key != item.key and related_item.properties['_customization_fee_component'] != blank
-                      if related_item.properties['_customization_id'] == customization_id
-                        assign grouped_customization_fee = grouped_customization_fee | plus: related_item.final_line_price
-                        assign grouped_customization_fee_original = grouped_customization_fee_original | plus: related_item.original_line_price
-                        assign has_grouped_customization_fee = true
-                      endif
-                    endif
-                  endfor
-                endif
 
                 assign is_customized_item = false
-                if customization_id != blank or customization_preview != blank or customization_manifest != blank or has_grouped_customization_fee
+                if customization_id != blank or customization_preview != blank or customization_manifest != blank
                   assign is_customized_item = true
                 endif
 
@@ -202,9 +183,6 @@
                 data-key="{{ item.key }}"
                 {% if customization_id != blank %}
                   data-customization-id="{{ customization_id | escape }}"
-                {% endif %}
-                {% if has_grouped_customization_fee %}
-                  data-customization-grouped="true"
                 {% endif %}
               >
                 <td
@@ -358,17 +336,6 @@
                         aria-label="Customization details"
                       >
                         <span class="cart-items__customization-badge">Customized</span>
-                        {%- if has_grouped_customization_fee and grouped_customization_fee > 0 -%}
-                          <p class="cart-items__customization-note">
-                            Customization fee included (+{{ grouped_customization_fee | money }})
-                          </p>
-                        {%- elsif item.properties['_customization_fee'] != blank
-                          and item.properties['_customization_fee'] != '0'
-                          and item.properties['_customization_fee'] != '0.0'
-                          and item.properties['_customization_fee'] != '0.00'
-                        -%}
-                          <p class="cart-items__customization-note">Customization fee included</p>
-                        {%- endif -%}
                       </div>
                     {%- endif -%}
 
@@ -450,31 +417,29 @@
                   </div>
 
                   {% liquid
-                    assign drawer_line_price = item.final_line_price | plus: grouped_customization_fee
-                    assign drawer_compare_price = item.original_line_price | plus: grouped_customization_fee_original
+                    assign drawer_line_price = item.final_line_price
+                    assign drawer_compare_price = item.original_line_price
 
                     if item.variant.compare_at_price > item.original_price
-                      assign drawer_compare_price = item.variant.compare_at_price | times: item.quantity | plus: grouped_customization_fee_original
+                      assign drawer_compare_price = item.variant.compare_at_price | times: item.quantity
                     endif
                   %}
-                  {% unless is_customized_item and context != 'drawer' %}
-                    <div class="cart-items__unit-price-wrapper">
-                      <div class="cart-items__price-inline">
-                        {% if drawer_compare_price > drawer_line_price %}
-                          <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
-                        {% else %}
-                          <span class="visually-hidden">{{ 'content.price' | t }}</span>
-                        {% endif %}
+                  <div class="cart-items__unit-price-wrapper">
+                    <div class="cart-items__price-inline">
+                      {% if drawer_compare_price > drawer_line_price %}
+                        <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
+                      {% else %}
+                        <span class="visually-hidden">{{ 'content.price' | t }}</span>
+                      {% endif %}
 
-                        <span class="cart-items__sale-price">{{ drawer_line_price | money }}</span>
+                      <span class="cart-items__sale-price">{{ drawer_line_price | money }}</span>
 
-                        {% if drawer_compare_price > drawer_line_price %}
-                          <span class="visually-hidden">{{ 'content.price_regular' | t }}</span>
-                          <s class="compare-at-price cart-items__compare-price">{{ drawer_compare_price | money }}</s>
-                        {% endif %}
-                      </div>
+                      {% if drawer_compare_price > drawer_line_price %}
+                        <span class="visually-hidden">{{ 'content.price_regular' | t }}</span>
+                        <s class="compare-at-price cart-items__compare-price">{{ drawer_compare_price | money }}</s>
+                      {% endif %}
                     </div>
-                  {% endunless %}
+                  </div>
                 </td>
                 <td
                   class="cart-items__quantity"
@@ -536,7 +501,7 @@
                   </div>
                 </td>
                 {%- liquid
-                  assign display_line_total = item.final_line_price | plus: grouped_customization_fee
+                  assign display_line_total = item.final_line_price
                   if settings.currency_code_enabled_cart_items
                     assign price = display_line_total | money_with_currency
                     assign unit_price = item.unit_price | money_with_currency
@@ -562,9 +527,6 @@
           </tbody>
         </table>
         {% for item in cart.items %}
-          {%- if item.properties['_customization_fee_component'] != blank -%}
-            {% continue %}
-          {%- endif -%}
           {%- liquid
             assign cart_disclosure_unique_id = 'page-' | append: item.index
             if context == 'drawer'

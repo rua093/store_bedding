@@ -28,10 +28,8 @@
 
   if recommendation_product == blank and request.page_type == 'cart'
     for item in cart.items
-      unless item.properties._customization_fee_component
-        assign recommendation_product = item.product
-        break
-      endunless
+      assign recommendation_product = item.product
+      break
     endfor
   endif
 

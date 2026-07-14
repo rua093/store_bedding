@@ -9,6 +9,8 @@
   @param {string} [image_widths]
   @param {string} [image_sizes]
   @param {string} [hover_image_sizes]
+  @param {boolean} [show_hover_image]
+  @param {boolean} [enable_quick_add]
 {%- enddoc -%}
 
 {% liquid
@@ -34,7 +36,12 @@
   endif
 
   assign has_quick_add = false
-  if settings.quick_add and product.available
+  assign quick_add_enabled = true
+  if enable_quick_add == false
+    assign quick_add_enabled = false
+  endif
+
+  if quick_add_enabled and settings.quick_add and product.available
     assign has_quick_add = true
   endif
 
@@ -63,6 +70,10 @@
   assign card_image_widths = image_widths | default: '160, 220, 320, 440, 640'
   assign card_image_sizes = image_sizes | default: '(min-width: 1400px) 300px, (min-width: 990px) 21vw, (min-width: 750px) 30vw, 44vw'
   assign card_hover_image_sizes = hover_image_sizes | default: card_image_sizes
+  assign hover_image_enabled = true
+  if show_hover_image == false
+    assign hover_image_enabled = false
+  endif
 
   if root_card_class != blank
     assign contextual_link_class = root_card_class | append: '__card-link'
@@ -156,7 +167,7 @@
             decoding: 'async',
             alt: product.featured_media.alt | default: product.title
         }}
-        {% if product.media.size > 1 %}
+        {% if hover_image_enabled and product.media.size > 1 %}
           {{
             product.media[1]
             | image_url: width: 640
@@ -182,7 +193,7 @@
         </span>
       {% endif %}
 
-      {% if settings.quick_add or settings.mobile_quick_add %}
+      {% if quick_add_enabled and settings.quick_add or quick_add_enabled and settings.mobile_quick_add %}
         {% render 'quick-add', product: product, section_id: product_card_section_id %}
       {% endif %}
     </div>

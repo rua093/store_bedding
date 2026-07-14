@@ -114,6 +114,14 @@ export class QuickAddComponent extends Component {
     const currentUrl = this.productPageUrl;
     if (!currentUrl) return;
 
+    if (typeof window.__ensureHomepageQuickAddSupport === 'function') {
+      try {
+        await window.__ensureHomepageQuickAddSupport();
+      } catch (error) {
+        console.warn('[quick-add] Failed to load homepage quick add support:', error);
+      }
+    }
+
     const requestId = ++this.#quickAddRequestId;
     this.#showQuickAddLoadingState(currentUrl);
     this.#openQuickAddModal();
@@ -297,6 +305,12 @@ export class QuickAddComponent extends Component {
   #prefetchQuickAddContent = async () => {
     const productPageUrl = this.productPageUrl;
     if (!productPageUrl || this.#cachedContent.has(productPageUrl) || this.#prefetchPromises.has(productPageUrl)) return;
+
+    if (typeof window.__ensureHomepageQuickAddSupport === 'function') {
+      window.__ensureHomepageQuickAddSupport().catch((error) => {
+        console.warn('[quick-add] Failed to prime homepage quick add support:', error);
+      });
+    }
 
     const prefetchPromise = fetch(productPageUrl)
       .then((response) => {

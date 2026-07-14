@@ -61,7 +61,7 @@
         "show_button": true,
         "button_label": "View all",
         "button_link": "",
-        "product_limit": 12,
+        "product_limit": 8,
         "section_width": "page-width",
         "show_arrows": true,
         "show_progress": true,

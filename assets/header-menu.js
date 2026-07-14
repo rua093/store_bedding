@@ -32,10 +32,24 @@ class HeaderMenu extends Component {
   /** @type {ReturnType<typeof setTimeout> | undefined} */
   #closeIntentTimer;
 
+  /**
+   * Cache for measured submenu heights to avoid layout thrashing.
+   * @type {Map<HTMLElement, number>}
+   */
+  #submenuHeightCache = new Map();
+
+  /**
+   * requestAnimationFrame ID for pointermove throttling.
+   * @type {number | null}
+   */
+  #pointerMoveRafId = null;
+
   connectedCallback() {
     super.connectedCallback();
 
     window.addEventListener('resize', this.#resizeListener);
+    window.addEventListener('load', this.#clearHeightCache);
+    document.addEventListener('readystatechange', this.#clearHeightCache);
     this.overflowMenu?.addEventListener('pointerleave', this.#overflowSubmenuListener);
     this.addEventListener('mouseenter', this.#handleMenuEnter);
     this.addEventListener('mouseleave', this.#handleMenuLeave);
@@ -46,7 +60,13 @@ class HeaderMenu extends Component {
   disconnectedCallback() {
     super.disconnectedCallback();
     window.removeEventListener('resize', this.#resizeListener);
+    window.removeEventListener('load', this.#clearHeightCache);
+    document.removeEventListener('readystatechange', this.#clearHeightCache);
     document.body.removeEventListener('pointermove', this.#onPointerMove);
+    if (this.#pointerMoveRafId !== null) {
+      cancelAnimationFrame(this.#pointerMoveRafId);
+      this.#pointerMoveRafId = null;
+    }
     if (this.#state.activeItem) {
       this.#stopPointerTracking(this.#state.activeItem);
     }
@@ -63,10 +83,15 @@ class HeaderMenu extends Component {
     this.#setHeaderMenuHover(false);
   }
 
+  #clearHeightCache = () => {
+    this.#submenuHeightCache.clear();
+  };
+
   /**
-   * Debounced resize event listener to recalculate menu style
+   * Debounced resize event listener to recalculate menu style and invalidate height cache
    */
   #resizeListener = debounce(() => {
+    this.#clearHeightCache();
     setHeaderMenuStyle();
   }, 100);
 
@@ -94,6 +119,7 @@ class HeaderMenu extends Component {
 
   /**
    * Update the safety box idle state on the active menu item.
+   * Throttled using requestAnimationFrame to avoid layout thrashing from elementFromPoint.
    * @param {PointerEvent} event
    */
   #onPointerMove = (event) => {
@@ -102,25 +128,36 @@ class HeaderMenu extends Component {
 
     this.#lastPointer.x = event.clientX;
     this.#lastPointer.y = event.clientY;
+    const movementX = event.movementX;
+    const movementY = event.movementY;
 
-    if (this.#switchToHoveredTopLevelItem()) {
-      return;
-    }
+    if (this.#pointerMoveRafId !== null) return;
 
-    const moving = Math.abs(event.movementX) >= 1 || event.movementY >= 1;
-    activeLink.dataset.safetyBox = `${moving}`;
+    this.#pointerMoveRafId = requestAnimationFrame(() => {
+      this.#pointerMoveRafId = null;
 
-    clearTimeout(this.#pointerIdleTimer);
-    if (moving) {
-      this.#pointerIdleTimer = setTimeout(() => {
-        if (this.#state.activeItem) {
-          this.#state.activeItem.dataset.safetyBox = 'false';
-          this.#reconcilePointerTarget();
-        }
-      }, 50);
-    } else {
-      this.#reconcilePointerTarget();
-    }
+      const currentActive = this.#state.activeItem;
+      if (!currentActive) return;
+
+      if (this.#switchToHoveredTopLevelItem()) {
+        return;
+      }
+
+      const moving = Math.abs(movementX) >= 1 || movementY >= 1;
+      currentActive.dataset.safetyBox = `${moving}`;
+
+      clearTimeout(this.#pointerIdleTimer);
+      if (moving) {
+        this.#pointerIdleTimer = setTimeout(() => {
+          if (this.#state.activeItem) {
+            this.#state.activeItem.dataset.safetyBox = 'false';
+            this.#reconcilePointerTarget();
+          }
+        }, 50);
+      } else {
+        this.#reconcilePointerTarget();
+      }
+    });
   };
 
   /**
@@ -193,6 +230,10 @@ class HeaderMenu extends Component {
   #stopPointerTracking(item) {
     window.clearTimeout(this.#pointerIdleTimer);
     this.#pointerIdleTimer = undefined;
+    if (this.#pointerMoveRafId !== null) {
+      cancelAnimationFrame(this.#pointerMoveRafId);
+      this.#pointerMoveRafId = null;
+    }
     item.style.removeProperty('--box-height');
     delete item.dataset.safetyBox;
   }
@@ -266,17 +307,17 @@ class HeaderMenu extends Component {
   }
 
   /**
-   * Measure submenu height and sync the header CSS vars once layout is stable.
+   * Retrieves the submenu height from cache or computes it.
    * @param {HTMLElement} submenu
    * @param {HTMLElement} item
    * @param {boolean} isDefaultSlot
    * @param {boolean} hasSubmenu
+   * @returns {number}
    */
-  #syncSubmenuHeight(submenu, item, isDefaultSlot, hasSubmenu) {
-    if (this.#state.activeItem !== item) return;
-
-    const activeSubmenu = findSubmenu(item);
-    if (!activeSubmenu || activeSubmenu !== submenu) return;
+  #getSubmenuHeightFromCache(submenu, item, isDefaultSlot, hasSubmenu) {
+    if (this.#submenuHeightCache.has(submenu)) {
+      return this.#submenuHeightCache.get(submenu);
+    }
 
     let finalHeight = this.#getSubmenuContentHeight(submenu);
 
@@ -290,9 +331,34 @@ class HeaderMenu extends Component {
       }
     }
 
+    this.#submenuHeightCache.set(submenu, finalHeight);
+    return finalHeight;
+  }
+
+  /**
+   * Measure submenu height and sync the header CSS vars once layout is stable.
+   * Separates layout read and DOM write phases to avoid forced reflows.
+   * @param {HTMLElement} submenu
+   * @param {HTMLElement} item
+   * @param {boolean} isDefaultSlot
+   * @param {boolean} hasSubmenu
+   */
+  #syncSubmenuHeight(submenu, item, isDefaultSlot, hasSubmenu) {
+    if (this.#state.activeItem !== item) return;
+
+    const activeSubmenu = findSubmenu(item);
+    if (!activeSubmenu || activeSubmenu !== submenu) return;
+
+    // Read Phase
+    const finalHeight = this.#getSubmenuHeightFromCache(submenu, item, isDefaultSlot, hasSubmenu);
     const headerVisibleHeight = this.#getHeaderVisibleHeight();
-    this.headerComponent?.style.setProperty('--submenu-height', `${finalHeight}px`);
-    this.#setFullOpenHeaderHeight(finalHeight, headerVisibleHeight);
+
+    // Write Phase (scheduled in rAF to batch updates)
+    requestAnimationFrame(() => {
+      if (this.#state.activeItem !== item) return;
+      this.headerComponent?.style.setProperty('--submenu-height', `${finalHeight}px`);
+      this.#setFullOpenHeaderHeight(finalHeight, headerVisibleHeight);
+    });
   }
 
   /**

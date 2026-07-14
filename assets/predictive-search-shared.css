@@ -1,0 +1,39 @@
+.predictive-search-results__card--product,
+.predictive-search-results__card {
+  position: relative;
+  transition:
+    transform var(--hover-transition-duration) var(--hover-transition-timing),
+    box-shadow var(--hover-transition-duration) var(--hover-transition-timing);
+  z-index: var(--layer-flat);
+}
+
+@media (any-pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .card-hover-effect-lift .predictive-search-results__card:hover {
+    transform: translateY(calc(-1 * var(--hover-lift-amount)));
+  }
+
+  .card-hover-effect-scale .predictive-search-results__card:hover {
+    transform: scale(var(--hover-scale-amount));
+  }
+
+  .card-hover-effect-subtle-zoom .predictive-search-results__card:hover {
+    transform: scale(var(--hover-subtle-zoom-amount));
+  }
+}
+
+.predictive-search-results__card--product:hover,
+.predictive-search-results__card:hover {
+  position: relative;
+  z-index: var(--layer-raised);
+  transition:
+    transform var(--hover-transition-duration) var(--hover-transition-timing),
+    box-shadow var(--hover-transition-duration) var(--hover-transition-timing);
+}
+
+.predictive-search-results__inner {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-block: var(--padding-lg);
+  container-type: inline-size;
+  color: var(--color-foreground);
+}

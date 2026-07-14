@@ -4,6 +4,13 @@
   @param {object} [product] - The product object, available on product pages.
 {% enddoc %}
 
+{% liquid
+  assign is_homepage_template = false
+  if template.name == 'index' or request.page_type == 'index'
+    assign is_homepage_template = true
+  endif
+%}
+
 <script type="importmap">
   {
     "imports": {
@@ -105,11 +112,6 @@
   type="module"
   fetchpriority="low"
 ></script>
-<script
-  src="{{ 'quick-add.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
 {% if settings.show_add_discount_code %}
   <script
     src="{{ 'cart-discount.js' | asset_url }}"
@@ -124,47 +126,12 @@
   fetchpriority="low"
 ></script>
 <script
-  src="{{ 'variant-picker.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
-<script
   src="{{ 'product-card.js' | asset_url }}"
   type="module"
   fetchpriority="low"
 ></script>
 <script
-  src="{{ 'product-form.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
-<script
-  src="{{ 'fly-to-cart.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
-<script
   src="{{ 'accordion-custom.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
-<script
-  src="{{ 'media.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
-<script
-  src="{{ 'product-price.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
-<script
-  src="{{ 'product-sku.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
-<script
-  src="{{ 'product-inventory.js' | asset_url }}"
   type="module"
   fetchpriority="low"
 ></script>
@@ -199,35 +166,77 @@
   fetchpriority="low"
 ></script>
 <script
-  src="{{ 'component-quantity-selector.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
-<script
-  src="{{ 'media-gallery.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
-<script
   src="{{ 'rte-formatter.js' | asset_url }}"
   type="module"
   fetchpriority="low"
 ></script>
 <script
-  src="{{ 'volume-pricing.js' | asset_url }}"
+  src="{{ 'quick-add.js' | asset_url }}"
   type="module"
   fetchpriority="low"
 ></script>
-<script
-  src="{{ 'price-per-item.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
-<script
-  src="{{ 'volume-pricing-info.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
+{% unless is_homepage_template %}
+  <script
+    src="{{ 'variant-picker.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  <script
+    src="{{ 'product-form.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  <script
+    src="{{ 'fly-to-cart.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  <script
+    src="{{ 'media.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  <script
+    src="{{ 'product-price.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  <script
+    src="{{ 'product-sku.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  <script
+    src="{{ 'product-inventory.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  <script
+    src="{{ 'component-quantity-selector.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  <script
+    src="{{ 'media-gallery.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  <script
+    src="{{ 'volume-pricing.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  <script
+    src="{{ 'price-per-item.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  <script
+    src="{{ 'volume-pricing-info.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+{% endunless %}
 
 {% if localization.available_countries.size > 1 or localization.available_languages.size > 1 %}
   <script
@@ -265,6 +274,98 @@
     type="module"
     fetchpriority="low"
   ></script>
+  <script>
+    (() => {
+      const homepageQuickAddModules = [
+        "{{ 'product-form.js' | asset_url }}",
+        "{{ 'fly-to-cart.js' | asset_url }}",
+        "{{ 'media.js' | asset_url }}",
+        "{{ 'product-price.js' | asset_url }}",
+        "{{ 'product-sku.js' | asset_url }}",
+        "{{ 'product-inventory.js' | asset_url }}",
+        "{{ 'component-quantity-selector.js' | asset_url }}",
+        "{{ 'media-gallery.js' | asset_url }}",
+        "{{ 'volume-pricing.js' | asset_url }}",
+        "{{ 'price-per-item.js' | asset_url }}",
+        "{{ 'volume-pricing-info.js' | asset_url }}"
+      ];
+
+      let homepageQuickAddSupportPromise = null;
+
+      const loadModuleScript = (src) =>
+        new Promise((resolve, reject) => {
+          if (document.querySelector(`script[type="module"][src="${src}"]`)) {
+            resolve();
+            return;
+          }
+
+          const script = document.createElement('script');
+          script.type = 'module';
+          script.src = src;
+          script.fetchPriority = 'low';
+          script.onload = () => resolve();
+          script.onerror = () => reject(new Error(`Failed to load ${src}`));
+          document.head.appendChild(script);
+        });
+
+      const ensureHomepageQuickAddSupport = () => {
+        if (!homepageQuickAddSupportPromise) {
+          homepageQuickAddSupportPromise = Promise.all(homepageQuickAddModules.map(loadModuleScript)).catch((error) => {
+            homepageQuickAddSupportPromise = null;
+            throw error;
+          });
+        }
+
+        return homepageQuickAddSupportPromise;
+      };
+
+      window.__ensureHomepageQuickAddSupport = ensureHomepageQuickAddSupport;
+
+      const quickAddSelectors = [
+        'quick-add-component',
+        '.quick-add__button',
+        '#quick-add-dialog'
+      ].join(',');
+
+      const primeQuickAddSupport = (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        if (!target.closest(quickAddSelectors)) return;
+
+        ensureHomepageQuickAddSupport().catch((error) => {
+          console.warn('[homepage quick-add] Failed to prime quick add support:', error);
+        });
+      };
+
+      document.addEventListener('pointerenter', primeQuickAddSupport, true);
+      document.addEventListener('focusin', primeQuickAddSupport, true);
+      document.addEventListener('pointerdown', primeQuickAddSupport, true);
+
+      const warmHomepageQuickAddSupport = () => {
+        ensureHomepageQuickAddSupport().catch((error) => {
+          console.warn('[homepage quick-add] Failed to warm quick add support:', error);
+        });
+      };
+
+      if ('requestIdleCallback' in window) {
+        window.addEventListener(
+          'load',
+          () => {
+            window.requestIdleCallback(warmHomepageQuickAddSupport, { timeout: 2500 });
+          },
+          { once: true }
+        );
+      } else {
+        window.addEventListener(
+          'load',
+          () => {
+            window.setTimeout(warmHomepageQuickAddSupport, 1500);
+          },
+          { once: true }
+        );
+      }
+    })();
+  </script>
 {% endif %}
 
 <script

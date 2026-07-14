@@ -81,6 +81,15 @@ class StickyAddToCartComponent extends Component {
   /** @type {HTMLElement | null} */
   #footerElement = null;
 
+  /** @type {boolean} */
+  #buyButtonsIntersecting = true;
+
+  /** @type {boolean} */
+  #footerIntersecting = false;
+
+  /** @type {ResizeObserver | null} */
+  #resizeObserver = null;
+
   connectedCallback() {
     super.connectedCallback();
 
@@ -93,16 +102,24 @@ class StickyAddToCartComponent extends Component {
     document.addEventListener(StandardEvents.cartLinesUpdate, this.#handleCartAddComplete, { signal });
     document.addEventListener(StandardEvents.cartError, this.#handleCartAddComplete, { signal });
     document.addEventListener(ThemeEvents.quantitySelectorUpdate, this.#handleQuantityUpdate, { signal });
-    window.addEventListener('scroll', this.#handleViewportChange, { signal, passive: true });
-    window.addEventListener('resize', this.#handleViewportChange, { signal, passive: true });
-    window.addEventListener('pageshow', this.#handleViewportChange, { signal });
+    
+    window.addEventListener('pageshow', this.#handlePageshow, { signal });
 
-    const pageWrapper = document.querySelector('.page-wrapper');
-    pageWrapper?.addEventListener('scroll', this.#handleViewportChange, { signal, passive: true });
+    if ('ResizeObserver' in window && this.refs.stickyBar) {
+      this.#resizeObserver = new ResizeObserver(() => {
+        this.#syncStickyAddToCartReserve();
+      });
+      this.#resizeObserver.observe(this.refs.stickyBar);
+    }
 
     this.#getInitialQuantity();
     this.#refreshActionTargets();
-    requestAnimationFrame(() => this.#evaluateStickyVisibility());
+    
+    // Initial evaluation
+    requestAnimationFrame(() => {
+      this.#evaluateStickyVisibility();
+      this.#syncStickyAddToCartReserve();
+    });
 
     // IntersectionObserver callbacks gate visibility on #isChatActive(), but
     // if the shopper scrolls before the Inbox bundle has upgraded
@@ -119,14 +136,13 @@ class StickyAddToCartComponent extends Component {
     this.#buyButtonsIntersectionObserver?.disconnect();
     this.#mainBottomObserver?.disconnect();
     this.#customizeButtonObserver?.disconnect();
+    this.#resizeObserver?.disconnect();
+    this.#resizeObserver = null;
     this.#abortController.abort();
     if (this.#animationTimeout) {
       clearTimeout(this.#animationTimeout);
     }
-    if (this.#viewportRafId !== null) {
-      cancelAnimationFrame(this.#viewportRafId);
-      this.#viewportRafId = null;
-    }
+    document.documentElement.style.setProperty('--sticky-add-to-cart-reserve', '0px');
   }
 
   /**
@@ -148,6 +164,7 @@ class StickyAddToCartComponent extends Component {
       const [entry] = entries;
       if (!entry) return;
 
+      this.#buyButtonsIntersecting = entry.isIntersecting;
       this.#evaluateStickyVisibility();
     });
 
@@ -157,6 +174,7 @@ class StickyAddToCartComponent extends Component {
         const [entry] = entries;
         if (!entry) return;
 
+        this.#footerIntersecting = entry.isIntersecting;
         this.#evaluateStickyVisibility();
       },
       {
@@ -168,31 +186,51 @@ class StickyAddToCartComponent extends Component {
     this.#mainBottomObserver.observe(this.#footerElement);
   }
 
-  #handleViewportChange = () => {
-    if (this.#viewportRafId !== null) return;
-
-    this.#viewportRafId = requestAnimationFrame(() => {
-      this.#viewportRafId = null;
-      this.#evaluateStickyVisibility();
-    });
+  #handlePageshow = () => {
+    this.#evaluateStickyVisibility();
+    this.#syncStickyAddToCartReserve();
   };
 
+  #syncStickyAddToCartReserve() {
+    const { stickyBar } = this.refs;
+    const isMobile = window.matchMedia('(max-width: 989px)').matches;
+    const isAvailable = this.dataset.variantAvailable === 'true';
+
+    // If not stuck or not available, remove reserve spacing
+    const isStuck = stickyBar?.getAttribute('data-stuck') === 'true';
+
+    if (!stickyBar || !isMobile || !isAvailable || !isStuck) {
+      requestAnimationFrame(() => {
+        document.documentElement.style.setProperty('--sticky-add-to-cart-reserve', '0px');
+      });
+      return;
+    }
+
+    // Read Phase
+    const stickyBarHeight = stickyBar.offsetHeight || 0;
+    const stickyBarStyles = window.getComputedStyle(stickyBar);
+    const bottomOffset = parseFloat(stickyBarStyles.bottom || '0') || 0;
+    const reserveHeight = Math.ceil(stickyBarHeight + Math.max(bottomOffset, 0));
+
+    // Write Phase
+    requestAnimationFrame(() => {
+      document.documentElement.style.setProperty('--sticky-add-to-cart-reserve', `${reserveHeight}px`);
+    });
+  }
+
   #evaluateStickyVisibility() {
-    if (!this.#buyButtonsBlock || !this.#footerElement) return;
-
-    const buyButtonsRect = this.#buyButtonsBlock.getBoundingClientRect();
-    const footerRect = this.#footerElement.getBoundingClientRect();
-    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
-
-    const buyButtonsScrolledPast = buyButtonsRect.bottom <= 0 || buyButtonsRect.top < 0;
-    const footerInRevealZone = footerRect.top <= viewportHeight + 200 && footerRect.bottom > 0;
-
-    if (footerInRevealZone) {
+    const isAvailable = this.dataset.variantAvailable === 'true';
+    if (!isAvailable) {
       this.#hideStickyBar();
       return;
     }
 
-    if (buyButtonsScrolledPast && !this.#isChatActive()) {
+    if (this.#footerIntersecting) {
+      this.#hideStickyBar();
+      return;
+    }
+
+    if (!this.#buyButtonsIntersecting && !this.#isChatActive()) {
       this.#showStickyBar();
       return;
     }
@@ -301,6 +339,10 @@ class StickyAddToCartComponent extends Component {
         }
         // Restore the current quantity display if needed
         this.#updateButtonText();
+
+        // Evaluate visibility and reserve height after variant selection
+        this.#evaluateStickyVisibility();
+        this.#syncStickyAddToCartReserve();
       })
       .catch((error) => {
         if (error?.name !== 'AbortError') console.warn('[sticky-add-to-cart] Event promise rejected:', error);
@@ -365,15 +407,14 @@ class StickyAddToCartComponent extends Component {
     const { stickyBar } = this.refs;
     this.#isStuck = true;
     stickyBar.dataset.stuck = 'true';
+    this.#syncStickyAddToCartReserve();
   }
 
-  /**
-   * Hides the sticky bar with animation
-   */
   #hideStickyBar() {
     const { stickyBar } = this.refs;
     this.#isStuck = false;
     stickyBar.dataset.stuck = 'false';
+    this.#syncStickyAddToCartReserve();
   }
 
   // Helper methods

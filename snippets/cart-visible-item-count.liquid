@@ -2,9 +2,7 @@
   assign visible_item_count = 0
 
   for item in cart.items
-    unless item.properties['_customization_fee_component'] != blank
-      assign visible_item_count = visible_item_count | plus: item.quantity
-    endunless
+    assign visible_item_count = visible_item_count | plus: item.quantity
   endfor
 
   echo visible_item_count

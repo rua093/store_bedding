@@ -23,10 +23,7 @@ class CartIcon extends Component {
   getVisibleItemCount(items) {
     if (!Array.isArray(items)) return null;
 
-    return items.reduce((total, item) => {
-      if (item?.properties?._customization_fee_component) return total;
-      return total + (Number(item?.quantity) || 0);
-    }, 0);
+    return items.reduce((total, item) => total + (Number(item?.quantity) || 0), 0);
   }
 
   /** @type {number} */

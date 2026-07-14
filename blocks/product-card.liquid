@@ -4,7 +4,7 @@
   assign product = block.settings.product
 -%}
 
-{% render 'custom-product-card', product: product, section_id: section.id, product_view_context: 'manual-product-card', show_badge: true %}
+{% render 'custom-product-card', product: product, section_id: section.id, product_view_context: 'page', show_badge: true %}
 
 {% schema %}
 {

@@ -66,72 +66,23 @@ export class CartItemsComponent extends createViewEventElement(Component) {
   }
 
   /**
-   * Returns the Shopify cart item JSON for a line number.
-   * @param {number} line
-   * @param {{ items?: Array<any> } | null} cart
-   * @returns {any | null}
-   */
-  #getCartItemByLine(line, cart) {
-    if (!cart?.items || line < 1 || line > cart.items.length) return null;
-    return cart.items[line - 1] ?? null;
-  }
-
-  /**
-   * Builds a batch update payload so customized main lines and their surcharge
-   * addon lines move in lockstep, then the theme rerenders once from the final cart.
+   * Builds a cart update payload for a single line item.
    * @param {number} line
    * @param {number} quantity
    * @returns {Promise<{endpoint: string, body: string, lineIds: Array<{id: string, quantity: number}>}>}
    */
   async #buildCartUpdateRequest(line, quantity) {
-    const cart = await this.fetchCartData();
-    const cartItem = this.#getCartItemByLine(line, cart);
     const sections = this.#getSectionsToUpdate();
 
-    const customizationId = cartItem?.properties?._customization_id;
-    const isMainCustomizedItem =
-      customizationId && !cartItem?.properties?._customization_fee_component;
-
-    if (!isMainCustomizedItem) {
-      return {
-        endpoint: Theme.routes.cart_change_url,
-        body: JSON.stringify({
-          line,
-          quantity,
-          sections,
-          sections_url: window.location.pathname,
-        }),
-        lineIds: [{ id: this.#getCartItemRowByLine(line)?.dataset.key ?? '', quantity }],
-      };
-    }
-
-    /** @type {Record<string, number>} */
-    const updates = {};
-    /** @type {Array<{id: string, quantity: number}>} */
-    const lineIds = [];
-
-    for (const item of cart.items ?? []) {
-      if (item.key === cartItem.key || item.properties?._customization_id === customizationId) {
-        const isFeeComponent = Boolean(item.properties?._customization_fee_component);
-        const nextQuantity = isFeeComponent ? quantity : item.key === cartItem.key ? quantity : item.quantity;
-        updates[item.key] = nextQuantity;
-        lineIds.push({ id: item.key, quantity: nextQuantity });
-      }
-    }
-
-    if (!updates[cartItem.key]) {
-      updates[cartItem.key] = quantity;
-      lineIds.push({ id: cartItem.key, quantity });
-    }
-
     return {
-      endpoint: `${Theme.routes.cart_url}/update.js`,
+      endpoint: Theme.routes.cart_change_url,
       body: JSON.stringify({
-        updates,
+        line,
+        quantity,
         sections,
         sections_url: window.location.pathname,
       }),
-      lineIds,
+      lineIds: [{ id: this.#getCartItemRowByLine(line)?.dataset.key ?? '', quantity }],
     };
   }
 
