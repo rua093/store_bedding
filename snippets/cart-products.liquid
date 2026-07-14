@@ -330,15 +330,6 @@
                   </div>
 
                   <div class="cart-items__variants-wrapper">
-                    {%- if is_customized_item -%}
-                      <div
-                        class="cart-items__customization-summary"
-                        aria-label="Customization details"
-                      >
-                        <span class="cart-items__customization-badge">Customized</span>
-                      </div>
-                    {%- endif -%}
-
                     {%- if item.product.has_only_default_variant == false
                       or item.properties.size != 0
                       or item.selling_plan_allocation != null
@@ -424,22 +415,24 @@
                       assign drawer_compare_price = item.variant.compare_at_price | times: item.quantity
                     endif
                   %}
-                  <div class="cart-items__unit-price-wrapper">
-                    <div class="cart-items__price-inline">
-                      {% if drawer_compare_price > drawer_line_price %}
-                        <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
-                      {% else %}
-                        <span class="visually-hidden">{{ 'content.price' | t }}</span>
-                      {% endif %}
+                  {% if context == 'drawer' %}
+                    <div class="cart-items__unit-price-wrapper">
+                      <div class="cart-items__price-inline">
+                        {% if drawer_compare_price > drawer_line_price %}
+                          <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
+                        {% else %}
+                          <span class="visually-hidden">{{ 'content.price' | t }}</span>
+                        {% endif %}
 
-                      <span class="cart-items__sale-price">{{ drawer_line_price | money }}</span>
+                        <span class="cart-items__sale-price">{{ drawer_line_price | money }}</span>
 
-                      {% if drawer_compare_price > drawer_line_price %}
-                        <span class="visually-hidden">{{ 'content.price_regular' | t }}</span>
-                        <s class="compare-at-price cart-items__compare-price">{{ drawer_compare_price | money }}</s>
-                      {% endif %}
+                        {% if drawer_compare_price > drawer_line_price %}
+                          <span class="visually-hidden">{{ 'content.price_regular' | t }}</span>
+                          <s class="compare-at-price cart-items__compare-price">{{ drawer_compare_price | money }}</s>
+                        {% endif %}
+                      </div>
                     </div>
-                  </div>
+                  {% endif %}
                 </td>
                 <td
                   class="cart-items__quantity"
