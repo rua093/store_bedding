@@ -42,6 +42,11 @@
   if request.page_type == 'product' and section.settings.recommendation_type == 'related'
     assign eager_load_recommendations = true
   endif
+
+  assign related_background_image_url = 'bg_new_arrivals.webp' | asset_url
+  if section.settings.related_background_image != blank
+    assign related_background_image_url = section.settings.related_background_image | image_url: width: 2400
+  endif
 %}
 
 {% render 'quick-add-styles' %}
@@ -65,7 +70,7 @@
       data-cart-recommendations-section-id="{{ section.id }}"
     {% endif %}
     {% if section.settings.recommendation_type == 'related' %}
-      style="--pdp-related-bg-image: url('{{ 'bg_new_arrivals.webp' | asset_url }}');"
+      style="--pdp-related-bg-image: url('{{ related_background_image_url }}');"
     {% endif %}
     {{ section.shopify_attributes }}
   >
@@ -542,6 +547,11 @@
       "step": 1,
       "unit": "px",
       "default": 12
+    },
+    {
+      "type": "image_picker",
+      "id": "related_background_image",
+      "label": "Related background image"
     },
     {
       "type": "color",

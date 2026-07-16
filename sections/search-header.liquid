@@ -5,13 +5,11 @@
     render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
   endif
 
-  assign hero_image = section.settings.hero_image
+  assign hero_image = section.settings.hero_image | default: section.settings.fallback_hero_image
   assign eyebrow_text = section.settings.eyebrow | default: 'Search results'
   assign heading_text = section.settings.heading | default: 'Cozy finds'
   assign subtitle_text = section.settings.subtitle | default: 'Made for moments that matter.'
   assign fallback_text = section.settings.fallback_text | default: 'Search blankets, quilts, comforters and more.'
-  assign fallback_hero_image = 'media-brand-intro-1600.webp' | asset_url
-  assign fallback_hero_image_large = 'media-brand-intro-2400.webp' | asset_url
   assign overlay_primary = section.settings.overlay_strength | plus: 17 | at_most: 100
   assign overlay_secondary = section.settings.overlay_strength | plus: 14 | at_most: 100
   assign overlay_tertiary = section.settings.overlay_strength | minus: 8 | at_least: 0
@@ -46,8 +44,8 @@
           }}
         {% else %}
           <img
-            src="{{ fallback_hero_image }}"
-            srcset="{{ fallback_hero_image }} 1600w, {{ fallback_hero_image_large }} 2400w"
+            src="{{ 'media-brand-intro-1600.webp' | asset_url }}"
+            srcset="{{ 'media-brand-intro-1600.webp' | asset_url }} 1600w, {{ 'media-brand-intro-2400.webp' | asset_url }} 2400w"
             sizes="(min-width: 990px) 1200px, 100vw"
             alt=""
             loading="eager"
@@ -363,6 +361,11 @@
       "type": "image_picker",
       "id": "hero_image",
       "label": "Banner image"
+    },
+    {
+      "type": "image_picker",
+      "id": "fallback_hero_image",
+      "label": "Fallback banner image"
     },
     {
       "type": "text",

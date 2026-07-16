@@ -34,6 +34,11 @@
   assign header_spacing_bottom = section.settings.header_spacing_bottom | default: 22
   assign carousel_padding_top = section.settings.carousel_padding_top | default: 18
   assign carousel_padding_bottom = section.settings.carousel_padding_bottom | default: 18
+  assign new_arrivals_background_image_url = 'bg_new_arrivals.webp' | asset_url
+
+  if section.settings.background_image != blank
+    assign new_arrivals_background_image_url = section.settings.background_image | image_url: width: 2400
+  endif
 
   if resolved_button_link == blank and selected_collection != blank
     assign resolved_button_link = selected_collection.url
@@ -93,7 +98,7 @@
     data-new-arrivals-line-section="{{ section.id }}"
     style="
       {% render 'spacing-style', settings: section.settings %}
-      --new-arrivals-bg-image: url('{{ "bg_new_arrivals.webp" | asset_url }}');
+      --new-arrivals-bg-image: url('{{ new_arrivals_background_image_url }}');
       --new-arrivals-section-bg: {{ section_background_color }};
       --new-arrivals-header-bg: {{ header_background_color }};
       --new-arrivals-heading-color: {{ heading_color }};
@@ -564,6 +569,11 @@
         "id": "dot_color",
         "label": "Dot color",
         "default": "#111111"
+      },
+      {
+        "type": "image_picker",
+        "id": "background_image",
+        "label": "Background image"
       },
       {
         "type": "header",

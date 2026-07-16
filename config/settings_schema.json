@@ -53,6 +53,11 @@
         "type": "image_picker",
         "id": "favicon",
         "label": "t:settings.favicon"
+      },
+      {
+        "type": "image_picker",
+        "id": "all_collection_fallback_image",
+        "label": "All collections fallback hero image"
       }
     ]
   },

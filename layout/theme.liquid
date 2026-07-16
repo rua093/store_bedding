@@ -76,10 +76,16 @@
           fetchpriority="high"
         >
       {%- elsif collection.handle == 'all' -%}
+        {%- liquid
+          assign all_collection_preload_image = 'bg-product.webp' | asset_url
+          if settings.all_collection_fallback_image != blank
+            assign all_collection_preload_image = settings.all_collection_fallback_image | image_url: width: 1920
+          endif
+        -%}
         <link
           rel="preload"
           as="image"
-          href="{{ 'bg-product.webp' | asset_url }}"
+          href="{{ all_collection_preload_image }}"
           fetchpriority="high"
         >
       {%- endif -%}

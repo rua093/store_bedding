@@ -1,9 +1,15 @@
 
+{% liquid
+  assign announcement_background_image_url = 'bg-announcement.webp' | asset_url
+  if section.settings.background_image != blank
+    assign announcement_background_image_url = section.settings.background_image | image_url: width: 2400
+  endif
+%}
+
 <link
   rel="preload"
   as="image"
-  href="{{ 'bg-announcement.webp' | asset_url }}"
-  type="image/webp"
+  href="{{ announcement_background_image_url }}"
 >
 
 {%- capture announcement_marquee_items -%}
@@ -18,7 +24,7 @@
 {%- endcapture -%}
 <aside
   class="announcement-bar spacing-style section section--{{ section.settings.section_width }}"
-  style="{% render 'spacing-padding', settings: section.settings %}; --border-bottom-width: {{ section.settings.divider_width }}px; --announcement-bg-image: url('{{ "bg-announcement.webp" | asset_url }}');{% if section.settings.divider_color != blank %} --color-border: {{ section.settings.divider_color }};{% endif %}"
+  style="{% render 'spacing-padding', settings: section.settings %}; --border-bottom-width: {{ section.settings.divider_width }}px; --announcement-bg-image: url('{{ announcement_background_image_url }}');{% if section.settings.divider_color != blank %} --color-border: {{ section.settings.divider_color }};{% endif %}"
 >
   <div class="announcement-bar__slider" aria-live="polite">
     <div class="announcement-bar__marquee" aria-label="Store announcements">
@@ -237,6 +243,11 @@
         }
       ],
       "default": "page-width"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
     },
     {
       "type": "color",

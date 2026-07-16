@@ -11,7 +11,8 @@
   assign section_eyebrow = section.settings.eyebrow | default: 'OUR MOST LOVED'
   assign section_description = section.settings.description | default: 'Loved for softness, warmth and everyday comfort.'
   assign section_cta_label = section.settings.cta_label | default: 'Shop Collection'
-  assign promo_alt = section.settings.promo_image.alt | default: section_title
+  assign promo_image = section.settings.promo_image | default: section.settings.promo_fallback_image
+  assign promo_alt = promo_image.alt | default: section_title
 %}
 
 <section class="bestselling-bedding" data-section-id="{{ section.id }}">
@@ -23,9 +24,9 @@
             <a class="bestselling-bedding__visual-link" href="{{ collection_url }}">
           {% endif %}
           <div class="bestselling-bedding__visual-frame">
-            {% if section.settings.promo_image != blank %}
+            {% if promo_image != blank %}
               {{
-                section.settings.promo_image | image_url: width: 1800 | image_tag: class: 'bestselling-bedding__visual-image', widths: '480, 720, 960, 1280, 1600, 1800', sizes: '(min-width: 990px) 38vw, (min-width: 750px) 46vw, 86vw', loading: 'lazy', alt: promo_alt, decoding: 'async'
+                promo_image | image_url: width: 1800 | image_tag: class: 'bestselling-bedding__visual-image', widths: '480, 720, 960, 1280, 1600, 1800', sizes: '(min-width: 990px) 38vw, (min-width: 750px) 46vw, 86vw', loading: 'lazy', alt: promo_alt, decoding: 'async'
               }}
             {% else %}
               <picture>
@@ -133,6 +134,11 @@
         "type": "image_picker",
         "id": "promo_image",
         "label": "Lifestyle image"
+      },
+      {
+        "type": "image_picker",
+        "id": "promo_fallback_image",
+        "label": "Fallback lifestyle image"
       },
       {
         "type": "text",

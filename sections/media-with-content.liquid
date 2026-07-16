@@ -28,6 +28,11 @@
   if section.settings.background_color != blank
     render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
   endif
+
+  assign brand_intro_background_image_url = 'media.webp' | asset_url
+  if section.settings.brand_intro_background_image != blank
+    assign brand_intro_background_image_url = section.settings.brand_intro_background_image | image_url: width: 2400
+  endif
 %}
 <div
   class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
@@ -57,7 +62,7 @@
      --section-preview-height: 600px;
      {% endif %}
     {% if section.id contains 'media_with_content_brand_intro' %}
-      --brand-intro-bg-image: url('{{ "media.webp" | asset_url }}');
+      --brand-intro-bg-image: url('{{ brand_intro_background_image_url }}');
     {% endif %}
   "
   {% if request.visual_preview_mode %}
@@ -205,6 +210,11 @@
       "label": "t:settings.extend_media_to_screen_edge",
       "default": true,
       "visible_if": "{{ section.settings.section_width == 'page-width' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "brand_intro_background_image",
+      "label": "Brand intro background image"
     },
     {
       "type": "color",

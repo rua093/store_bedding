@@ -4,11 +4,15 @@
   assign email_id = 'ContactForm-email-' | append: section.id
   assign phone_id = 'ContactForm-phone-' | append: section.id
   assign body_id = 'ContactForm-body-' | append: section.id
+  assign contact_background_image_url = 'bg_new_arrivals.webp' | asset_url
+  if section.settings.background_image != blank
+    assign contact_background_image_url = section.settings.background_image | image_url: width: 2400
+  endif
 %}
 
 <section
   class="contact-page"
-  style="--contact-page-bg-image: url('{{ 'bg_new_arrivals.webp' | asset_url }}');"
+  style="--contact-page-bg-image: url('{{ contact_background_image_url }}');"
 >
   <div class="section page-width-normal">
     <div class="contact-page__inner">
@@ -625,7 +629,13 @@
   "name": "Main contact page",
   "tag": "section",
   "class": "section-contact-page",
-  "settings": [],
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    }
+  ],
   "presets": [
     {
       "name": "Main contact page"
