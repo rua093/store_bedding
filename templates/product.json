@@ -484,6 +484,7 @@
         "icons_shape": "none",
         "section_width": "page-width",
         "gap": 28,
+        "related_background_image": "shopify://shop_images/bg_new_arrivals.webp",
         "background_color": "",
         "padding-block-start": 48,
         "padding-block-end": 48

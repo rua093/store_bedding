@@ -11,7 +11,9 @@
   "sections": {
     "section": {
       "type": "collection-hero",
-      "settings": {}
+      "settings": {
+        "all_collection_fallback_image": "shopify://shop_images/bg-product.webp"
+      }
     },
     "main": {
       "type": "main-collection",
