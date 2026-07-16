@@ -11,6 +11,7 @@
   assign add_to_cart_text = 'actions.add' | t
   assign choose_options_text = 'actions.choose' | t
   assign customize_now_text = 'Customize now'
+  assign customize_button_text = 'Customize'
   capture product_display_title
     render 'product-display-title', product: product
   endcapture
@@ -53,8 +54,42 @@
       class="button quick-add__button quick-add__button--customize"
       aria-label="Customize now {{ product_display_title | strip }}"
     >
-      <span class="quick-add__customize-text">
-        {{ customize_now_text }}
+      <span class="add-to-cart-text quick-add__customize-pill">
+        <span
+          aria-hidden="true"
+          class="svg-wrapper add-to-cart-icon quick-add__customize-icon"
+        >
+          <svg viewBox="0 0 24 24" fill="none" role="presentation" focusable="false">
+            <path
+              d="M4 16.75V20h3.25L17.06 10.19l-3.25-3.25L4 16.75Z"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M12.88 7.12 16.13 10.37"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M14.94 5.06 16.94 3.06a1.5 1.5 0 0 1 2.12 0l1.88 1.88a1.5 1.5 0 0 1 0 2.12l-2 2"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </span>
+        <span class="add-to-cart-text__content is-visually-hidden-mobile">
+          <span>
+            <span>
+              {{ customize_button_text }}
+            </span>
+          </span>
+        </span>
       </span>
     </a>
   </div>
