@@ -43,6 +43,7 @@
       "type": "bestselling-bedding",
       "settings": {
         "collection": "best-selling",
+        "promo_image": "shopify://shop_images/best_seller.webp",
         "eyebrow": "OUR MOST LOVED",
         "title": "Best Sellers",
         "description": "Loved for softness, warmth and everyday comfort.",
@@ -71,6 +72,7 @@
         "heading_accent_color": "#d39a74",
         "subheading_color": "#ffffff",
         "dot_color": "#563d30",
+        "background_image": "shopify://shop_images/bg_new_arrivals.webp",
         "padding-block-start": 0,
         "padding-block-end": 32,
         "header_padding_top": 32,
@@ -456,6 +458,7 @@
         "media_height": "50svh",
         "section_width": "page-width",
         "extend_media": false,
+        "brand_intro_background_image": "shopify://shop_images/media.webp",
         "background_color": "",
         "padding-block-start": 0,
         "padding-block-end": 0
