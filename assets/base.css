@@ -910,11 +910,6 @@ body:has(.header[transparent]) #header-group > *:not(.header-section) {
   z-index: calc(var(--layer-menu-drawer) - 1);
 }
 
-/* Featured collection block */
-.featured-collection-block {
-  width: 100%;
-}
-
 /* Product grid */
 .product-grid-container {
   display: block;

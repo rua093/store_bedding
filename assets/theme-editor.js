@@ -2,11 +2,6 @@
 import { updateAllHeaderCustomProperties } from '@theme/utilities';
 
 /** @type {{ activeSlideIndex: number | null }} */
-const layeredSlideshowState = {
-  activeSlideIndex: null,
-};
-
-/** @type {{ activeSlideIndex: number | null }} */
 const carouselState = {
   activeSlideIndex: null,
 };
@@ -92,24 +87,6 @@ document.addEventListener('shopify:block:select', function (event) {
       }
     }
 
-    // Keep track of the selected slide for the layered slideshow
-    const layeredSlideshowPanel = event.target.closest('layered-slideshow-component [role="tabpanel"]');
-
-    if (layeredSlideshowPanel) {
-      /** @type {import('./layered-slideshow').LayeredSlideshowComponent | null} */
-      const layeredSlideshow = layeredSlideshowPanel.closest('layered-slideshow-component');
-      if (!layeredSlideshow) return;
-
-      const index = Array.from(layeredSlideshow.querySelectorAll('[role="tabpanel"]')).indexOf(layeredSlideshowPanel);
-      if (index === -1) return;
-
-      // Compare before updating to detect if same slide is selected again
-      const isAlreadyActive = index === layeredSlideshowState.activeSlideIndex;
-      layeredSlideshowState.activeSlideIndex = index;
-
-      // Use instant transition if the same slide is selected again
-      layeredSlideshow.select(index, { instant: isAlreadyActive });
-    }
   }
 });
 

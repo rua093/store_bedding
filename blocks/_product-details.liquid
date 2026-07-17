@@ -936,14 +936,8 @@
     height: 100%;
   }
 
-  .product-details--main-product .product-personalizer {
-    gap: 0.95rem;
-    margin: 0 0 1rem;
-    padding-top: 0.25rem;
-  }
-
   .product-details--main-product
-    :is(.product-personalizer, .recipient-form, .buy-buttons-block__bar, .shopify-app-block) {
+    :is(.recipient-form, .buy-buttons-block__bar, .shopify-app-block) {
     width: 100%;
     max-width: 100%;
     min-width: 0;
@@ -955,60 +949,8 @@
     max-width: 100%;
   }
 
-  .product-details--main-product .product-personalizer__controls {
-    gap: 0.9rem;
-  }
-
-  .product-details--main-product .personalizer-group {
-    padding-top: 0.8rem;
-    border-top: 1px solid rgba(184, 115, 69, 0.16);
-  }
-
-  .product-details--main-product .personalizer-group:first-child {
-    padding-top: 0;
-    border-top: 0;
-  }
-
-  .product-details--main-product .personalizer-group__legend {
-    margin-bottom: 0.6rem;
-    color: #43342b;
-    font-size: 0.98rem;
-    font-weight: 600;
-    line-height: 1.35;
-    letter-spacing: -0.01em;
-  }
-
-  .product-details--main-product .personalizer-group__options {
-    gap: 0.55rem;
-  }
-
-  .product-details--main-product .personalizer-option__label {
-    width: 5.1rem;
-    height: 5.1rem;
-    border: 1px solid rgba(120, 84, 58, 0.16);
-    border-radius: 14px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 249, 242, 0.88) 100%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 10px 22px rgba(47, 36, 29, 0.04);
-  }
-
-  .product-details--main-product .personalizer-option__input:checked + .personalizer-option__label {
-    border-color: #b87345;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 0 0 1px rgba(184, 115, 69, 0.26),
-      0 12px 24px rgba(184, 115, 69, 0.12);
-  }
-
-  .product-details--main-product .product-personalizer__summary {
-    gap: 0.3rem;
-    padding-top: 0;
-    color: #7b6657;
-    font-size: 0.88rem;
-    line-height: 1.5;
-  }
-
   .product-details--main-product
     :is(
-      .product-personalizer__summary-item,
-      .product-personalizer__errors,
       .personalizer-upload__filename,
       .recipient-form__message,
       .quantity-rules,
@@ -1633,7 +1575,6 @@
         .quantity-rules,
         .volume-pricing,
         .product-form-text__error,
-        .product-personalizer,
         .recipient-form,
         .shopify-app-block
       ) {
