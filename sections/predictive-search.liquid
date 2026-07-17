@@ -24,7 +24,6 @@
       {% if predictive_search.performed %}
         {% assign search_results_count = predictive_search.resources.products.size
           | plus: predictive_search.resources.pages.size
-          | plus: predictive_search.resources.articles.size
           | plus: predictive_search.resources.collections.size
         %}
       {% else %}
@@ -85,9 +84,6 @@
               {% for resource in predictive_search.resources.pages limit: 2 %}
                 <a class="jem-search-alt-results__item" href="{{ resource.url }}" ref="resultsItems[]">{{ resource.title }}</a>
               {% endfor %}
-              {% for resource in predictive_search.resources.articles limit: 2 %}
-                <a class="jem-search-alt-results__item" href="{{ resource.url }}" ref="resultsItems[]">{{ resource.title }}</a>
-              {% endfor %}
             </div>
           {%- elsif predictive_search.resources.queries.size == 0 -%}
             <div class="predictive-search-results__no-results jem-search-empty-state">
@@ -118,7 +114,6 @@
           {% assign total_results = predictive_search.resources.products.size
             | plus: predictive_search.resources.collections.size
             | plus: predictive_search.resources.pages.size
-            | plus: predictive_search.resources.articles.size
           %}
           {% assign single_result_url = null %}
           {% if total_results == 1 %}
@@ -128,8 +123,6 @@
               {% assign single_result_url = predictive_search.resources.collections.first.url %}
             {% elsif predictive_search.resources.pages.size == 1 %}
               {% assign single_result_url = predictive_search.resources.pages.first.url %}
-            {% elsif predictive_search.resources.articles.size == 1 %}
-              {% assign single_result_url = predictive_search.resources.articles.first.url %}
             {% endif %}
           {% endif %}
 

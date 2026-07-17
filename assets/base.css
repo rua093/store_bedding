@@ -337,8 +337,8 @@ p:empty {
     calc((100% - min(var(--page-content-width), 100% - var(--page-margin) * 2)) / 2)
   );
 
-  /* Offset for full-width sections to account for the page margin,
-  used for Marquee — note that --util-page-margin-offset doesn't work here */
+  /* Offset for full-width sections that need to bleed past the page margin.
+  Note that --util-page-margin-offset doesn't work for this case. */
   --full-page-margin-inline-offset: calc(((100vw - var(--full-page-grid-central-column-width)) / 2) * -1);
 
   width: 100%;

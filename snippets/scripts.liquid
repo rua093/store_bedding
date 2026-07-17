@@ -9,6 +9,15 @@
   if template.name == 'index' or request.page_type == 'index'
     assign is_homepage_template = true
   endif
+
+  assign uses_product_interaction_stack = false
+  if request.page_type == 'product'
+    assign uses_product_interaction_stack = true
+  elsif request.page_type == 'collection'
+    assign uses_product_interaction_stack = true
+  elsif request.page_type == 'search'
+    assign uses_product_interaction_stack = true
+  endif
 %}
 
 <script type="importmap">
@@ -170,7 +179,7 @@
   type="module"
   fetchpriority="low"
 ></script>
-{% unless is_homepage_template %}
+{% if uses_product_interaction_stack %}
   <script
     src="{{ 'variant-picker.js' | asset_url }}"
     type="module"
@@ -231,7 +240,7 @@
     type="module"
     fetchpriority="low"
   ></script>
-{% endunless %}
+{% endif %}
 
 {% if localization.available_countries.size > 1 or localization.available_languages.size > 1 %}
   <script
