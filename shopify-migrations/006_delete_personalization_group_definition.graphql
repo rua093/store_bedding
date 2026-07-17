@@ -1,9 +1,0 @@
-mutation DeletePersonalizationGroupDefinition($id: ID!) {
-  metaobjectDefinitionDelete(id: $id) {
-    deletedId
-    userErrors {
-      field
-      message
-    }
-  }
-}
