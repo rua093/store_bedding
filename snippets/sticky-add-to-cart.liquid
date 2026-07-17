@@ -1,0 +1,163 @@
+{% doc %}
+  Renders the sticky add to cart bar markup for the main product page.
+
+  @param {product} product_resource - Product used to populate the sticky bar
+{% enddoc %}
+
+{% liquid
+  assign current_variant = product_resource.selected_or_first_available_variant
+  assign product_display_title = product_resource.metafields.custom.short_title.value | default: product_resource.metafields.custom.short_title | default: product_resource.title
+  assign initial_quantity = current_variant.quantity_rule.min | default: 1
+  assign amazon_customizer_metafield = product_resource.metafields.custom.amazon_customizer
+  assign has_amazon_customizer = false
+
+  if amazon_customizer_metafield != blank and amazon_customizer_metafield.value != blank
+    assign amazon_customizer_json = amazon_customizer_metafield.value | json
+
+    unless amazon_customizer_json == '{}' or amazon_customizer_json == '[]' or amazon_customizer_json == 'null' or amazon_customizer_json == '""'
+      assign has_amazon_customizer = true
+    endunless
+  endif
+
+  assign image_to_show = current_variant.featured_image | default: product_resource.featured_image
+
+  assign has_single_option = false
+  if product_resource.has_only_default_variant != true and product_resource.options.size == 1
+    assign has_single_option = true
+  endif
+
+  assign has_image = false
+  if image_to_show != blank
+    assign has_image = true
+  endif
+%}
+
+<sticky-add-to-cart
+  class="sticky-add-to-cart"
+  data-variant-available="{{ current_variant.available }}"
+  data-has-amazon-customizer="{{ has_amazon_customizer }}"
+  data-product-id="{{ product_resource.id }}"
+  data-current-variant-id="{{ current_variant.id }}"
+  data-initial-quantity="{{ initial_quantity }}"
+  data-default-variant-title="{{ 'products.product.default_title' | t }}"
+>
+  <div
+    class="sticky-add-to-cart__bar color-custom-popover"
+    data-stuck="false"
+    ref="stickyBar"
+    role="region"
+    aria-label="{{ 'products.product.sticky_add_to_cart' | t }}"
+  >
+    {% if image_to_show %}
+      <div class="sticky-add-to-cart__image">
+        {% assign image_alt = image_to_show.alt | default: product_resource.title | escape %}
+        {{
+          image_to_show
+          | image_url: width: 120
+          | image_tag:
+            loading: 'lazy',
+            alt: image_alt,
+            class: 'sticky-add-to-cart__image-img',
+            data-testid: 'sticky-product-image',
+            srcset: null,
+            sizes: null,
+            ref: 'productImage'
+        }}
+      </div>
+    {% endif %}
+
+    <div
+      class="sticky-add-to-cart__info"
+      data-has-image="{{ has_image }}"
+      data-singleton="{{ product_resource.has_only_default_variant }}"
+      data-single-option="{{ has_single_option }}"
+    >
+      <p
+        class="sticky-add-to-cart__title"
+        data-testid="sticky-product-title"
+      >
+        {{ product_display_title | escape }}
+      </p>
+      <div
+        class="sticky-add-to-cart__variant"
+        data-testid="sticky-variant-title"
+        {% if product_resource.has_only_default_variant %}
+          style="display: none;"
+        {% endif %}
+      >
+        {% unless product_resource.has_only_default_variant %}
+          {% if current_variant != blank %}
+            {% assign variant_title = current_variant.title | escape %}
+          {% endif %}
+          {{ variant_title }}
+        {% endunless %}
+      </div>
+    </div>
+
+    <div
+      class="sticky-add-to-cart__price"
+      data-testid="sticky-price-display"
+    >
+      {% render 'price', product_resource: product_resource, show_sale_price_first: true %}
+    </div>
+
+    {% if has_amazon_customizer %}
+      <button
+        type="button"
+        class="sticky-add-to-cart__button sticky-add-to-cart__button--customize button"
+        ref="addToCartButton"
+        on:click="/handleCustomizeClick"
+        aria-label="Customize {{ product_display_title | escape }}"
+        disabled
+      >
+        <span class="sticky-add-to-cart__button-text">Customize</span>
+      </button>
+    {% else %}
+      <button
+        type="button"
+        class="sticky-add-to-cart__button add-to-cart-button button"
+        ref="addToCartButton"
+        on:click="/handleAddToCartClick"
+        {% unless current_variant.available %}
+          disabled
+        {% endunless %}
+      >
+        <span class="add-to-cart-text">
+          {% if current_variant.available %}
+            <span class="svg-wrapper">
+              {{- 'icon-add-to-cart.svg' | inline_asset_content -}}
+            </span>
+          {% endif %}
+          <span class="add-to-cart-text__content">
+            <span>
+              {%- if current_variant.available -%}
+                {{- 'products.product.add_to_cart' | t -}}
+              {%- elsif current_variant == blank -%}
+                {{- 'products.product.unavailable' | t -}}
+              {%- else -%}
+                {{- 'products.product.sold_out' | t -}}
+              {%- endif -%}
+            </span>
+            <span
+              ref="quantityDisplay"
+              {% if current_variant.available and initial_quantity > 1 %}
+                style="display: inline;"
+              {% else %}
+                style="display: none;"
+              {% endif %}
+            >
+              {{- ' (' -}}
+              <span ref="quantityNumber">{{- initial_quantity -}}</span>
+              {{- ')' -}}
+            </span>
+          </span>
+        </span>
+        <span class="add-to-cart__added">
+          <span class="svg-wrapper add-to-cart__added-icon">
+            {{- 'icon-checkmark-burst.svg' | inline_asset_content -}}
+          </span>
+        </span>
+      </button>
+    {% endif %}
+  </div>
+</sticky-add-to-cart>

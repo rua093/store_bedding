@@ -1,0 +1,17 @@
+{% doc %}
+  Outputs the homepage quick add dependency list as JSON.
+{% enddoc %}
+
+[
+  {{ 'product-form.js' | asset_url | json }},
+  {{ 'fly-to-cart.js' | asset_url | json }},
+  {{ 'media.js' | asset_url | json }},
+  {{ 'product-price.js' | asset_url | json }},
+  {{ 'product-sku.js' | asset_url | json }},
+  {{ 'product-inventory.js' | asset_url | json }},
+  {{ 'component-quantity-selector.js' | asset_url | json }},
+  {{ 'media-gallery.js' | asset_url | json }},
+  {{ 'volume-pricing.js' | asset_url | json }},
+  {{ 'price-per-item.js' | asset_url | json }},
+  {{ 'volume-pricing-info.js' | asset_url | json }}
+]

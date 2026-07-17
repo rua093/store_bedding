@@ -5,17 +5,28 @@
 {% enddoc %}
 
 {% liquid
-  assign is_homepage_template = false
+  assign is_homepage = false
   if template.name == 'index' or request.page_type == 'index'
-    assign is_homepage_template = true
+    assign is_homepage = true
+  endif
+
+  assign is_collection_or_search_page = false
+  if template.name == 'collection' or template.name == 'search'
+    assign is_collection_or_search_page = true
+  endif
+
+  assign is_product_page = false
+  if template == 'product' or template.name == 'product' or request.page_type == 'product'
+    assign is_product_page = true
+  endif
+
+  assign has_localization_selector = false
+  if localization.available_countries.size > 1 or localization.available_languages.size > 1
+    assign has_localization_selector = true
   endif
 
   assign uses_product_interaction_stack = false
-  if request.page_type == 'product'
-    assign uses_product_interaction_stack = true
-  elsif request.page_type == 'collection'
-    assign uses_product_interaction_stack = true
-  elsif request.page_type == 'search'
+  if request.page_type == 'product' or request.page_type == 'collection' or request.page_type == 'search'
     assign uses_product_interaction_stack = true
   endif
 %}
@@ -83,7 +94,17 @@
   fetchpriority="low"
 >
 
-{% if template.name == 'collection' or template.name == 'search' %}
+{% if is_collection_or_search_page %}
+  <script
+    src="{{ 'show-more.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
+  <script
+    src="{{ 'floating-panel.js' | asset_url }}"
+    type="module"
+    fetchpriority="low"
+  ></script>
   <link
     rel="modulepreload"
     href="{{ 'paginated-list-aspect-ratio.js' | asset_url }}"
@@ -145,22 +166,12 @@
   fetchpriority="low"
 ></script>
 <script
-  src="{{ 'show-more.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
-<script
   src="{{ 'slideshow.js' | asset_url }}"
   type="module"
   fetchpriority="low"
 ></script>
 <script
   src="{{ 'anchored-popover.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
-<script
-  src="{{ 'floating-panel.js' | asset_url }}"
   type="module"
   fetchpriority="low"
 ></script>
@@ -242,7 +253,7 @@
   ></script>
 {% endif %}
 
-{% if localization.available_countries.size > 1 or localization.available_languages.size > 1 %}
+{% if has_localization_selector %}
   <script
     src="{{ 'localization.js' | asset_url }}"
     type="module"
@@ -250,126 +261,12 @@
   ></script>
 {% endif %}
 
-{% if template == 'product' or template.name == 'product' or request.page_type == 'product' %}
-  <script
-    src="{{ 'sticky-add-to-cart.js' | asset_url }}"
-    type="module"
-    fetchpriority="low"
-  ></script>
-  <script
-    src="{{ 'product-delivery-estimate.js' | asset_url }}"
-    defer
-    fetchpriority="low"
-  ></script>
-  <script type="module">
-    import { RecentlyViewed } from '@theme/recently-viewed-products';
-    RecentlyViewed.addProduct('{{ product.id }}');
-  </script>
+{% if is_product_page %}
+  {% render 'product-page-scripts', product: product %}
 {% endif %}
 
-{% if template.name == 'index' or request.page_type == 'index' %}
-  <script
-    src="{{ 'homepage-reveal.js' | asset_url }}"
-    type="module"
-    fetchpriority="low"
-  ></script>
-  <script
-    src="{{ 'collection-discovery.js' | asset_url }}"
-    type="module"
-    fetchpriority="low"
-  ></script>
-  <script>
-    (() => {
-      const homepageQuickAddModules = [
-        "{{ 'product-form.js' | asset_url }}",
-        "{{ 'fly-to-cart.js' | asset_url }}",
-        "{{ 'media.js' | asset_url }}",
-        "{{ 'product-price.js' | asset_url }}",
-        "{{ 'product-sku.js' | asset_url }}",
-        "{{ 'product-inventory.js' | asset_url }}",
-        "{{ 'component-quantity-selector.js' | asset_url }}",
-        "{{ 'media-gallery.js' | asset_url }}",
-        "{{ 'volume-pricing.js' | asset_url }}",
-        "{{ 'price-per-item.js' | asset_url }}",
-        "{{ 'volume-pricing-info.js' | asset_url }}"
-      ];
-
-      let homepageQuickAddSupportPromise = null;
-
-      const loadModuleScript = (src) =>
-        new Promise((resolve, reject) => {
-          if (document.querySelector(`script[type="module"][src="${src}"]`)) {
-            resolve();
-            return;
-          }
-
-          const script = document.createElement('script');
-          script.type = 'module';
-          script.src = src;
-          script.fetchPriority = 'low';
-          script.onload = () => resolve();
-          script.onerror = () => reject(new Error(`Failed to load ${src}`));
-          document.head.appendChild(script);
-        });
-
-      const ensureHomepageQuickAddSupport = () => {
-        if (!homepageQuickAddSupportPromise) {
-          homepageQuickAddSupportPromise = Promise.all(homepageQuickAddModules.map(loadModuleScript)).catch((error) => {
-            homepageQuickAddSupportPromise = null;
-            throw error;
-          });
-        }
-
-        return homepageQuickAddSupportPromise;
-      };
-
-      window.__ensureHomepageQuickAddSupport = ensureHomepageQuickAddSupport;
-
-      const quickAddSelectors = [
-        'quick-add-component',
-        '.quick-add__button',
-        '#quick-add-dialog'
-      ].join(',');
-
-      const primeQuickAddSupport = (event) => {
-        const target = event.target;
-        if (!(target instanceof Element)) return;
-        if (!target.closest(quickAddSelectors)) return;
-
-        ensureHomepageQuickAddSupport().catch((error) => {
-          console.warn('[homepage quick-add] Failed to prime quick add support:', error);
-        });
-      };
-
-      document.addEventListener('pointerenter', primeQuickAddSupport, true);
-      document.addEventListener('focusin', primeQuickAddSupport, true);
-      document.addEventListener('pointerdown', primeQuickAddSupport, true);
-
-      const warmHomepageQuickAddSupport = () => {
-        ensureHomepageQuickAddSupport().catch((error) => {
-          console.warn('[homepage quick-add] Failed to warm quick add support:', error);
-        });
-      };
-
-      if ('requestIdleCallback' in window) {
-        window.addEventListener(
-          'load',
-          () => {
-            window.requestIdleCallback(warmHomepageQuickAddSupport, { timeout: 2500 });
-          },
-          { once: true }
-        );
-      } else {
-        window.addEventListener(
-          'load',
-          () => {
-            window.setTimeout(warmHomepageQuickAddSupport, 1500);
-          },
-          { once: true }
-        );
-      }
-    })();
-  </script>
+{% if is_homepage %}
+  {% render 'homepage-scripts' %}
 {% endif %}
 
 <script

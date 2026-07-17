@@ -1,0 +1,61 @@
+{% doc %}
+  Renders the media area for the custom product card.
+
+  @param {product} product
+  @param {string} featured_image_classes
+  @param {string} hover_image_classes
+  @param {string} placeholder_svg_classes
+  @param {string} contextual_placeholder_class
+  @param {boolean} hover_image_enabled
+  @param {string} card_image_widths
+  @param {string} card_image_sizes
+  @param {string} card_hover_image_sizes
+  @param {boolean} show_sale_badge
+  @param {string} contextual_badge_class
+  @param {number} discount_percent
+  @param {boolean} should_render_quick_add
+  @param {string} product_card_section_id
+{% enddoc %}
+
+{% if product.featured_media != blank %}
+  {{
+    product.featured_media
+    | image_url: width: 640
+    | image_tag:
+      class: featured_image_classes,
+      widths: card_image_widths,
+      sizes: card_image_sizes,
+      loading: 'lazy',
+      fetchpriority: 'low',
+      decoding: 'async',
+      alt: product.featured_media.alt | default: product.title
+  }}
+  {% if hover_image_enabled and product.media.size > 1 %}
+    {{
+      product.media[1]
+      | image_url: width: 640
+      | image_tag:
+        class: hover_image_classes,
+        widths: card_image_widths,
+        sizes: card_hover_image_sizes,
+        loading: 'lazy',
+        fetchpriority: 'low',
+        decoding: 'async',
+        alt: product.media[1].alt | default: product.title
+    }}
+  {% endif %}
+{% else %}
+  <div class="custom-product-card__placeholder{% if contextual_placeholder_class != blank %} {{ contextual_placeholder_class }}{% endif %}" aria-hidden="true">
+    {{ 'product-apparel-1' | placeholder_svg_tag: placeholder_svg_classes }}
+  </div>
+{% endif %}
+
+{% if show_sale_badge %}
+  <span class="custom-product-card__badge custom-product-card__badge--sale{% if contextual_badge_class != blank %} {{ contextual_badge_class }} {{ contextual_badge_class }}--sale{% endif %}">
+    -{{ discount_percent }}%
+  </span>
+{% endif %}
+
+{% if should_render_quick_add %}
+  {% render 'quick-add', product: product, section_id: product_card_section_id %}
+{% endif %}

@@ -1,0 +1,51 @@
+{% doc %}
+  Computes contextual class names for the custom product card based on `card_class`.
+
+  Output order:
+  1. contextual_link_class
+  2. contextual_card_class
+  3. contextual_media_class
+  4. contextual_image_class
+  5. contextual_hover_image_class
+  6. contextual_placeholder_class
+  7. contextual_placeholder_svg_class
+  8. contextual_badge_class
+  9. contextual_content_class
+  10. contextual_title_class
+  11. contextual_price_row_class
+  12. contextual_price_class
+  13. contextual_compare_class
+{% enddoc %}
+
+{% liquid
+  assign contextual_link_class = ''
+  assign contextual_card_class = ''
+  assign contextual_media_class = ''
+  assign contextual_image_class = ''
+  assign contextual_hover_image_class = ''
+  assign contextual_placeholder_class = ''
+  assign contextual_placeholder_svg_class = ''
+  assign contextual_badge_class = ''
+  assign contextual_content_class = ''
+  assign contextual_title_class = ''
+  assign contextual_price_row_class = ''
+  assign contextual_price_class = ''
+  assign contextual_compare_class = ''
+
+  if card_class != blank
+    assign contextual_link_class = card_class | append: '__card-link'
+    assign contextual_card_class = card_class | append: '__card'
+    assign contextual_media_class = card_class | append: '__media'
+    assign contextual_image_class = card_class | append: '__image'
+    assign contextual_hover_image_class = card_class | append: '__image--hover'
+    assign contextual_placeholder_class = card_class | append: '__placeholder'
+    assign contextual_placeholder_svg_class = card_class | append: '__placeholder-svg'
+    assign contextual_badge_class = card_class | append: '__badge'
+    assign contextual_content_class = card_class | append: '__content'
+    assign contextual_title_class = card_class | append: '__title'
+    assign contextual_price_row_class = card_class | append: '__price-row'
+    assign contextual_price_class = card_class | append: '__price'
+    assign contextual_compare_class = card_class | append: '__compare'
+  endif
+%}
+{{ contextual_link_class }}||{{ contextual_card_class }}||{{ contextual_media_class }}||{{ contextual_image_class }}||{{ contextual_hover_image_class }}||{{ contextual_placeholder_class }}||{{ contextual_placeholder_svg_class }}||{{ contextual_badge_class }}||{{ contextual_content_class }}||{{ contextual_title_class }}||{{ contextual_price_row_class }}||{{ contextual_price_class }}||{{ contextual_compare_class }}

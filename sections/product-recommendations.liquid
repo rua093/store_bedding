@@ -26,15 +26,8 @@
 
   assign recommendation_product = section.settings.product | default: product
 
-  if recommendation_product == blank and request.page_type == 'cart'
-    for item in cart.items
-      assign recommendation_product = item.product
-      break
-    endfor
-  endif
-
   assign should_render_recommendations = true
-  if request.page_type == 'cart' and recommendation_product == blank
+  if recommendation_product == blank
     assign should_render_recommendations = false
   endif
 
@@ -49,10 +42,6 @@
   endif
 %}
 
-{% render 'quick-add-styles' %}
-{% render 'quick-add-modal-styles' %}
-{% render 'variant-picker-styles' %}
-{% render 'product-badges-styles' %}
 {% if should_render_recommendations %}
   <product-recommendations
     id="product-recommendations-{{ section.id }}"
@@ -65,10 +54,6 @@
     data-recommendations-performed="{{ recommendations.performed }}"
     data-eager-load="{{ eager_load_recommendations }}"
     data-hydration-key="product-recommendations-{{ section.id }}"
-    {% if request.page_type == 'cart' %}
-      data-cart-dependent-section
-      data-cart-recommendations-section-id="{{ section.id }}"
-    {% endif %}
     {% if section.settings.recommendation_type == 'related' %}
       style="--pdp-related-bg-image: url('{{ related_background_image_url }}');"
     {% endif %}
@@ -218,12 +203,6 @@
     {%- endif -%}
   </div>
   </product-recommendations>
-{% elsif request.page_type == 'cart' %}
-  <script
-    type="application/json"
-    data-cart-dependent-section
-    data-cart-recommendations-section-id="{{ section.id }}"
-  ></script>
 {% endif %}
 
 {% stylesheet %}

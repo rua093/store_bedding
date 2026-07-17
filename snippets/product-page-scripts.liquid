@@ -1,0 +1,20 @@
+{% doc %}
+  Renders product-page-only scripts and bootstrapping.
+
+  @param {product} product
+{% enddoc %}
+
+<script
+  src="{{ 'sticky-add-to-cart.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
+  src="{{ 'product-delivery-estimate.js' | asset_url }}"
+  defer
+  fetchpriority="low"
+></script>
+<script type="module">
+  import { RecentlyViewed } from '@theme/recently-viewed-products';
+  RecentlyViewed.addProduct('{{ product.id }}');
+</script>

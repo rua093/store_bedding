@@ -81,8 +81,8 @@ class StickyAddToCartComponent extends Component {
   /** @type {HTMLElement | null} */
   #footerElement = null;
 
-  /** @type {boolean} */
-  #buyButtonsIntersecting = true;
+  /** @type {'unknown' | 'below' | 'intersecting' | 'above'} */
+  #buyButtonsViewportPosition = 'unknown';
 
   /** @type {boolean} */
   #footerIntersecting = false;
@@ -120,15 +120,6 @@ class StickyAddToCartComponent extends Component {
       this.#evaluateStickyVisibility();
       this.#syncStickyAddToCartReserve();
     });
-
-    // IntersectionObserver callbacks gate visibility on #isChatActive(), but
-    // if the shopper scrolls before the Inbox bundle has upgraded
-    // <shopify-chat>, the bar shows and nothing re-runs that check. Hide it
-    // once the element is defined so the bar doesn't overlap the chat UI.
-    customElements.whenDefined('shopify-chat').then(() => {
-      if (signal.aborted) return;
-      if (this.#isStuck && this.#isChatActive()) this.#hideStickyBar();
-    });
   }
 
   disconnectedCallback() {
@@ -155,16 +146,23 @@ class StickyAddToCartComponent extends Component {
     this.#buyButtonsBlock = productForm.closest('.buy-buttons-block');
     if (!this.#buyButtonsBlock) return;
 
-    // In themes migrated from 2.0, the footer element doesn't exist
+    // Some customized themes don't render a semantic <footer>. The sticky bar
+    // should still work even when the bottom sentinel is unavailable.
     this.#footerElement = document.querySelector('footer') ?? document.querySelector('[class*="footer-group"]');
-    if (!this.#footerElement) return;
 
     // Observer for buy buttons visibility
     this.#buyButtonsIntersectionObserver = new IntersectionObserver((entries) => {
       const [entry] = entries;
       if (!entry) return;
 
-      this.#buyButtonsIntersecting = entry.isIntersecting;
+      if (entry.isIntersecting) {
+        this.#buyButtonsViewportPosition = 'intersecting';
+      } else if (entry.boundingClientRect.top < 0) {
+        this.#buyButtonsViewportPosition = 'above';
+      } else {
+        this.#buyButtonsViewportPosition = 'below';
+      }
+
       this.#evaluateStickyVisibility();
     });
 
@@ -183,7 +181,10 @@ class StickyAddToCartComponent extends Component {
     );
 
     this.#buyButtonsIntersectionObserver.observe(this.#buyButtonsBlock);
-    this.#mainBottomObserver.observe(this.#footerElement);
+
+    if (this.#footerElement) {
+      this.#mainBottomObserver.observe(this.#footerElement);
+    }
   }
 
   #handlePageshow = () => {
@@ -230,7 +231,9 @@ class StickyAddToCartComponent extends Component {
       return;
     }
 
-    if (!this.#buyButtonsIntersecting && !this.#isChatActive()) {
+    // Only show after the shopper has actually scrolled past the native buy
+    // buttons. Hide while the buttons are still in view or still below the fold.
+    if (this.#buyButtonsViewportPosition === 'above') {
       this.#showStickyBar();
       return;
     }
@@ -419,24 +422,6 @@ class StickyAddToCartComponent extends Component {
 
   // Helper methods
   /**
-   * Checks whether the Shopify Chat is active on the page.
-   * When active, the sticky bar must stay hidden to avoid overlapping the chat UI.
-   *
-   * <shopify-chat> is rendered unconditionally by chat-drawer.liquid, but
-   * the "Ask anything" button only paints once the Inbox app has installed
-   * and upgraded the element. Gate on the registration of the custom element
-   * (the same signal chat-drawer.liquid uses via customElements.whenDefined)
-   * so the inert placeholder on shops without Inbox doesn't suppress the
-   * sticky bar.
-   *
-   * @returns {boolean}
-   */
-  #isChatActive() {
-    if (!customElements.get('shopify-chat')) return false;
-    return Boolean(document.querySelector('shopify-chat'));
-  }
-
-  /**
    * Gets the product form element
    * @returns {HTMLElement | null}
    */
@@ -445,12 +430,12 @@ class StickyAddToCartComponent extends Component {
     if (!productId) return null;
 
     const sectionElement = this.closest('.shopify-section');
-    if (!sectionElement) return null;
-
-    const sectionId = sectionElement.id.replace('shopify-section-', '');
-    return document.querySelector(
-      `#shopify-section-${sectionId} product-form-component[data-product-id="${productId}"]`
+    const sectionScopedForm = sectionElement?.querySelector(
+      `product-form-component[data-product-id="${productId}"]`
     );
+    if (sectionScopedForm) return sectionScopedForm;
+
+    return document.querySelector(`product-form-component[data-product-id="${productId}"]`);
   }
 
   /**

@@ -1,0 +1,35 @@
+{% doc %}
+  Computes quick add state flags for the custom product card.
+
+  Output order:
+  1. quick_add_enabled
+  2. has_quick_add
+  3. has_mobile_quick_add
+  4. should_render_quick_add
+{% enddoc %}
+
+{% liquid
+  assign quick_add_enabled = true
+  if enable_quick_add == false
+    assign quick_add_enabled = false
+  endif
+
+  assign has_quick_add = false
+  if quick_add_enabled and settings.quick_add and product.available
+    assign has_quick_add = true
+  endif
+
+  assign has_mobile_quick_add = false
+  if has_quick_add and settings.mobile_quick_add
+    assign has_mobile_quick_add = true
+  endif
+
+  assign should_render_quick_add = false
+  if quick_add_enabled and settings.quick_add
+    assign should_render_quick_add = true
+  endif
+  if quick_add_enabled and settings.mobile_quick_add
+    assign should_render_quick_add = true
+  endif
+%}
+{{ quick_add_enabled }}||{{ has_quick_add }}||{{ has_mobile_quick_add }}||{{ should_render_quick_add }}
