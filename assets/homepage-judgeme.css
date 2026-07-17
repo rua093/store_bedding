@@ -566,17 +566,6 @@ main[data-template*='index'] [data-jeminise-home-judgeme] .jdgm-card.jdgm-carous
     min-height: 350px !important;
   }
 }
-/* Homepage scoped visual continuity overrides */
-main[data-template*='index'] .ui-test-product-list .section-background,
-main[data-template*='index'] .ui-test-product-list [data-testid='product-list'] {
-  background: linear-gradient(180deg, #f5eae1 0%, #f2e5db 100%) !important;
-}
-
-main[data-template*='index'] .ui-test-product-list [data-testid='product-list']::before,
-main[data-template*='index'] .ui-test-product-list [data-testid='product-list']::after {
-  display: none !important;
-}
-
 main[data-template*='index'] .testimonials {
   background: #f2e5db !important;
 }

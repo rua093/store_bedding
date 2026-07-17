@@ -401,7 +401,6 @@ export class ProductCard extends ProductCardLink {
    */
   previewImage(event) {
     if (event.pointerType !== 'mouse') return;
-    if (this.closest('.ui-test-product-list') && this.closest('[data-testid="product-list"]')) return;
 
     const { slideshow } = this.refs;
 
@@ -423,7 +422,6 @@ export class ProductCard extends ProductCardLink {
    */
   resetImage(event) {
     if (event.pointerType !== 'mouse') return;
-    if (this.closest('.ui-test-product-list') && this.closest('[data-testid="product-list"]')) return;
 
     const { slideshow } = this.refs;
 
