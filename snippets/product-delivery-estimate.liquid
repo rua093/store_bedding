@@ -1,6 +1,7 @@
 {%- liquid
-  assign delivery_country_form_id = 'pdp-delivery-' | append: product.id | append: '-' | append: section.id
-  assign delivery_country_panel_id = 'pdp-delivery-panel-' | append: product.id | append: '-' | append: section.id
+  assign resolved_section_id = section_id | default: 'main-product'
+  assign delivery_country_form_id = 'pdp-delivery-' | append: product.id | append: '-' | append: resolved_section_id
+  assign delivery_country_panel_id = 'pdp-delivery-panel-' | append: product.id | append: '-' | append: resolved_section_id
   assign show_delivery_country_selector = false
   if localization.available_countries.size > 1
     assign show_delivery_country_selector = true

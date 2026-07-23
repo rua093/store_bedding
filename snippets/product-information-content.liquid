@@ -128,24 +128,55 @@
     </product-component>
   </div>
 
-  {% if is_main_product_page and product.description != blank %}
+  {% liquid
+    assign has_support_accordions = false
+    assign show_details_below = false
+    if settings.shipping_heading != blank or settings.personalization_heading != blank
+      assign has_support_accordions = true
+    endif
+
+    if is_main_product_page
+      if product.description != blank or has_support_accordions
+        assign show_details_below = true
+      endif
+    endif
+  %}
+
+  {% if show_details_below %}
     <div class="product-information__details-below" data-product-details-below>
-      <details class="product-description-collapsible">
-        <summary class="product-description-collapsible__summary">
-          <span class="product-description-collapsible__summary-copy">
-            <span class="product-description-collapsible__title">Product Details</span>
-          </span>
-          <span class="product-description-collapsible__icon" aria-hidden="true">+</span>
-        </summary>
-        <div class="product-description-collapsible__content">
-          <rte-formatter
-            class="product-description-rich"
-            style="--width: 100%; --max-width: 100%;"
-          >
-            {{ product.description }}
-          </rte-formatter>
-        </div>
-      </details>
+      {% if product.description != blank %}
+        <details class="product-description-collapsible">
+          <summary class="product-description-collapsible__summary">
+            <span class="product-description-collapsible__summary-copy">
+              <span class="product-description-collapsible__icon-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="M12 10v6"></path>
+                  <path d="M12 7.5h.01"></path>
+                </svg>
+              </span>
+              <span class="product-description-collapsible__title">Product Details</span>
+            </span>
+            <span class="product-description-collapsible__icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m7 4 6 6-6 6"></path>
+              </svg>
+            </span>
+          </summary>
+          <div class="product-description-collapsible__content">
+            <rte-formatter
+              class="product-description-rich"
+              style="--width: 100%; --max-width: 100%;"
+            >
+              {{ product.description }}
+            </rte-formatter>
+          </div>
+        </details>
+      {% endif %}
+
+      {% if has_support_accordions %}
+        {% render 'product-support-accordions', settings: settings %}
+      {% endif %}
     </div>
   {% endif %}
 
@@ -226,26 +257,31 @@
   .product-information--main-product .product-information__details-below {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 18px;
+    gap: 0;
     margin-top: clamp(20px, 2.2vw, 30px);
+    padding-inline: clamp(36px, 6vw, 92px);
     position: relative;
-    isolation: isolate;
-    overflow: clip;
   }
 
   .product-information--main-product .product-information__details-below::before {
     content: '';
     position: absolute;
-    inset: 0;
-    border-radius: 18px;
-    background:
-      radial-gradient(circle at top right, rgba(255, 246, 237, 0.72), transparent 30%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 251, 247, 0.96) 100%);
-    border: 1px solid rgba(120, 84, 58, 0.08);
-    box-shadow:
-      0 22px 44px rgba(47, 36, 29, 0.06),
-      0 8px 18px rgba(184, 115, 69, 0.035);
-    z-index: -1;
+    top: 0;
+    left: clamp(36px, 6vw, 92px);
+    right: clamp(36px, 6vw, 92px);
+    height: 1px;
+    background: rgba(120, 84, 58, 0.14);
+    pointer-events: none;
+  }
+
+  .product-information--main-product .product-information__details-below::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: clamp(36px, 6vw, 92px);
+    right: clamp(36px, 6vw, 92px);
+    height: 1px;
+    background: rgba(120, 84, 58, 0.14);
     pointer-events: none;
   }
 
@@ -256,6 +292,7 @@
   .product-information--main-product .product-information__details-below > .product-description-collapsible,
   .product-information--main-product .product-information__details-below > rte-formatter,
   .product-information--main-product .product-information__details-below > .accordion,
+  .product-information--main-product .product-information__details-below > .product-support-collapsible,
   .product-information--main-product .product-information__details-below > .shopify-app-block {
     --width: 100%;
     --max-width: 100%;
@@ -263,44 +300,65 @@
     width: 100%;
     min-width: 0;
     max-width: 100%;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.985) 0%, rgba(255, 252, 249, 0.965) 100%);
-    border: 1px solid rgba(120, 84, 58, 0.1);
-    border-radius: 18px;
-    padding: clamp(18px, 1.8vw, 26px);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.96),
-      0 16px 30px rgba(47, 36, 29, 0.045);
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid rgba(120, 84, 58, 0.14);
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
   }
 
   .product-information--main-product .product-description-collapsible {
     padding: 0;
-    overflow: hidden;
+    overflow: visible;
   }
 
   .product-information--main-product .product-description-collapsible__summary {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 1.1rem 1.2rem;
+    min-height: clamp(82px, 7vw, 94px);
+    padding: 0.95rem 0.35rem 0.95rem 0;
     cursor: pointer;
-    color: #2f241d;
-    font-family: var(--font-heading--family);
-    font-size: clamp(1.18rem, 4vw, 1.38rem);
-    font-weight: 600;
-    line-height: 1.12;
-    letter-spacing: -0.02em;
+    color: #4f5053;
+    font-family: var(--font-body--family);
+    font-size: clamp(1.08rem, 1.7vw, 1.22rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: normal;
     list-style: none;
   }
 
   .product-information--main-product .product-description-collapsible__summary-copy {
-    display: grid;
-    gap: 0.32rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85rem;
     min-width: 0;
+  }
+
+  .product-information--main-product .product-description-collapsible__icon-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    color: #54504d;
+    flex: 0 0 auto;
+  }
+
+  .product-information--main-product .product-description-collapsible__icon-mark svg {
+    width: 100%;
+    height: 100%;
   }
 
   .product-information--main-product .product-description-collapsible__title {
     display: block;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    color: inherit;
   }
 
   .product-information--main-product .product-description-collapsible__summary::-webkit-details-marker {
@@ -309,19 +367,35 @@
 
   .product-information--main-product .product-description-collapsible__icon {
     flex: 0 0 auto;
-    color: #c46f41;
-    font-family: var(--font-body--family);
-    font-size: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.2rem;
+    height: 1.2rem;
+    color: #54504d;
     line-height: 1;
     transition: transform var(--animation-speed, 0.2s) var(--animation-easing, ease);
   }
 
+  .product-information--main-product .product-description-collapsible__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
   .product-information--main-product .product-description-collapsible[open] .product-description-collapsible__icon {
-    transform: rotate(45deg);
+    transform: rotate(90deg);
+  }
+
+  .product-information--main-product .product-support-collapsible[open] .product-support-collapsible__icon {
+    transform: rotate(90deg);
   }
 
   .product-information--main-product .product-description-collapsible__content {
-    padding: 0 1.2rem 1.3rem;
+    padding: 0.2rem 2.1rem 1.5rem 2.85rem;
+  }
+
+  .product-information--main-product .product-support-collapsible__content {
+    padding: 0.2rem 2.1rem 1.5rem 2.85rem;
   }
 
   .product-information--main-product .product-description-collapsible__content > rte-formatter {
@@ -342,7 +416,237 @@
   .product-information--main-product .product-description-rich {
     display: block;
     width: 100%;
-    color: #4f3c31;
+    color: #4f4a46;
+    font-family: var(--font-body--family);
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .product-information--main-product .product-support-collapsible {
+    --width: 100%;
+    --max-width: 100%;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    background: transparent;
+    overflow: visible;
+  }
+
+  .product-information--main-product .product-support-collapsible__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: clamp(82px, 7vw, 94px);
+    padding: 0.95rem 0.35rem 0.95rem 0;
+    cursor: pointer;
+    color: #4f5053;
+    font-family: var(--font-body--family);
+    font-size: clamp(1.08rem, 1.7vw, 1.22rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: normal;
+    list-style: none;
+  }
+
+  .product-information--main-product .product-support-collapsible__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .product-information--main-product .product-support-collapsible__summary-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85rem;
+    min-width: 0;
+  }
+
+  .product-information--main-product .product-support-collapsible__icon-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    color: #54504d;
+    flex: 0 0 auto;
+  }
+
+  .product-information--main-product .product-support-collapsible__icon-mark svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .product-information--main-product .product-support-collapsible__title {
+    display: block;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+  }
+
+  .product-information--main-product .product-support-collapsible__icon {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.2rem;
+    height: 1.2rem;
+    color: #54504d;
+    line-height: 1;
+    transition: transform var(--animation-speed, 0.2s) var(--animation-easing, ease);
+  }
+
+  .product-information--main-product .product-support-collapsible__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .product-information--main-product .product-support-collapsible__lead,
+  .product-information--main-product .product-support-collapsible__details,
+  .product-information--main-product .product-support-collapsible__note {
+    color: #4f4a46;
+    font-family: var(--font-body--family);
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .product-information--main-product .product-support-collapsible__lead {
+    margin-bottom: 1.05rem;
+    color: #473a31;
+    font-size: 1.02rem;
+    font-weight: 500;
+    line-height: 1.76;
+  }
+
+  .product-information--main-product .product-support-collapsible__lead :is(p, ul, ol),
+  .product-information--main-product .product-support-collapsible__details :is(p, ul, ol),
+  .product-information--main-product .product-support-collapsible__note :is(p, ul, ol) {
+    margin: 0;
+  }
+
+  .product-information--main-product .product-support-collapsible__details {
+    margin-top: 1rem;
+  }
+
+  .product-information--main-product .product-support-shipping-journey {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.2rem, 3vw, 2.4rem);
+    margin: 0.35rem 0 1.35rem;
+    padding: 0;
+  }
+
+  .product-information--main-product .product-support-shipping-journey__track {
+    position: absolute;
+    top: 1.45rem;
+    left: clamp(2.6rem, 5.2vw, 4rem);
+    right: clamp(2.6rem, 5.2vw, 4rem);
+    height: 3px;
+    border-radius: 999px;
+    background: rgba(120, 84, 58, 0.14);
+  }
+
+  .product-information--main-product .product-support-shipping-journey__step {
+    position: relative;
+    display: grid;
+    justify-items: start;
+    gap: 0.5rem;
+    min-width: 0;
+    z-index: 1;
+  }
+
+  .product-information--main-product .product-support-shipping-journey__step--ship {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .product-information--main-product .product-support-shipping-journey__step--deliver {
+    justify-items: end;
+    text-align: right;
+  }
+
+  .product-information--main-product .product-support-shipping-journey__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.95rem;
+    height: 2.95rem;
+    border-radius: 999px;
+    background: #f6f5f3;
+    color: #f26e3d;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  }
+
+  .product-information--main-product .product-support-shipping-journey__badge svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .product-information--main-product .product-support-shipping-journey__date,
+  .product-information--main-product .product-support-shipping-journey__heading,
+  .product-information--main-product .product-support-shipping-journey__copy {
+    margin: 0;
+  }
+
+  .product-information--main-product .product-support-shipping-journey__date {
+    color: #3f3934;
+    font-family: var(--font-body--family);
+    font-size: clamp(0.98rem, 1.15vw, 1.08rem);
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .product-information--main-product .product-support-shipping-journey__heading {
+    color: #4f5053;
+    font-family: var(--font-body--family);
+    font-size: clamp(1rem, 1.45vw, 1.14rem);
+    font-weight: 400;
+    line-height: 1.32;
+  }
+
+  .product-information--main-product .product-support-collapsible__note {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: start;
+    margin-top: 1.05rem;
+    padding: 0.9rem 1rem;
+    border-radius: 1rem;
+    background: linear-gradient(180deg, rgba(255, 246, 239, 0.92) 0%, rgba(255, 250, 246, 0.98) 100%);
+    border: 1px solid rgba(196, 111, 65, 0.1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
+    color: #4f4a46;
+  }
+
+  .product-information--main-product .product-support-collapsible__note-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.12rem;
+    height: 1.12rem;
+    color: #b66b41;
+  }
+
+  .product-information--main-product .product-support-collapsible__note-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .product-information--main-product .product-support-collapsible__details {
+    color: #403a35;
+    font-size: 1.01rem;
+    line-height: 1.72;
+  }
+
+  .product-information--main-product .product-support-collapsible__details :is(ul, ol) {
+    margin: 0;
+    padding-left: 1.35rem;
+  }
+
+  .product-information--main-product .product-support-collapsible__details li + li {
+    margin-top: 0.5rem;
   }
 
   .product-information--main-product .product-description-rich__layout {
@@ -865,21 +1169,24 @@
     }
 
     .product-information--main-product .product-information__details-below {
-      gap: 14px;
+      gap: 0;
       margin-top: 16px;
+      padding-inline: 1rem;
     }
 
-    .product-information--main-product .product-information__details-below::before {
-      inset: 0;
-      border-radius: 24px;
+    .product-information--main-product .product-information__details-below::before,
+    .product-information--main-product .product-information__details-below::after {
+      left: 1rem;
+      right: 1rem;
     }
 
     .product-information--main-product .product-information__details-below > rte-formatter,
     .product-information--main-product .product-information__details-below > .product-description-collapsible,
     .product-information--main-product .product-information__details-below > .accordion,
+    .product-information--main-product .product-information__details-below > .product-support-collapsible,
     .product-information--main-product .product-information__details-below > .shopify-app-block {
-      border-radius: 16px;
-      padding: 18px;
+      border-radius: 0;
+      padding: 0;
     }
 
     .product-information--main-product .product-information__details-below > .product-description-collapsible {
@@ -887,12 +1194,96 @@
     }
 
     .product-information--main-product .product-description-collapsible__summary {
-      padding: 1rem 1rem;
-      font-size: clamp(1.06rem, 5.2vw, 1.22rem);
+      min-height: 78px;
+      padding: 0.82rem 0.2rem 0.82rem 0;
+      font-size: clamp(0.98rem, 4.4vw, 1.12rem);
+    }
+
+    .product-information--main-product .product-description-collapsible__summary-copy {
+      gap: 0.75rem;
+    }
+
+    .product-information--main-product .product-support-collapsible__summary {
+      min-height: 78px;
+      padding: 0.82rem 0.2rem 0.82rem 0;
+    }
+
+    .product-information--main-product .product-support-collapsible__summary-copy {
+      gap: 0.75rem;
+    }
+
+    .product-information--main-product .product-description-collapsible__icon-mark {
+      width: 1.72rem;
+      height: 1.72rem;
+    }
+
+    .product-information--main-product .product-support-collapsible__icon-mark {
+      width: 1.72rem;
+      height: 1.72rem;
     }
 
     .product-information--main-product .product-description-collapsible__content {
-      padding: 0 1rem 1rem;
+      padding: 0.15rem 0.85rem 1.18rem 2.48rem;
+    }
+
+    .product-information--main-product .product-support-collapsible__title {
+      font-size: clamp(0.98rem, 4.4vw, 1.12rem);
+    }
+
+    .product-information--main-product .product-support-collapsible__icon {
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+
+    .product-information--main-product .product-support-collapsible__content {
+      padding: 0.15rem 0.85rem 1.18rem 2.48rem;
+    }
+
+    .product-information--main-product .product-support-shipping-journey {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1rem;
+      margin: 0.55rem 0 1rem;
+    }
+
+    .product-information--main-product .product-support-shipping-journey__track {
+      left: 1.5rem;
+      right: auto;
+      top: 1.1rem;
+      bottom: 1.2rem;
+      width: 3px;
+      height: auto;
+    }
+
+    .product-information--main-product .product-support-shipping-journey__step,
+    .product-information--main-product .product-support-shipping-journey__step--ship,
+    .product-information--main-product .product-support-shipping-journey__step--deliver {
+      grid-template-columns: auto minmax(0, 1fr);
+      justify-items: start;
+      align-items: start;
+      column-gap: 0.85rem;
+      row-gap: 0.28rem;
+      text-align: left;
+    }
+
+    .product-information--main-product .product-support-shipping-journey__badge {
+      grid-row: 1 / span 3;
+      width: 2.35rem;
+      height: 2.35rem;
+    }
+
+    .product-information--main-product .product-support-shipping-journey__badge svg {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .product-information--main-product .product-support-shipping-journey__date {
+      font-size: 0.94rem;
+      line-height: 1.3;
+    }
+
+    .product-information--main-product .product-support-shipping-journey__heading {
+      font-size: 1.02rem;
+      line-height: 1.34;
     }
 
     .product-information--main-product .product-description-rich__layout {

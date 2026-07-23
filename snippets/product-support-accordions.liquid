@@ -1,0 +1,115 @@
+{% if settings.shipping_heading != blank %}
+  <details class="product-support-collapsible">
+    <summary class="product-support-collapsible__summary">
+      <span class="product-support-collapsible__summary-copy">
+        <span class="product-support-collapsible__icon-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h8A1.5 1.5 0 0 1 14 7.5V17H3z"></path>
+            <path d="M14 10h3.6a1 1 0 0 1 .8.4l1.8 2.4a1 1 0 0 1 .2.6V17H14"></path>
+            <circle cx="7.5" cy="17.5" r="1.5"></circle>
+            <circle cx="17.5" cy="17.5" r="1.5"></circle>
+          </svg>
+        </span>
+        <span class="product-support-collapsible__title">{{ settings.shipping_heading }}</span>
+      </span>
+      <span class="product-support-collapsible__icon" aria-hidden="true">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m7 4 6 6-6 6"></path>
+        </svg>
+      </span>
+    </summary>
+    <div class="product-support-collapsible__content">
+      <div
+        class="product-support-shipping-journey"
+        data-delivery-timeline
+        data-country-code="{{ localization.country.iso_code }}"
+        aria-label="Shipping timeline"
+      >
+        <div class="product-support-shipping-journey__track" aria-hidden="true"></div>
+
+        <div class="product-support-shipping-journey__step product-support-shipping-journey__step--order">
+          <span class="product-support-shipping-journey__badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 21s-6.5-4.2-8.8-8.5C1.8 9.5 3.2 5.6 7 4.5c2-.6 3.9.1 5 1.6 1.1-1.5 3-2.2 5-1.6 3.8 1.1 5.2 5 3.8 8-2.3 4.3-8.8 8.5-8.8 8.5Z"></path>
+            </svg>
+          </span>
+          <div class="product-support-shipping-journey__date" data-delivery-stage-order-date></div>
+          <p class="product-support-shipping-journey__heading">Order placed</p>
+        </div>
+
+        <div class="product-support-shipping-journey__step product-support-shipping-journey__step--ship">
+          <span class="product-support-shipping-journey__badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h8A1.5 1.5 0 0 1 14 7.5V17H3z"></path>
+              <path d="M14 10h3.6a1 1 0 0 1 .8.4l1.8 2.4a1 1 0 0 1 .2.6V17H14"></path>
+              <circle cx="7.5" cy="17.5" r="1.5"></circle>
+              <circle cx="17.5" cy="17.5" r="1.5"></circle>
+            </svg>
+          </span>
+          <div class="product-support-shipping-journey__date" data-delivery-stage-ship-range></div>
+          <p class="product-support-shipping-journey__heading">Order ships</p>
+        </div>
+
+        <div class="product-support-shipping-journey__step product-support-shipping-journey__step--deliver">
+          <span class="product-support-shipping-journey__badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="7" width="16" height="13" rx="1.5"></rect>
+              <path d="M12 7v13"></path>
+              <path d="M8 7V5.8A1.8 1.8 0 0 1 9.8 4h4.4A1.8 1.8 0 0 1 16 5.8V7"></path>
+              <path d="M4 11.5h16"></path>
+            </svg>
+          </span>
+          <div class="product-support-shipping-journey__date" data-delivery-stage-delivery-range></div>
+          <p class="product-support-shipping-journey__heading">Delivered!</p>
+        </div>
+      </div>
+
+      {% if settings.shipping_details != blank %}
+        <div class="product-support-collapsible__details rte">{{ settings.shipping_details | escape | newline_to_br }}</div>
+      {% endif %}
+    </div>
+  </details>
+{% endif %}
+
+{% if settings.personalization_heading != blank %}
+  <details class="product-support-collapsible">
+    <summary class="product-support-collapsible__summary">
+      <span class="product-support-collapsible__summary-copy">
+        <span class="product-support-collapsible__icon-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="3.5"></circle>
+            <path d="M5.5 20a6.5 6.5 0 0 1 13 0"></path>
+          </svg>
+        </span>
+        <span class="product-support-collapsible__title">{{ settings.personalization_heading }}</span>
+      </span>
+      <span class="product-support-collapsible__icon" aria-hidden="true">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m7 4 6 6-6 6"></path>
+        </svg>
+      </span>
+    </summary>
+    <div class="product-support-collapsible__content">
+      {% if settings.personalization_intro != blank %}
+        <div class="product-support-collapsible__lead rte">{{ settings.personalization_intro | escape | newline_to_br }}</div>
+      {% endif %}
+
+      {% if settings.personalization_details != blank %}
+        <div class="product-support-collapsible__details rte">{{ settings.personalization_details | escape | newline_to_br }}</div>
+      {% endif %}
+
+      {% if settings.personalization_note != blank %}
+        <div class="product-support-collapsible__note">
+          <span class="product-support-collapsible__note-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 8.5h.01"></path>
+              <path d="M11 12h1v4h1"></path>
+            </svg>
+          </span>
+          <div class="rte">{{ settings.personalization_note | escape | newline_to_br }}</div>
+        </div>
+      {% endif %}
+    </div>
+  </details>
+{% endif %}

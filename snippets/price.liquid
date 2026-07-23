@@ -6,6 +6,7 @@
   @param {boolean} [show_unit_price] - Whether to show the unit price
   @param {boolean} [show_sale_price_first] - Whether to show the sale price first
   @param {boolean} [show_product_callouts] - Whether to show PDP-only sale badge and promo/shipping callouts
+  @param {string} [section_id] - Optional section id for nested PDP helpers
 {%- enddoc -%}
 
 {%- liquid
@@ -159,6 +160,16 @@
   {%- endif -%}
 </div>
 {%- if render_product_callouts -%}
+  {%- liquid
+    assign tax_note_text = 'Taxes calculated at checkout'
+    if cart.duties_included and cart.taxes_included
+      assign tax_note_text = 'Duties and taxes included'
+    elsif cart.taxes_included
+      assign tax_note_text = 'Taxes included'
+    elsif cart.duties_included
+      assign tax_note_text = 'Duties included'
+    endif
+  -%}
   <div class="price-callouts">
     <div class="price-discount-message">
       <span class="price-discount-message__icon" aria-hidden="true">
@@ -166,7 +177,23 @@
       </span>
       <span>Extra 10% off at checkout · Use code WELCOME10</span>
     </div>
-    {% render 'product-delivery-estimate', product: product_resource, section: section %}
+    {% render 'product-delivery-estimate', product: product_resource, section_id: section_id %}
+    <div class="price-policy-note">
+      <span class="price-policy-note__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3 5 6v6c0 4.7 2.9 7.9 7 9 4.1-1.1 7-4.3 7-9V6l-7-3Z"/>
+          <path d="m9.5 12 1.7 1.7L14.9 10"/>
+        </svg>
+      </span>
+      <span class="price-policy-note__copy">
+        <span>Shipping calculated at checkout</span>
+        <span class="price-policy-note__separator" aria-hidden="true">·</span>
+        <span>{{ tax_note_text }}</span>
+        {% if shop.shipping_policy.body != blank %}
+          <a href="{{ shop.shipping_policy.url }}" class="price-policy-note__link">Learn more</a>
+        {% endif %}
+      </span>
+    </div>
   </div>
 {%- endif -%}
 {%- if has_volume_pricing -%}

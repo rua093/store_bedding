@@ -1,6 +1,7 @@
 (() => {
   const ROOT_SELECTOR = '[data-delivery-estimate]';
   const RANGE_SELECTOR = '[data-delivery-date-range]';
+  const TIMELINE_SELECTOR = '[data-delivery-timeline]';
   const TIME_ZONE = 'America/New_York';
 
   const nyDateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -96,6 +97,21 @@
     return `${formatShortDate(earliestDate, true)} \u2013 ${formatShortDate(latestDate, true)}`;
   };
 
+  const formatLongDateRange = (earliestDate, latestDate) => {
+    const sameYear = earliestDate.getUTCFullYear() === latestDate.getUTCFullYear();
+    const sameMonth = sameYear && earliestDate.getUTCMonth() === latestDate.getUTCMonth();
+
+    if (sameMonth) {
+      return `${longMonthFormatter.format(earliestDate)} ${earliestDate.getUTCDate()} \u2013 ${latestDate.getUTCDate()}`;
+    }
+
+    if (sameYear) {
+      return `${formatLongDate(earliestDate)} \u2013 ${formatLongDate(latestDate)}`;
+    }
+
+    return `${formatLongDate(earliestDate, true)} \u2013 ${formatLongDate(latestDate, true)}`;
+  };
+
   const formatAriaLabel = (earliestDate, latestDate) => {
     const sameYear = earliestDate.getUTCFullYear() === latestDate.getUTCFullYear();
 
@@ -118,13 +134,46 @@
     root.setAttribute('aria-label', formatAriaLabel(earliestDate, latestDate));
   };
 
+  const updateTimeline = (root) => {
+    const countryCode = root.dataset.countryCode;
+    const { minimumBusinessDays, maximumBusinessDays } = getDeliveryWindow(countryCode);
+    const baseDate = getTodayInNewYork();
+    const orderDate = baseDate;
+    const shipStartDate = addBusinessDays(baseDate, 2);
+    const shipEndDate = addBusinessDays(baseDate, 5);
+    const deliveryStartDate = addBusinessDays(baseDate, minimumBusinessDays);
+    const deliveryEndDate = addBusinessDays(baseDate, maximumBusinessDays);
+
+    const orderDateElement = root.querySelector('[data-delivery-stage-order-date]');
+    const shipRangeElement = root.querySelector('[data-delivery-stage-ship-range]');
+    const deliveryRangeElement = root.querySelector('[data-delivery-stage-delivery-range]');
+
+    if (orderDateElement) {
+      orderDateElement.textContent = formatLongDate(orderDate);
+    }
+
+    if (shipRangeElement) {
+      shipRangeElement.textContent = formatLongDateRange(shipStartDate, shipEndDate);
+    }
+
+    if (deliveryRangeElement) {
+      deliveryRangeElement.textContent = formatLongDateRange(deliveryStartDate, deliveryEndDate);
+    }
+  };
+
   const updateAll = (scope = document) => {
     const roots =
       scope instanceof Element && scope.matches(ROOT_SELECTOR)
         ? [scope]
         : Array.from(scope.querySelectorAll ? scope.querySelectorAll(ROOT_SELECTOR) : []);
 
+    const timelines =
+      scope instanceof Element && scope.matches(TIMELINE_SELECTOR)
+        ? [scope]
+        : Array.from(scope.querySelectorAll ? scope.querySelectorAll(TIMELINE_SELECTOR) : []);
+
     roots.forEach(updateEstimate);
+    timelines.forEach(updateTimeline);
   };
 
   const queueUpdate = (() => {

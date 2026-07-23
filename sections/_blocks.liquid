@@ -12,23 +12,6 @@
 
 {% assign children = raw_children %}
 
-{% if section.id contains '1782702718c3bf58b5' %}
-  <link
-    rel="preload"
-    as="style"
-    href="{{ 'homepage-judgeme.css' | asset_url }}"
-    onload="this.onload=null;this.rel='stylesheet'"
-  >
-  <noscript>
-    {{ 'homepage-judgeme.css' | asset_url | stylesheet_tag }}
-  </noscript>
-  {% capture children %}
-    <div class="jeminise-home-judgeme" data-jeminise-home-judgeme>
-      {{ raw_children }}
-    </div>
-  {% endcapture %}
-{% endif %}
-
 {% render 'section',
   section: section,
   children: children,
