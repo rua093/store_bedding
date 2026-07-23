@@ -365,7 +365,7 @@
         "lifestyle_image_1": {
           "type": "image",
           "settings": {
-            "image": "",
+            "image": "shopify://shop_images/img2.webp",
             "caption": "Styled in a real home",
             "link": ""
           }
@@ -373,7 +373,7 @@
         "lifestyle_image_2": {
           "type": "image",
           "settings": {
-            "image": "",
+            "image": "shopify://shop_images/img1.webp",
             "caption": "Customer-inspired bedroom look",
             "link": ""
           }
@@ -381,7 +381,7 @@
         "lifestyle_image_3": {
           "type": "image",
           "settings": {
-            "image": "",
+            "image": "shopify://shop_images/img3.webp",
             "caption": "Layered bedding in a cozy space",
             "link": ""
           }
@@ -389,7 +389,7 @@
         "lifestyle_image_4": {
           "type": "image",
           "settings": {
-            "image": "",
+            "image": "shopify://shop_images/img4.webp",
             "caption": "Warm, lived-in styling",
             "link": ""
           }
@@ -397,7 +397,7 @@
         "lifestyle_image_5": {
           "type": "image",
           "settings": {
-            "image": "",
+            "image": "shopify://shop_images/img5.webp",
             "caption": "Soft layers for everyday comfort",
             "link": ""
           }
@@ -405,7 +405,7 @@
         "lifestyle_image_6": {
           "type": "image",
           "settings": {
-            "image": "",
+            "image": "shopify://shop_images/img6.webp",
             "caption": "Collected, cozy bedroom styling",
             "link": ""
           }
