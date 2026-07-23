@@ -1,3 +1,5 @@
+{{ 'pdp-lifestyle-gallery.js' | asset_url | script_tag }}
+
 {% liquid
   if section.settings.background_color != blank
     render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
@@ -5,7 +7,10 @@
 %}
 
 <div class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"></div>
-<section class="section section--{{ section.settings.section_width }}{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %} pdp-lifestyle-gallery spacing-style">
+<section
+  class="section section--{{ section.settings.section_width }}{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %} pdp-lifestyle-gallery spacing-style"
+  data-pdp-lifestyle-section="{{ section.id }}"
+>
   <div class="pdp-lifestyle-gallery__shell" style="{% render 'spacing-style', settings: section.settings %}">
     <div class="pdp-lifestyle-gallery__header">
       {% if section.settings.eyebrow != blank %}
@@ -26,80 +31,69 @@
       {% endif %}
     </div>
 
-    {% liquid
-      assign lifestyle_slide_count = section.blocks.size
-      assign lifestyle_render_slide_count = lifestyle_slide_count
-      if lifestyle_render_slide_count == 0
-        assign lifestyle_render_slide_count = 1
-      endif
-    %}
-
-    {% capture lifestyle_slides %}
-      {% if lifestyle_slide_count > 0 %}
-        {% for block in section.blocks %}
-          {% liquid
-            assign image = block.settings.image
-            assign tag_name = 'div'
-            if block.settings.link != blank
-              assign tag_name = 'a'
-            endif
-          %}
-
-          {% capture slide_children %}
-            <{{ tag_name }}
-              class="pdp-lifestyle-gallery__card"
-              {% if block.settings.link != blank %}
-                href="{{ block.settings.link }}"
-              {% endif %}
-              {{ block.shopify_attributes }}
-            >
-              <div class="pdp-lifestyle-gallery__media">
-                {% if image != blank %}
-                  {{
-                    image
-                    | image_url: width: 1200
-                    | image_tag:
-                      alt: block.settings.caption,
-                      loading: 'lazy',
-                      widths: '480, 720, 960, 1200',
-                      sizes: '(min-width: 1200px) 24vw, (min-width: 750px) 42vw, 82vw'
-                  }}
-                {% else %}
-                  {{ 'image' | placeholder_svg_tag: 'pdp-lifestyle-gallery__placeholder' }}
-                {% endif %}
+    {% if section.blocks.size > 0 %}
+      <div
+        class="pdp-lifestyle-gallery__carousel"
+        aria-label="{{ section.settings.heading | default: 'Lifestyle gallery' | escape }}"
+      >
+        <div class="pdp-lifestyle-gallery__viewport" data-pdp-lifestyle-viewport tabindex="0">
+          <div class="pdp-lifestyle-gallery__track" data-pdp-lifestyle-track>
+            {% for block in section.blocks %}
+              {% liquid
+                assign image = block.settings.image
+                assign tag_name = 'div'
+                if block.settings.link != blank
+                  assign tag_name = 'a'
+                endif
+              %}
+              <div class="pdp-lifestyle-gallery__item" data-pdp-lifestyle-item {{ block.shopify_attributes }}>
+                <{{ tag_name }}
+                  class="pdp-lifestyle-gallery__card"
+                  {% if block.settings.link != blank %}
+                    href="{{ block.settings.link }}"
+                  {% endif %}
+                >
+                  <div class="pdp-lifestyle-gallery__media">
+                    {% if image != blank %}
+                      {{
+                        image
+                        | image_url: width: 1200
+                        | image_tag:
+                          alt: block.settings.caption,
+                          loading: 'lazy',
+                          widths: '480, 720, 960, 1200',
+                          sizes: '(min-width: 1200px) 24vw, (min-width: 750px) 42vw, 82vw'
+                      }}
+                    {% else %}
+                      {{ 'image' | placeholder_svg_tag: 'pdp-lifestyle-gallery__placeholder' }}
+                    {% endif %}
+                  </div>
+                </{{ tag_name }}>
               </div>
-              {% if block.settings.caption != blank %}
-                <p class="pdp-lifestyle-gallery__caption">{{ block.settings.caption }}</p>
-              {% endif %}
-            </{{ tag_name }}>
-          {% endcapture %}
-
-          {% render 'slideshow-slide', index: forloop.index0, children: slide_children, class: 'pdp-lifestyle-gallery__slide' %}
-        {% endfor %}
-      {% else %}
-        {% capture placeholder_slide %}
-          <div class="pdp-lifestyle-gallery__card">
-            <div class="pdp-lifestyle-gallery__media">
-              {{ 'image' | placeholder_svg_tag: 'pdp-lifestyle-gallery__placeholder' }}
-            </div>
-            <p class="pdp-lifestyle-gallery__caption">Styled in a real home</p>
+            {% endfor %}
           </div>
-        {% endcapture %}
-        {% render 'slideshow-slide', index: 0, children: placeholder_slide, class: 'pdp-lifestyle-gallery__slide' %}
-      {% endif %}
-    {% endcapture %}
-
-    {% render 'slideshow',
-      ref: 'pdpLifestyleCarousel',
-      class: 'pdp-lifestyle-gallery__carousel',
-      slides: lifestyle_slides,
-      show_arrows: false,
-      icon_style: 'arrow',
-      icon_shape: 'circle',
-      auto_hide_controls: false,
-      infinite: false,
-      slide_count: lifestyle_render_slide_count
-    %}
+        </div>
+        <div
+          class="pdp-lifestyle-gallery__dots"
+          data-pdp-lifestyle-dots
+          aria-label="Lifestyle gallery pagination"
+        ></div>
+      </div>
+    {% else %}
+      <div class="pdp-lifestyle-gallery__carousel pdp-lifestyle-gallery__carousel--placeholder">
+        <div class="pdp-lifestyle-gallery__viewport">
+          <div class="pdp-lifestyle-gallery__track">
+            <div class="pdp-lifestyle-gallery__item">
+              <div class="pdp-lifestyle-gallery__card">
+                <div class="pdp-lifestyle-gallery__media">
+                  {{ 'image' | placeholder_svg_tag: 'pdp-lifestyle-gallery__placeholder' }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
   </div>
 </section>
 
@@ -107,6 +101,13 @@
   .pdp-lifestyle-gallery__shell {
     display: grid;
     gap: clamp(1rem, 2vw, 1.5rem);
+    border-top: 1px solid rgba(125, 93, 67, 0.14);
+    padding-top: clamp(1.5rem, 3vw, 2.25rem);
+    padding-bottom: clamp(1.6rem, 3vw, 2.5rem);
+  }
+
+  .pdp-lifestyle-gallery__shell > * {
+    min-width: 0;
   }
 
   .pdp-lifestyle-gallery__header {
@@ -114,7 +115,7 @@
     gap: 0.5rem;
     justify-items: center;
     text-align: center;
-    max-width: 42rem;
+    max-width: min(100%, 70rem);
     margin-inline: auto;
   }
 
@@ -145,9 +146,11 @@
     margin: 0;
     color: #4d372b;
     font-family: var(--font-heading--family);
-    font-size: clamp(1.65rem, 2.9vw, 2.7rem);
+    font-size: clamp(1.65rem, 2.7vw, 3rem);
     line-height: 0.98;
     letter-spacing: -0.03em;
+    max-width: none;
+    white-space: nowrap;
   }
 
   .pdp-lifestyle-gallery__subheading {
@@ -164,23 +167,45 @@
     --pdp-lifestyle-gap: clamp(0.8rem, 1.8vw, 1.1rem);
     width: 100%;
     position: relative;
-  }
-
-  .pdp-lifestyle-gallery__carousel slideshow-slides {
-    gap: var(--pdp-lifestyle-gap);
-    padding-block: 0.45rem 0.75rem;
-  }
-
-  .pdp-lifestyle-gallery__slide {
-    width: calc((100% - (var(--pdp-lifestyle-gap) * 3)) / 4);
     min-width: 0;
-    flex: 0 0 auto;
-    scroll-snap-align: start;
+  }
+
+  .pdp-lifestyle-gallery__viewport {
+    width: 100%;
+    overflow: hidden;
+    touch-action: pan-y pinch-zoom;
+    padding-block: 0.45rem 0.75rem;
+    cursor: grab;
+  }
+
+  .pdp-lifestyle-gallery__viewport.is-dragging {
+    cursor: grabbing;
+  }
+
+  .pdp-lifestyle-gallery__track {
+    display: flex;
+    margin-inline: calc(var(--pdp-lifestyle-gap) * -0.5);
+    will-change: transform;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .pdp-lifestyle-gallery__viewport.is-dragging,
+  .pdp-lifestyle-gallery__viewport.is-dragging * {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .pdp-lifestyle-gallery__item {
+    flex: 0 0 25%;
+    min-width: 0;
+    padding-inline: calc(var(--pdp-lifestyle-gap) * 0.5);
+    box-sizing: border-box;
   }
 
   .pdp-lifestyle-gallery__card {
-    display: grid;
-    gap: 0.7rem;
+    display: block;
+    width: 100%;
     text-decoration: none;
     color: inherit;
   }
@@ -188,7 +213,7 @@
   .pdp-lifestyle-gallery__media {
     position: relative;
     overflow: hidden;
-    border-radius: 1.2rem;
+    border-radius: 0;
     border: 1px solid rgba(125, 93, 67, 0.1);
     background: linear-gradient(180deg, rgba(255, 250, 245, 1), rgba(248, 238, 227, 1));
     box-shadow: 0 16px 38px rgba(86, 57, 38, 0.07);
@@ -211,33 +236,68 @@
     transition: transform 220ms ease;
   }
 
-  .pdp-lifestyle-gallery__caption {
-    margin: 0;
-    color: #6a5343;
-    font-size: 0.92rem;
-    font-weight: 600;
-    line-height: 1.45;
-    text-align: center;
+  .pdp-lifestyle-gallery__carousel--placeholder .pdp-lifestyle-gallery__item {
+    flex-basis: min(22rem, 100%);
+  }
+
+  .pdp-lifestyle-gallery__dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.65rem;
+    margin-top: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .pdp-lifestyle-gallery__dot {
+    width: 0.72rem;
+    height: 0.72rem;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(123, 89, 64, 0.34);
+    cursor: pointer;
+    padding: 0;
+    opacity: 1;
+    box-shadow: inset 0 0 0 1px rgba(122, 88, 63, 0.16);
+    transition:
+      width 180ms ease,
+      background-color 180ms ease,
+      box-shadow 180ms ease,
+      opacity 180ms ease;
+  }
+
+  .pdp-lifestyle-gallery__dot.is-active {
+    width: 2.35rem;
+    background: linear-gradient(180deg, #b87a5a 0%, #9f6548 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 247, 240, 0.3),
+      0 4px 10px rgba(159, 101, 72, 0.2);
   }
 
   @media screen and (max-width: 1199px) {
-    .pdp-lifestyle-gallery__slide {
-      width: calc((100% - (var(--pdp-lifestyle-gap) * 1.5)) / 2.5);
+    .pdp-lifestyle-gallery__item {
+      flex-basis: min(36vw, 19rem);
     }
   }
 
   @media screen and (max-width: 749px) {
-    .pdp-lifestyle-gallery__carousel slideshow-slides {
+    .pdp-lifestyle-gallery__viewport {
       padding-block: 0.3rem 0.55rem;
     }
 
-    .pdp-lifestyle-gallery__slide {
-      width: min(82vw, 20rem);
+    .pdp-lifestyle-gallery__item {
+      flex-basis: min(82vw, 20rem);
     }
 
     .pdp-lifestyle-gallery__media {
       aspect-ratio: 1;
-      border-radius: 1rem;
+      border-radius: 0;
+    }
+
+    .pdp-lifestyle-gallery__heading {
+      max-width: 10ch;
+      font-size: clamp(1.9rem, 7vw, 2.6rem);
+      white-space: normal;
+      text-wrap: balance;
     }
   }
 {% endstylesheet %}

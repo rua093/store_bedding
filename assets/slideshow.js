@@ -762,7 +762,14 @@ export class Slideshow extends Component {
       const next = this.#sync();
 
       const modifier = current !== next || Math.abs(velocity) < 10 || distanceTravelled < 10 ? 0 : direction;
-      const newIndex = clamp(next + modifier, 0, slides.length - 1);
+      let newIndex = next + modifier;
+
+      if (this.infinite) {
+        if (newIndex < 0) newIndex = slides.length - 1;
+        if (newIndex > slides.length - 1) newIndex = 0;
+      } else {
+        newIndex = clamp(newIndex, 0, slides.length - 1);
+      }
 
       const newSlide = slides[newIndex];
       const currentIndex = this.current;

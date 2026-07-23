@@ -53,29 +53,95 @@
     </div>
   {%- endif -%}
 
-  <div class="product-delivery-estimate__shipping-line">
-    <span class="product-delivery-estimate__icon" aria-hidden="true">
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M14 16H9m10 0h2v-3.6a1 1 0 0 0-.2-.6l-1.8-2.4a1 1 0 0 0-.8-.4H14" />
-        <path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h8A1.5 1.5 0 0 1 14 6.5V17H3z" />
-        <circle cx="7.5" cy="17.5" r="1.5" />
-        <circle cx="17.5" cy="17.5" r="1.5" />
-      </svg>
-    </span>
+  <div class="product-delivery-estimate__shipping-popover">
+    <button
+      type="button"
+      class="product-delivery-estimate__shipping-line button-unstyled"
+      aria-label="View delivery timeline"
+    >
+      <span class="product-delivery-estimate__icon" aria-hidden="true">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M14 16H9m10 0h2v-3.6a1 1 0 0 0-.2-.6l-1.8-2.4a1 1 0 0 0-.8-.4H14" />
+          <path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h8A1.5 1.5 0 0 1 14 6.5V17H3z" />
+          <circle cx="7.5" cy="17.5" r="1.5" />
+          <circle cx="17.5" cy="17.5" r="1.5" />
+        </svg>
+      </span>
 
-    <span class="product-delivery-estimate__copy">
-      <span class="product-delivery-estimate__label">Estimated delivery:</span>
-      <strong class="product-delivery-estimate__range" data-delivery-date-range></strong>
-    </span>
+      <span class="product-delivery-estimate__copy">
+        <span class="product-delivery-estimate__label">Estimated delivery:</span>
+        <strong class="product-delivery-estimate__range" data-delivery-date-range></strong>
+      </span>
+    </button>
+
+    <div
+      class="product-delivery-estimate__popover color-custom-popover"
+      role="dialog"
+      aria-label="Shipping timeline"
+    >
+      <div
+        class="product-support-shipping-journey product-delivery-estimate__journey"
+        data-delivery-timeline
+        data-country-code="{{ localization.country.iso_code }}"
+        aria-label="Shipping timeline"
+      >
+        <div class="product-support-shipping-journey__track" aria-hidden="true"></div>
+
+        <div class="product-support-shipping-journey__step product-support-shipping-journey__step--order">
+          <span class="product-support-shipping-journey__badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 21s-6.5-4.2-8.8-8.5C1.8 9.5 3.2 5.6 7 4.5c2-.6 3.9.1 5 1.6 1.1-1.5 3-2.2 5-1.6 3.8 1.1 5.2 5 3.8 8-2.3 4.3-8.8 8.5-8.8 8.5Z"></path>
+            </svg>
+          </span>
+          <div class="product-support-shipping-journey__date" data-delivery-stage-order-date></div>
+          <p class="product-support-shipping-journey__heading">Order placed</p>
+        </div>
+
+        <div class="product-support-shipping-journey__step product-support-shipping-journey__step--ship">
+          <span class="product-support-shipping-journey__badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h8A1.5 1.5 0 0 1 14 7.5V17H3z"></path>
+              <path d="M14 10h3.6a1 1 0 0 1 .8.4l1.8 2.4a1 1 0 0 1 .2.6V17H14"></path>
+              <circle cx="7.5" cy="17.5" r="1.5"></circle>
+              <circle cx="17.5" cy="17.5" r="1.5"></circle>
+            </svg>
+          </span>
+          <div class="product-support-shipping-journey__date" data-delivery-stage-ship-range></div>
+          <p class="product-support-shipping-journey__heading">Order ships</p>
+        </div>
+
+        <div class="product-support-shipping-journey__step product-support-shipping-journey__step--deliver">
+          <span class="product-support-shipping-journey__badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="7" width="16" height="13" rx="1.5"></rect>
+              <path d="M12 7v13"></path>
+              <path d="M8 7V5.8A1.8 1.8 0 0 1 9.8 4h4.4A1.8 1.8 0 0 1 16 5.8V7"></path>
+              <path d="M4 11.5h16"></path>
+            </svg>
+          </span>
+          <div class="product-support-shipping-journey__date" data-delivery-stage-delivery-range></div>
+          <p class="product-support-shipping-journey__heading">Delivered!</p>
+        </div>
+      </div>
+
+      {% if section.settings.shipping_details != blank %}
+        <div class="product-delivery-estimate__popover-details rte">
+          <ul class="product-delivery-estimate__popover-list">
+            <li>Orders can be cancelled or modified within 2 hours after being placed.</li>
+            <li>Refund or free replacement requests must be submitted within 30 days of delivery for damaged, defective, incorrectly customized, or missing items.</li>
+          </ul>
+        </div>
+      {% endif %}
+    </div>
   </div>
 </div>
 
@@ -172,6 +238,13 @@
     width: fit-content;
     max-width: 100%;
     flex-wrap: wrap;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
   }
 
   .product-delivery-estimate__icon {
@@ -199,6 +272,138 @@
     white-space: nowrap;
   }
 
+  .product-delivery-estimate__shipping-popover {
+    position: relative;
+    display: inline-flex;
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .product-delivery-estimate__popover {
+    position: absolute;
+    z-index: 30;
+    top: calc(100% + 0.8rem);
+    left: 3.25rem;
+    right: auto;
+    width: min(31.5rem, calc(100vw - 3rem));
+    max-width: calc(100vw - 3rem);
+    padding: 1.1rem 1.1rem 1rem;
+    border: var(--style-border-popover);
+    border-radius: 1.35rem;
+    box-shadow: var(--shadow-popover);
+    background: #fffdfb;
+    color: #4f4238;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: stretch;
+    align-items: start;
+    gap: 0.9rem;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(0.6rem) scale(0.985);
+    transform-origin: top right;
+    transition:
+      opacity 220ms ease,
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear 260ms;
+  }
+
+  .product-delivery-estimate__shipping-popover:is(:hover, :focus-within) .product-delivery-estimate__popover {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    transition:
+      opacity 220ms ease,
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear 0s;
+  }
+
+  .product-delivery-estimate__journey {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .product-delivery-estimate__popover-details {
+    color: #5d5046;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    text-align: left;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    inline-size: 100%;
+  }
+
+  .product-delivery-estimate__popover-details :is(p, ul, ol) {
+    margin: 0;
+  }
+
+  .product-delivery-estimate__popover-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.38rem;
+    padding-left: 0.95rem;
+    margin: 0;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    inline-size: 100%;
+  }
+
+  .product-delivery-estimate__popover-list li {
+    text-align: left;
+    max-width: none;
+    min-width: 0;
+    width: 100%;
+    inline-size: 100%;
+    white-space: normal;
+    text-wrap: wrap;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .product-delivery-estimate__popover-list li::marker {
+    color: #6e5646;
+  }
+
+  .product-delivery-estimate__popover .product-support-shipping-journey__track {
+    left: 2.35rem;
+    right: 2.35rem;
+  }
+
+  .product-delivery-estimate__popover .product-support-shipping-journey__step {
+    gap: 0.42rem;
+  }
+
+  .product-delivery-estimate__popover .product-support-shipping-journey__badge {
+    width: 3.3rem;
+    height: 3.3rem;
+  }
+
+  .product-delivery-estimate__popover .product-support-shipping-journey__badge svg {
+    width: 1.22rem;
+    height: 1.22rem;
+  }
+
+  .product-delivery-estimate__popover .product-support-shipping-journey__date {
+    font-size: 0.76rem;
+    line-height: 1.2;
+    font-weight: 680;
+  }
+
+  .product-delivery-estimate__popover .product-support-shipping-journey__heading {
+    font-size: 0.78rem;
+    line-height: 1.24;
+    font-weight: 430;
+  }
+
+  .product-delivery-estimate__popover .product-support-shipping-journey__step--deliver {
+    text-align: right;
+    justify-items: end;
+  }
+
   @media screen and (max-width: 749px) {
     .product-delivery-estimate {
       width: 100%;
@@ -211,6 +416,16 @@
 
     .product-delivery-estimate__range {
       white-space: normal;
+    }
+
+    .product-delivery-estimate__popover {
+      left: 0;
+      width: min(24rem, calc(100vw - 1.5rem));
+      min-width: 0;
+      max-width: calc(100vw - 1.5rem);
+      padding: 1rem 0.95rem;
+      border-radius: 1.1rem;
+      transform-origin: top left;
     }
   }
 {% endstyle %}
