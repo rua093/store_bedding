@@ -361,8 +361,64 @@
     },
     "pdp_lifestyle_gallery_dK9uRr": {
       "type": "pdp-lifestyle-gallery",
-      "blocks": {},
-      "block_order": [],
+      "blocks": {
+        "lifestyle_image_1": {
+          "type": "image",
+          "settings": {
+            "image": "",
+            "caption": "Styled in a real home",
+            "link": ""
+          }
+        },
+        "lifestyle_image_2": {
+          "type": "image",
+          "settings": {
+            "image": "",
+            "caption": "Customer-inspired bedroom look",
+            "link": ""
+          }
+        },
+        "lifestyle_image_3": {
+          "type": "image",
+          "settings": {
+            "image": "",
+            "caption": "Layered bedding in a cozy space",
+            "link": ""
+          }
+        },
+        "lifestyle_image_4": {
+          "type": "image",
+          "settings": {
+            "image": "",
+            "caption": "Warm, lived-in styling",
+            "link": ""
+          }
+        },
+        "lifestyle_image_5": {
+          "type": "image",
+          "settings": {
+            "image": "",
+            "caption": "Soft layers for everyday comfort",
+            "link": ""
+          }
+        },
+        "lifestyle_image_6": {
+          "type": "image",
+          "settings": {
+            "image": "",
+            "caption": "Collected, cozy bedroom styling",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "lifestyle_image_1",
+        "lifestyle_image_2",
+        "lifestyle_image_3",
+        "lifestyle_image_4",
+        "lifestyle_image_5",
+        "lifestyle_image_6"
+      ],
       "settings": {
         "section_width": "page-width",
         "eyebrow": "Lifestyle inspiration",
