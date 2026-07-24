@@ -515,9 +515,31 @@
     .product-information--main-product .product-information__media .slideshow-controls__thumbnails-container {
       mask-image: none !important;
       -webkit-mask-image: none !important;
-      overflow: visible;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      max-height: clamp(480px, 46vw, 620px);
       padding-top: 0 !important;
+      padding-right: 4px !important;
+      padding-bottom: 8px !important;
+      margin-right: -4px !important;
       margin-top: 0 !important;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      overflow-clip-margin: 6px;
+    }
+
+    .product-information--main-product .product-information__media .slideshow-controls__thumbnails {
+      gap: 10px;
+      padding-block: 0 8px !important;
+      padding-inline-start: 2px !important;
+      padding-inline-end: 4px !important;
+    }
+
+    .product-information--main-product .product-information__media slideshow-controls[thumbnails] scroll-hint::-webkit-scrollbar,
+    .product-information--main-product .product-information__media .slideshow-controls__thumbnails-container::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
     }
   }
 
@@ -569,11 +591,18 @@
       box-shadow var(--animation-speed) var(--animation-easing);
   }
 
+  .product-information--main-product .product-information__media .slideshow-controls__thumbnail:focus,
+  .product-information--main-product .product-information__media .slideshow-controls__thumbnail:focus-visible,
+  .product-information--main-product .product-information__media .slideshow-controls__thumbnail[aria-selected='true'] {
+    outline: none !important;
+    outline-offset: 0 !important;
+  }
+
   .product-information--main-product .product-information__media .slideshow-controls__thumbnail[aria-selected='true'] {
     border-color: #b87345;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.92),
-      0 0 0 1px rgba(184, 115, 69, 0.28),
+      inset 0 0 0 1px rgba(184, 115, 69, 0.28),
       0 12px 22px rgba(184, 115, 69, 0.14);
   }
 
