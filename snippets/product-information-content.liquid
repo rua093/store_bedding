@@ -1355,20 +1355,23 @@
     .product-information--main-product .variant-picker__button,
     .product-information--main-product button.swatch-button {
       border-radius: 3px !important;
-      border: 1px solid rgba(0, 0, 0, 0.22) !important;
+      border: 1px solid rgba(0, 0, 0, 0.12) !important;
       background: #FFFFFF !important;
-      color: #000000 !important;
+      color: #171717 !important;
       font-weight: 500 !important;
-      font-size: 0.86rem !important;
-      padding: 6px 14px !important;
-      min-width: auto !important;
+      font-size: 1rem !important;
+      padding: 0.75rem 1.25rem !important;
+      min-width: 3.9rem !important;
       width: fit-content !important;
       height: auto !important;
+      min-height: 3rem !important;
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
+      flex: 0 0 auto !important;
       transition: all 0.15s ease !important;
       box-shadow: none !important;
+      white-space: nowrap !important;
     }
 
     .product-information--main-product .variant-option__button-label:has(input:checked),
@@ -1376,16 +1379,48 @@
     .product-information--main-product .variant-picker__button[aria-checked="true"],
     .product-information--main-product .variant-picker__button.active,
     .product-information--main-product button.swatch-button[aria-checked="true"] {
-      border: 2px solid #000000 !important;
-      background: #FFFFFF !important;
-      color: #000000 !important;
-      font-weight: 700 !important;
+      border-color: #000000 !important;
+      background: #000000 !important;
+      color: #FFFFFF !important;
+      font-weight: 500 !important;
       box-shadow: none !important;
     }
 
     .product-information--main-product .variant-option__button-label__text {
-      color: #000000 !important;
+      color: inherit !important;
       font-weight: inherit !important;
+      font-size: 1rem !important;
+      line-height: 1.2 !important;
+      letter-spacing: 0 !important;
+      text-align: center !important;
+      text-wrap: nowrap !important;
+      white-space: nowrap !important;
+    }
+
+    .product-information--main-product .variant-option__button-label__pill {
+      display: none !important;
+    }
+
+    .product-information--main-product
+      .variant-option--buttons:not(.variant-option--swatches)
+      .variant-option__button-label::before,
+    .product-information--main-product
+      .variant-option--buttons:not(.variant-option--swatches)
+      .variant-option__button-label::after {
+      border-color: rgba(0, 0, 0, 0.12) !important;
+    }
+
+    .product-information--main-product
+      .variant-option--buttons:not(.variant-option--swatches)
+      .variant-option__button-label:has(input:checked)::before,
+    .product-information--main-product
+      .variant-option--buttons:not(.variant-option--swatches)
+      .variant-option__button-label:has(input:checked)::after {
+      border-color: #000000 !important;
+    }
+
+    .product-information--main-product .variant-option--buttons {
+      gap: 0.75rem !important;
     }
 
     /* Quantity and CTA row */
@@ -1441,11 +1476,15 @@
     .product-information--main-product .product-form-trust-badge__title {
       font-size: 0.82rem !important;
       font-weight: 500 !important;
-      color: #5A473B !important;
+      color: #000000 !important;
       white-space: normal !important;
       overflow-wrap: break-word !important;
       word-break: normal !important;
       line-height: 1.25 !important;
+    }
+
+    .product-information--main-product .product-form-trust-badge__icon {
+      color: #000000 !important;
     }
 
     /* Brand Promise Note */
@@ -1454,7 +1493,7 @@
       border: 1px solid rgba(211, 84, 53, 0.12) !important;
       border-radius: 14px !important;
       padding: 12px 16px !important;
-      color: #4A3E36 !important;
+      color: #000000 !important;
       font-size: 0.88rem !important;
       font-weight: 500 !important;
       text-align: center !important;
@@ -1463,6 +1502,10 @@
       justify-content: center !important;
       gap: 8px !important;
       margin-top: 10px !important;
+    }
+
+    .product-information--main-product .product-form-trust-badges__note-icon {
+      color: #000000 !important;
     }
 
     .product-information--main-product .product-information__details-below {

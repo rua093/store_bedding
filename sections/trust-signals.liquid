@@ -88,17 +88,42 @@
                 when 4
                   assign trust_icon_asset = 'ready_shipping.webp'
               endcase
+
+              assign trust_icon_image = blank
+              case forloop.index
+                when 1
+                  assign trust_icon_image = section.settings.icon_image_1
+                when 2
+                  assign trust_icon_image = section.settings.icon_image_2
+                when 3
+                  assign trust_icon_image = section.settings.icon_image_3
+                when 4
+                  assign trust_icon_image = section.settings.icon_image_4
+              endcase
             %}
             <div class="trust-signals__hero-item trust-signals__hero-item--{{ forloop.index }}" {{ block.shopify_attributes }}>
               <div class="trust-signals__hero-icon trust-signals__hero-icon--{{ forloop.index }}" aria-hidden="true">
-                <img
-                  class="trust-signals__hero-icon-image"
-                  src="{{ trust_icon_asset | asset_url }}"
-                  alt=""
-                  width="512"
-                  height="512"
-                  loading="lazy"
-                >
+                {% if trust_icon_image != blank %}
+                  {{
+                    trust_icon_image
+                    | image_url: width: 512
+                    | image_tag:
+                      class: 'trust-signals__hero-icon-image',
+                      widths: '96, 160, 240, 320, 512',
+                      sizes: '96px',
+                      loading: 'lazy',
+                      alt: ''
+                  }}
+                {% else %}
+                  <img
+                    class="trust-signals__hero-icon-image"
+                    src="{{ trust_icon_asset | asset_url }}"
+                    alt=""
+                    width="512"
+                    height="512"
+                    loading="lazy"
+                  >
+                {% endif %}
               </div>
               <div class="trust-signals__hero-copy">
                 <h3 class="trust-signals__hero-title">{{ trust_title }}</h3>
@@ -147,6 +172,26 @@
       "id": "background_color",
       "label": "Background color",
       "default": "#FAF8F5"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_image_1",
+      "label": "Icon image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_image_2",
+      "label": "Icon image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_image_3",
+      "label": "Icon image 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_image_4",
+      "label": "Icon image 4"
     },
     {
       "type": "range",
