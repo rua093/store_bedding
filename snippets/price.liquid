@@ -160,16 +160,6 @@
   {%- endif -%}
 </div>
 {%- if render_product_callouts -%}
-  {%- liquid
-    assign tax_note_text = 'Taxes calculated at checkout'
-    if cart.duties_included and cart.taxes_included
-      assign tax_note_text = 'Duties and taxes included'
-    elsif cart.taxes_included
-      assign tax_note_text = 'Taxes included'
-    elsif cart.duties_included
-      assign tax_note_text = 'Duties included'
-    endif
-  -%}
   <div class="price-callouts">
     <div class="price-discount-message">
       <span class="price-discount-message__icon" aria-hidden="true">
@@ -187,11 +177,6 @@
       </span>
       <span class="price-policy-note__copy">
         <span>Shipping calculated at checkout</span>
-        <span class="price-policy-note__separator" aria-hidden="true">·</span>
-        <span>{{ tax_note_text }}</span>
-        {% if shop.shipping_policy.body != blank %}
-          <a href="{{ shop.shipping_policy.url }}" class="price-policy-note__link">Learn more</a>
-        {% endif %}
       </span>
     </div>
   </div>

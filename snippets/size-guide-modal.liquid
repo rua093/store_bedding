@@ -46,6 +46,30 @@
   {%- endif -%}
 
   {%- if render_trigger -%}
+    {% style %}
+      .size-guide-trigger {
+        font-size: 0.82rem !important;
+        font-weight: 300 !important;
+        color: #999999 !important;
+        text-decoration: underline !important;
+        text-decoration-color: #AAAAAA !important;
+        text-decoration-thickness: 1px !important;
+        text-underline-offset: 3px !important;
+        border: none !important;
+        border-bottom: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        cursor: pointer !important;
+        opacity: 0.85 !important;
+        transition: opacity 0.15s ease, color 0.15s ease !important;
+        display: inline-block !important;
+      }
+      .size-guide-trigger:hover {
+        opacity: 1 !important;
+        color: #444444 !important;
+        text-decoration-color: #444444 !important;
+      }
+    {% endstyle %}
     <span
       class="size-guide-trigger"
       role="button"
@@ -53,8 +77,9 @@
       aria-haspopup="dialog"
       aria-controls="{{ dialog_id }}"
       on:click="#{{ dialog_component_id }}/showDialog"
+      style="font-size: 13px !important; font-weight: 300 !important; color: #888888 !important; text-decoration: underline !important; text-decoration-color: #bbbbbb !important; text-decoration-thickness: 1px !important; text-underline-offset: 3px !important; border: none !important; border-bottom: none !important; background: transparent !important; box-shadow: none !important; -webkit-font-smoothing: antialiased !important;"
     >
-      Size Guide
+      Size Chart
     </span>
   {%- endif -%}
 
@@ -109,7 +134,7 @@
             id="{{ heading_id }}"
             class="size-guide-modal__heading h4"
           >
-            Size Guide
+            Size Chart
           </h2>
           <p
             id="{{ description_id }}"

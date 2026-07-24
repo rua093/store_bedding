@@ -249,6 +249,10 @@
       {% render 'quick-add-modal' %}
     {% endif %}
 
+    {% if request.page_type == 'index' or template == 'index' %}
+      {% render 'discount-popup' %}
+    {% endif %}
+
     <style>
       :root {
         --floating-action-right: clamp(1.15rem, 2vw, 1.65rem);

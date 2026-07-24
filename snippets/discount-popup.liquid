@@ -1,0 +1,535 @@
+{% comment %}
+  Discount 10% Floating Tag & Modal Popup
+  - Displays floating tag on the left edge of homepage
+  - Opens center modal popup with smooth animation on tag click
+  - Submits customer newsletter email identically to footer newsletter section
+{% endcomment %}
+
+{%- if request.page_type == 'index' or template == 'index' -%}
+
+{% liquid
+  assign has_posted = false
+  if form.posted_successfully?
+    assign has_posted = true
+  endif
+%}
+
+<!-- Floating 10% OFF Side Tag -->
+<aside
+  id="discount-tag"
+  class="discount-tag"
+  role="region"
+  aria-label="10% OFF Discount Promotion"
+>
+  <button
+    type="button"
+    id="discount-tag-close"
+    class="discount-tag__close"
+    aria-label="Close discount tag"
+  >
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </button>
+  
+  <div
+    id="discount-tag-trigger"
+    class="discount-tag__trigger"
+    role="button"
+    tabindex="0"
+    aria-haspopup="dialog"
+    aria-expanded="false"
+    aria-controls="discount-modal"
+  >
+    <span class="discount-tag__text">10% OFF</span>
+  </div>
+</aside>
+
+<!-- Modal Overlay & Popup Container -->
+<div
+  id="discount-modal-overlay"
+  class="discount-modal-overlay{% if has_posted or form.errors %} is-active{% endif %}"
+  aria-hidden="{% if has_posted or form.errors %}false{% else %}true{% endif %}"
+>
+  <div
+    id="discount-modal"
+    class="discount-modal{% if has_posted or form.errors %} is-active{% endif %}"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="discount-modal-title"
+  >
+    <button
+      type="button"
+      id="discount-modal-close"
+      class="discount-modal__close"
+      aria-label="Close modal"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+
+    <div class="discount-modal__header">
+      <div class="discount-modal__badge">
+        <img
+          src="{{ 'leaf.svg' | asset_url }}"
+          alt=""
+          width="28"
+          height="28"
+          loading="lazy"
+          class="discount-modal__badge-icon"
+        >
+      </div>
+      <h2 id="discount-modal-title" class="discount-modal__title">Get 10% Off Your Order</h2>
+      <p class="discount-modal__subtitle">
+        Subscribe to our newsletter to receive an exclusive 10% discount code and stay updated with new arrivals & cozy ideas.
+      </p>
+    </div>
+
+    <div class="discount-modal__body">
+      {% form 'customer', class: 'discount-modal__form', id: 'discount-popup-customer-form' %}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        
+        {% if form.posted_successfully? %}
+          <div class="discount-modal__success">
+            <div class="discount-modal__success-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+            <h3 class="discount-modal__success-title">Thank You for Subscribing!</h3>
+            <p class="discount-modal__success-desc">
+              Your 10% discount code has been sent to your email address. Check your inbox to claim your discount!
+            </p>
+          </div>
+        {% else %}
+          <div class="discount-modal__input-group">
+            <input
+              type="email"
+              name="contact[email]"
+              class="discount-modal__input"
+              placeholder="Email address"
+              autocorrect="off"
+              autocapitalize="off"
+              required
+              {% if form.errors %}aria-invalid="true"{% endif %}
+            >
+            <button type="submit" class="discount-modal__submit">
+              <span>Subscribe &rarr;</span>
+            </button>
+          </div>
+
+          {% if form.errors %}
+            <p class="discount-modal__error">
+              {{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}
+            </p>
+          {% endif %}
+
+          <p class="discount-modal__footer-note">
+            By signing up, you agree to receive email updates. You can unsubscribe at any time.
+          </p>
+        {% endif %}
+      {% endform %}
+    </div>
+  </div>
+</div>
+
+<style>
+  /* ==========================================================================
+     Floating Discount Tag (Left Edge)
+     ========================================================================== */
+  .discount-tag {
+    position: fixed;
+    left: 0;
+    right: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 105;
+    background-color: #D35435;
+    color: #ffffff;
+    border-radius: 0;
+    box-shadow: 4px 6px 20px rgba(211, 84, 53, 0.22);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 8px 18px 8px;
+    gap: 14px;
+    user-select: none;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease, opacity 0.25s ease, visibility 0.25s ease;
+  }
+
+  .discount-tag:hover {
+    background-color: #b9442a;
+    transform: translateY(-50%) translateX(3px);
+  }
+
+  .discount-tag.is-hidden {
+    display: none !important;
+  }
+
+  .discount-tag__close {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.75);
+    padding: 4px;
+    margin: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    line-height: 1;
+  }
+
+  .discount-tag__close:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.18);
+  }
+
+  .discount-tag__trigger {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 2px;
+    outline: none;
+  }
+
+  .discount-tag__text {
+    font-family: var(--font-primary--family), sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: #ffffff;
+    writing-mode: vertical-rl;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ==========================================================================
+     Modal Backdrop Overlay
+     ========================================================================== */
+  .discount-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99998;
+    background-color: rgba(47, 38, 31, 0.52);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s ease;
+  }
+
+  .discount-modal-overlay.is-active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  /* ==========================================================================
+     Center Modal Card
+     ========================================================================== */
+  .discount-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 99999;
+    width: calc(100% - 32px);
+    max-width: 500px;
+    background-color: #ffffff;
+    border: 1px solid rgba(201, 133, 90, 0.18);
+    border-radius: 28px;
+    box-shadow: 0 20px 50px rgba(47, 38, 31, 0.18);
+    padding: 36px 32px 32px;
+    text-align: center;
+    transform: translate(-50%, -44%) scale(0.95);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, visibility 0.35s ease;
+    box-sizing: border-box;
+  }
+
+  .discount-modal.is-active {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .discount-modal__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: #f4eae1;
+    border: 1px solid rgba(201, 133, 90, 0.15);
+    color: #6f5f52;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+
+  .discount-modal__close:hover {
+    background-color: #c9855a;
+    color: #ffffff;
+    transform: rotate(90deg);
+  }
+
+  .discount-modal__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .discount-modal__badge {
+    width: 52px;
+    height: 52px;
+    background-color: #f4eae1;
+    border: 1px solid rgba(201, 133, 90, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    color: #c9855a;
+  }
+
+  .discount-modal__badge-icon {
+    width: 28px;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .discount-modal__title {
+    font-family: var(--font-primary--family), serif;
+    font-size: clamp(1.35rem, 2.5vw, 1.6rem);
+    font-weight: 600;
+    color: #2f261f;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+  }
+
+  .discount-modal__subtitle {
+    font-size: 0.92rem;
+    color: #8a7566;
+    margin: 0;
+    line-height: 1.5;
+    max-width: 400px;
+  }
+
+  .discount-modal__form {
+    width: 100%;
+    margin: 0;
+  }
+
+  .discount-modal__input-group {
+    display: flex;
+    background-color: #fffaf4;
+    border: 1px solid #e4d3c4;
+    border-radius: 50px;
+    padding: 4px 4px 4px 18px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .discount-modal__input-group:focus-within {
+    border-color: #c9855a;
+    box-shadow: 0 0 0 3px rgba(201, 133, 90, 0.12);
+  }
+
+  .discount-modal__input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 0.95rem;
+    color: #2f261f;
+    outline: none;
+    min-width: 0;
+    padding: 10px 0;
+  }
+
+  .discount-modal__input::placeholder {
+    color: #8a7566;
+    opacity: 0.75;
+  }
+
+  .discount-modal__submit {
+    background-color: #c9855a;
+    color: #fffaf4;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 22px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.25s ease, transform 0.2s ease;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .discount-modal__submit:hover {
+    background-color: #b3734a;
+  }
+
+  .discount-modal__error {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    margin: 8px 0 0 0;
+    text-align: left;
+    padding-left: 12px;
+  }
+
+  .discount-modal__footer-note {
+    font-size: 0.78rem;
+    color: #a08e82;
+    margin: 12px 0 0 0;
+    line-height: 1.4;
+  }
+
+  .discount-modal__success {
+    background-color: #f4f9f4;
+    border: 1px solid #c8e6c9;
+    border-radius: 16px;
+    padding: 20px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .discount-modal__success-icon {
+    width: 44px;
+    height: 44px;
+    background-color: #e8f5e9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  .discount-modal__success-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2e7d32;
+    margin: 0 0 6px 0;
+  }
+
+  .discount-modal__success-desc {
+    font-size: 0.88rem;
+    color: #43a047;
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  @media screen and (max-width: 480px) {
+    .discount-modal {
+      padding: 30px 20px 24px;
+      border-radius: 22px;
+    }
+
+    .discount-modal__input-group {
+      flex-direction: column;
+      border-radius: 18px;
+      padding: 8px 12px 10px;
+      gap: 8px;
+    }
+
+    .discount-modal__input {
+      padding: 6px 0;
+      text-align: center;
+    }
+
+    .discount-modal__submit {
+      width: 100%;
+      justify-content: center;
+      padding: 10px 16px;
+    }
+  }
+</style>
+
+<script>
+  (function initDiscountPopup() {
+    const tag = document.getElementById('discount-tag');
+    const tagClose = document.getElementById('discount-tag-close');
+    const tagTrigger = document.getElementById('discount-tag-trigger');
+    
+    const overlay = document.getElementById('discount-modal-overlay');
+    const modal = document.getElementById('discount-modal');
+    const modalClose = document.getElementById('discount-modal-close');
+
+    if (!tag || !overlay || !modal) return;
+
+    function openModal() {
+      overlay.classList.add('is-active');
+      modal.classList.add('is-active');
+      overlay.setAttribute('aria-hidden', 'false');
+      tagTrigger?.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      overlay.classList.remove('is-active');
+      modal.classList.remove('is-active');
+      overlay.setAttribute('aria-hidden', 'true');
+      tagTrigger?.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    function hideTag() {
+      tag.classList.add('is-hidden');
+      closeModal();
+    }
+
+    // Event Listeners
+    tagTrigger?.addEventListener('click', function(e) {
+      e.stopPropagation();
+      openModal();
+    });
+
+    tagTrigger?.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openModal();
+      }
+    });
+
+    tagClose?.addEventListener('click', function(e) {
+      e.stopPropagation();
+      hideTag();
+    });
+
+    modalClose?.addEventListener('click', function(e) {
+      e.stopPropagation();
+      closeModal();
+    });
+
+    overlay?.addEventListener('click', function(e) {
+      if (e.target === overlay) {
+        closeModal();
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && overlay.classList.contains('is-active')) {
+        closeModal();
+      }
+    });
+  })();
+</script>
+{%- endif -%}

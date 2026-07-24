@@ -576,26 +576,51 @@
 
   .product-details--main-product variant-picker .variant-option__button-label {
     min-height: 2.5rem;
+    border-radius: 3px !important;
+    border: 1px solid rgba(0, 0, 0, 0.22) !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-weight: 500 !important;
+    font-size: 0.86rem !important;
+    padding: 6px 14px !important;
+    min-width: auto !important;
+    width: fit-content !important;
+    height: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.15s ease !important;
+    box-shadow: none !important;
   }
 
   .product-details--main-product variant-picker .variant-option__button-label__text {
-    font-size: 0.98rem;
-    font-weight: 500;
+    font-size: 0.86rem !important;
+    font-weight: inherit !important;
     letter-spacing: -0.01em;
+    color: #000000 !important;
   }
 
   .product-details--main-product
     variant-picker
     .variant-option--buttons:not(.variant-option--swatches)
     .variant-option__button-label {
-    border-radius: 8px;
+    border-radius: 3px !important;
   }
 
   .product-details--main-product
     variant-picker
     .variant-option--buttons:not(.variant-option--swatches)
     .variant-option__button-label__pill {
-    border-radius: 8px;
+    border-radius: 3px !important;
+  }
+
+  .product-details--main-product variant-picker .variant-option__button-label:has(input:checked),
+  .product-details--main-product variant-picker .variant-option__button-label[aria-checked='true'] {
+    border: 2px solid #000000 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+    box-shadow: none !important;
   }
 
   .product-details--main-product

@@ -65,7 +65,21 @@
       </div>
 
       {% if settings.shipping_details != blank %}
-        <div class="product-support-collapsible__details rte">{{ settings.shipping_details | escape | newline_to_br }}</div>
+        {% assign shipping_lines = settings.shipping_details | strip | newline_to_br | split: '<br />' %}
+        <div class="product-support-collapsible__details product-support-collapsible__details--shipping rte">
+          <ul class="product-support-collapsible__summary-list" role="list">
+            {% for line in shipping_lines %}
+              {% assign clean_line = line | strip %}
+              {% assign first_char = clean_line | slice: 0, 1 %}
+              {% if first_char == '•' or first_char == '*' or first_char == '-' %}
+                {% assign clean_line = clean_line | slice: 1, clean_line.size | strip %}
+              {% endif %}
+              {% if clean_line != blank %}
+                <li>{{ clean_line }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
       {% endif %}
     </div>
   </details>
@@ -95,7 +109,21 @@
       {% endif %}
 
       {% if settings.personalization_details != blank %}
-        <div class="product-support-collapsible__details rte">{{ settings.personalization_details | escape | newline_to_br }}</div>
+        {% assign personalization_lines = settings.personalization_details | strip | newline_to_br | split: '<br />' %}
+        <div class="product-support-collapsible__details product-support-collapsible__details--personalization rte">
+          <ul class="product-support-collapsible__checklist" role="list">
+            {% for line in personalization_lines %}
+              {% assign clean_line = line | strip %}
+              {% assign first_char = clean_line | slice: 0, 1 %}
+              {% if first_char == '•' or first_char == '*' or first_char == '-' %}
+                {% assign clean_line = clean_line | slice: 1, clean_line.size | strip %}
+              {% endif %}
+              {% if clean_line != blank %}
+                <li>{{ clean_line }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
       {% endif %}
 
       {% if settings.personalization_note != blank %}
