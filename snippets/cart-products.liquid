@@ -213,12 +213,27 @@
                         data-customization-preview-root
                         data-customization-id="{{ customization_id | escape }}"
                         data-render-context="{{ context | default: 'page' | escape }}"
+                        {% if item.image %}
+                          data-fallback-src="{{ item.image | image_url: width: 250 }}"
+                          data-zoom-src="{{ item.image | image_url: width: 1400 }}"
+                        {% endif %}
                       >
                         <div
                           class="cart-items__custom-preview-frame border-style"
                           data-customization-preview-frame
                           aria-label="{{ item_product_display_title | strip | escape }} custom preview"
                         ></div>
+                        <button
+                          type="button"
+                          class="cart-items__media-zoom"
+                          data-customization-preview-zoom
+                          aria-label="Preview {{ item_product_display_title | strip | escape }}"
+                        >
+                          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M2.25 12s3.5-6.25 9.75-6.25S21.75 12 21.75 12 18.25 18.25 12 18.25 2.25 12 2.25 12Z"></path>
+                            <circle cx="12" cy="12" r="3.1"></circle>
+                          </svg>
+                        </button>
                         <script
                           type="application/json"
                           data-customization-payload
@@ -252,6 +267,18 @@
                         width="250"
                         height="250"
                       >
+                      <button
+                        type="button"
+                        class="cart-items__media-zoom"
+                        data-cart-image-zoom
+                        data-zoom-src="{{ customization_preview | escape }}"
+                        aria-label="Preview {{ item_product_display_title | strip | escape }}"
+                      >
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                          <path d="M2.25 12s3.5-6.25 9.75-6.25S21.75 12 21.75 12 18.25 18.25 12 18.25 2.25 12 2.25 12Z"></path>
+                          <circle cx="12" cy="12" r="3.1"></circle>
+                        </svg>
+                      </button>
                     </a>
                   {%- elsif item.image -%}
                     {% liquid
@@ -276,6 +303,18 @@
                       {%- liquid
                         echo item.image | image_url: width: 250 | image_tag: class: 'cart-items__media-image border-style', style: border_override
                       -%}
+                      <button
+                        type="button"
+                        class="cart-items__media-zoom"
+                        data-cart-image-zoom
+                        data-zoom-src="{{ item.image | image_url: width: 1400 }}"
+                        aria-label="Preview {{ item_product_display_title | strip | escape }}"
+                      >
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                          <path d="M2.25 12s3.5-6.25 9.75-6.25S21.75 12 21.75 12 18.25 18.25 12 18.25 2.25 12 2.25 12Z"></path>
+                          <circle cx="12" cy="12" r="3.1"></circle>
+                        </svg>
+                      </button>
                     </a>
                   {%- endif %}
                 </td>
@@ -353,7 +392,7 @@
                         for property in item.properties
                           assign property_first_char = property.first | slice: 0
                           if property.last != blank and property_first_char != '_'
-                            unless property.first == 'Customization'
+                            unless property.first == 'Customization' or property.first == 'Production preview' or property.first == 'Original upload'
                               assign visible_properties_count = visible_properties_count | plus: 1
                             endunless
                           endif
@@ -366,7 +405,7 @@
                           {%- assign visible_property_index = 0 -%}
                           {%- for property in item.properties -%}
                             {%- assign property_first_char = property.first | slice: 0 -%}
-                            {%- if property.last != blank and property_first_char != '_' and property.first != 'Customization' -%}
+                            {%- if property.last != blank and property_first_char != '_' and property.first != 'Customization' and property.first != 'Production preview' and property.first != 'Original upload' -%}
                               {%- assign visible_property_index = visible_property_index | plus: 1 -%}
                               <div class="cart-items__property{% if visible_property_index > 2 %} is-collapsed{% endif %}"{% if visible_property_index > 2 %} hidden{% endif %}>
                                 <dt>{{ property.first }}:</dt>
@@ -864,6 +903,7 @@
 
   .cart-items__custom-preview {
     display: block;
+    position: relative;
     width: 100%;
     height: 100%;
   }
@@ -887,6 +927,155 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  .cart-items__custom-preview-canvas--fallback {
+    object-fit: cover;
+  }
+
+  .cart-items__media-zoom {
+    align-items: center;
+    background: linear-gradient(180deg, rgb(45 61 117 / 0.96), rgb(27 40 86 / 0.96));
+    border: 0;
+    border-radius: 999px;
+    box-shadow:
+      0 10px 24px rgb(23 33 72 / 0.18),
+      inset 0 0 0 1px rgb(255 255 255 / 0.12);
+    color: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    height: 3.2rem;
+    justify-content: center;
+    left: 50%;
+    opacity: 0;
+    padding: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.94);
+    transition: opacity 0.18s ease, transform 0.18s ease, background-color 0.18s ease;
+    width: 3.2rem;
+    z-index: 3;
+  }
+
+  .cart-items__media-zoom svg {
+    fill: none;
+    height: 1.68rem;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
+    width: 1.68rem;
+  }
+
+  .cart-items__media-container:hover .cart-items__media-zoom,
+  .cart-items__media-container:focus-within .cart-items__media-zoom,
+  .cart-items__custom-preview:hover .cart-items__media-zoom,
+  .cart-items__custom-preview:focus-within .cart-items__media-zoom {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .cart-items__media-zoom:hover {
+    background: linear-gradient(180deg, rgb(53 72 135 / 0.98), rgb(31 46 98 / 0.98));
+  }
+
+  .cart-items__media-zoom:focus-visible {
+    outline: 0.2rem solid rgb(242 101 34 / 0.65);
+    outline-offset: 0.2rem;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .cart-items__preview-lightbox {
+    align-items: center;
+    background: rgb(0 0 0 / 0.56);
+    display: flex;
+    inset: 0;
+    justify-content: center;
+    opacity: 0;
+    padding: 1.8rem;
+    pointer-events: none;
+    position: fixed;
+    transition: opacity 0.18s ease;
+    z-index: 2147483647;
+  }
+
+  .cart-items__preview-lightbox.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .cart-items__preview-lightbox-dialog {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    max-height: min(88vh, 110rem);
+    max-width: min(94vw, 128rem);
+    position: relative;
+    width: auto;
+  }
+
+  .cart-items__preview-lightbox-image {
+    background: #ffffff;
+    border-radius: 1.1rem;
+    box-shadow: 0 2.8rem 7rem rgb(0 0 0 / 0.34);
+    display: block;
+    height: auto;
+    max-height: min(88vh, 110rem);
+    max-width: min(94vw, 128rem);
+    object-fit: contain;
+    width: auto;
+  }
+
+  .cart-items__preview-lightbox-close {
+    align-items: center;
+    background: #ffffff;
+    border: 0;
+    border-radius: 999px;
+    color: #0e1b4d;
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 2.4rem;
+    font-weight: 500;
+    height: 4rem;
+    justify-content: center;
+    line-height: 1;
+    position: absolute;
+    box-shadow: 0 0.9rem 2.2rem rgb(0 0 0 / 0.16);
+    right: 1rem;
+    top: 1rem;
+    width: 4rem;
+    z-index: 2;
+  }
+
+  .cart-preview-lightbox-open {
+    overflow: hidden;
+  }
+
+  @media (hover: none) {
+    .cart-items__media-zoom {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .cart-items__preview-lightbox {
+      padding: 1.1rem;
+    }
+
+    .cart-items__preview-lightbox-dialog {
+      max-width: 94vw;
+    }
+
+    .cart-items__preview-lightbox-image {
+      max-height: 84vh;
+      max-width: 94vw;
+    }
   }
 
   .cart-items__empty-button {
