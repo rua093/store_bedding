@@ -254,6 +254,7 @@ class StickyAddToCartComponent extends Component {
    * @param {Event} [event]
    */
   handleToggleCollapse = (event) => {
+    if (window.innerWidth < 750) return;
     if (event) {
       event.stopPropagation();
     }
@@ -261,6 +262,7 @@ class StickyAddToCartComponent extends Component {
   };
 
   #handleBarClick = (event) => {
+    if (window.innerWidth < 750) return;
     if (this.#isCollapsed) {
       if (event.target instanceof Element && event.target.closest('.sticky-add-to-cart__toggle')) {
         return;

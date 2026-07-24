@@ -126,6 +126,19 @@
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-palette' -%}
 
+    {% unless request.page_type == 'index' or template == 'index' %}
+      <style>
+        shopify-chat,
+        #chat-drawer,
+        .shopify-chat-host {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+        }
+      </style>
+    {% endunless %}
+
     {% if request.design_mode %}
       {%- render 'theme-editor' -%}
     {% endif %}
@@ -136,7 +149,9 @@
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
 
-    {% render 'chat-drawer' %}
+    {% if request.page_type == 'index' or template == 'index' %}
+      {% render 'chat-drawer' %}
+    {% endif %}
 
     <div class="page-wrapper">
       <div id="header-group">
