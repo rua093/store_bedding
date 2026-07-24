@@ -54,6 +54,9 @@ class StickyAddToCartComponent extends Component {
   /** @type {boolean} */
   #isStuck = false;
 
+  /** @type {boolean} */
+  #isCollapsed = false;
+
   /** @type {number | null} */
   #animationTimeout = null;
 
@@ -104,6 +107,10 @@ class StickyAddToCartComponent extends Component {
     document.addEventListener(ThemeEvents.quantitySelectorUpdate, this.#handleQuantityUpdate, { signal });
     
     window.addEventListener('pageshow', this.#handlePageshow, { signal });
+
+    if (this.refs.stickyBar) {
+      this.refs.stickyBar.addEventListener('click', this.#handleBarClick, { signal });
+    }
 
     if ('ResizeObserver' in window && this.refs.stickyBar) {
       this.#resizeObserver = new ResizeObserver(() => {
@@ -243,6 +250,50 @@ class StickyAddToCartComponent extends Component {
 
   // Public action handlers
   /**
+   * Handles the collapse toggle button click in the sticky bar
+   * @param {Event} [event]
+   */
+  handleToggleCollapse = (event) => {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.#setCollapsed(!this.#isCollapsed);
+  };
+
+  #handleBarClick = (event) => {
+    if (this.#isCollapsed) {
+      if (event.target instanceof Element && event.target.closest('.sticky-add-to-cart__toggle')) {
+        return;
+      }
+      this.#setCollapsed(false);
+    }
+  };
+
+  #setCollapsed(collapsed) {
+    this.#isCollapsed = collapsed;
+    const { stickyBar } = this.refs;
+    if (!stickyBar) return;
+
+    const toggleButton = this.querySelector('.sticky-add-to-cart__toggle');
+
+    if (collapsed) {
+      stickyBar.setAttribute('data-collapsed', 'true');
+      if (toggleButton) {
+        toggleButton.setAttribute('aria-expanded', 'false');
+        toggleButton.setAttribute('aria-label', 'Expand sticky add to cart');
+      }
+    } else {
+      stickyBar.setAttribute('data-collapsed', 'false');
+      if (toggleButton) {
+        toggleButton.setAttribute('aria-expanded', 'true');
+        toggleButton.setAttribute('aria-label', 'Collapse sticky add to cart');
+      }
+    }
+
+    this.#syncStickyAddToCartReserve();
+  }
+
+  /**
    * Handles the add to cart button click in the sticky bar
    */
   handleAddToCartClick = async () => {
@@ -320,6 +371,7 @@ class StickyAddToCartComponent extends Component {
 
         // Store current visibility state before morphing
         const currentStuck = this.refs.stickyBar.getAttribute('data-stuck') || 'false';
+        const currentCollapsed = this.refs.stickyBar.getAttribute('data-collapsed') || 'false';
         const variantAvailable = newStickyAddToCart.dataset.variantAvailable;
 
         // Morph the entire sticky bar content
@@ -327,6 +379,7 @@ class StickyAddToCartComponent extends Component {
 
         // Restore visibility state after morphing
         this.refs.stickyBar.setAttribute('data-stuck', currentStuck);
+        this.refs.stickyBar.setAttribute('data-collapsed', currentCollapsed);
         this.dataset.variantAvailable = variantAvailable;
         this.dataset.hasAmazonCustomizer = newStickyAddToCart.dataset.hasAmazonCustomizer ?? 'false';
 
