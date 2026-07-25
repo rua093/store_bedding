@@ -4117,3 +4117,11 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
   text-decoration-color: #737373 !important;
 }
 
+@media screen and (min-width: 750px) {
+  .header__column--left .header-logo,
+  .header-logo {
+    margin-inline-start: 90px !important;
+    margin-left: 90px !important;
+  }
+}
+
