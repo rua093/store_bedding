@@ -8,7 +8,7 @@
   assign pinterest_url = 'https://www.pinterest.com/bedding779/'
   assign tiktok_url = 'https://www.tiktok.com/@jeminisebedding'
   assign youtube_url = 'https://www.youtube.com/@Jeminise'
-  assign footer_logo = settings.logo_inverse | default: settings.logo
+  assign footer_logo = settings.logo | default: settings.logo_inverse
 
   assign has_instagram_url = false
   if instagram_url != blank and instagram_url != '#' and instagram_url contains 'instagram.com'
@@ -481,6 +481,7 @@
     display: flex;
     justify-content: center;
     max-width: 195px;
+    transform: translateX(7px);
   }
   @media screen and (min-width: 990px) {
     .footer-brand__logo {
