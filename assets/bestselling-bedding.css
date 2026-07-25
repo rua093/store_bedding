@@ -295,19 +295,19 @@
     background: rgba(255, 247, 238, 0.96);
     color: #6a3f26;
     border: 1px solid rgba(122, 74, 45, 0.12);
-    font-family: var(--font-subheading--family);
-    font-style: var(--font-subheading--style);
+    font-family: var(--font-body--family) !important;
+    font-style: var(--font-body--style);
     font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
+    font-weight: 400 !important;
+    letter-spacing: 0.03em;
     text-transform: uppercase;
     box-shadow: 0 10px 22px rgba(86, 53, 33, 0.14);
   }
 
   .bestselling-bedding-card__badge--sale {
-    background: rgba(154, 79, 43, 0.96);
-    color: #fff8f1;
-    border-color: transparent;
+    background: #FC5732 !important;
+    color: #fff8f1 !important;
+    border-color: transparent !important;
     box-shadow: 0 10px 22px rgba(108, 55, 29, 0.22);
   }
 
@@ -346,14 +346,15 @@
     font-size: 1rem;
     font-weight: 700;
     letter-spacing: -0.03em;
-    color: #c62828;
+    color: #DB1215 !important;
   }
 
   .bestselling-bedding-card__compare {
-    font-family: var(--font-body--family);
+    font-family: var(--font-body--family) !important;
     font-style: var(--font-body--style);
     font-size: 0.85rem;
-    color: #a99384;
+    font-weight: 400 !important;
+    color: #737373 !important;
     text-decoration: line-through;
     text-decoration-thickness: 1px;
   }

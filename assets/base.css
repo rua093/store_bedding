@@ -4097,7 +4097,23 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
     transform: none;
     transition: none;
     will-change: auto;
-  }
+
+
+.price-sale-badge {
+  background: #FC5732 !important;
 }
 
+.price-sale-badge,
+.compare-at-price {
+  font-family: var(--font-body--family) !important;
+  font-size: 0.86rem !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.03em !important;
+}
+
+.compare-at-price {
+  font-size: inherit !important;
+  color: #737373 !important;
+  text-decoration-color: #737373 !important;
+}
 

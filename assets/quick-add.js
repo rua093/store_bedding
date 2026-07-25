@@ -773,7 +773,7 @@ export class QuickAddComponent extends Component {
       });
 
       if (badge instanceof HTMLElement) {
-        badge.textContent = `Save ${savingsPercentage}%`;
+        badge.textContent = `${savingsPercentage}% OFF`;
         badge.hidden = false;
         badge.style.display = '';
       }

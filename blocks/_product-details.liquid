@@ -711,7 +711,7 @@
 
   .product-details--main-product product-price .price__regular .price,
   .product-details--main-product product-price .price__sale .price-item--sale.price {
-    color: #fc5732 !important;
+    color: #DB1215 !important;
     font-size: clamp(1.9rem, 2.2vw, 2.4rem);
     font-weight: 780;
     line-height: 1;
@@ -729,7 +729,7 @@
       .price-item,
       span.price
     ):not(.compare-at-price) {
-    color: #fc5732 !important;
+    color: #DB1215 !important;
   }
 
   .product-details--main-product .price__sale-layout {
@@ -740,14 +740,15 @@
   }
 
   .product-details--main-product .compare-at-price {
-    color: #a9978b !important;
+    color: #737373 !important;
     font-size: clamp(1.1rem, 1.2vw, 1.35rem);
-    font-weight: 650;
+    font-family: var(--font-body--family) !important;
+    font-weight: 400 !important;
     line-height: 1;
     letter-spacing: -0.02em;
     text-decoration-line: line-through;
     text-decoration-thickness: 1.5px;
-    text-decoration-color: rgba(169, 151, 139, 0.75);
+    text-decoration-color: #737373;
   }
 
   .product-information--main-product .product-details--main-product .price-sale-badge {
@@ -758,12 +759,13 @@
     min-height: 2.15rem;
     padding: 0.4rem 0.95rem;
     border-radius: 999px;
-    background: linear-gradient(135deg, #ff5a36 0%, #ff7a32 100%);
+    background: #FC5732 !important;
     color: #fffdf9;
     border: 0;
     box-shadow: 0 10px 20px rgba(252, 87, 50, 0.22);
     font-size: 0.92rem;
-    font-weight: 900;
+    font-family: var(--font-body--family) !important;
+    font-weight: 400 !important;
     line-height: 1;
     letter-spacing: 0;
     white-space: nowrap;
