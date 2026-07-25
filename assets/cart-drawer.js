@@ -50,13 +50,24 @@ class CartDrawerComponent extends Component {
   #handleDrawerOpen = () => {
     this.#updateStickyState();
 
+    // Close cart drawer when clicking any page link to navigate away
+    document.addEventListener('click', this.#handleLinkNavigation, { capture: true, once: true });
+
     // Close cart drawer when installments CTA is clicked to avoid overlapping dialogs.
-    // Re-queried on every open so it survives cart content re-renders that
-    // replace the shopify-payment-terms shadow root.
     customElements.whenDefined('shopify-payment-terms').then(() => {
       const cta = this.querySelector('shopify-payment-terms')?.shadowRoot?.querySelector('#shopify-installments-cta');
       cta?.addEventListener('click', () => this.#themeDrawer?.close(), { once: true });
     });
+  };
+
+  #handleLinkNavigation = (event) => {
+    const anchor = event.target instanceof Element ? event.target.closest('a[href]') : null;
+    if (anchor && !this.contains(anchor)) {
+      try {
+        sessionStorage.removeItem('theme-drawer-open');
+      } catch (_e) {}
+      this.#themeDrawer?.close();
+    }
   };
 
   /**

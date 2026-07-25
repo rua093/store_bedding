@@ -261,46 +261,20 @@
 </div>
 
 <div class="cart__ctas">
-  {% if context == 'drawer' %}
-    <div class="cart__primary-actions">
-      <a
-        href="{{ routes.cart_url }}"
-        class="cart__view-cart-button button-secondary"
-      >
-        <span class="button-text">View cart</span>
-      </a>
-
-      <button
-        type="submit"
-        id="checkout"
-        class="cart__checkout-button button"
-        name="checkout"
-        {% if cart == empty %}
-          disabled
-        {% endif %}
-        form="cart-form"
-      >
-        <span class="button-text">
-          {{ 'content.checkout' | t }}
-        </span>
-      </button>
-    </div>
-  {% else %}
-    <button
-      type="submit"
-      id="checkout"
-      class="cart__checkout-button button"
-      name="checkout"
-      {% if cart == empty %}
-        disabled
-      {% endif %}
-      form="cart-form"
-    >
-      <span class="button-text">
-        {{ 'content.checkout' | t }}
-      </span>
-    </button>
-  {% endif %}
+  <button
+    type="submit"
+    id="checkout"
+    class="cart__checkout-button button"
+    name="checkout"
+    {% if cart == empty %}
+      disabled
+    {% endif %}
+    form="cart-form"
+  >
+    <span class="button-text">
+      {{ 'content.checkout' | t }}
+    </span>
+  </button>
 
   {% if additional_checkout_buttons and settings.show_accelerated_checkout_buttons %}
     <div
