@@ -10,6 +10,9 @@
 
 <div
   class="product-delivery-estimate"
+
+<div
+  class="product-delivery-estimate"
   data-delivery-estimate
   data-country-code="{{ localization.country.iso_code }}"
   aria-label="Estimated delivery"
@@ -24,6 +27,11 @@
         ref="button"
         on:click="/toggleSelector"
       >
+        <span
+          class="product-delivery-estimate__flag"
+          style="background-image: url({{- localization.country | image_url: width: 32 }});"
+          aria-hidden="true"
+        ></span>
         <span class="product-delivery-estimate__country-label">Deliver to:</span>
         <span class="product-delivery-estimate__country-name">{{ localization.country.name }}</span>
         <span class="product-delivery-estimate__country-caret" aria-hidden="true">
@@ -48,6 +56,11 @@
     </dropdown-localization-component>
   {%- else -%}
     <div class="product-delivery-estimate__country-static">
+      <span
+        class="product-delivery-estimate__flag"
+        style="background-image: url({{- localization.country | image_url: width: 32 }});"
+        aria-hidden="true"
+      ></span>
       <span class="product-delivery-estimate__country-label">Deliver to:</span>
       <span class="product-delivery-estimate__country-name">{{ localization.country.name }}</span>
     </div>
@@ -189,6 +202,19 @@
 
   .product-delivery-estimate__country-name {
     font-weight: 600;
+  }
+
+  .product-delivery-estimate__flag {
+    width: 1.35rem;
+    height: 0.95rem;
+    border-radius: 3px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: inline-block;
+    flex-shrink: 0;
+    margin-inline-end: 0.2rem;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
   }
 
   .product-delivery-estimate__country-caret {
