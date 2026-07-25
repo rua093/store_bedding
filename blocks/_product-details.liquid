@@ -808,10 +808,10 @@
   }
 
   .product-details--main-product .price-discount-message {
-    padding: 0.48rem 0.72rem;
-    border-radius: 10px;
-    background: linear-gradient(90deg, rgba(245, 228, 255, 0.82) 0%, rgba(246, 236, 255, 0.92) 100%);
-    color: #8d58a8;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    color: #000000;
   }
 
   .product-details--main-product .price-shipping-line {
@@ -824,34 +824,40 @@
 
   .product-details--main-product .price-discount-message__icon,
   .product-details--main-product .price-shipping-line__icon,
-  .product-details--main-product .price-policy-note__icon {
+  .product-details--main-product .price-policy-note__icon,
+  .product-details--main-product .product-delivery-estimate__icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 1rem;
-    height: 1rem;
-    flex: 0 0 auto;
+    width: 1.45rem;
+    height: 1.25rem;
+    flex: 0 0 1.45rem;
+  }
+
+  .product-details--main-product :is(.price-discount-message__icon, .price-shipping-line__icon, .price-policy-note__icon, .product-delivery-estimate__icon) :is(svg, img) {
+    width: 1.38rem;
+    height: 1.38rem;
+    max-width: none;
+    max-height: none;
   }
 
   .product-details--main-product .price-discount-message__icon {
-    color: #8d58a8;
+    color: #FC5732;
+    transform: rotate(45deg) scale(1.3);
+    transform-origin: center;
   }
 
-  .product-details--main-product .price-shipping-line__icon {
-    width: 1.725rem;
-    height: 1.725rem;
+  .product-details--main-product .price-discount-message strong {
+    font-weight: 700;
     color: #000000;
+  }
+
+  .product-details--main-product .product-delivery-estimate__icon {
+    color: #2E7D32;
   }
 
   .product-details--main-product .price-policy-note__icon {
-    width: 1rem;
-    height: 1rem;
-    color: #000000;
-  }
-
-  .product-details--main-product .price-policy-note__icon svg {
-    width: 100%;
-    height: 100%;
+    color: #1E6091;
   }
 
   .product-details--main-product .price-policy-note__copy {
@@ -1130,7 +1136,8 @@
 
     .product-details--main-product .price-discount-message {
       width: 100%;
-      padding: 0.55rem 0.7rem;
+      padding: 0;
+      background: transparent;
     }
 
     .product-details--main-product .gift-card-form-option {

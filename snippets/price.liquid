@@ -161,13 +161,13 @@
 </div>
 {%- if render_product_callouts -%}
   <div class="price-callouts">
+    {% render 'product-delivery-estimate', product: product_resource, section_id: section_id %}
     <div class="price-discount-message">
       <span class="price-discount-message__icon" aria-hidden="true">
         {{- 'icon-discount.svg' | inline_asset_content -}}
       </span>
-      <span>Extra 10% off at checkout · Use code WELCOME10</span>
+      <span>Subscribe for updates & <strong>exclusive discounts</strong></span>
     </div>
-    {% render 'product-delivery-estimate', product: product_resource, section_id: section_id %}
     <div class="price-policy-note">
       <span class="price-policy-note__icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">

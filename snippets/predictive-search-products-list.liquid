@@ -83,7 +83,8 @@
                     }}
                   {% endif %}
                   {% if show_compare_price %}
-                    <span class="jem-search-product-card__badge">Sale</span>
+                    {% assign discount_percent = compare_price | minus: current_price | times: 100.0 | divided_by: compare_price | round %}
+                    <span class="jem-search-product-card__badge">-{{ discount_percent }}%</span>
                   {% endif %}
                 </div>
                 <div class="jem-search-product-card__content">
@@ -131,7 +132,8 @@
                     }}
                   {% endif %}
                   {% if show_compare_price %}
-                    <span class="jem-search-product-card__badge">Sale</span>
+                    {% assign discount_percent = compare_price | minus: current_price | times: 100.0 | divided_by: compare_price | round %}
+                    <span class="jem-search-product-card__badge">-{{ discount_percent }}%</span>
                   {% endif %}
                 </div>
                 <div class="jem-search-product-card__content">
@@ -196,7 +198,8 @@
                 }}
               {% endif %}
               {% if show_compare_price %}
-                <span class="jem-search-product-card__badge">Sale</span>
+                {% assign discount_percent = compare_price | minus: current_price | times: 100.0 | divided_by: compare_price | round %}
+                <span class="jem-search-product-card__badge">-{{ discount_percent }}%</span>
               {% endif %}
             </div>
             <div class="jem-search-product-card__content">

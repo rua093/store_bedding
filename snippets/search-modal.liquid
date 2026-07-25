@@ -709,18 +709,34 @@
     line-height: 1.2;
   }
 
-  .predictive-search-results__clear.button-unstyled {
-    min-height: 40px;
-    padding: 0 12px;
-    border-radius: 999px;
-    color: var(--jem-search-muted);
-    background: rgba(255, 253, 249, 0.85);
-    border: 1px solid rgba(126, 91, 64, 0.12);
+  .predictive-search-results__clear.button-unstyled,
+  .predictive-search-results__clear.button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 32px !important;
+    height: 32px !important;
+    padding: 0 16px !important;
+    margin: 0 !important;
+    border-radius: 999px !important;
+    font-size: 0.82rem !important;
+    font-weight: 500 !important;
+    line-height: 1 !important;
+    letter-spacing: 0.02em !important;
+    text-align: center !important;
+    color: var(--jem-search-muted) !important;
+    background: rgba(255, 253, 249, 0.85) !important;
+    border: 1px solid rgba(126, 91, 64, 0.14) !important;
+    box-sizing: border-box !important;
+    transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, box-shadow 160ms ease !important;
   }
 
-  .predictive-search-results__clear.button-unstyled:hover {
-    color: var(--jem-search-text);
-    background: #fff8f1;
+  .predictive-search-results__clear.button-unstyled:hover,
+  .predictive-search-results__clear.button:hover {
+    color: var(--jem-search-text) !important;
+    background: #fff8f1 !important;
+    border-color: rgba(183, 121, 82, 0.28) !important;
+    opacity: 1 !important;
   }
 
   .predictive-search-results__card.predictive-search-results__card--product {
@@ -823,21 +839,23 @@
 
   .jem-search-product-card__badge {
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: 0.72rem;
+    left: 0.72rem;
     z-index: 1;
     display: inline-flex;
     align-items: center;
-    min-height: 1.65rem;
-    padding: 0.18rem 0.6rem;
+    min-height: 1.8rem;
+    padding: 0.25rem 0.7rem;
     border-radius: 999px;
-    background: rgba(154, 79, 43, 0.96);
-    color: #fff8f1;
-    box-shadow: 0 10px 22px rgba(108, 55, 29, 0.22);
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
+    font-family: var(--font-body--family) !important;
+    font-size: 0.72rem;
+    font-weight: 400 !important;
+    letter-spacing: 0.03em;
     text-transform: uppercase;
+    background: #FC5732 !important;
+    color: #fff8f1 !important;
+    box-shadow: 0 10px 22px rgba(108, 55, 29, 0.22);
+    border: 1px solid transparent;
   }
 
   .jem-search-product-card__title {

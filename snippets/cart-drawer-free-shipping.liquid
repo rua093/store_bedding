@@ -1,6 +1,6 @@
 {%- liquid
   assign free_shipping_context = context | default: 'drawer'
-  assign free_shipping_threshold = 10000
+  assign free_shipping_threshold = 9900
   assign amount_remaining = free_shipping_threshold | minus: cart.total_price
 
   if amount_remaining < 0
