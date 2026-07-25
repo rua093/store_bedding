@@ -492,18 +492,14 @@ export class CartItemsComponent extends createViewEventElement(Component) {
 
         if (cartItemsHtml) {
           const existingKeys = new Set(this.refs.cartItemRows?.map((row) => row.dataset.key) ?? []);
+          const drawerIsOpening = this.closest('theme-drawer')?.querySelector('.theme-drawer__dialog--opening') !== null;
 
-          if (wasEmptyCartDrawer) {
-            startViewTransition(() => {
-              morphSection(this.sectionId, cartItemsHtml, morphOptions);
-            }, ['fill-cart-drawer']);
-          } else {
-            await morphSection(this.sectionId, cartItemsHtml, morphOptions);
-          }
+          await morphSection(this.sectionId, cartItemsHtml, morphOptions);
 
           // Animate newly added rows (reverse of the remove animation).
           if (!wasEmptyCartDrawer && !prefersReducedMotion()) {
-            for (const row of this.refs.cartItemRows ?? []) {
+            const currentRows = Array.from(this.querySelectorAll('[ref="cartItemRows[]"]'));
+            for (const row of currentRows) {
               if (!existingKeys.has(row.dataset.key)) {
                 row.classList.add('adding');
                 onAnimationEnd(row, () => row.classList.remove('adding'));

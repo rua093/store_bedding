@@ -73,6 +73,18 @@
         {% endif %}
       >
         <template id="empty-cart-template">
+          <div class="theme-drawer__header">
+            <button
+              on:click="#cart-drawer/close"
+              class="theme-drawer__close-button cart-drawer__close-button--empty"
+              type="button"
+              aria-label="{{ 'actions.close' | t }}"
+            >
+              <span class="svg-wrapper">
+                {{- 'icon-close.svg' | inline_asset_content -}}
+              </span>
+            </button>
+          </div>
           {{ empty_cart_drawer_content }}
         </template>
 
@@ -80,57 +92,53 @@
           class="cart-drawer__inner{% if cart.empty? %} cart-drawer--empty{% endif %}"
           data-hydration-key="cart-drawer-inner"
         >
-          {%- if cart.empty? -%}
-            <div class="theme-drawer__header">
-              <button
-                on:click="#cart-drawer/close"
-                class="theme-drawer__close-button cart-drawer__close-button--empty"
-                type="button"
-                aria-label="{{ 'actions.close' | t }}"
-              >
-                <span class="svg-wrapper">
-                  {{- 'icon-close.svg' | inline_asset_content -}}
-                </span>
-              </button>
-            </div>
-          {%- else -%}
-            <div class="theme-drawer__header cart-drawer__header">
-              <div class="cart-drawer__header-main">
-                <h2
-                  class="theme-drawer__title h4 cart-drawer__title"
-                  id="cart-drawer-heading"
-                >
-                  <span class="cart-drawer__title-text cart-drawer__title-text--desktop">Your cart</span>
-                  <span class="cart-drawer__title-text cart-drawer__title-text--mobile">Cart</span>
-                  <span class="cart-drawer__inline-count">
-                    {{ visible_item_count }}
-                    {% if visible_item_count == 1 %}
-                      item
-                    {% else %}
-                      items
-                    {% endif %}
-                  </span>
-                </h2>
-              </div>
-
-              <button
-                class="theme-drawer__close-button cart-drawer__close-button"
-                on:click="#cart-drawer/close"
-                type="button"
-                aria-label="{{ 'actions.close' | t }}"
-              >
-                <span class="svg-wrapper">
-                  {{- 'icon-close.svg' | inline_asset_content -}}
-                </span>
-              </button>
-            </div>
-            {% render 'cart-drawer-free-shipping', context: 'drawer' %}
-          {%- endif -%}
-
           {% capture cart_items_children %}
             {%- if cart.empty? -%}
+              <div class="theme-drawer__header">
+                <button
+                  on:click="#cart-drawer/close"
+                  class="theme-drawer__close-button cart-drawer__close-button--empty"
+                  type="button"
+                  aria-label="{{ 'actions.close' | t }}"
+                >
+                  <span class="svg-wrapper">
+                    {{- 'icon-close.svg' | inline_asset_content -}}
+                  </span>
+                </button>
+              </div>
               {{ empty_cart_drawer_content }}
             {%- else -%}
+              <div class="theme-drawer__header cart-drawer__header">
+                <div class="cart-drawer__header-main">
+                  <h2
+                    class="theme-drawer__title h4 cart-drawer__title"
+                    id="cart-drawer-heading"
+                  >
+                    <span class="cart-drawer__title-text cart-drawer__title-text--desktop">Your cart</span>
+                    <span class="cart-drawer__title-text cart-drawer__title-text--mobile">Cart</span>
+                    <span class="cart-drawer__inline-count">
+                      {{ visible_item_count }}
+                      {% if visible_item_count == 1 %}
+                        item
+                      {% else %}
+                        items
+                      {% endif %}
+                    </span>
+                  </h2>
+                </div>
+
+                <button
+                  class="theme-drawer__close-button cart-drawer__close-button"
+                  on:click="#cart-drawer/close"
+                  type="button"
+                  aria-label="{{ 'actions.close' | t }}"
+                >
+                  <span class="svg-wrapper">
+                    {{- 'icon-close.svg' | inline_asset_content -}}
+                  </span>
+                </button>
+              </div>
+              {% render 'cart-drawer-free-shipping', context: 'drawer' %}
               <scroll-hint
                 class="cart-drawer__content"
                 aria-label="{{ 'accessibility.cart' | t }}"
@@ -171,36 +179,40 @@
   #cart-drawer .theme-drawer__dialog {
     width: min(31rem, 92vw);
     overflow: hidden;
-    --backdrop-opacity: 0.42;
-    --backdrop-color-rgb: 38 27 20;
-    --animation-speed: 0.38s;
-    --animation-timing-fade-in: cubic-bezier(0.18, 0.92, 0.22, 1);
-    --animation-timing-fade-out: cubic-bezier(0.26, 0.96, 0.32, 1);
+    --backdrop-opacity: 0.38;
+    --backdrop-color-rgb: 24 16 12;
+    --animation-speed: 0.42s;
+    --animation-timing-fade-in: cubic-bezier(0.16, 1, 0.3, 1);
+    --animation-timing-fade-out: cubic-bezier(0.32, 0.72, 0, 1);
     background:
       radial-gradient(circle at top center, rgb(252 248 242 / 0.98), transparent 36%),
       linear-gradient(180deg, rgb(var(--color-background-rgb) / 1), rgb(var(--color-background-rgb) / 0.96));
     border-inline-start: 1px solid var(--cart-drawer-panel-border);
+    box-shadow: -12px 0 40px rgb(0 0 0 / 0.12);
   }
 
   #cart-drawer .theme-drawer__dialog::backdrop {
-    backdrop-filter: none;
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
     background: rgb(var(--backdrop-color-rgb) / var(--backdrop-opacity));
-    transition: opacity 0.38s cubic-bezier(0.26, 0.96, 0.32, 1);
+    transition: opacity 0.42s cubic-bezier(0.32, 0.72, 0, 1), backdrop-filter 0.42s cubic-bezier(0.32, 0.72, 0, 1);
   }
 
   #cart-drawer .theme-drawer__dialog.theme-drawer__dialog--opening,
   #cart-drawer .theme-drawer__dialog.theme-drawer__dialog--opening-inline-start {
-    animation-duration: 0.38s;
-    animation-timing-function: cubic-bezier(0.18, 0.92, 0.22, 1);
+    animation-duration: 0.42s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   #cart-drawer .theme-drawer__dialog.theme-drawer__dialog--closing {
     animation-duration: 0.38s;
-    animation-timing-function: cubic-bezier(0.26, 0.96, 0.32, 1);
+    animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
   }
 
   #cart-drawer .theme-drawer__dialog.theme-drawer__dialog--closing::backdrop {
     opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
   }
 
   .cart-drawer__inner {

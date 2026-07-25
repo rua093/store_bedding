@@ -193,6 +193,8 @@ export class ThemeDrawer extends Component {
    * @param {'inline-start'} [options.enter] - Slide direction.
    */
   #bringToFront({ enter } = {}) {
+    if (this.#isTopmost()) return;
+
     const { panel } = this.refs;
 
     ThemeDrawer.#stackOrder += 1;

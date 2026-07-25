@@ -230,8 +230,8 @@
                           aria-label="Preview {{ item_product_display_title | strip | escape }}"
                         >
                           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                            <path d="M2.25 12s3.5-6.25 9.75-6.25S21.75 12 21.75 12 18.25 18.25 12 18.25 2.25 12 2.25 12Z"></path>
-                            <circle cx="12" cy="12" r="3.1"></circle>
+                            <path d="M2.25 12s3.5-6.25 9.75-6.25S21.75 12 21.75 12 18.25 18.25 12 18.25 2.25 12 2.25 12Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+                            <circle cx="12" cy="12" r="3.1" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
                           </svg>
                         </button>
                         <script
@@ -275,8 +275,8 @@
                         aria-label="Preview {{ item_product_display_title | strip | escape }}"
                       >
                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                          <path d="M2.25 12s3.5-6.25 9.75-6.25S21.75 12 21.75 12 18.25 18.25 12 18.25 2.25 12 2.25 12Z"></path>
-                          <circle cx="12" cy="12" r="3.1"></circle>
+                          <path d="M2.25 12s3.5-6.25 9.75-6.25S21.75 12 21.75 12 18.25 18.25 12 18.25 2.25 12 2.25 12Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+                          <circle cx="12" cy="12" r="3.1" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
                         </svg>
                       </button>
                     </a>
@@ -311,8 +311,8 @@
                         aria-label="Preview {{ item_product_display_title | strip | escape }}"
                       >
                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                          <path d="M2.25 12s3.5-6.25 9.75-6.25S21.75 12 21.75 12 18.25 18.25 12 18.25 2.25 12 2.25 12Z"></path>
-                          <circle cx="12" cy="12" r="3.1"></circle>
+                          <path d="M2.25 12s3.5-6.25 9.75-6.25S21.75 12 21.75 12 18.25 18.25 12 18.25 2.25 12 2.25 12Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+                          <circle cx="12" cy="12" r="3.1" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
                         </svg>
                       </button>
                     </a>
@@ -716,23 +716,39 @@
   }
 
   .cart-items__table-row.adding {
-    interpolate-size: allow-keywords;
-    overflow: hidden;
-    animation: addRow calc(var(--animation-speed) * 2) var(--animation-easing) forwards;
+    will-change: opacity, transform, background-color, box-shadow;
+    border-radius: 12px;
+    animation:
+      addRow 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+      addedHighlightGlow 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
   @keyframes addRow {
     0% {
       opacity: 0;
-      height: 0;
-      padding-bottom: 0;
-      margin-bottom: 0;
-      border-color: transparent;
+      transform: translateY(-10px);
     }
 
     100% {
       opacity: 1;
-      height: auto;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes addedHighlightGlow {
+    0% {
+      background-color: rgb(var(--color-foreground-rgb) / 0.08);
+      box-shadow: 0 0 0 2px rgb(181 95 61 / 0.28), 0 4px 16px rgb(181 95 61 / 0.12);
+    }
+
+    45% {
+      background-color: rgb(var(--color-foreground-rgb) / 0.05);
+      box-shadow: 0 0 0 2px rgb(181 95 61 / 0.18), 0 4px 12px rgb(181 95 61 / 0.08);
+    }
+
+    100% {
+      background-color: transparent;
+      box-shadow: none;
     }
   }
 
@@ -911,11 +927,31 @@
   .cart-items__custom-preview-frame {
     display: grid;
     place-items: center;
+    position: relative;
     width: 100%;
     height: 100%;
     background:
       radial-gradient(circle at top, rgb(255 255 255 / 0.95), rgb(246 239 232 / 0.92)),
       linear-gradient(180deg, rgb(250 247 242), rgb(241 233 224));
+  }
+
+  /* Sleek spinning loading indicator while canvas is rendering */
+  .cart-items__custom-preview:not([data-rendered='ready']) .cart-items__custom-preview-frame::after {
+    content: '';
+    position: absolute;
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 2px solid rgb(181 95 61 / 0.2);
+    border-top-color: #b55f3d;
+    border-radius: 50%;
+    animation: customPreviewSpin 0.75s linear infinite;
+    z-index: 1;
+  }
+
+  @keyframes customPreviewSpin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   .cart-items__custom-preview[data-rendered='ready'] .cart-items__custom-preview-frame {
@@ -935,37 +971,34 @@
 
   .cart-items__media-zoom {
     align-items: center;
-    background: linear-gradient(180deg, rgb(45 61 117 / 0.96), rgb(27 40 86 / 0.96));
-    border: 0;
-    border-radius: 999px;
-    box-shadow:
-      0 10px 24px rgb(23 33 72 / 0.18),
-      inset 0 0 0 1px rgb(255 255 255 / 0.12);
-    color: #fff;
-    cursor: pointer;
-    display: inline-flex;
-    height: 3.2rem;
     justify-content: center;
-    left: 50%;
-    opacity: 0;
-    padding: 0;
-    pointer-events: none;
+    display: inline-flex;
     position: absolute;
     top: 50%;
-    transform: translate(-50%, -50%) scale(0.94);
-    transition: opacity 0.18s ease, transform 0.18s ease, background-color 0.18s ease;
-    width: 3.2rem;
+    left: 50%;
+    width: 1.85rem;
+    height: 1.85rem;
+    padding: 0;
+    border: 1px solid rgb(255 255 255 / 0.4);
+    border-radius: 50%;
+    background: rgb(229 106 69 / 0.84);
+    backdrop-filter: blur(8px) saturate(160%);
+    -webkit-backdrop-filter: blur(8px) saturate(160%);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgb(229 106 69 / 0.35);
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.88);
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, box-shadow 0.2s ease;
     z-index: 3;
   }
 
   .cart-items__media-zoom svg {
     fill: none;
-    height: 1.68rem;
+    width: 1.05rem;
+    height: 1.05rem;
     stroke: currentColor;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.7;
-    width: 1.68rem;
   }
 
   .cart-items__media-container:hover .cart-items__media-zoom,
@@ -978,15 +1011,17 @@
   }
 
   .cart-items__media-zoom:hover {
-    background: linear-gradient(180deg, rgb(53 72 135 / 0.98), rgb(31 46 98 / 0.98));
+    background: rgb(229 106 69 / 0.98);
+    box-shadow: 0 6px 18px rgb(229 106 69 / 0.48);
+    transform: translate(-50%, -50%) scale(1.08);
   }
 
   .cart-items__media-zoom:focus-visible {
-    outline: 0.2rem solid rgb(242 101 34 / 0.65);
-    outline-offset: 0.2rem;
+    outline: 2px solid #e56a45;
+    outline-offset: 2px;
     opacity: 1;
     pointer-events: auto;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, -50%) scale(1.08);
   }
 
   .cart-items__preview-lightbox {
