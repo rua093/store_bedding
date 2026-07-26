@@ -9,8 +9,8 @@
  */
 {
   "current": {
-    "logo": "shopify://shop_images/logo_inverse_23fc1fe2-d812-4745-8982-96282258b4f1.png",
-    "logo_inverse": "shopify://shop_images/logo_4cea45e8-60d3-46e3-b331-fbb4bc71934c.png",
+    "logo": "shopify://shop_images/logo.png",
+    "logo_inverse": "shopify://shop_images/logo_inverse.png",
     "logo_height": 50,
     "logo_height_mobile": 50,
     "page_text_color": "#000000",
