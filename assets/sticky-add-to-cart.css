@@ -266,6 +266,9 @@ sticky-add-to-cart:not([data-variant-available='true']) .sticky-add-to-cart__bar
   color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
   font-size: var(--font-paragraph-small--size);
   margin-top: var(--margin-3xs);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .sticky-add-to-cart__price {

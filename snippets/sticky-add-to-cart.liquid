@@ -76,20 +76,24 @@
       <p
         class="sticky-add-to-cart__title"
         data-testid="sticky-product-title"
+        title="{{ product_display_title | escape }}"
       >
         {{ product_display_title | escape }}
       </p>
+      {% unless product_resource.has_only_default_variant %}
+        {% if current_variant != blank %}
+          {% assign variant_title = current_variant.title | escape %}
+        {% endif %}
+      {% endunless %}
       <div
         class="sticky-add-to-cart__variant"
         data-testid="sticky-variant-title"
+        title="{{ variant_title }}"
         {% if product_resource.has_only_default_variant %}
           style="display: none;"
         {% endif %}
       >
         {% unless product_resource.has_only_default_variant %}
-          {% if current_variant != blank %}
-            {% assign variant_title = current_variant.title | escape %}
-          {% endif %}
           {{ variant_title }}
         {% endunless %}
       </div>

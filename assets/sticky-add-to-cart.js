@@ -423,6 +423,7 @@ class StickyAddToCartComponent extends Component {
       .join(' / ');
     if (!selectedOptions) return;
     variantTitleElement.textContent = selectedOptions;
+    variantTitleElement.setAttribute('title', selectedOptions);
   };
 
   /**
