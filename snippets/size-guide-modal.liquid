@@ -85,25 +85,154 @@
 
   {%- if render_dialog -%}
     {% style %}
-      .product-details--main-product .size-guide-modal__image-wrap {
-        margin-top: 1rem;
-        max-width: 100%;
+      .size-guide-dialog {
+        display: contents;
       }
 
-      .product-details--main-product .size-guide-modal__image {
-        display: block;
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-        border-radius: 16px;
-        background: transparent;
-        box-shadow: 0 14px 30px rgba(68, 45, 30, 0.08);
+      .size-guide-modal {
+        position: fixed !important;
+        inset: 0 !important;
+        margin: auto !important;
+        width: min(90vw, 32rem) !important;
+        height: fit-content !important;
+        max-height: min(84dvh, 600px) !important;
+        padding: 0 !important;
+        border: 1px solid rgba(92, 61, 42, 0.14) !important;
+        border-radius: 24px !important;
+        background: linear-gradient(180deg, #fffdf9 0%, #faf5ee 100%) !important;
+        color: #3e332d !important;
+        box-shadow:
+          0 24px 60px rgba(47, 36, 29, 0.22),
+          inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
+        overflow: hidden !important;
+        isolation: isolate !important;
+        outline: none !important;
+        z-index: 10001 !important;
+        transform: none !important;
+        translate: none !important;
+      }
+
+      .size-guide-modal::backdrop {
+        background: rgba(30, 20, 15, 0.52);
+        backdrop-filter: blur(8px) saturate(120%);
+        -webkit-backdrop-filter: blur(8px) saturate(120%);
+        opacity: 0;
+        transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .size-guide-modal[open]::backdrop {
+        opacity: 1;
+      }
+
+      .size-guide-modal.dialog-closing::backdrop {
+        opacity: 0;
+      }
+
+      .size-guide-modal[open] {
+        animation: sizeGuideModalIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      .size-guide-modal.dialog-closing {
+        animation: sizeGuideModalOut 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      @keyframes sizeGuideModalIn {
+        from {
+          opacity: 0;
+          transform: scale(0.92);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes sizeGuideModalOut {
+        from {
+          opacity: 1;
+          transform: scale(1);
+        }
+        to {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+      }
+
+      .size-guide-modal__close {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        z-index: 10;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(92, 61, 42, 0.07);
+        border: 1px solid rgba(92, 61, 42, 0.1);
+        color: #5c3d2a;
+        cursor: pointer;
+        transition: transform 0.2s ease, background-color 0.2s ease;
+      }
+
+      .size-guide-modal__close:hover {
+        background: rgba(92, 61, 42, 0.14);
+        transform: scale(1.08);
+      }
+
+      .size-guide-modal__close svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .size-guide-modal__content {
+        display: flex;
+        flex-direction: column;
+        max-height: inherit;
+        padding: 1.25rem 1.4rem 1.75rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
       }
 
       @media screen and (max-width: 749px) {
-        .product-details--main-product .size-guide-modal__image-wrap {
-          margin: 0.85rem 0 1rem;
+        .size-guide-modal__content {
+          padding: 1.15rem 1.15rem 1.4rem;
         }
+      }
+
+      .size-guide-modal__heading {
+        margin: 0;
+        padding-right: 2.2rem;
+        color: #3a2a20;
+        font-family: var(--font-heading--family, inherit);
+        font-size: clamp(1.2rem, 1.4vw, 1.45rem);
+        font-weight: 600;
+        line-height: 1.25;
+      }
+
+      .size-guide-modal__helper {
+        margin: 0.25rem 0 0;
+        color: #7a6556;
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+
+      .size-guide-modal__image-wrap {
+        margin-top: 1.1rem;
+        width: 100%;
+      }
+
+      .size-guide-modal__image {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 18px;
+        background: #fff;
+        border: 1px solid rgba(92, 61, 42, 0.08);
+        box-shadow: 0 10px 24px rgba(68, 45, 30, 0.06);
       }
     {% endstyle %}
 
@@ -114,7 +243,7 @@
       <dialog
         id="{{ dialog_id }}"
         ref="dialog"
-        class="size-guide-modal dialog-modal"
+        class="size-guide-modal"
         scroll-lock
         aria-labelledby="{{ heading_id }}"
         aria-describedby="{{ description_id }}"

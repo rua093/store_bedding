@@ -761,77 +761,15 @@
   }
 
   .quick-add-modal__content .size-guide-modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: min(34rem, calc(100vw - 2rem));
-    max-height: min(82dvh, calc(100dvh - 2rem));
-    padding: 0;
-    margin: 0;
-    border: 1px solid rgba(107, 82, 63, 0.16);
-    border-radius: 24px;
-    background: linear-gradient(180deg, #fffdfb 0%, #fbf5ed 100%);
-    color: #43342b;
-    box-shadow:
-      0 28px 60px rgba(68, 45, 30, 0.16),
-      inset 0 1px 0 rgba(255, 255, 255, 0.78);
-    overflow: hidden;
-    isolation: isolate;
-    translate: -50% -50%;
-    z-index: 1001;
-  }
-
-  .quick-add-modal__content .size-guide-modal::backdrop {
-    backdrop-filter: blur(3px);
-    background: rgba(53, 37, 27, 0.34);
-  }
-
-  .quick-add-modal__content .size-guide-modal__content {
-    display: grid;
-    gap: 1rem;
-    max-height: inherit;
-    padding: 1.4rem;
-    overflow-y: auto;
-    overflow-x: hidden;
-    overscroll-behavior: contain;
-  }
-
-  .quick-add-modal__content .size-guide-modal__heading {
-    margin: 0;
-    padding-inline-end: 2.5rem;
-    color: #3f2f26;
-    font-size: clamp(1.15rem, 1.3vw, 1.4rem);
-    line-height: 1.1;
-  }
-
-  .quick-add-modal__content .size-guide-modal__helper {
-    margin: 0;
-    color: #765f4f;
-    font-size: 0.92rem;
-    line-height: 1.5;
-  }
-
-  .quick-add-modal__content .size-guide-modal__image-wrap {
-    margin-top: 1rem;
-    max-width: 100%;
-  }
-
-  .quick-add-modal__content .size-guide-modal__image {
-    display: block;
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-    border-radius: 16px;
-    background: transparent;
-    box-shadow: 0 14px 30px rgba(68, 45, 30, 0.08);
-  }
-
-  .quick-add-modal__content .size-guide-modal__close {
-    position: absolute;
-    inset-block-start: 0.85rem;
-    inset-inline-end: 0.85rem;
-    z-index: 2;
-    color: #7b6657;
+    position: fixed !important;
+    inset: 0 !important;
+    margin: auto !important;
+    width: min(90vw, 32rem) !important;
+    height: fit-content !important;
+    max-height: min(84dvh, 600px) !important;
+    border-radius: 24px !important;
+    transform: none !important;
+    translate: none !important;
   }
 
   .quick-add-modal__content .product-details .variant-option--buttons {
