@@ -1280,7 +1280,8 @@
     top: 0;
     height: 100dvh;
     left: 0;
-    background: linear-gradient(180deg, rgb(var(--color-background-rgb) / 1), rgb(var(--color-background-rgb) / 0.96));
+    background: var(--color-background, #FAF7F2) !important;
+    background-color: var(--color-background, #FAF7F2) !important;
     z-index: var(--layer-flat);
     transform: translateX(-5%);
     visibility: hidden;
@@ -1757,5 +1758,12 @@
     border-top: 1px solid rgba(184, 121, 85, 0.15);
     padding: 1.25rem 1.25rem 2rem !important;
     margin-top: auto !important;
+  }
+
+  /* Ensure solid, opaque background for submenu panel to eliminate parent menu ghosting */
+  .menu-drawer__submenu,
+  .menu-drawer__inner-submenu {
+    background: #FAF7F2 !important;
+    background-color: #FAF7F2 !important;
   }
 {% endstylesheet %}
