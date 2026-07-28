@@ -54,14 +54,26 @@
   <span class="custom-product-card__tag-badge custom-product-card__tag-badge--{{ custom_tag_type }}{% if contextual_badge_class != blank %} {{ contextual_badge_class }}--tag{% endif %}">
     <svg class="custom-product-card__tag-bg" viewBox="0 0 100 27" preserveAspectRatio="none" aria-hidden="true" focusable="false">
       <defs>
-        <linearGradient id="tagBgGrad-{{ product.id }}" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#E52E2E" />
-          <stop offset="100%" stop-color="#B71C1C" />
+        <linearGradient id="tagBgGrad-{{ product.id }}" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#FF3B30" />
+          <stop offset="40%" stop-color="#D31D1D" />
+          <stop offset="100%" stop-color="#8B0707" />
+        </linearGradient>
+        <linearGradient id="tagGlint-{{ product.id }}" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.6" />
+          <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.15" />
+          <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.4" />
         </linearGradient>
       </defs>
+      <!-- Base 3D Body -->
       <path d="M 11 2 H 95 A 3.5 3.5 0 0 1 98.5 5.5 V 21.5 A 3.5 3.5 0 0 1 95 25 H 11 A 2.5 2.5 0 0 1 9.2 24.1 L 2.8 14.8 A 2.2 2.2 0 0 1 2.8 12.2 L 9.2 2.9 A 2.5 2.5 0 0 1 11 2 Z" fill="url(#tagBgGrad-{{ product.id }})" />
-      <path d="M 12.5 4.5 H 93.5 A 2 2 0 0 1 95.5 6.5 V 20.5 A 2 2 0 0 1 93.5 22.5 H 12.5 A 1.5 1.5 0 0 1 11.2 21.8 L 5.2 14.2 A 1.2 1.2 0 0 1 5.2 12.8 L 11.2 5.2 A 1.5 1.5 0 0 1 12.5 4.5 Z" fill="none" stroke="#FFFFFF" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round" opacity="0.85" />
+      <!-- Top 3D Curved Light Bevel Highlight -->
+      <path d="M 12 3 H 94.5 A 2 2 0 0 1 96.5 5" fill="none" stroke="url(#tagGlint-{{ product.id }})" stroke-width="1.1" stroke-linecap="round" />
+      <!-- Inner Contour Stroke -->
+      <path d="M 12.5 4.5 H 93.5 A 2 2 0 0 1 95.5 6.5 V 20.5 A 2 2 0 0 1 93.5 22.5 H 12.5 A 1.5 1.5 0 0 1 11.2 21.8 L 5.2 14.2 A 1.2 1.2 0 0 1 5.2 12.8 L 11.2 5.2 A 1.5 1.5 0 0 1 12.5 4.5 Z" fill="none" stroke="#FFFFFF" stroke-width="0.95" stroke-linecap="round" stroke-linejoin="round" opacity="0.9" />
     </svg>
+
+    <span class="custom-product-card__tag-shimmer" aria-hidden="true"></span>
 
     <span class="custom-product-card__tag-body">
       {% if custom_tag_type == 'bestseller' %}

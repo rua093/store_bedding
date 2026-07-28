@@ -5,7 +5,12 @@
   - Submits customer newsletter email identically to footer newsletter section
 {% endcomment %}
 
-{%- if request.page_type == 'index' or template == 'index' -%}
+{%- assign show_discount_popup = settings.enable_discount_popup -%}
+{%- if show_discount_popup == nil -%}
+  {%- assign show_discount_popup = true -%}
+{%- endif -%}
+
+{%- if show_discount_popup and (request.page_type == 'index' or template == 'index') -%}
 
 {% liquid
   assign has_posted = false
@@ -42,7 +47,7 @@
     aria-expanded="false"
     aria-controls="discount-modal"
   >
-    <span class="discount-tag__text">10% OFF</span>
+    <span class="discount-tag__text">{{ settings.discount_popup_tag_text | default: '10% OFF' }}</span>
   </div>
 </aside>
 
@@ -82,7 +87,7 @@
           class="discount-modal__badge-icon"
         >
       </div>
-      <h2 id="discount-modal-title" class="discount-modal__title">Get 10% Off Your Order</h2>
+      <h2 id="discount-modal-title" class="discount-modal__title">{{ settings.discount_popup_title | default: 'Get 10% Off Your Order' }}</h2>
       <p class="discount-modal__subtitle">
         Subscribe to our newsletter to receive an exclusive 10% discount code and stay updated with new arrivals & cozy ideas.
       </p>
@@ -435,6 +440,30 @@
     color: #43a047;
     margin: 0;
     line-height: 1.45;
+  }
+
+  @media screen and (max-width: 749px) {
+    .discount-tag {
+      padding: 8px 4px 14px 4px;
+      gap: 8px;
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+      box-shadow: 2px 4px 14px rgba(211, 84, 53, 0.25);
+    }
+
+    .discount-tag__text {
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+    }
+
+    .discount-tag__close {
+      padding: 2px;
+    }
+
+    .discount-tag__close svg {
+      width: 12px;
+      height: 12px;
+    }
   }
 
   @media screen and (max-width: 480px) {

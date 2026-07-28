@@ -76,6 +76,9 @@
     "palette_selected_variant_border": "#3E332D",
     "variant_button_radius": 10,
     "variant_button_width": "default-width-buttons",
+    "enable_discount_popup": true,
+    "discount_popup_tag_text": "10% OFF",
+    "discount_popup_title": "Get 10% Off Your Order",
     "content_for_index": [],
     "blocks": {
       "14060646107696862457": {

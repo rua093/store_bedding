@@ -53,15 +53,15 @@
   elsif show_badge
     for tag in product.tags
       assign downcased_tag = tag | downcase | strip
-      if downcased_tag == 'best seller' or downcased_tag == 'bestseller' or downcased_tag == 'best-seller' or downcased_tag == 'best sellers' or downcased_tag == 'bestsellers'
+      if downcased_tag contains 'best'
         assign custom_tag_label = 'Best Seller'
         assign custom_tag_type = 'bestseller'
         break
-      elsif downcased_tag == 'new' or downcased_tag == 'new arrival' or downcased_tag == 'new-arrival' or downcased_tag == 'new arrivals' or downcased_tag == 'new-arrivals'
+      elsif downcased_tag contains 'new'
         assign custom_tag_label = 'New'
         assign custom_tag_type = 'new'
         break
-      elsif downcased_tag == 'hot' or downcased_tag == 'trending'
+      elsif downcased_tag contains 'hot' or downcased_tag contains 'trend'
         assign custom_tag_label = 'Trending'
         assign custom_tag_type = 'hot'
         break
@@ -71,6 +71,22 @@
         break
       endif
     endfor
+
+    # Auto-detect badge from product.collections if product has no explicit tag
+    if custom_tag_label == blank
+      for col in product.collections
+        assign downcased_col = col.title | downcase
+        if downcased_col contains 'best'
+          assign custom_tag_label = 'Best Seller'
+          assign custom_tag_type = 'bestseller'
+          break
+        elsif downcased_col contains 'new'
+          assign custom_tag_label = 'New'
+          assign custom_tag_type = 'new'
+          break
+        endif
+      endfor
+    endif
   endif
 
   capture quick_add_state

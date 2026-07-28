@@ -104,14 +104,20 @@
   border-radius: 999px;
   font-family: var(--font-body--family) !important;
   font-size: 0.7rem;
-  font-weight: 500 !important;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  background: #FC5732 !important;
+  font-weight: 450 !important;
+  letter-spacing: 0.015em;
+  text-transform: none;
+  background: linear-gradient(180deg, #FF6B4A 0%, #FC5732 50%, #D83C1A 100%) !important;
   color: #fff8f1 !important;
-  box-shadow: 0 8px 18px rgba(108, 55, 29, 0.2);
-  border: 1px solid transparent;
+  box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.5), 0 8px 18px rgba(108, 55, 29, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   pointer-events: none;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease;
+}
+
+.custom-product-card:hover .custom-product-card__badge {
+  transform: translateY(-1.5px) scale(1.02);
+  box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.6), 0 12px 22px rgba(108, 55, 29, 0.35);
 }
 
 .custom-product-card__tag-badge {
@@ -126,8 +132,15 @@
   min-height: 1.7rem !important;
   max-height: 1.7rem !important;
   box-sizing: border-box !important;
-  filter: drop-shadow(0 4px 10px rgba(183, 28, 28, 0.35));
+  filter: drop-shadow(0 6px 14px rgba(180, 20, 20, 0.42)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
   pointer-events: none;
+  overflow: visible !important;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.25s ease;
+}
+
+.custom-product-card:hover .custom-product-card__tag-badge {
+  transform: translateY(-1.5px) scale(1.03);
+  filter: drop-shadow(0 10px 20px rgba(200, 25, 25, 0.55)) drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
 }
 
 .custom-product-card__tag-bg {
@@ -138,6 +151,54 @@
   z-index: 1;
   pointer-events: none;
   overflow: visible;
+}
+
+/* 3D Dynamic Sheen Light Sweep */
+.custom-product-card__tag-shimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  z-index: 3;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.48) 50%,
+    transparent 100%
+  );
+  transform: skewX(-22deg);
+  pointer-events: none;
+  animation: tagShimmerSweep 5.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.custom-product-card:hover .custom-product-card__tag-shimmer {
+  animation: tagShimmerSweepFast 1s ease-out 1;
+}
+
+@keyframes tagShimmerSweep {
+  0%, 75% {
+    left: -100%;
+    opacity: 0;
+  }
+  82% {
+    opacity: 1;
+  }
+  95%, 100% {
+    left: 180%;
+    opacity: 0;
+  }
+}
+
+@keyframes tagShimmerSweepFast {
+  0% {
+    left: -100%;
+    opacity: 1;
+  }
+  100% {
+    left: 180%;
+    opacity: 0;
+  }
 }
 
 .custom-product-card__tag-body {
@@ -152,25 +213,48 @@
 }
 
 .custom-product-card__tag-icon {
-  width: 0.72rem !important;
-  height: 0.72rem !important;
+  width: 0.74rem !important;
+  height: 0.74rem !important;
   flex-shrink: 0 !important;
   display: block !important;
   align-self: center !important;
-  fill: #FFFFFF !important;
-  color: #FFFFFF !important;
+  margin: 0 !important;
+  fill: #FFF4D0 !important;
+  color: #FFF4D0 !important;
+  transform-origin: center center;
+  animation: flameFlicker 1.6s ease-in-out infinite;
+}
+
+@keyframes flameFlicker {
+  0%, 100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 2px #FFD700) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+  }
+  25% {
+    transform: translateY(-0.8px) scale(1.16) rotate(-4deg);
+    filter: drop-shadow(0 0 6px #FF9500) drop-shadow(0 0 12px #FF3B30);
+  }
+  50% {
+    transform: translateY(0) scale(1.05) rotate(2deg);
+    filter: drop-shadow(0 0 3px #FFE600);
+  }
+  75% {
+    transform: translateY(-1px) scale(1.18) rotate(-2deg);
+    filter: drop-shadow(0 0 8px #FFB300) drop-shadow(0 0 14px #FF2D55);
+  }
 }
 
 .custom-product-card__tag-text {
   color: #FFFFFF !important;
   font-family: var(--font-body--family) !important;
-  font-size: 0.7rem !important;
-  font-weight: 500 !important;
+  font-size: 0.72rem !important;
+  font-weight: 450 !important;
   line-height: 1 !important;
-  letter-spacing: 0.02em !important;
-  text-transform: uppercase !important;
+  letter-spacing: 0.015em !important;
+  text-transform: capitalize !important;
   white-space: nowrap !important;
   align-self: center !important;
+  text-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.25);
 }
 
 .custom-product-card__content {

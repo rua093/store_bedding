@@ -2121,5 +2121,29 @@
         "default": "equal-width-buttons"
       }
     ]
+  },
+  {
+    "name": "Discount Promotion Popup",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_discount_popup",
+        "label": "Enable 10% OFF Side Tag & Popup",
+        "default": true,
+        "info": "Show floating side discount tag and newsletter modal popup on homepage"
+      },
+      {
+        "type": "text",
+        "id": "discount_popup_tag_text",
+        "label": "Side Tag Text",
+        "default": "10% OFF"
+      },
+      {
+        "type": "text",
+        "id": "discount_popup_title",
+        "label": "Popup Title",
+        "default": "Get 10% Off Your Order"
+      }
+    ]
   }
 ]

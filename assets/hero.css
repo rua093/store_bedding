@@ -361,6 +361,7 @@ body:has(#header-group > .header-section > #header-component) .hero-wrapper:firs
   .hero__content-shell {
     padding-block-start: clamp(1.15rem, 4vw, 1.75rem);
     padding-block-end: clamp(4.5rem, 14vw, 6.25rem);
+    padding-inline-start: clamp(2.5rem, 9.5vw, 3.2rem) !important;
   }
 
   .hero__content {

@@ -302,10 +302,10 @@
     font-family: var(--font-body--family) !important;
     font-style: var(--font-body--style);
     font-size: 0.72rem;
-    font-weight: 400 !important;
+    font-weight: 450 !important;
     line-height: 1;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
+    letter-spacing: 0.015em;
+    text-transform: none;
     box-shadow: 0 10px 22px rgba(86, 53, 33, 0.14);
   }
 
