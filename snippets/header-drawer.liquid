@@ -79,16 +79,29 @@
         {% endif %}
       "
     >
-      <button
-        class="button close-button menu-drawer__close-button focus-inset"
-        type="button"
-        aria-label="{{ 'actions.close' | t }}"
-        on:click="/close"
-      >
-        <span class="svg-wrapper header-drawer-icon header-drawer-icon--close">
-          {{- 'icon-close.svg' | inline_asset_content -}}
-        </span>
-      </button>
+      <div class="menu-drawer__header">
+        <div class="menu-drawer__brand">
+          {% if settings.logo != blank %}
+            <a href="{{ routes.root_url }}" class="menu-drawer__brand-logo-link">
+              {{ settings.logo | image_url: width: 320 | image_tag: class: 'menu-drawer__brand-logo-img', alt: shop.name, loading: 'eager' }}
+            </a>
+          {% else %}
+            <a href="{{ routes.root_url }}" class="menu-drawer__brand-logo-link">
+              <span class="menu-drawer__brand-title">{{ shop.name }}</span>
+            </a>
+          {% endif %}
+        </div>
+        <button
+          class="button close-button menu-drawer__close-button focus-inset"
+          type="button"
+          aria-label="{{ 'actions.close' | t }}"
+          on:click="/close"
+        >
+          <span class="svg-wrapper header-drawer-icon header-drawer-icon--close">
+            {{- 'icon-close.svg' | inline_asset_content -}}
+          </span>
+        </button>
+      </div>
       <nav
         class="menu-drawer__navigation"
         style="
@@ -109,6 +122,38 @@
             {% assign animation_index = 0 %}
             {%- for link in linklist.links -%}
               {% assign animation_index = animation_index | plus: 1 %}
+              {% capture link_icon_markup %}
+                {% assign title_low = link.title | downcase %}
+                <span class="menu-drawer__icon-box">
+                  {% if title_low contains 'home' or title_low contains 'trang chủ' %}
+                    <svg class="menu-drawer__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                  {% elsif title_low contains 'best' or title_low contains 'bán chạy' or title_low contains 'hot' %}
+                    <svg class="menu-drawer__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  {% elsif title_low contains 'new' or title_low contains 'mới' or title_low contains 'arrival' %}
+                    <svg class="menu-drawer__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/><path d="M5 3v4M3 5h4M19 17v4M17 19h4"/></svg>
+                  {% elsif title_low contains 'collection' or title_low contains 'danh mục' or title_low contains 'bộ sưu tập' %}
+                    <svg class="menu-drawer__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>
+                  {% elsif title_low contains 'product' or title_low contains 'sản phẩm' or title_low contains 'mền' or title_low contains 'blanket' %}
+                    <svg class="menu-drawer__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1H4v-1a2 2 0 0 0-2 0Z"/><path d="M4 18v2"/><path d="M20 18v2"/></svg>
+                  {% elsif title_low contains 'about' or title_low contains 'giới thiệu' or title_low contains 'về chúng tôi' %}
+                    <svg class="menu-drawer__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                  {% elsif title_low contains 'contact' or title_low contains 'liên hệ' or title_low contains 'hỗ trợ' or title_low contains 'faq' %}
+                    <svg class="menu-drawer__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  {% else %}
+                    <svg class="menu-drawer__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                  {% endif %}
+                </span>
+              {% endcapture %}
+
+              {% capture link_badge_markup %}
+                {% assign title_low = link.title | downcase %}
+                {% if title_low contains 'best' or title_low contains 'bán chạy' %}
+                  <span class="menu-drawer__badge menu-drawer__badge--hot">HOT 🔥</span>
+                {% elsif title_low contains 'new' or title_low contains 'mới' %}
+                  <span class="menu-drawer__badge menu-drawer__badge--new">NEW ✨</span>
+                {% endif %}
+              {% endcapture %}
+
               <li
                 style="--menu-drawer-animation-index: {{ animation_index }};"
                 class="{%- if block_settings.drawer_accordion -%}menu-drawer__list-item--deep{%- else -%}menu-drawer__list-item--flat{%- endif -%}{% if block_settings.drawer_dividers %} menu-drawer__list-item--divider{% endif %}"
@@ -132,7 +177,7 @@
                         id="HeaderDrawer-{{ link.handle }}"
                         class="menu-drawer__menu-item menu-drawer__menu-item--mainlist menu-drawer__animated-element focus-inset"
                       >
-                        <span class="menu-drawer__menu-item-text wrap-text">{{ link.title | escape }}</span>
+                        <span class="menu-drawer__link-content">{{ link_icon_markup }}<span class="menu-drawer__menu-item-text wrap-text">{{ link.title | escape }}</span>{{ link_badge_markup }}</span>
                         <span class="svg-wrapper icon-plus">
                           {{- 'icon-plus.svg' | inline_asset_content -}}
                         </span>
@@ -192,7 +237,7 @@
                     id="HeaderDrawer-{{ link.handle }}"
                     class="menu-drawer__menu-item menu-drawer__menu-item--mainlist menu-drawer__animated-element focus-inset"
                   >
-                    <span class="menu-drawer__menu-item-text wrap-text">{{ link.title | escape }}</span>
+                    <span class="menu-drawer__link-content">{{ link_icon_markup }}<span class="menu-drawer__menu-item-text wrap-text">{{ link.title | escape }}</span>{{ link_badge_markup }}</span>
                   </span>
                   {% liquid
                     assign render_link_image = false
@@ -246,7 +291,7 @@
                       aria-current="page"
                     {% endif %}
                   >
-                    <span class="menu-drawer__menu-item-text wrap-text">{{ link.title | escape }}</span>
+                    <span class="menu-drawer__link-content">{{ link_icon_markup }}<span class="menu-drawer__menu-item-text wrap-text">{{ link.title | escape }}</span>{{ link_badge_markup }}</span>
                   </a>
                 {% endif %}
               </li>
@@ -258,6 +303,28 @@
             {% assign animation_index = 0 %}
             {%- for link in linklist.links -%}
               {% assign animation_index = animation_index | plus: 1 %}
+              {% capture link_icon_markup %}
+                {% assign title_low = link.title | downcase %}
+                <span class="menu-drawer__icon-box">
+                  {% if title_low contains 'home' or title_low contains 'trang chủ' %}
+                    <svg class="menu-drawer__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                  {% elsif title_low contains 'best' or title_low contains 'bán chạy' or title_low contains 'hot' %}
+                    <svg class="menu-drawer__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  {% elsif title_low contains 'new' or title_low contains 'mới' or title_low contains 'arrival' %}
+                    <svg class="menu-drawer__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/><path d="M5 3v4M3 5h4M19 17v4M17 19h4"/></svg>
+                  {% elsif title_low contains 'collection' or title_low contains 'danh mục' or title_low contains 'bộ sưu tập' %}
+                    <svg class="menu-drawer__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>
+                  {% elsif title_low contains 'product' or title_low contains 'sản phẩm' or title_low contains 'mền' or title_low contains 'blanket' %}
+                    <svg class="menu-drawer__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1H4v-1a2 2 0 0 0-2 0Z"/><path d="M4 18v2"/><path d="M20 18v2"/></svg>
+                  {% elsif title_low contains 'about' or title_low contains 'giới thiệu' or title_low contains 'về chúng tôi' %}
+                    <svg class="menu-drawer__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                  {% elsif title_low contains 'contact' or title_low contains 'liên hệ' or title_low contains 'hỗ trợ' or title_low contains 'faq' %}
+                    <svg class="menu-drawer__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  {% else %}
+                    <svg class="menu-drawer__item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                  {% endif %}
+                </span>
+              {% endcapture %}
               <li
                 class="menu-drawer__list-item"
                 style="--menu-drawer-animation-index: {{ animation_index }};"
@@ -275,9 +342,12 @@
                       class="menu-drawer__menu-item menu-drawer__menu-item--mainlist menu-drawer__animated-element focus-inset{% if link.child_active %} menu-drawer__menu-item--active{% endif %}"
                       on:click="header-drawer/open/submenu"
                     >
-                      <span class="menu-drawer__menu-item-text wrap-text">{{ link.title | escape }}</span>
-                      <span class="svg-wrapper icon-caret icon-caret--forward">
-                        {{- 'icon-caret.svg' | inline_asset_content -}}
+                      <span class="menu-drawer__link-content">
+                        {{ link_icon_markup }}
+                        <span class="menu-drawer__menu-item-text wrap-text">{{ link.title | escape }}</span>
+                      </span>
+                      <span class="menu-drawer__item-arrow">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                       </span>
                     </summary>
                     <div
@@ -504,7 +574,10 @@
                       aria-current="page"
                     {% endif %}
                   >
-                    <span class="menu-drawer__menu-item-text wrap-text">{{ link.title | escape }}</span>
+                    <span class="menu-drawer__link-content">
+                      {{ link_icon_markup }}
+                      <span class="menu-drawer__menu-item-text wrap-text">{{ link.title | escape }}</span>
+                    </span>
                   </a>
                 {%- endif -%}
               </li>
@@ -743,15 +816,17 @@
   }
 
   .menu-drawer {
-    position: fixed;
+    position: fixed !important;
     transform: translateX(-100%);
     visibility: hidden;
-    height: var(--drawer-height);
+    height: 100dvh !important;
+    max-height: 100dvh !important;
     width: var(--drawer-width);
     max-width: var(--drawer-max-width);
-    z-index: var(--layer-menu-drawer);
-    left: 0;
-    top: 0;
+    z-index: 100000 !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
     padding: 0;
     background: linear-gradient(180deg, rgb(var(--color-background-rgb) / 1), rgb(var(--color-background-rgb) / 0.96));
     overflow: auto;
@@ -771,18 +846,20 @@
   }
 
   .menu-drawer__backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100dvh;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
     backdrop-filter: blur(3px) brightness(0.82);
-    z-index: var(--layer-overlay);
+    z-index: 99998 !important;
     opacity: 0;
+    pointer-events: none;
     transition: opacity var(--drawer-animation-speed) ease;
 
     .menu-open & {
       opacity: 1;
+      pointer-events: auto;
     }
   }
 
@@ -1393,5 +1470,292 @@
 
   .drawer-localization .language-selector .svg-wrapper.icon-caret svg {
     transform: none;
+  }
+
+  /* ==========================================================================
+     Modern Luxury Mobile Drawer (Exact Match & Typography Hierarchy)
+     ========================================================================== */
+  .menu-drawer {
+    background: #FAF6F0 !important;
+  }
+
+  .menu-drawer__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 1.25rem 1rem;
+    background: transparent !important;
+    border: none !important;
+  }
+
+  .menu-drawer__brand {
+    display: flex;
+    align-items: center;
+  }
+
+  .menu-drawer__brand-logo-link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+  }
+
+  .menu-drawer__brand-logo-img {
+    height: auto;
+    max-height: 40px;
+    width: auto;
+    max-width: 170px;
+    object-fit: contain;
+  }
+
+  .menu-drawer__brand-title {
+    font-family: var(--font-heading-family, serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: #2F2723;
+  }
+
+  .menu-drawer__close-button {
+    width: 2.25rem;
+    height: 2.25rem;
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+    border-radius: 50%;
+    background: #FAF6F0 !important;
+    border: 1px solid rgba(184, 121, 85, 0.3) !important;
+    color: #7A4B33 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .menu-drawer__close-button:hover {
+    background: #F3EAE0 !important;
+    transform: scale(1.05);
+  }
+
+  .menu-drawer__menu {
+    padding-inline: 1.25rem !important;
+    padding-block: 0.5rem !important;
+  }
+
+  /* --------------------------------------------------------------------------
+     LEVEL 1: Main Menu Items (Home, Best Sellers, Shop By Product)
+     -------------------------------------------------------------------------- */
+  .menu-drawer__menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0 !important;
+    margin-block-end: 0.85rem;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    text-decoration: none;
+  }
+
+  .menu-drawer__menu-item:hover,
+  .menu-drawer__menu-item:focus {
+    background: transparent !important;
+    transform: translateX(4px);
+  }
+
+  .menu-drawer__link-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .menu-drawer__icon-box {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    border-radius: 16px;
+    background: #F3EAE0;
+    color: #A26848;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+  }
+
+  .menu-drawer__menu-item:hover .menu-drawer__icon-box {
+    background: #EBDCD0;
+    transform: scale(1.04);
+  }
+
+  .menu-drawer__item-icon {
+    width: 22px;
+    height: 22px;
+    stroke-width: 1.65px;
+  }
+
+  .menu-drawer__menu-item-text {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #2F2723;
+    letter-spacing: 0.01em;
+  }
+
+  .menu-drawer__item-arrow {
+    display: flex;
+    align-items: center;
+    color: #A26848;
+    margin-inline-start: auto;
+    flex-shrink: 0;
+  }
+
+  .menu-drawer__item-arrow svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* --------------------------------------------------------------------------
+     LEVEL 2: Group Headings inside Submenu (BLANKETS, QUILT, COMFORTER)
+     -------------------------------------------------------------------------- */
+  .menu-drawer__menu-item--group-heading,
+  .menu-drawer__menu-item--parent {
+    margin-top: 0.75rem;
+    margin-bottom: 0.3rem;
+    padding: 0.5rem 0 !important;
+  }
+
+  .menu-drawer__menu-item--group-heading .menu-drawer__menu-item-text,
+  .menu-drawer__menu-item--parent .menu-drawer__menu-item-text {
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: #8C593B !important;
+  }
+
+  /* Toggle Button (+ / -) for Group Headings: Show ONLY + when closed, ONLY - when open */
+  .menu-drawer__group-toggle {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 50% !important;
+    background: #F3EAE0 !important;
+    color: #8C593B !important;
+    transition: background-color 0.2s ease, transform 0.2s ease !important;
+    flex-shrink: 0;
+  }
+
+  .menu-drawer__group-toggle:hover {
+    background: #EBDCD0 !important;
+    transform: scale(1.05) !important;
+  }
+
+  .menu-drawer__group-icon {
+    width: 14px !important;
+    height: 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .menu-drawer__group-icon svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  /* Toggle visibility logic: Hide minus when closed, hide plus when open */
+  details:not([open]) > summary .menu-drawer__group-icon--minus {
+    display: none !important;
+  }
+
+  details[open] > summary .menu-drawer__group-icon--plus {
+    display: none !important;
+  }
+
+  /* --------------------------------------------------------------------------
+     LEVEL 3: Child Items inside Group (Couples & Family, Christian & Baptism)
+     -------------------------------------------------------------------------- */
+  .menu-drawer__menu--childlist,
+  .menu-drawer__menu--grandchildlist {
+    border-left: none !important;
+    border-right: none !important;
+    margin-left: 0.5rem !important;
+    padding-left: 0.75rem !important;
+    margin-block: 0.2rem 0.8rem !important;
+  }
+
+  .menu-drawer__menu--grandchildlist .menu-drawer__menu-item--child {
+    margin-block-end: 0.35rem !important;
+    padding: 0.35rem 0 !important;
+    border-left: none !important;
+  }
+
+  .menu-drawer__menu--grandchildlist .menu-drawer__menu-item-text {
+    font-size: 0.98rem !important;
+    font-weight: 400 !important;
+    color: #3E332D !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    transition: color 0.2s ease, transform 0.2s ease !important;
+  }
+
+  .menu-drawer__menu--grandchildlist .menu-drawer__menu-item--child:hover .menu-drawer__menu-item-text,
+  .menu-drawer__menu--grandchildlist .menu-drawer__menu-item--child:focus .menu-drawer__menu-item-text {
+    color: #8C593B !important;
+    font-weight: 500 !important;
+    transform: translateX(3px);
+  }
+
+  /* --------------------------------------------------------------------------
+     Submenu Navigation Header Back Button
+     -------------------------------------------------------------------------- */
+  .menu-drawer__back-button {
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    color: #2F2723 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.75rem 0 !important;
+  }
+
+  .menu-drawer__back-button .icon-caret {
+    color: #8C593B !important;
+  }
+
+  .menu-drawer__badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+    letter-spacing: 0.05em;
+    margin-inline-start: 0.5rem;
+    white-space: nowrap;
+  }
+
+  .menu-drawer__badge--hot {
+    background: linear-gradient(135deg, #d35435, #b87955);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(211, 84, 53, 0.3);
+  }
+
+  .menu-drawer__badge--new {
+    background: linear-gradient(135deg, #2e7d32, #4caf50);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(46, 125, 50, 0.25);
+  }
+
+  .menu-drawer__utility-links {
+    background: #FAF6F0 !important;
+    border-top: 1px solid rgba(184, 121, 85, 0.15);
+    padding: 1.25rem 1.25rem 2rem !important;
+    margin-top: auto !important;
   }
 {% endstylesheet %}

@@ -73,6 +73,7 @@ class HeaderDrawer extends Component {
     if (!summary) return;
 
     summary.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('menu-drawer-is-open');
 
     this.preventInitialAccordionAnimations(details);
     requestAnimationFrame(() => {
@@ -116,6 +117,7 @@ class HeaderDrawer extends Component {
     summary.setAttribute('aria-expanded', 'false');
     details.classList.remove('menu-open');
     this.refs.menuDrawer.classList.remove('menu-drawer--has-submenu-opened');
+    document.body.classList.remove('menu-drawer-is-open');
 
     // Wait for the .menu-drawer element's transition, not the entire details subtree
     // This avoids waiting for child accordion/resource-card animations which can cause issues on Firefox
@@ -185,4 +187,5 @@ function reset(element) {
   element.classList.remove('menu-open');
   element.removeAttribute('open');
   element.querySelector('summary')?.setAttribute('aria-expanded', 'false');
+  document.body.classList.remove('menu-drawer-is-open');
 }

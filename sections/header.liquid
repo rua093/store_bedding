@@ -717,6 +717,22 @@
     transition-timing-function: var(--header-sticky-hide-easing);
   }
 
+  /* When menu drawer is open, keep header visible instantaneously without transition flickering or layout reflow */
+  .header:has(details[open]),
+  .header:has(details.menu-open),
+  #header-component:has(details[open]),
+  #header-component:has(details.menu-open),
+  body.menu-drawer-is-open #header-component,
+  body.menu-drawer-is-open .header {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    contain: none !important;
+    will-change: auto !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
   @media screen and (max-width: 749px) {
     .header[data-sticky-state='active'] {
       .header__underlay-closed {

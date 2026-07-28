@@ -166,6 +166,29 @@
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease, opacity 0.25s ease, visibility 0.25s ease;
   }
 
+  /* Auto hide floating 10% OFF side tag when menu drawer or any modal is open */
+  body:has(header-drawer details[open]),
+  body:has(header-drawer details.menu-open),
+  body:has(.menu-open),
+  body:has(dialog[open]),
+  body:has(.discount-modal-overlay.is-active) {
+    & .discount-tag {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transform: translateY(-50%) translateX(-100%) !important;
+    }
+  }
+
+  header-drawer details[open] ~ .discount-tag,
+  header-drawer details.menu-open ~ .discount-tag,
+  .menu-open .discount-tag {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transform: translateY(-50%) translateX(-100%) !important;
+  }
+
   .discount-tag:hover {
     background-color: #b9442a;
     transform: translateY(-50%) translateX(3px);

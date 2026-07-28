@@ -29,11 +29,18 @@
   <div class="announcement-bar__slider" aria-live="polite">
     <div class="announcement-bar__marquee" aria-label="Store announcements">
       <div class="announcement-bar__marquee-track">
-        {{ announcement_marquee_items }}
-        <span class="visually-hidden">Store announcements repeated for marquee loop.</span>
-        <span class="announcement-bar__marquee-group" aria-hidden="true">
+        <div class="announcement-bar__marquee-content">
           {{ announcement_marquee_items }}
-        </span>
+        </div>
+        <div class="announcement-bar__marquee-content" aria-hidden="true">
+          {{ announcement_marquee_items }}
+        </div>
+        <div class="announcement-bar__marquee-content" aria-hidden="true">
+          {{ announcement_marquee_items }}
+        </div>
+        <div class="announcement-bar__marquee-content" aria-hidden="true">
+          {{ announcement_marquee_items }}
+        </div>
       </div>
     </div>
   </div>
@@ -105,20 +112,20 @@
   }
 
   .announcement-bar__marquee-track {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    min-width: max-content;
-    gap: clamp(1.2rem, 3vw, 2.4rem);
-    white-space: nowrap;
-    padding-inline: clamp(1rem, 2vw, 1.5rem);
+    width: max-content;
     will-change: transform;
-    animation: announcement-marquee 26s linear infinite;
+    animation: announcement-marquee 30s linear infinite;
   }
 
-  .announcement-bar__marquee-group {
-    display: inline-flex;
+  .announcement-bar__marquee-content {
+    display: flex;
     align-items: center;
-    gap: inherit;
+    gap: clamp(1.2rem, 3vw, 2.4rem);
+    padding-inline-end: clamp(1.2rem, 3vw, 2.4rem);
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .announcement-bar__marquee-item,
@@ -161,12 +168,12 @@
   }
 
   @keyframes announcement-marquee {
-    from {
-      transform: translateX(0);
+    0% {
+      transform: translate3d(0, 0, 0);
     }
 
-    to {
-      transform: translateX(-50%);
+    100% {
+      transform: translate3d(-50%, 0, 0);
     }
   }
 
@@ -180,9 +187,12 @@
     }
 
     .announcement-bar__marquee-track {
+      animation-duration: 25s;
+    }
+
+    .announcement-bar__marquee-content {
       gap: 1rem;
-      padding-inline: 0.75rem;
-      animation-duration: 24s;
+      padding-inline-end: 1rem;
     }
 
     .announcement-bar__marquee-item,
