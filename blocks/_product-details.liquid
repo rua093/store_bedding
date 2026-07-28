@@ -578,82 +578,41 @@
     color: #7b6657;
   }
 
-  /* Desktop variant button sizing */
-  @media screen and (min-width: 750px) {
-    .product-details--main-product variant-picker .variant-option--buttons {
-      gap: 0.75rem;
-    }
-
-    .product-details--main-product variant-picker .variant-option__button-label {
-      min-height: 3rem;
-      border-radius: 3px !important;
-      border: 1px solid rgba(0, 0, 0, 0.12) !important;
-      background: #ffffff !important;
-      color: #171717 !important;
-      font-weight: 500 !important;
-      font-size: 1rem !important;
-      padding: 0.75rem 1.25rem !important;
-      min-width: 3.9rem !important;
-      width: fit-content !important;
-      height: auto !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      flex: 0 0 auto !important;
-      transition: all 0.15s ease !important;
-      box-shadow: none !important;
-      white-space: nowrap !important;
-    }
-
-    .product-details--main-product variant-picker .variant-option__button-label__text {
-      font-size: 1rem !important;
-      font-weight: inherit !important;
-      letter-spacing: 0;
-      line-height: 1.2 !important;
-      color: inherit !important;
-      text-align: center !important;
-      text-wrap: nowrap !important;
-      white-space: nowrap !important;
-    }
+  /* Compact variant button sizing for Desktop and Mobile */
+  .product-details--main-product variant-picker .variant-option--buttons {
+    gap: 0.38rem 0.45rem !important;
   }
 
-  /* Compact Mobile variant button sizing */
-  @media screen and (max-width: 749px) {
-    .product-details--main-product variant-picker .variant-option--buttons {
-      gap: 0.38rem 0.45rem !important;
-    }
+  .product-details--main-product variant-picker .variant-option__button-label {
+    min-height: 2.1rem !important;
+    border-radius: 4px !important;
+    border: 1px solid rgba(0, 0, 0, 0.14) !important;
+    background: #ffffff !important;
+    color: #171717 !important;
+    font-weight: 500 !important;
+    font-size: 0.8rem !important;
+    padding: 0.3rem 0.55rem !important;
+    min-width: 2.1rem !important;
+    width: fit-content !important;
+    height: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 auto !important;
+    transition: all 0.15s ease !important;
+    box-shadow: none !important;
+    white-space: nowrap !important;
+  }
 
-    .product-details--main-product variant-picker .variant-option__button-label {
-      min-height: 2.1rem !important;
-      border-radius: 4px !important;
-      border: 1px solid rgba(0, 0, 0, 0.14) !important;
-      background: #ffffff !important;
-      color: #171717 !important;
-      font-weight: 500 !important;
-      font-size: 0.8rem !important;
-      padding: 0.3rem 0.55rem !important;
-      min-width: 2.1rem !important;
-      width: fit-content !important;
-      height: auto !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      flex: 0 0 auto !important;
-      transition: all 0.15s ease !important;
-      box-shadow: none !important;
-      white-space: nowrap !important;
-    }
-
-    .product-details--main-product variant-picker .variant-option__button-label__text {
-      font-size: 0.8rem !important;
-      font-weight: inherit !important;
-      letter-spacing: 0;
-      line-height: 1.2 !important;
-      color: inherit !important;
-      text-align: center !important;
-      text-wrap: nowrap !important;
-      white-space: nowrap !important;
-    }
+  .product-details--main-product variant-picker .variant-option__button-label__text {
+    font-size: 0.8rem !important;
+    font-weight: inherit !important;
+    letter-spacing: 0;
+    line-height: 1.2 !important;
+    color: inherit !important;
+    text-align: center !important;
+    text-wrap: nowrap !important;
+    white-space: nowrap !important;
   }
 
   .product-details--main-product

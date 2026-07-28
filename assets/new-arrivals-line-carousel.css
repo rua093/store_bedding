@@ -209,6 +209,11 @@
     box-shadow: 0 6px 14px rgb(117 69 38 / 0.14);
   }
 
+  .new-arrivals-strip-section .custom-product-card__tag-badge {
+    top: 0.8rem !important;
+    right: 0.8rem !important;
+  }
+
   .new-arrivals-strip-section .custom-product-card__image--hover {
     display: none;
   }

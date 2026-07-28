@@ -35,6 +35,44 @@
     assign discount_percent = compare_price | minus: current_price | times: 100.0 | divided_by: compare_price | round
   endif
 
+  # Custom badge tag detection (Best Seller, New Arrival, Trending/Hot)
+  assign custom_tag_label = card_tag | default: ''
+  assign custom_tag_type = ''
+
+  if custom_tag_label != blank
+    assign downcased_param = custom_tag_label | downcase | strip
+    if downcased_param contains 'best'
+      assign custom_tag_type = 'bestseller'
+    elsif downcased_param contains 'new'
+      assign custom_tag_type = 'new'
+    elsif downcased_param contains 'hot' or downcased_param contains 'trend'
+      assign custom_tag_type = 'hot'
+    else
+      assign custom_tag_type = 'custom'
+    endif
+  elsif show_badge
+    for tag in product.tags
+      assign downcased_tag = tag | downcase | strip
+      if downcased_tag == 'best seller' or downcased_tag == 'bestseller' or downcased_tag == 'best-seller' or downcased_tag == 'best sellers' or downcased_tag == 'bestsellers'
+        assign custom_tag_label = 'Best Seller'
+        assign custom_tag_type = 'bestseller'
+        break
+      elsif downcased_tag == 'new' or downcased_tag == 'new arrival' or downcased_tag == 'new-arrival' or downcased_tag == 'new arrivals' or downcased_tag == 'new-arrivals'
+        assign custom_tag_label = 'New'
+        assign custom_tag_type = 'new'
+        break
+      elsif downcased_tag == 'hot' or downcased_tag == 'trending'
+        assign custom_tag_label = 'Trending'
+        assign custom_tag_type = 'hot'
+        break
+      elsif downcased_tag contains 'badge:'
+        assign custom_tag_label = tag | split: 'badge:' | last | strip
+        assign custom_tag_type = 'custom'
+        break
+      endif
+    endfor
+  endif
+
   capture quick_add_state
     render 'custom-product-card-quick-add-state', product: product, enable_quick_add: enable_quick_add
   endcapture
@@ -167,6 +205,8 @@
         show_sale_badge: show_sale_badge,
         contextual_badge_class: contextual_badge_class,
         discount_percent: discount_percent,
+        custom_tag_label: custom_tag_label,
+        custom_tag_type: custom_tag_type,
         should_render_quick_add: should_render_quick_add,
         product_card_section_id: product_card_section_id
       %}
