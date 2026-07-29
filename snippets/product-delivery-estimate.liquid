@@ -162,8 +162,10 @@
   .product-delivery-estimate {
     display: grid;
     gap: 0.38rem;
-    width: fit-content;
+    width: 100%;
     max-width: 100%;
+    min-width: 0;
+    container-type: inline-size;
     color: #000000;
     font-size: 0.88rem;
     line-height: 1.4;
@@ -295,29 +297,30 @@
 
   .product-delivery-estimate__copy {
     min-width: 0;
+    max-width: 100%;
   }
 
   .product-delivery-estimate__range {
     color: #000000;
     font-weight: 700;
-    white-space: nowrap;
+    white-space: normal;
   }
 
   .product-delivery-estimate__shipping-popover {
-    position: relative;
-    display: inline-flex;
-    width: fit-content;
+    display: grid;
+    width: 100%;
+    min-width: 0;
     max-width: 100%;
   }
 
   .product-delivery-estimate__popover {
-    position: absolute;
+    position: static;
     z-index: 30;
-    top: calc(100% + 0.8rem);
-    left: 3.25rem;
-    right: auto;
-    width: min(31.5rem, calc(100vw - 3rem));
-    max-width: calc(100vw - 3rem);
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    margin-top: 0.65rem;
     padding: 1.1rem 1.1rem 1rem;
     border: var(--style-border-popover);
     border-radius: 1.35rem;
@@ -329,26 +332,12 @@
     justify-items: stretch;
     align-items: start;
     gap: 0.9rem;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transform: translateY(0.6rem) scale(0.985);
-    transform-origin: top right;
-    transition:
-      opacity 220ms ease,
-      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
-      visibility 0s linear 260ms;
+    overflow: hidden;
+    display: none;
   }
 
   .product-delivery-estimate__shipping-popover:is(:hover, :focus-within) .product-delivery-estimate__popover {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translateY(0) scale(1);
-    transition:
-      opacity 220ms ease,
-      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
-      visibility 0s linear 0s;
+    display: grid;
   }
 
   .product-delivery-estimate__journey {
@@ -375,15 +364,19 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 0.38rem;
-    padding-left: 0.95rem;
+    padding-left: 0;
     margin: 0;
     width: 100%;
     max-width: none;
     min-width: 0;
     inline-size: 100%;
+    list-style: none;
   }
 
   .product-delivery-estimate__popover-list li {
+    display: grid;
+    grid-template-columns: 0.75rem minmax(0, 1fr);
+    gap: 0.42rem;
     text-align: left;
     max-width: none;
     min-width: 0;
@@ -391,72 +384,132 @@
     inline-size: 100%;
     white-space: normal;
     text-wrap: wrap;
-    overflow-wrap: normal;
+    overflow-wrap: break-word;
     word-break: normal;
   }
 
-  .product-delivery-estimate__popover-list li::marker {
+  .product-delivery-estimate__popover-list li::before {
+    content: '★';
     color: #6e5646;
+    font-size: 0.58rem;
+    line-height: 1.4;
+    transform: translateY(0.08em);
   }
 
-  .product-delivery-estimate__popover .product-support-shipping-journey__track {
-    left: 2.35rem;
-    right: 2.35rem;
+  .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.55rem;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
   }
 
-  .product-delivery-estimate__popover .product-support-shipping-journey__step {
-    gap: 0.42rem;
+  .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey__track {
+    display: none;
   }
 
-  .product-delivery-estimate__popover .product-support-shipping-journey__badge {
-    width: 3.3rem;
-    height: 3.3rem;
+  .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey__step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, auto) minmax(0, 1fr);
+    align-items: center;
+    justify-items: start;
+    gap: 0.5rem;
+    width: 100%;
+    min-width: 0;
+    text-align: left;
   }
 
-  .product-delivery-estimate__popover .product-support-shipping-journey__badge svg {
+  .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey__badge {
+    grid-column: 1;
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey__badge svg {
     width: 1.22rem;
     height: 1.22rem;
   }
 
-  .product-delivery-estimate__popover .product-support-shipping-journey__date {
+  .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey__date {
+    grid-column: 2;
     font-size: 0.76rem;
     line-height: 1.2;
     font-weight: 680;
+    white-space: nowrap;
+    min-width: 0;
   }
 
-  .product-delivery-estimate__popover .product-support-shipping-journey__heading {
+  .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey__heading {
+    grid-column: 3;
     font-size: 0.78rem;
     line-height: 1.24;
     font-weight: 430;
+    min-width: 0;
   }
 
-  .product-delivery-estimate__popover .product-support-shipping-journey__step--deliver {
-    text-align: right;
-    justify-items: end;
+  .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey__step--ship,
+  .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey__step--deliver {
+    text-align: left;
+    justify-items: start;
+  }
+
+  @container (min-width: 34rem) {
+    .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey__track {
+      display: block;
+      position: absolute;
+      top: 1.65rem;
+      left: 2.35rem;
+      right: 2.35rem;
+      height: 3px;
+    }
+
+    .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey__step {
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: center;
+      gap: 0.42rem;
+      text-align: center;
+    }
+
+    .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey__badge,
+    .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey__date,
+    .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey__heading {
+      grid-column: auto;
+    }
+
+    .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey__badge {
+      width: 3.3rem;
+      height: 3.3rem;
+    }
+
+    .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey__date {
+      white-space: normal;
+    }
+
+    .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey__step--ship,
+    .product-delivery-estimate .product-delivery-estimate__popover .product-support-shipping-journey__step--deliver {
+      text-align: center;
+      justify-items: center;
+    }
   }
 
   @media screen and (max-width: 749px) {
-    .product-delivery-estimate {
-      width: 100%;
-    }
-
     .product-delivery-estimate__localization-panel {
       min-width: 0;
       width: min(24rem, calc(100vw - 2.5rem));
     }
 
-    .product-delivery-estimate__range {
-      white-space: normal;
-    }
-
     .product-delivery-estimate__popover {
-      left: 0;
-      width: min(24rem, calc(100vw - 1.5rem));
-      min-width: 0;
-      max-width: calc(100vw - 1.5rem);
       padding: 1rem 0.95rem;
       border-radius: 1.1rem;
-      transform-origin: top left;
     }
   }
 {% endstyle %}

@@ -10,7 +10,12 @@
   {%- assign show_discount_popup = true -%}
 {%- endif -%}
 
-{%- if show_discount_popup and (request.page_type == 'index' or template == 'index') -%}
+{%- assign is_index_template = false -%}
+{%- if request.page_type == 'index' or template.name == 'index' or template == 'index' -%}
+  {%- assign is_index_template = true -%}
+{%- endif -%}
+
+{%- if show_discount_popup and is_index_template -%}
 
 {% liquid
   assign has_posted = false

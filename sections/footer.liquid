@@ -413,6 +413,7 @@
     padding: 28px 20px 32px;
     position: relative;
     overflow: hidden;
+    container-type: inline-size;
   }
 
   .footer-top-section::before {
@@ -516,6 +517,7 @@
 
   /* 2. Newsletter card */
   .footer-newsletter {
+    --footer-newsletter-content-width: 720px;
     background-color: #ffffff;
     border: 1px solid rgba(201, 133, 90, 0.12);
     border-radius: 30px;
@@ -523,8 +525,10 @@
     max-width: 940px;
     margin: 0 auto;
     padding: 20px 22px;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: minmax(0, min(100%, var(--footer-newsletter-content-width)));
+    justify-content: center;
+    justify-items: stretch;
     gap: 16px;
     position: relative;
     z-index: 3;
@@ -532,11 +536,12 @@
 
   @media screen and (min-width: 990px) {
     .footer-newsletter {
+      --footer-newsletter-content-width: 100%;
       padding: 24px 36px;
       border-radius: 34px;
-      flex-direction: row;
+      grid-template-columns: max-content minmax(360px, 440px);
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       gap: 28px;
     }
   }
@@ -546,6 +551,8 @@
     align-items: center;
     gap: 16px;
     text-align: left;
+    grid-column: 1;
+    min-width: 0;
   }
 
   .footer-icon {
@@ -594,8 +601,22 @@
 
   .footer-newsletter__right {
     flex: 1;
-    max-width: 440px;
+    grid-column: 1;
+    justify-self: stretch;
+    max-width: 100%;
     width: 100%;
+  }
+
+  @media screen and (min-width: 990px) {
+    .footer-newsletter__left {
+      grid-column: 1;
+    }
+
+    .footer-newsletter__right {
+      grid-column: 2;
+      justify-self: stretch;
+      max-width: 440px;
+    }
   }
 
   .footer-newsletter__form {
@@ -604,7 +625,9 @@
   }
 
   .footer-newsletter__input-group {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
     background-color: #fffaf4;
     border: 1px solid #e4d3c4;
     border-radius: 50px;
@@ -644,13 +667,62 @@
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s;
-    flex-shrink: 0;
-    display: flex;
+    min-width: max-content;
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
   }
   .footer-newsletter__submit:hover {
     background-color: #b3734a;
+  }
+
+  @container (max-width: 560px) {
+    .footer-newsletter__left {
+      align-items: flex-start;
+    }
+
+    .footer-newsletter__right {
+      grid-column: 1;
+    }
+
+    .footer-newsletter__input-group {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+      padding: 8px;
+      border-radius: 22px;
+    }
+
+    .footer-newsletter__input {
+      width: 100%;
+      min-height: 42px;
+      padding: 0 12px;
+      text-align: left;
+    }
+
+    .footer-newsletter__submit {
+      width: 100%;
+      min-width: 0;
+      min-height: 44px;
+      padding: 10px 16px;
+    }
+  }
+
+  @container (max-width: 400px) {
+    .footer-newsletter {
+      padding: 18px 16px;
+      border-radius: 24px;
+    }
+
+    .footer-newsletter__left {
+      gap: 12px;
+    }
+
+    .footer-newsletter__icon,
+    .footer-icon--newsletter {
+      width: 52px;
+      height: 52px;
+    }
   }
 
   /* 3. Navigation/contact band */

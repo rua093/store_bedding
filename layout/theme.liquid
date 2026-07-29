@@ -219,9 +219,10 @@
           const headerComponent = document.querySelector('#header-component');
           if (headerComponent) {
             const isTouchDevice = 'ontouchstart' in window && navigator.maxTouchPoints > 0;
+            const isMobileMenuViewport = window.matchMedia('(max-width: 989px)').matches;
             const overflowList = headerComponent?.querySelector('overflow-list');
             const hasReachedMinimum = overflowList && overflowList.hasAttribute('minimum-reached');
-            headerComponent.dataset.menuStyle = isTouchDevice || hasReachedMinimum ? 'drawer' : 'menu';
+            headerComponent.dataset.menuStyle = isTouchDevice || isMobileMenuViewport || hasReachedMinimum ? 'drawer' : 'menu';
           }
         })();
       </script>

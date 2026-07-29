@@ -121,6 +121,10 @@
             {% assign first_accordion_open = false %}
             {% assign animation_index = 0 %}
             {%- for link in linklist.links -%}
+              {% assign link_title_normalized = link.title | strip | downcase %}
+              {% if link.handle == 'more' or link_title_normalized == 'more' %}
+                {% continue %}
+              {% endif %}
               {% assign animation_index = animation_index | plus: 1 %}
               {% capture link_icon_markup %}
                 {% assign title_low = link.title | downcase %}
@@ -302,6 +306,10 @@
             {%- endcomment -%}
             {% assign animation_index = 0 %}
             {%- for link in linklist.links -%}
+              {% assign link_title_normalized = link.title | strip | downcase %}
+              {% if link.handle == 'more' or link_title_normalized == 'more' %}
+                {% continue %}
+              {% endif %}
               {% assign animation_index = animation_index | plus: 1 %}
               {% capture link_icon_markup %}
                 {% assign title_low = link.title | downcase %}

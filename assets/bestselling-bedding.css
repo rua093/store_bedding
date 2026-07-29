@@ -285,8 +285,8 @@
 
   .bestselling-bedding-card__badge {
     position: absolute;
-    top: 0.72rem;
-    left: 0.72rem;
+    top: var(--custom-product-card-badge-inset, 0.72rem);
+    left: var(--custom-product-card-badge-inset, 0.72rem);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -311,11 +311,11 @@
 
   .bestselling-bedding-card__badge--tag,
   .bestselling-bedding .custom-product-card__tag-badge {
-    top: 0.72rem !important;
-    right: 0.72rem !important;
-    height: 1.8rem !important;
-    min-height: 1.8rem !important;
-    max-height: 1.8rem !important;
+    top: var(--custom-product-card-badge-inset, 0.72rem) !important;
+    right: var(--custom-product-card-badge-inset, 0.72rem) !important;
+    height: 1.7rem !important;
+    min-height: 1.7rem !important;
+    max-height: 1.7rem !important;
     box-sizing: border-box !important;
   }
 
@@ -490,8 +490,8 @@
     }
 
     .bestselling-bedding-card__badge {
-      top: 0.52rem;
-      left: 0.52rem;
+      top: var(--custom-product-card-badge-inset, 0.52rem);
+      left: var(--custom-product-card-badge-inset, 0.52rem);
       min-height: 1.55rem;
       height: 1.55rem;
       max-height: 1.55rem;
@@ -503,11 +503,11 @@
 
     .bestselling-bedding-card__badge--tag,
     .bestselling-bedding .custom-product-card__tag-badge {
-      top: 0.52rem !important;
-      right: 0.52rem !important;
-      height: 1.55rem !important;
-      min-height: 1.55rem !important;
-      max-height: 1.55rem !important;
+      top: var(--custom-product-card-badge-inset, 0.52rem) !important;
+      right: var(--custom-product-card-badge-inset, 0.52rem) !important;
+      height: 1.45rem !important;
+      min-height: 1.45rem !important;
+      max-height: 1.45rem !important;
       box-sizing: border-box !important;
     }
 
@@ -522,5 +522,22 @@
 
     .bestselling-bedding-card__compare {
       font-size: 0.78rem;
+    }
+  }
+
+  @container (max-width: 210px) {
+    .bestselling-bedding-card__badge {
+      min-height: 1.45rem;
+      height: 1.45rem;
+      max-height: 1.45rem;
+      padding-inline: 0.42rem;
+      font-size: 0.58rem;
+    }
+
+    .bestselling-bedding-card__badge--tag,
+    .bestselling-bedding .custom-product-card__tag-badge {
+      height: 1.45rem !important;
+      min-height: 1.45rem !important;
+      max-height: 1.45rem !important;
     }
   }

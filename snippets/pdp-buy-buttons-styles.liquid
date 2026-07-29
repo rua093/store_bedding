@@ -10,6 +10,10 @@
     --buy-box-background: rgba(255, 250, 244, 0.8);
     --buy-box-border: rgba(92, 61, 42, 0.1);
     --buy-box-shadow: none;
+    --pdp-buy-buttons-gap: clamp(8px, 1.6cqi, 12px);
+    --pdp-quantity-column: minmax(116px, 124px);
+
+    container-type: inline-size;
   }
 
   .product-information--main-product .product-details--main-product .buy-buttons-block,
@@ -170,6 +174,7 @@
   }
 
   .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-trust-badges {
+    container-type: inline-size;
     grid-column: 1 / -1;
     display: grid;
     gap: 14px;
@@ -184,37 +189,42 @@
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0;
+    justify-items: stretch;
+    align-items: stretch;
     width: 100%;
+    margin-inline: auto;
   }
 
   .product-information--main-product .product-details--main-product .product-form-trust-badge {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: start;
-    gap: 0.75rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.58rem;
+    width: 100%;
     min-width: 0;
     max-width: 100%;
-    padding-inline: clamp(8px, 1vw, 12px);
+    padding-inline: clamp(0.45rem, 1.2vw, 0.75rem);
     color: #000;
     position: relative;
   }
 
   .product-information--main-product .product-details--main-product .product-form-trust-badge:not(:last-child)::after {
     content: '';
+    display: block;
     position: absolute;
-    top: 0.1rem;
-    right: -7px;
+    top: 0.18rem;
+    right: 0;
     width: 1px;
-    height: calc(100% - 0.2rem);
-    background: linear-gradient(180deg, rgba(184, 115, 69, 0) 0%, rgba(184, 115, 69, 0.18) 16%, rgba(184, 115, 69, 0.18) 84%, rgba(184, 115, 69, 0) 100%);
+    height: calc(100% - 0.36rem);
+    background: rgba(184, 115, 69, 0.16);
   }
 
   .product-information--main-product .product-details--main-product .product-form-trust-badge__icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 1.65rem;
-    height: 1.65rem;
+    width: 1.45rem;
+    height: 1.45rem;
     color: #000000;
   }
 
@@ -232,10 +242,13 @@
 
   .product-information--main-product .product-details--main-product .product-form-trust-badge__title {
     color: #000000;
-    font-size: clamp(0.78rem, 0.88vw, 0.92rem);
+    font-size: clamp(0.76rem, 1.25vw, 0.9rem);
     line-height: 1.12;
-    overflow-wrap: anywhere;
+    white-space: normal;
+    text-wrap: balance;
+    overflow-wrap: normal;
     word-break: normal;
+    hyphens: none;
   }
 
   .product-information--main-product .product-details--main-product .product-form-trust-badge__meta {
@@ -245,15 +258,16 @@
   }
 
   .product-information--main-product .product-details--main-product .product-form-trust-badges__note {
-    display: inline-flex;
+    display: flex;
+    position: static;
     align-items: center;
     justify-content: center;
-    gap: 0.7rem;
+    gap: 0.5rem;
     width: 100%;
     min-width: 0;
-    min-height: 2.95rem;
+    min-height: 2.6rem;
     margin-inline: 0;
-    padding: 0.85rem 1rem;
+    padding: 0.68rem 1rem;
     border-radius: 14px;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 246, 237, 0.92) 100%);
     border: 1px solid rgba(184, 115, 69, 0.12);
@@ -270,6 +284,7 @@
     justify-content: center;
     width: 1rem;
     height: 1rem;
+    flex: 0 0 auto;
     color: #000000;
   }
 
@@ -362,7 +377,8 @@
       .product-details--main-product.product-details--has-amazon-customizer
       .buy-buttons-block
       .product-form-buttons {
-      grid-template-columns: clamp(124px, 21%, 144px) minmax(0, 1fr);
+      grid-template-columns: var(--pdp-quantity-column) minmax(0, 1fr);
+      column-gap: var(--pdp-buy-buttons-gap);
     }
 
     .product-information--main-product
@@ -372,11 +388,15 @@
       > .product-form-customize {
       grid-column: 2;
       grid-row: 2;
+      margin-inline-start: 0;
     }
   }
 
   @media screen and (min-width: 990px) and (max-width: 1120px) {
-    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons {
+    .product-information--main-product
+      .product-details--main-product:not(.product-details--has-amazon-customizer)
+      .buy-buttons-block
+      .product-form-buttons {
       grid-template-columns: minmax(0, 1fr);
       row-gap: 12px;
       column-gap: 0;
@@ -396,6 +416,142 @@
     .product-information--main-product .product-details--main-product .product-form-trust-badge__title {
       font-size: clamp(0.84rem, 1.3vw, 0.94rem);
       line-height: 1.24;
+    }
+  }
+
+  @container (max-width: 560px) {
+    .product-information--main-product .product-details--main-product .product-form-trust-badges__items {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 12px;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-inline: 0;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge::after {
+      display: none;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge__icon {
+      flex: 0 0 auto;
+      width: 18px;
+      height: 18px;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge__title {
+      font-size: clamp(0.8rem, 2.4cqi, 0.92rem);
+      line-height: 1.25;
+      overflow-wrap: normal;
+      word-break: keep-all;
+      hyphens: none;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badges__note {
+      display: flex;
+      position: static;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 0;
+      padding: 0.72rem 1rem;
+      border-radius: 10px;
+      font-size: clamp(0.82rem, 2.5cqi, 0.92rem);
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badges__note-icon {
+      position: static;
+      transform: none;
+      width: 0.9rem;
+      height: 0.9rem;
+      flex: 0 0 auto;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badges__note > span:not(.product-form-trust-badges__note-icon) {
+      display: inline;
+      flex: 0 1 auto;
+      min-width: 0;
+      max-width: 100%;
+      text-wrap: balance;
+    }
+  }
+
+  @media screen and (min-width: 900px) and (max-width: 989px) {
+    .product-information--main-product .product-details--main-product .product-form-trust-badges__note {
+      display: flex;
+      position: static;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      text-align: center;
+      padding-inline: 1rem;
+      font-size: 0.9rem;
+      line-height: 1.35;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badges__note-icon {
+      position: static;
+      transform: none;
+      flex: 0 0 auto;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badges__note > span:not(.product-form-trust-badges__note-icon) {
+      display: inline;
+      flex: 0 1 auto;
+      max-width: 22rem;
+      margin-inline: 0;
+    }
+  }
+
+  @container (max-width: 380px) {
+    .product-information--main-product .product-details--main-product .product-form-trust-badges__items {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 10px;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge {
+      gap: 6px;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge__icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge__title {
+      font-size: 0.78rem;
+    }
+  }
+
+  @container (max-width: 340px) {
+    .product-information--main-product .product-details--main-product .buy-buttons-block {
+      --pdp-buy-buttons-gap: 10px;
+    }
+
+    .product-information--main-product
+      .product-details--main-product.product-details--has-amazon-customizer
+      .buy-buttons-block
+      .product-form-buttons {
+      grid-template-columns: minmax(0, 1fr);
+      column-gap: 0;
+    }
+
+    .product-information--main-product
+      .product-details--main-product.product-details--has-amazon-customizer
+      .buy-buttons-block
+      .product-form-buttons
+      > .quantity-selector-wrapper,
+    .product-information--main-product
+      .product-details--main-product.product-details--has-amazon-customizer
+      .buy-buttons-block
+      .product-form-buttons
+      > .product-form-customize {
+      grid-column: 1 / -1;
     }
   }
 
@@ -420,7 +576,8 @@
       .product-details--main-product.product-details--has-amazon-customizer
       .buy-buttons-block
       .product-form-buttons {
-      grid-template-columns: clamp(124px, 21%, 144px) minmax(0, 1fr);
+      grid-template-columns: var(--pdp-quantity-column) minmax(0, 1fr);
+      column-gap: var(--pdp-buy-buttons-gap);
     }
 
     .product-information--main-product
@@ -429,6 +586,7 @@
       .product-form-buttons
       > .quantity-selector-wrapper {
       grid-column: 1;
+      min-width: 0;
     }
 
     .product-information--main-product
@@ -437,6 +595,7 @@
       .product-form-buttons
       > .product-form-customize {
       grid-column: 2;
+      min-width: 0;
     }
   }
 
@@ -528,15 +687,21 @@
       font-size: clamp(0.82rem, 3.4vw, 0.92rem);
       line-height: 1.25;
       white-space: normal;
-      overflow-wrap: anywhere;
-      hyphens: auto;
+      overflow-wrap: normal;
+      word-break: keep-all;
+      hyphens: none;
     }
 
     .product-information--main-product .product-details--main-product .product-form-trust-badges__note {
       margin-top: 2px;
-      padding: 10px 12px;
-      font-size: clamp(0.86rem, 3.5vw, 0.95rem);
-      line-height: 1.35;
+      padding: 0.68rem 0.85rem;
+      font-size: clamp(0.8rem, 3.2vw, 0.88rem);
+      line-height: 1.32;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badges__note-icon {
+      position: static;
+      transform: none;
     }
   }
 

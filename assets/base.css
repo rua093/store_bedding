@@ -12,6 +12,12 @@ body {
   font-variation-settings: 'slnt' 0;
 }
 
+html,
+body,
+.page-wrapper {
+  overflow-x: clip;
+}
+
 :root {
   --hover-lift-amount: 4px;
   --hover-scale-amount: 1.03;
