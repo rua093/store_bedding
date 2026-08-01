@@ -1,0 +1,448 @@
+{% comment %}
+  Exclusive 10% Off Daily Limited Orders FOMO Widget
+{% endcomment %}
+
+<div class="exclusive-fomo-wrapper" data-exclusive-fomo>
+  <button
+    type="button"
+    class="exclusive-fomo__trigger button-unstyled"
+    aria-expanded="false"
+    aria-label="Get 10% off for first 30 daily orders"
+    data-fomo-trigger
+  >
+    <span class="exclusive-fomo__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+        <line x1="7" y1="7" x2="7.01" y2="7"></line>
+      </svg>
+    </span>
+
+    <span class="exclusive-fomo__title">
+      Get <strong>10% OFF</strong> for first <strong>30 orders</strong> today
+    </span>
+
+    <span class="exclusive-fomo__caret" aria-hidden="true">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m5 7 5 5 5-5"></path>
+      </svg>
+    </span>
+  </button>
+
+  <div class="exclusive-fomo__panel" hidden data-fomo-panel>
+    <div class="exclusive-fomo__header">
+      <span class="exclusive-fomo__fire-icon">🔥</span>
+      <span class="exclusive-fomo__spots-text">
+        Only <strong data-fomo-spots-count>--</strong> / 30 spots remaining today!
+      </span>
+    </div>
+
+    <div class="exclusive-fomo__progress-container">
+      <div class="exclusive-fomo__progress-bar" data-fomo-progress-bar style="width: 0%;"></div>
+    </div>
+
+    <div class="exclusive-fomo__timer-row">
+      <div class="exclusive-fomo__timer-label">
+        <span class="exclusive-fomo__timer-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </span>
+        <span>Resets in:</span>
+      </div>
+
+      <div class="exclusive-fomo__countdown" data-fomo-countdown>
+        <span class="exclusive-fomo__time-unit">
+          <strong data-fomo-hours>00</strong>
+          <small>hrs</small>
+        </span>
+        <span class="exclusive-fomo__colon">:</span>
+        <span class="exclusive-fomo__time-unit">
+          <strong data-fomo-minutes>00</strong>
+          <small>mins</small>
+        </span>
+        <span class="exclusive-fomo__colon">:</span>
+        <span class="exclusive-fomo__time-unit">
+          <strong data-fomo-seconds>00</strong>
+          <small>secs</small>
+        </span>
+      </div>
+    </div>
+
+    <div class="exclusive-fomo__code-row">
+      <div class="exclusive-fomo__code-box">
+        <span class="exclusive-fomo__code-label">Use code:</span>
+        <code class="exclusive-fomo__code" data-fomo-code>DAILY10</code>
+      </div>
+      <button type="button" class="exclusive-fomo__copy-btn button-unstyled" data-fomo-copy-btn>
+        Copy code
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .exclusive-fomo-wrapper {
+    display: inline-flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .exclusive-fomo__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    width: fit-content;
+    max-width: 100%;
+    font-size: 0.88rem;
+    line-height: 1.4;
+    color: #000000;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    font-family: var(--font-body--family);
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .exclusive-fomo__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: 0 0 1.25rem;
+    margin-inline-end: 0.4rem;
+    color: #FC5732;
+  }
+
+  .exclusive-fomo__icon svg {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  .exclusive-fomo__title {
+    color: #000000;
+    font-size: 0.88rem;
+  }
+
+  .exclusive-fomo__title strong {
+    font-weight: 700;
+  }
+
+  .exclusive-fomo__caret {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.82rem;
+    height: 0.82rem;
+    color: #000000;
+    flex: 0 0 auto;
+    margin-inline-start: 0.35rem;
+    transition: transform 0.2s ease;
+    transform: rotate(0deg);
+  }
+
+  .exclusive-fomo__caret svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .exclusive-fomo__trigger[aria-expanded="true"] .exclusive-fomo__caret {
+    transform: rotate(180deg);
+  }
+
+  /* Panel Styling */
+  .exclusive-fomo__panel {
+    margin-top: 0.6rem;
+    padding: 0.95rem 1.05rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .exclusive-fomo__panel[hidden] {
+    display: none !important;
+  }
+
+  .exclusive-fomo__header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.86rem;
+    color: #171717;
+  }
+
+  .exclusive-fomo__fire-icon {
+    font-size: 1.05rem;
+  }
+
+  .exclusive-fomo__spots-text strong {
+    color: #FC5732;
+    font-weight: 700;
+  }
+
+  .exclusive-fomo__progress-container {
+    width: 100%;
+    height: 7px;
+    background: #F2EFEA;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .exclusive-fomo__progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #FC5732 0%, #E03E1B 100%);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  .exclusive-fomo__timer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.2rem;
+    border-top: 1px dashed rgba(0, 0, 0, 0.08);
+    font-size: 0.84rem;
+  }
+
+  .exclusive-fomo__timer-label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: #555555;
+  }
+
+  .exclusive-fomo__timer-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.1rem;
+    height: 1.1rem;
+    color: #FC5732;
+  }
+
+  .exclusive-fomo__timer-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .exclusive-fomo__countdown {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .exclusive-fomo__time-unit {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.15rem;
+    background: #F8F6F2;
+    padding: 0.2rem 0.45rem;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .exclusive-fomo__time-unit strong {
+    color: #171717;
+    font-weight: 700;
+    font-size: 0.88rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .exclusive-fomo__time-unit small {
+    color: #777777;
+    font-size: 0.72rem;
+  }
+
+  .exclusive-fomo__colon {
+    color: #888888;
+    font-weight: 700;
+  }
+
+  .exclusive-fomo__code-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #FFF6F3;
+    border: 1px stroke #FC5732;
+    border: 1px dashed rgba(252, 87, 50, 0.35);
+    padding: 0.45rem 0.75rem;
+    border-radius: 8px;
+  }
+
+  .exclusive-fomo__code-box {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.84rem;
+  }
+
+  .exclusive-fomo__code-label {
+    color: #555555;
+  }
+
+  .exclusive-fomo__code {
+    font-family: var(--font-body--family), monospace;
+    font-weight: 800;
+    color: #FC5732;
+    letter-spacing: 0.05em;
+    font-size: 0.9rem;
+  }
+
+  .exclusive-fomo__copy-btn {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #FC5732;
+    background: #ffffff;
+    border: 1px solid rgba(252, 87, 50, 0.3);
+    padding: 0.22rem 0.6rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+  .exclusive-fomo__copy-btn:hover {
+    background: #FC5732;
+    color: #ffffff;
+  }
+  }
+</style>
+
+<script>
+  (() => {
+    const initExclusiveFomo = () => {
+      document.querySelectorAll('[data-exclusive-fomo]').forEach((container) => {
+        if (container.dataset.initialized === 'true') return;
+        container.dataset.initialized = 'true';
+
+        const trigger = container.querySelector('[data-fomo-trigger]');
+        const panel = container.querySelector('[data-fomo-panel]');
+        const spotsText = container.querySelector('[data-fomo-spots-count]');
+        const progressBar = container.querySelector('[data-fomo-progress-bar]');
+
+        const hoursEl = container.querySelector('[data-fomo-hours]');
+        const minsEl = container.querySelector('[data-fomo-minutes]');
+        const secsEl = container.querySelector('[data-fomo-seconds]');
+
+        const copyBtn = container.querySelector('[data-fomo-copy-btn]');
+        const codeEl = container.querySelector('[data-fomo-code]');
+
+        // Toggle panel
+        if (trigger && panel) {
+          trigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+            trigger.setAttribute('aria-expanded', (!isExpanded).toString());
+            if (isExpanded) {
+              panel.setAttribute('hidden', '');
+            } else {
+              panel.removeAttribute('hidden');
+            }
+          });
+        }
+
+        // Copy discount code
+        if (copyBtn && codeEl) {
+          copyBtn.addEventListener('click', () => {
+            const codeText = codeEl.textContent.trim();
+            navigator.clipboard.writeText(codeText).then(() => {
+              const originalText = copyBtn.textContent;
+              copyBtn.textContent = 'Copied! ✓';
+              copyBtn.style.background = '#FC5732';
+              copyBtn.style.color = '#ffffff';
+
+              setTimeout(() => {
+                copyBtn.textContent = originalText;
+                copyBtn.style.background = '';
+                copyBtn.style.color = '';
+              }, 2000);
+            });
+          });
+        }
+
+        // --- Deterministic Pseudo-Random Spots Logic ---
+        // 24 hours / 4 = 6 intervals
+        // Total spots = 30
+        // In each interval, subtract a pseudo-random number between 1 and 5
+        const calculateRemainingSpots = () => {
+          const now = new Date();
+          const year = now.getFullYear();
+          const month = now.getMonth() + 1;
+          const date = now.getDate();
+          const currentHour = now.getHours();
+
+          // Current 4-hour window index (0 to 5)
+          const currentIntervalIndex = Math.floor(currentHour / 4);
+
+          // Simple deterministic hash based on date
+          const dateSeed = year * 10000 + month * 100 + date;
+
+          const getIntervalReduction = (idx) => {
+            // Seeded pseudo-random 1 to 5
+            const x = Math.sin(dateSeed + idx * 7919) * 10000;
+            const rand = x - Math.floor(x);
+            return Math.floor(rand * 5) + 1; // 1, 2, 3, 4, or 5
+          };
+
+          let totalReduced = 0;
+          for (let i = 0; i <= currentIntervalIndex; i++) {
+            totalReduced += getIntervalReduction(i);
+          }
+
+          let remaining = 30 - totalReduced;
+          if (remaining < 2) remaining = 2; // Keep at least 2 spots remaining
+          return remaining;
+        };
+
+        const updateSpotsUI = () => {
+          const spots = calculateRemainingSpots();
+          if (spotsText) spotsText.textContent = spots;
+          if (progressBar) {
+            const percentage = Math.round((spots / 30) * 100);
+            progressBar.style.width = `${percentage}%`;
+          }
+        };
+
+        // --- Countdown Timer to Midnight ---
+        const updateCountdown = () => {
+          const now = new Date();
+          const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+          const diffSeconds = Math.floor((midnight.getTime() - now.getTime()) / 1000);
+
+          if (diffSeconds <= 0) {
+            updateSpotsUI(); // Day reset
+            return;
+          }
+
+          const hours = Math.floor(diffSeconds / 3600);
+          const mins = Math.floor((diffSeconds % 3600) / 60);
+          const secs = diffSeconds % 60;
+
+          if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+          if (minsEl) minsEl.textContent = String(mins).padStart(2, '0');
+          if (secsEl) secsEl.textContent = String(secs).padStart(2, '0');
+        };
+
+        updateSpotsUI();
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+      });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initExclusiveFomo);
+    } else {
+      initExclusiveFomo();
+    }
+
+    document.addEventListener('shopify:section:load', initExclusiveFomo);
+  })();
+</script>

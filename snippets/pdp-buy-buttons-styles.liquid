@@ -345,12 +345,72 @@
   .product-information--main-product
     .product-details--main-product.product-details--has-amazon-customizer
     .buy-buttons-block
+    color: #000000;
+  }
+
+  .product-information--main-product .product-details--main-product .product-form-trust-badges__note-icon :is(svg, img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .product-information--main-product
+    .product-details--main-product.product-details--has-amazon-customizer
+    > .group-block
+    > .group-block-content
+    > .shopify-app-block {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    clip: auto !important;
+    clip-path: none !important;
+    white-space: normal !important;
+    border: 0 !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .product-information--main-product
+    .product-details--main-product.product-details--has-amazon-customizer
+    > .group-block
+    > .group-block-content
+    > .shopify-app-block
+    .amzcustom-open {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  .product-information--main-product
+    .product-details--main-product.product-details--has-amazon-customizer
+    .buy-buttons-block
+    .product-form-customize__button {
+    background: #e56a45;
+    border-color: #e56a45;
+    color: #fffaf4;
+    box-shadow: none;
+  }
+
+  .product-information--main-product
+    .product-details--main-product.product-details--has-amazon-customizer
+    .buy-buttons-block
     .product-form-customize__button:hover:not([disabled]) {
     background: #d45c38;
     border-color: #d45c38;
   }
 
-  @media screen and (min-width: 990px) {
+  @media screen and (min-width: 1151px) {
     .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons {
       grid-template-columns: clamp(124px, 21%, 144px) minmax(0, 1fr) minmax(0, 1fr);
       column-gap: 12px;
@@ -392,30 +452,50 @@
     }
   }
 
-  @media screen and (min-width: 990px) and (max-width: 1120px) {
-    .product-information--main-product
-      .product-details--main-product:not(.product-details--has-amazon-customizer)
-      .buy-buttons-block
-      .product-form-buttons {
-      grid-template-columns: minmax(0, 1fr);
-      row-gap: 12px;
-      column-gap: 0;
+  @media screen and (min-width: 750px) and (max-width: 1150px) {
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons {
+      grid-template-columns: var(--pdp-quantity-column) minmax(0, 1fr) !important;
+      column-gap: var(--pdp-buy-buttons-gap) !important;
+      row-gap: 12px !important;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .quantity-selector-wrapper {
+      grid-column: 1 !important;
+      grid-row: 2 !important;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > :is(span:has(.add-to-cart-button), .product-form-customize) {
+      grid-column: 2 !important;
+      grid-row: 2 !important;
+    }
+
+    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons > .accelerated-checkout-block {
+      grid-column: 1 / -1 !important;
+      grid-row: 3 !important;
     }
 
     .product-information--main-product .product-details--main-product .product-form-trust-badges__items {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 10px 12px !important;
     }
 
     .product-information--main-product .product-details--main-product .product-form-trust-badge {
-      align-items: flex-start;
-      gap: 8px;
-      padding-inline: 0;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      gap: 8px !important;
+      padding-inline: 0 !important;
+      text-align: left !important;
     }
 
-    .product-information--main-product .product-details--main-product .product-form-trust-badge__title {
-      font-size: clamp(0.84rem, 1.3vw, 0.94rem);
-      line-height: 1.24;
+    .product-information--main-product .product-details--main-product .product-form-trust-badge::after {
+      display: none !important;
+    }
+
+    .product-information--main-product .product-details--main-product .product-form-trust-badge__icon {
+      flex: 0 0 auto !important;
+      width: 18px !important;
+      height: 18px !important;
     }
   }
 
@@ -566,42 +646,6 @@
     }
 
     .product-information--main-product .product-details--main-product .product-form-trust-badges {
-      margin-top: 16px;
-      padding-top: 14px;
-    }
-  }
-
-  @media screen and (min-width: 750px) and (max-width: 989px) {
-    .product-information--main-product
-      .product-details--main-product.product-details--has-amazon-customizer
-      .buy-buttons-block
-      .product-form-buttons {
-      grid-template-columns: var(--pdp-quantity-column) minmax(0, 1fr);
-      column-gap: var(--pdp-buy-buttons-gap);
-    }
-
-    .product-information--main-product
-      .product-details--main-product.product-details--has-amazon-customizer
-      .buy-buttons-block
-      .product-form-buttons
-      > .quantity-selector-wrapper {
-      grid-column: 1;
-      min-width: 0;
-    }
-
-    .product-information--main-product
-      .product-details--main-product.product-details--has-amazon-customizer
-      .buy-buttons-block
-      .product-form-buttons
-      > .product-form-customize {
-      grid-column: 2;
-      min-width: 0;
-    }
-  }
-
-  @media screen and (max-width: 749px) {
-    .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons {
-      grid-template-columns: minmax(0, 1fr);
       column-gap: 0;
       row-gap: 12px;
     }

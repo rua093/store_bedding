@@ -161,22 +161,19 @@
 </div>
 {%- if render_product_callouts -%}
   <div class="price-callouts">
+    {% render 'buy-more-save-more', product: product_resource %}
     {% render 'product-delivery-estimate', product: product_resource, section_id: section_id %}
-    <div class="price-discount-message">
-      <span class="price-discount-message__icon" aria-hidden="true">
-        {{- 'icon-discount.svg' | inline_asset_content -}}
-      </span>
-      <span>Get updates & <strong>exclusive discounts</strong></span>
-    </div>
+    {% render 'exclusive-discount-fomo' %}
     <div class="price-policy-note">
       <span class="price-policy-note__icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 3 5 6v6c0 4.7 2.9 7.9 7 9 4.1-1.1 7-4.3 7-9V6l-7-3Z"/>
-          <path d="m9.5 12 1.7 1.7L14.9 10"/>
+          <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+          <path d="m3.3 7 8.7 5 8.7-5"/>
+          <path d="M12 22V12"/>
         </svg>
       </span>
       <span class="price-policy-note__copy">
-        <span>Shipping calculated at checkout</span>
+        <span><strong>Free shipping</strong> on all orders</span>
       </span>
     </div>
   </div>

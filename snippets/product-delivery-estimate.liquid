@@ -35,7 +35,9 @@
         <span class="product-delivery-estimate__country-label">Deliver to:</span>
         <span class="product-delivery-estimate__country-name">{{ localization.country.name }}</span>
         <span class="product-delivery-estimate__country-caret" aria-hidden="true">
-          {{- 'icon-caret.svg' | inline_asset_content -}}
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m5 7 5 5 5-5"></path>
+          </svg>
         </span>
       </button>
 
@@ -71,6 +73,7 @@
       type="button"
       class="product-delivery-estimate__shipping-line button-unstyled"
       aria-label="View delivery timeline"
+      aria-expanded="false"
     >
       <span class="product-delivery-estimate__icon" aria-hidden="true">
         <svg
@@ -93,6 +96,12 @@
       <span class="product-delivery-estimate__copy">
         <span class="product-delivery-estimate__label">Estimated delivery:</span>
         <strong class="product-delivery-estimate__range" data-delivery-date-range></strong>
+      </span>
+
+      <span class="product-delivery-estimate__caret" aria-hidden="true">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m5 7 5 5 5-5"></path>
+        </svg>
       </span>
     </button>
 
@@ -223,11 +232,15 @@
 
   .product-delivery-estimate__country-caret {
     display: inline-flex;
-    width: 0.85rem;
-    height: 0.85rem;
+    align-items: center;
+    justify-content: center;
+    width: 0.82rem;
+    height: 0.82rem;
     color: #000000;
     flex: 0 0 auto;
+    margin-inline-start: 0.35rem;
     transition: transform 180ms ease;
+    transform: rotate(0deg);
   }
 
   .product-delivery-estimate__country-caret :is(svg, img) {
@@ -284,15 +297,15 @@
     align-items: center;
     justify-content: center;
     width: 1.25rem;
-    height: 0.88rem;
+    height: 1.25rem;
     flex: 0 0 1.25rem;
     margin-inline-end: 0.4rem;
     color: #000000;
   }
 
   .product-delivery-estimate__icon svg {
-    width: 100%;
-    height: 100%;
+    width: 1.15rem;
+    height: 1.15rem;
   }
 
   .product-delivery-estimate__copy {
@@ -322,11 +335,11 @@
     box-sizing: border-box;
     margin-top: 0.65rem;
     padding: 1.1rem 1.1rem 1rem;
-    border: var(--style-border-popover);
-    border-radius: 1.35rem;
-    box-shadow: var(--shadow-popover);
-    background: #fffdfb;
-    color: #4f4238;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    background: #ffffff;
+    color: #171717;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     justify-items: stretch;
@@ -336,8 +349,28 @@
     display: none;
   }
 
-  .product-delivery-estimate__shipping-popover:is(:hover, :focus-within) .product-delivery-estimate__popover {
+  .product-delivery-estimate__shipping-line[aria-expanded="true"] + .product-delivery-estimate__popover {
     display: grid;
+  }
+
+  .product-delivery-estimate__caret {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.82rem;
+    height: 0.82rem;
+    margin-inline-start: 0.35rem;
+    color: #000000;
+    transition: transform 0.2s ease;
+  }
+
+  .product-delivery-estimate__caret svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .product-delivery-estimate__shipping-line[aria-expanded="true"] .product-delivery-estimate__caret {
+    transform: rotate(180deg);
   }
 
   .product-delivery-estimate__journey {
@@ -509,7 +542,31 @@
 
     .product-delivery-estimate__popover {
       padding: 1rem 0.95rem;
-      border-radius: 1.1rem;
+      border-radius: 10px;
     }
   }
 {% endstyle %}
+
+<script>
+  (() => {
+    const initShippingToggle = () => {
+      document.querySelectorAll('.product-delivery-estimate__shipping-line').forEach((btn) => {
+        if (btn.dataset.toggleInit === 'true') return;
+        btn.dataset.toggleInit = 'true';
+
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+          btn.setAttribute('aria-expanded', (!isExpanded).toString());
+        });
+      });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initShippingToggle);
+    } else {
+      initShippingToggle();
+    }
+    document.addEventListener('shopify:section:load', initShippingToggle);
+  })();
+</script>

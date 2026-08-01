@@ -1,0 +1,88 @@
+{% comment %}
+  Buy More, Save More Volume Discount Tier Rows (Compact Auto-Apply Suffix)
+{% endcomment %}
+
+<div class="buy-more-save-more-group">
+  <div class="price-discount-tier">
+    <span class="price-discount-tier__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 12 20 22 4 22 4 12"></polyline>
+        <rect x="2" y="7" width="20" height="5"></rect>
+        <line x1="12" y1="22" x2="12" y2="7"></line>
+        <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+        <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+      </svg>
+    </span>
+    <span class="price-discount-tier__text">
+      Buy <strong>2 items</strong>: <strong class="discount-highlight">Get 2% Off</strong> <span class="discount-auto-note">(Auto applied)</span>
+    </span>
+  </div>
+
+  <div class="price-discount-tier">
+    <span class="price-discount-tier__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 12 20 22 4 22 4 12"></polyline>
+        <rect x="2" y="7" width="20" height="5"></rect>
+        <line x1="12" y1="22" x2="12" y2="7"></line>
+        <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+        <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+      </svg>
+    </span>
+    <span class="price-discount-tier__text">
+      Buy <strong>5+ items</strong>: <strong class="discount-highlight">Get 6% Off</strong> <span class="discount-auto-note">(Auto applied)</span>
+    </span>
+  </div>
+</div>
+
+<style>
+  .buy-more-save-more-group {
+    display: contents;
+  }
+
+  .price-discount-tier {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    width: fit-content;
+    max-width: 100%;
+    font-size: 0.88rem;
+    line-height: 1.4;
+    color: #000000;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    font-family: var(--font-body--family);
+    user-select: text;
+  }
+
+  .price-discount-tier__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: 0 0 1.25rem;
+    margin-inline-end: 0.4rem;
+    color: #FC5732;
+  }
+
+  .price-discount-tier__icon svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    max-width: none;
+    max-height: none;
+  }
+
+  .price-discount-tier .discount-highlight {
+    color: #FC5732;
+    font-weight: 700;
+  }
+
+  .price-discount-tier .discount-auto-note {
+    color: #777777;
+    font-size: 0.8rem;
+    font-weight: 400;
+    margin-inline-start: 0.3rem;
+  }
+</style>
