@@ -242,7 +242,7 @@
     --border-radius: 18px;
 
     position: relative;
-    overflow: hidden;
+    overflow: visible !important;
     border-radius: 18px;
     aspect-ratio: 1 / 1.02;
     background: linear-gradient(180deg, #f2e4d8 0%, #ead6c3 100%);
@@ -255,11 +255,13 @@
   .bestselling-bedding-card__placeholder-svg {
     width: 100%;
     height: 100%;
+    border-radius: 18px;
   }
 
   .bestselling-bedding-card__image {
     display: block;
     object-fit: cover;
+    border-radius: 18px;
     transition: opacity 850ms ease
     , transform 1100ms ease
     , filter 900ms ease;
@@ -312,7 +314,7 @@
   .bestselling-bedding-card__badge--tag,
   .bestselling-bedding .custom-product-card__tag-badge {
     top: var(--custom-product-card-badge-inset, 0.72rem) !important;
-    right: var(--custom-product-card-badge-inset, 0.72rem) !important;
+    right: calc(-0.72rem - 6px) !important;
     height: 1.7rem !important;
     min-height: 1.7rem !important;
     max-height: 1.7rem !important;
@@ -504,7 +506,7 @@
     .bestselling-bedding-card__badge--tag,
     .bestselling-bedding .custom-product-card__tag-badge {
       top: var(--custom-product-card-badge-inset, 0.52rem) !important;
-      right: var(--custom-product-card-badge-inset, 0.52rem) !important;
+      right: calc(-0.58rem - 5px) !important;
       height: 1.45rem !important;
       min-height: 1.45rem !important;
       max-height: 1.45rem !important;
