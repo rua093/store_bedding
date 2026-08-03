@@ -15,7 +15,7 @@
         "mission": {
           "type": "content_row",
           "settings": {
-            "image": "shopify://shop_images/anh_2.png",
+            "image": "shopify://shop_images/img3.webp",
             "image_alt": "",
             "image_position": "left",
             "kicker": "OUR MISSION",
@@ -28,7 +28,7 @@
         "story": {
           "type": "content_row",
           "settings": {
-            "image": "shopify://shop_images/anh_3.png",
+            "image": "shopify://shop_images/img1.webp",
             "image_alt": "",
             "image_position": "right",
             "kicker": "OUR STORY",
@@ -41,7 +41,7 @@
         "approach": {
           "type": "content_row",
           "settings": {
-            "image": "shopify://shop_images/anh_4.png",
+            "image": "shopify://shop_images/img5.webp",
             "image_alt": "",
             "image_position": "left",
             "kicker": "OUR APPROACH",
@@ -58,7 +58,7 @@
         "approach"
       ],
       "settings": {
-        "hero_image": "shopify://shop_images/anh_1.png",
+        "hero_image": "shopify://shop_images/hero_banner_mobile.webp",
         "hero_image_alt": "",
         "hero_title": "About JEMINISE",
         "hero_subtitle": "At JEMINISE, we believe comfort should feel personal.\nFrom cozy blankets to meaningful quilts and comforters, every piece is designed to bring warmth, personality, and a sense of home into everyday living.",
