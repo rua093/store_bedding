@@ -553,37 +553,66 @@
       closeModal();
     }
 
+    // Auto popup for first-time visitors after 5 seconds
+    const STORAGE_KEY = 'bedding_discount_popup_seen';
+    let autoPopupTimer = null;
+
+    try {
+      const hasSeenPopup = localStorage.getItem(STORAGE_KEY);
+      if (!hasSeenPopup && !overlay.classList.contains('is-active')) {
+        autoPopupTimer = setTimeout(function() {
+          openModal();
+          try {
+            localStorage.setItem(STORAGE_KEY, 'true');
+          } catch (e) {}
+        }, 5000);
+      }
+    } catch (e) {}
+
+    function markPopupSeen() {
+      try {
+        localStorage.setItem(STORAGE_KEY, 'true');
+      } catch (e) {}
+    }
+
     // Event Listeners
     tagTrigger?.addEventListener('click', function(e) {
       e.stopPropagation();
+      markPopupSeen();
       openModal();
     });
 
     tagTrigger?.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
+        markPopupSeen();
         openModal();
       }
     });
 
     tagClose?.addEventListener('click', function(e) {
       e.stopPropagation();
+      if (autoPopupTimer) clearTimeout(autoPopupTimer);
+      markPopupSeen();
       hideTag();
     });
 
     modalClose?.addEventListener('click', function(e) {
       e.stopPropagation();
+      markPopupSeen();
       closeModal();
     });
 
     overlay?.addEventListener('click', function(e) {
       if (e.target === overlay) {
+        markPopupSeen();
         closeModal();
       }
     });
 
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && overlay.classList.contains('is-active')) {
+        markPopupSeen();
         closeModal();
       }
     });

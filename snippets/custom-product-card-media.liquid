@@ -50,53 +50,18 @@
   </div>
 {% endif %}
 
-{% if custom_tag_label != blank %}
-  <span class="custom-product-card__tag-badge custom-product-card__tag-badge--{{ custom_tag_type }}{% if contextual_badge_class != blank %} {{ contextual_badge_class }}--tag{% endif %}">
-    <svg class="custom-product-card__tag-bg" viewBox="0 0 100 27" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-      <defs>
-        <linearGradient id="tagBgGrad-{{ product.id }}" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#FF3B30" />
-          <stop offset="40%" stop-color="#D31D1D" />
-          <stop offset="100%" stop-color="#8B0707" />
-        </linearGradient>
-        <linearGradient id="tagGlint-{{ product.id }}" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.6" />
-          <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.15" />
-          <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.4" />
-        </linearGradient>
-      </defs>
-      <!-- Base 3D Body -->
-      <path d="M 11 2 H 98 A 2 2 0 0 1 100 4 V 27 H 11 A 2.5 2.5 0 0 1 9.2 24.1 L 2.8 14.8 A 2.2 2.2 0 0 1 2.8 12.2 L 9.2 2.9 A 2.5 2.5 0 0 1 11 2 Z" fill="url(#tagBgGrad-{{ product.id }})" />
-      <!-- Top 3D Curved Light Bevel Highlight -->
-      <path d="M 12 3 H 98" fill="none" stroke="url(#tagGlint-{{ product.id }})" stroke-width="1.1" stroke-linecap="round" />
-      <!-- Inner Contour Stroke -->
-      <path d="M 12.5 4.5 H 98.5 V 22.5 H 12.5 A 1.5 1.5 0 0 1 11.2 21.8 L 5.2 14.2 A 1.2 1.2 0 0 1 5.2 12.8 L 11.2 5.2 A 1.5 1.5 0 0 1 12.5 4.5 Z" fill="none" stroke="#FFFFFF" stroke-width="0.95" stroke-linecap="round" stroke-linejoin="round" opacity="0.85" />
-    </svg>
-
-    <span class="custom-product-card__tag-shimmer" aria-hidden="true"></span>
-
-    <span class="custom-product-card__tag-body">
-      {% if custom_tag_type == 'bestseller' %}
-        <svg class="custom-product-card__tag-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path fill="currentColor" d="M12 23c-4.97 0-9-3.58-9-8 0-4.19 3.23-7.6 7.15-8.45.47-.1.85.34.73.8-.76 2.87.5 4.65 2.12 4.65 1.5 0 2.5-1.5 2.5-3 0-1.85-1.2-3.45-1.2-3.45a.75.75 0 0 1 .84-1.14C17.5 5.5 21 9.5 21 15c0 4.42-4.03 8-9 8z"/>
-        </svg>
-      {% elsif custom_tag_type == 'new' %}
-        <svg class="custom-product-card__tag-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path fill="currentColor" d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/>
-        </svg>
-      {% elsif custom_tag_type == 'hot' %}
-        <svg class="custom-product-card__tag-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path fill="currentColor" d="M13 2L3 14h7v8l10-12h-7L13 2z"/>
-        </svg>
-      {% else %}
-        <svg class="custom-product-card__tag-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-        </svg>
-      {% endif %}
-      <span class="custom-product-card__tag-text">{{ custom_tag_label }}</span>
-    </span>
-  </span>
-{% endif %}
+{% liquid
+  assign contextual_badge_tag_class = ''
+  if contextual_badge_class != blank
+    assign contextual_badge_tag_class = contextual_badge_class | append: '--tag'
+  endif
+%}
+{% render 'product-tag-badge',
+  product: product,
+  custom_tag_label: custom_tag_label,
+  custom_tag_type: custom_tag_type,
+  badge_class: contextual_badge_tag_class
+%}
 
 {% if show_sale_badge %}
   <span class="custom-product-card__badge custom-product-card__badge--sale{% if contextual_badge_class != blank %} {{ contextual_badge_class }} {{ contextual_badge_class }}--sale{% endif %}">

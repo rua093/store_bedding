@@ -106,4 +106,41 @@
       min-width: 56px;
     }
   }
+
+  /* PDP Main Product Media Tag Badge */
+  .product-media-gallery__tag-badge {
+    top: 12px !important;
+    right: 12px !important;
+    z-index: 12 !important;
+    position: absolute !important;
+  }
+
+  .product-media-gallery__tag-badge::after {
+    display: none !important;
+  }
+
+  @media screen and (min-width: 990px) {
+    .product-media-gallery__tag-badge {
+      top: 14px !important;
+      right: 14px !important;
+      height: 2.1rem !important;
+      min-height: 2.1rem !important;
+      max-height: 2.1rem !important;
+    }
+
+    .product-media-gallery__tag-badge .custom-product-card__tag-body {
+      padding: 0 0.85rem 0 0.95rem !important;
+      gap: 0.38rem !important;
+    }
+
+    .product-media-gallery__tag-badge .custom-product-card__tag-icon {
+      width: 0.92rem !important;
+      height: 0.92rem !important;
+    }
+
+    .product-media-gallery__tag-badge .custom-product-card__tag-text {
+      font-size: 0.85rem !important;
+      font-weight: 500 !important;
+    }
+  }
 {% endstylesheet %}

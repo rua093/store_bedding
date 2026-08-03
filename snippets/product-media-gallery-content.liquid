@@ -25,9 +25,14 @@
   ></script>
 {%- endif -%}
 {%- liquid
-  assign selected_product = closest.product
+  assign selected_product = closest.product | default: product
   assign selected_variant_media = selected_product.selected_or_first_available_variant.featured_media
   assign first_3d_model = selected_product.media | where: 'media_type', 'model' | first
+
+  capture pdp_tag_badge
+    render 'product-tag-badge', product: selected_product, badge_class: 'product-media-gallery__tag-badge'
+  endcapture
+  assign pdp_tag_badge = pdp_tag_badge | strip
 
   if block_settings.hide_variants
     assign variant_images = selected_product.images | where: 'attached_to_variant?', true | map: 'src'
@@ -947,7 +952,8 @@
       slide_count: sorted_media.size,
       slideshow_arrows: slideshow_arrows,
       arrows_position: icons_position,
-      controls: controls
+      controls: controls,
+      badge: pdp_tag_badge
     %}
 
     {% if media_presentation == 'grid' %}
@@ -974,6 +980,9 @@
               data-focal-point="{{ media.presentation.focal_point }}"
             {% endif %}
           >
+            {%- if forloop.first -%}
+              {{ pdp_tag_badge }}
+            {%- endif -%}
             {%- if block_settings.zoom and media.media_type == 'image' -%}
               <button
                 type="button"
