@@ -63,8 +63,14 @@
         {% endif %}
 
         {% if predictive_search.performed %}
+          {%- liquid
+            assign search_terms_wildcard = predictive_search.terms
+            unless search_terms_wildcard contains '*'
+              assign search_terms_wildcard = search_terms_wildcard | append: '*'
+            endunless
+          -%}
           {%- if predictive_search.resources.products.size > 0 -%}
-            {% capture view_all_url %}{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}{% endcapture %}
+            {% capture view_all_url %}{{ routes.search_url }}?q={{ search_terms_wildcard | url_encode }}&type=product&options%5Bprefix%5D=last{% endcapture %}
             {%- liquid
               assign title = 'Top Results'
               assign products = predictive_search.resources.products
@@ -73,7 +79,7 @@
           {%- elsif search_results_count > 0 -%}
             <div class="jem-search-results-header">
               <h4 class="predictive-search-results__title">Top Results</h4>
-              <a class="jem-search-results-header__link" href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}">
+              <a class="jem-search-results-header__link" href="{{ routes.search_url }}?q={{ search_terms_wildcard | url_encode }}&type=product&options%5Bprefix%5D=last">
                 View all results
               </a>
             </div>

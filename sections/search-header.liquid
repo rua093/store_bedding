@@ -63,7 +63,7 @@
           {% endif %}
           <h1 class="jem-search-hero__title">
             {% if search.performed and search.terms != blank %}
-              Search results for "{{ search.terms | escape }}"
+              Search results for "{{ search.terms | remove: '*' | escape }}"
             {% elsif heading_text != blank %}
               {{ heading_text }}
             {% endif %}
@@ -74,7 +74,7 @@
 
           {% if search.performed and search.terms != blank and section.settings.show_results_count %}
             <p class="jem-search-hero__meta">
-              {{ search.results_count }} results for "{{ search.terms | escape }}"
+              {{ search.results_count }} results for "{{ search.terms | remove: '*' | escape }}"
             </p>
           {% elsif fallback_text != blank %}
             <p class="jem-search-hero__meta">{{ fallback_text }}</p>

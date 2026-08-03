@@ -11,6 +11,21 @@ import { debounce } from '@theme/utilities';
 class SearchPageInputComponent extends Component {
   requiredRefs = ['searchPageInput'];
 
+  connectedCallback() {
+    super.connectedCallback();
+    const form = this.closest('form');
+    if (form) {
+      form.addEventListener('submit', this.#handleSubmit);
+    }
+  }
+
+  #handleSubmit = () => {
+    const searchInput = this.refs.searchPageInput;
+    if (searchInput && searchInput.value.trim() && !searchInput.value.trim().endsWith('*')) {
+      searchInput.value = searchInput.value.trim() + '*';
+    }
+  };
+
   /**
    * Handles the keydown event on the search input and resets the search when
    * empty and Escape is pressed.
