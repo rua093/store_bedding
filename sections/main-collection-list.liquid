@@ -211,15 +211,15 @@
   .ui-test-collection-list .collection-list-compact-banner {
     position: relative;
     display: block;
-    min-height: 210px;
-    max-height: 230px;
+    min-height: 230px;
+    max-height: 250px;
     overflow: hidden;
     width: calc(100% + 40px);
     margin-inline: -20px;
-    border: 1px solid rgba(192, 168, 144, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 22px;
-    background: linear-gradient(135deg, #fffdfa 0%, #f6ede1 100%);
-    box-shadow: 0 12px 28px rgba(109, 83, 60, 0.06);
+    background: #18120e;
+    box-shadow: 0 16px 38px rgba(36, 26, 18, 0.14);
     isolation: isolate;
   }
 
@@ -230,10 +230,10 @@
     z-index: 1;
     background: linear-gradient(
       90deg,
-      rgba(250, 246, 239, 0.88) 0%,
-      rgba(250, 246, 239, 0.62) 24%,
-      rgba(250, 246, 239, 0.28) 42%,
-      rgba(250, 246, 239, 0) 58%
+      rgba(20, 14, 10, 0.92) 0%,
+      rgba(22, 16, 12, 0.78) 38%,
+      rgba(24, 17, 12, 0.38) 68%,
+      rgba(24, 17, 12, 0.05) 100%
     );
     pointer-events: none;
   }
@@ -245,49 +245,48 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 7px;
-    width: min(34%, 29rem);
-    padding: 24px 34px 24px 38px;
+    align-items: flex-start;
+    gap: 8px;
+    width: min(46%, 34rem);
+    padding: 28px 24px 28px 48px;
     min-width: 0;
   }
 
   .ui-test-collection-list .collection-list-compact-banner__content::before {
-    content: '';
-    position: absolute;
-    inset: 14px -18px 14px 12px;
-    z-index: -1;
-    border-radius: 18px;
-    background: linear-gradient(90deg, rgba(255, 251, 246, 0.46) 0%, rgba(255, 249, 243, 0.24) 56%, rgba(255, 249, 243, 0.08) 100%);
-    backdrop-filter: blur(2px);
-    pointer-events: none;
+    display: none;
   }
 
   .ui-test-collection-list .collection-list-compact-banner__eyebrow {
     margin: 0;
-    color: #b0835f;
-    font-size: 0.62rem;
-    font-weight: 650;
-    letter-spacing: 0.18em;
+    color: #e5a880;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     line-height: 1;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
   }
 
   .ui-test-collection-list .collection-list-compact-banner__heading {
     margin: 0;
-    color: #30251f;
-    font-size: clamp(38px, 3.2vw, 52px);
-    line-height: 1;
-    letter-spacing: -0.04em;
+    font-family: var(--font-heading--family), Georgia, serif;
+    color: #ffffff;
+    font-size: clamp(38px, 3.6vw, 48px);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
     text-wrap: balance;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
   }
 
   .ui-test-collection-list .collection-list-compact-banner__text {
-    margin: 0;
-    max-width: 29ch;
-    color: #47382f;
-    font-size: 0.92rem;
-    line-height: 1.4;
-    font-weight: 600;
+    margin: 2px 0 6px 0;
+    max-width: 34ch;
+    color: rgba(255, 250, 244, 0.88);
+    font-size: 0.94rem;
+    line-height: 1.45;
+    font-weight: 400;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
   }
 
   .ui-test-collection-list .collection-list-compact-banner__button {
@@ -295,26 +294,44 @@
     align-items: center;
     justify-content: center;
     width: fit-content;
-    min-width: 100px;
-    min-height: 37px;
-    padding: 0.48rem 1.25rem;
-    border-radius: 4px;
-    background: #241d19;
+    min-height: 38px;
+    padding: 0.55rem 1.4rem;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.32);
     color: #ffffff;
-    font-size: 0.84rem;
+    font-size: 0.85rem;
     font-weight: 600;
+    letter-spacing: 0.03em;
     text-decoration: none;
-    box-shadow: 0 6px 12px rgba(36, 29, 25, 0.12);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
     transition:
-      background-color 0.2s ease,
-      transform 0.2s ease,
-      box-shadow 0.2s ease;
+      background-color 0.25s ease,
+      color 0.25s ease,
+      border-color 0.25s ease,
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+
+  .ui-test-collection-list .collection-list-compact-banner__button::after {
+    content: '\2192';
+    margin-left: 7px;
+    font-size: 0.95rem;
+    transition: transform 0.25s ease;
   }
 
   .ui-test-collection-list .collection-list-compact-banner__button:hover {
-    background: #302722;
-    transform: translateY(-1px);
-    box-shadow: 0 7px 12px rgba(36, 29, 25, 0.13);
+    background: #ffffff;
+    color: #1c1410;
+    border-color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  }
+
+  .ui-test-collection-list .collection-list-compact-banner__button:hover::after {
+    transform: translateX(4px);
   }
 
   .ui-test-collection-list .collection-list-compact-banner__media {
@@ -328,8 +345,8 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 66% center;
-    filter: brightness(1.1) contrast(0.95) saturate(0.98);
+    object-position: 65% center;
+    filter: brightness(1.02) contrast(1.02);
   }
 
   .ui-test-collection-list .collection-list-grid-anchor {
@@ -535,13 +552,13 @@
     }
 
     .ui-test-collection-list .collection-list-compact-banner__content {
-      width: min(48%, 26rem);
-      padding: 20px 24px;
+      width: min(52%, 28rem);
+      padding: 20px 20px 20px 28px;
       gap: 8px;
     }
 
     .ui-test-collection-list .collection-list-compact-banner__content::before {
-      inset: 12px -10px 12px 8px;
+      display: none;
     }
 
     .ui-test-collection-list .collection-list-compact-banner__heading {
@@ -594,6 +611,10 @@
       margin-inline: -12px;
     }
 
+    .ui-test-collection-list .collection-list-compact-banner::before {
+      background: linear-gradient(180deg, rgba(18, 12, 8, 0.92) 0%, rgba(22, 15, 10, 0.84) 60%, rgba(18, 12, 8, 0.45) 100%);
+    }
+
     .ui-test-collection-list .collection-list-compact-banner__content {
       width: min(100%, 19.5rem);
       padding: 20px 20px 18px;
@@ -601,9 +622,7 @@
     }
 
     .ui-test-collection-list .collection-list-compact-banner__content::before {
-      inset: 10px -6px 10px 4px;
-      border-radius: 16px;
-      background: linear-gradient(90deg, rgba(255, 251, 246, 0.5) 0%, rgba(255, 249, 243, 0.28) 60%, rgba(255, 249, 243, 0.1) 100%);
+      display: none;
     }
 
     .ui-test-collection-list .collection-list-compact-banner__heading {
