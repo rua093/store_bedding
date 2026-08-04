@@ -2128,7 +2128,7 @@
       {
         "type": "checkbox",
         "id": "enable_discount_popup",
-        "label": "Enable 10% OFF Side Tag & Popup",
+        "label": "Enable 15% OFF Side Tag & Popup",
         "default": true,
         "info": "Show floating side discount tag and newsletter modal popup on homepage"
       },
@@ -2136,13 +2136,13 @@
         "type": "text",
         "id": "discount_popup_tag_text",
         "label": "Side Tag Text",
-        "default": "10% OFF"
+        "default": "15% OFF"
       },
       {
         "type": "text",
         "id": "discount_popup_title",
         "label": "Popup Title",
-        "default": "Get 10% Off Your Order"
+        "default": "Get 15% Off Your Order"
       }
     ]
   }
