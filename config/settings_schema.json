@@ -2143,6 +2143,13 @@
         "id": "discount_popup_title",
         "label": "Popup Title",
         "default": "Get 15% Off Your Order"
+      },
+      {
+        "type": "text",
+        "id": "discount_popup_code",
+        "label": "Discount Code",
+        "default": "WELCOME15",
+        "info": "The 15% discount code displayed in the success popup after subscription"
       }
     ]
   }

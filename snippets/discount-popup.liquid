@@ -146,7 +146,23 @@
             </div>
             <h3 class="discount-modal__success-title">Thank You for Subscribing!</h3>
             <p class="discount-modal__success-desc">
-              Your 15% discount code has been sent to your email address. Check your inbox to claim your discount!
+              Here is your exclusive 15% discount code for your first order:
+            </p>
+            <div class="discount-modal__code-box">
+              <span class="discount-modal__code-text" id="discount-modal-code-val">
+                {{ settings.discount_popup_code | default: 'WELCOME15' }}
+              </span>
+              <button
+                type="button"
+                class="discount-modal__copy-btn"
+                id="discount-modal-copy-btn"
+                aria-label="Copy discount code"
+              >
+                Copy Code
+              </button>
+            </div>
+            <p class="discount-modal__success-subnote">
+              Use this code at checkout to claim your 15% discount!
             </p>
           </div>
 
@@ -521,6 +537,48 @@
       line-height: 1.45;
     }
 
+    .discount-modal__code-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #fffaf4;
+      border: 1.5px dashed #c9855a;
+      border-radius: 12px;
+      padding: 10px 16px;
+      margin: 14px 0 8px 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .discount-modal__code-text {
+      font-family: monospace, sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #c9855a;
+      letter-spacing: 0.08em;
+    }
+    .discount-modal__copy-btn {
+      background-color: #c9855a;
+      color: #ffffff;
+      border: none;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.15s ease;
+    }
+    .discount-modal__copy-btn:hover {
+      background-color: #b3734a;
+    }
+    .discount-modal__copy-btn.is-copied {
+      background-color: #2e7d32;
+    }
+    .discount-modal__success-subnote {
+      font-size: 0.8rem;
+      color: #6f5f52;
+      margin: 4px 0 0 0;
+    }
+
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -630,6 +688,7 @@
 
       // Auto popup for first-time visitors after 5 seconds
       const STORAGE_KEY = 'bedding_discount_popup_seen';
+      const SUB_STORAGE_KEY = 'bedding_discount_just_subscribed';
       let autoPopupTimer = null;
 
       try {
@@ -650,7 +709,7 @@
         } catch (e) {}
       }
 
-      // AJAX Form Submission without page reload
+      // Elements
       const form = document.getElementById('discount-popup-customer-form');
       const formContent = document.getElementById('discount-modal-form-content');
       const successBlock = document.getElementById('discount-modal-success');
@@ -658,11 +717,45 @@
       const submitText = submitBtn?.querySelector('.discount-modal__submit-text');
       const submitSpinner = submitBtn?.querySelector('.discount-modal__submit-spinner');
       const errorMsg = document.getElementById('discount-modal-error');
+      const copyBtn = document.getElementById('discount-modal-copy-btn');
+      const codeVal = document.getElementById('discount-modal-code-val');
 
+      // Check if user just subscribed (either via page reload or server post)
+      try {
+        const justSubscribed = sessionStorage.getItem(SUB_STORAGE_KEY);
+        if (justSubscribed === 'true' || overlay.classList.contains('is-active')) {
+          if (formContent) formContent.style.display = 'none';
+          if (successBlock) successBlock.style.display = 'flex';
+          openModal();
+          sessionStorage.removeItem(SUB_STORAGE_KEY);
+        }
+      } catch (e) {}
+
+      // Copy Discount Code Handler
+      if (copyBtn && codeVal) {
+        copyBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          const codeText = codeVal.textContent.trim();
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(codeText).then(function () {
+              copyBtn.textContent = 'Copied! ✓';
+              copyBtn.classList.add('is-copied');
+              setTimeout(function () {
+                copyBtn.textContent = 'Copy Code';
+                copyBtn.classList.remove('is-copied');
+              }, 2000);
+            });
+          }
+        });
+      }
+
+      // Form Submission
       if (form) {
         form.addEventListener('submit', function (e) {
-          e.preventDefault();
           markPopupSeen();
+          try {
+            sessionStorage.setItem(SUB_STORAGE_KEY, 'true');
+          } catch (e) {}
 
           if (errorMsg) {
             errorMsg.style.display = 'none';
@@ -673,8 +766,8 @@
           if (submitText) submitText.style.display = 'none';
           if (submitSpinner) submitSpinner.style.display = 'inline-flex';
 
+          // Try AJAX first
           const formData = new FormData(form);
-
           fetch(form.action, {
             method: 'POST',
             body: formData,
@@ -698,22 +791,20 @@
               if (submitBtn) submitBtn.disabled = false;
               if (submitText) submitText.style.display = 'inline';
               if (submitSpinner) submitSpinner.style.display = 'none';
+              try {
+                sessionStorage.removeItem(SUB_STORAGE_KEY);
+              } catch (e) {}
             } else {
               if (formContent) formContent.style.display = 'none';
               if (successBlock) {
                 successBlock.style.display = 'flex';
                 successBlock.classList.add('is-animated');
               }
+              openModal();
             }
           })
           .catch(function () {
-            if (errorMsg) {
-              errorMsg.textContent = 'Something went wrong. Please try again.';
-              errorMsg.style.display = 'block';
-            }
-            if (submitBtn) submitBtn.disabled = false;
-            if (submitText) submitText.style.display = 'inline';
-            if (submitSpinner) submitSpinner.style.display = 'none';
+            // Fallback for native submit if fetch network fails
           });
         });
       }
