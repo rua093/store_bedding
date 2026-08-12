@@ -4139,3 +4139,146 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
   }
 }
 
+/* ==========================================================================
+   Homepage Reviews Section (Judge.me Carousel) - Luxury Aesthetic Overhaul
+   ========================================================================== */
+.section-wrapper:has([class*="judge_me_reviews"], [class*="jdgm"]),
+.shopify-section:has(.jdgm-carousel-wrapper),
+.color-custom-1782702718c3bf58b5 {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Luxury ambient background decoration */
+.section-wrapper:has([class*="judge_me_reviews"], [class*="jdgm"]) .section {
+  background: radial-gradient(circle at 50% 30%, rgba(255, 252, 248, 0.95) 0%, rgba(247, 237, 227, 0.9) 60%, rgba(242, 229, 219, 0.96) 100%) !important;
+  position: relative;
+}
+
+/* Floating watermark quote mark decor */
+.section-wrapper:has([class*="judge_me_reviews"], [class*="jdgm"]) .section::before {
+  content: '“';
+  position: absolute;
+  top: 15px;
+  left: 5%;
+  font-family: var(--font-primary--family), Georgia, serif;
+  font-size: 240px;
+  line-height: 1;
+  color: #c9855a;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 1;
+  user-select: none;
+}
+
+.section-wrapper:has([class*="judge_me_reviews"], [class*="jdgm"]) .section::after {
+  content: '”';
+  position: absolute;
+  bottom: -30px;
+  right: 5%;
+  font-family: var(--font-primary--family), Georgia, serif;
+  font-size: 240px;
+  line-height: 1;
+  color: #c9855a;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 1;
+  user-select: none;
+}
+
+/* Judge.me Container Header Polish */
+.jdgm-carousel-title,
+[class*="jdgm-carousel"] [class*="title"],
+[class*="jdgm-carousel"] h2,
+.jdgm-carousel-wrapper .jdgm-carousel__header {
+  font-family: var(--font-primary--family), serif !important;
+  font-size: clamp(1.8rem, 3.2vw, 2.4rem) !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.01em !important;
+  color: #2f261f !important;
+  text-align: center !important;
+  margin-bottom: 8px !important;
+  position: relative;
+  z-index: 2;
+}
+
+/* Average Rating Badge Container */
+.jdgm-carousel-wrapper .jdgm-all-reviews-rating,
+.jdgm-carousel__sub-header,
+[class*="jdgm-carousel"] [class*="sub-header"],
+[class*="jdgm-carousel"] [class*="rating"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 6px 18px !important;
+  background: linear-gradient(135deg, #ffffff 0%, #fcf6f0 100%) !important;
+  border: 1px solid rgba(201, 133, 90, 0.22) !important;
+  border-radius: 50px !important;
+  box-shadow: 0 4px 15px rgba(47, 38, 31, 0.05) !important;
+  margin: 0 auto 32px !important;
+  font-size: 0.92rem !important;
+  color: #6f5f52 !important;
+}
+
+/* Judge.me Individual Card Styling */
+.jdgm-carousel-item,
+.jdgm-carousel-card,
+[class*="jdgm-carousel"] [class*="card"],
+[class*="jdgm-carousel"] [class*="item"] {
+  background: #ffffff !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(201, 133, 90, 0.14) !important;
+  box-shadow: 0 14px 40px rgba(47, 38, 31, 0.06) !important;
+  padding: 20px !important;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  position: relative;
+  z-index: 2;
+  overflow: hidden !important;
+}
+
+.jdgm-carousel-item:hover,
+.jdgm-carousel-card:hover,
+[class*="jdgm-carousel"] [class*="card"]:hover,
+[class*="jdgm-carousel"] [class*="item"]:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 22px 50px rgba(47, 38, 31, 0.12) !important;
+  border-color: rgba(201, 133, 90, 0.38) !important;
+}
+
+/* Review Images inside cards */
+.jdgm-carousel-item-img,
+.jdgm-carousel-card-img,
+[class*="jdgm-carousel"] img {
+  border-radius: 16px !important;
+  object-fit: cover !important;
+  background-color: #f7eee7 !important;
+}
+
+/* Navigation arrows styling */
+.jdgm-carousel__arrow,
+[class*="jdgm-carousel"] [class*="arrow"],
+[class*="jdgm-carousel"] button[class*="nav"] {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  border: 1px solid #e4d3c4 !important;
+  color: #2f261f !important;
+  box-shadow: 0 6px 20px rgba(47, 38, 31, 0.08) !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 5 !important;
+}
+
+.jdgm-carousel__arrow:hover,
+[class*="jdgm-carousel"] [class*="arrow"]:hover,
+[class*="jdgm-carousel"] button[class*="nav"]:hover {
+  background: #c9855a !important;
+  color: #ffffff !important;
+  border-color: #c9855a !important;
+  transform: scale(1.08) !important;
+  box-shadow: 0 10px 25px rgba(201, 133, 90, 0.3) !important;
+}

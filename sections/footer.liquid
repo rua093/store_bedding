@@ -72,8 +72,7 @@
           </div>
         </div>
         <div class="footer-newsletter__right">
-          {% form 'customer'
-            , class: 'footer-newsletter__form' %}
+          {% form 'customer', class: 'footer-newsletter__form' %}
             <input
               type="hidden"
               name="contact[tags]"
@@ -165,6 +164,46 @@
                 </span>
                 <span>30 N Gould St, Sheridan, WY 82801, United States</span>
               </li>
+              {%- if section.settings.show_amazon_store and section.settings.amazon_store_url != blank -%}
+                <li class="footer-amazon-contact-item">
+                  <span class="contact-icon">
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                      <line x1="3" y1="6" x2="21" y2="6" />
+                      <path d="M16 10a4 4 0 0 1-8 0" />
+                    </svg>
+                  </span>
+                  <a
+                    href="{{ section.settings.amazon_store_url }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="footer-amazon-contact-link"
+                  >
+                    <span>{{ section.settings.amazon_store_text | default: 'Amazon Store' }}</span>
+                    <svg
+                      class="footer-amazon-contact-arrow"
+                      width="11"
+                      height="11"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <line x1="7" y1="17" x2="17" y2="7"></line>
+                      <polyline points="7 7 17 7 17 17"></polyline>
+                    </svg>
+                  </a>
+                </li>
+              {%- endif -%}
             </ul>
           </div>
         </div>
@@ -310,10 +349,10 @@
 
     <!-- Bottom Group: Social Row & Copyright Row -->
     <div class="footer-bottom-group">
-      <!-- 4. Social row riêng -->
+      <!-- 4. Social row -->
       <div class="footer-social">
         {% if has_instagram_url %}
-          <a href="{{ instagram_url }}" class="footer-social__item" target="_blank" rel="noopener noreferrer">
+          <a href="{{ instagram_url }}" class="footer-social__item" target="_blank" rel="noopener noreferrer" title="Instagram">
             <div class="footer-social__icon">
               <img
                 src="{{ 'ig.svg' | asset_url }}"
@@ -324,7 +363,7 @@
           </a>
           <div class="footer-social__divider"></div>
         {% endif %}
-        <a href="{{ facebook_url }}" class="footer-social__item" target="_blank" rel="noopener noreferrer">
+        <a href="{{ facebook_url }}" class="footer-social__item" target="_blank" rel="noopener noreferrer" title="Facebook">
           <div class="footer-social__icon">
             <img
               src="{{ 'fb.svg' | asset_url }}"
@@ -334,7 +373,7 @@
           </div>
         </a>
         <div class="footer-social__divider"></div>
-        <a href="{{ pinterest_url }}" class="footer-social__item" target="_blank" rel="noopener noreferrer">
+        <a href="{{ pinterest_url }}" class="footer-social__item" target="_blank" rel="noopener noreferrer" title="Pinterest">
           <div class="footer-social__icon">
             <img
               src="{{ 'pinterest.svg' | asset_url }}"
@@ -344,7 +383,7 @@
           </div>
         </a>
         <div class="footer-social__divider"></div>
-        <a href="{{ tiktok_url }}" class="footer-social__item" target="_blank" rel="noopener noreferrer">
+        <a href="{{ tiktok_url }}" class="footer-social__item" target="_blank" rel="noopener noreferrer" title="TikTok">
           <div class="footer-social__icon">
             <img
               src="{{ 'tiktok.svg' | asset_url }}"
@@ -354,7 +393,7 @@
           </div>
         </a>
         <div class="footer-social__divider"></div>
-        <a href="{{ youtube_url }}" class="footer-social__item" target="_blank" rel="noopener noreferrer">
+        <a href="{{ youtube_url }}" class="footer-social__item" target="_blank" rel="noopener noreferrer" title="YouTube">
           <div class="footer-social__icon">
             <img
               src="{{ 'ytb.svg' | asset_url }}"
@@ -399,11 +438,9 @@
 
   .footer-wrapper {
     color: #2f261f;
-    font-family: var(--font-primary--family)
-    , sans-serif;
+    font-family: var(--font-primary--family), sans-serif;
     position: relative;
     margin-top: 24px;
-    /* Push slightly away from section above */
   }
 
   /* Top Section (Brand + Newsletter) */
@@ -495,8 +532,7 @@
     display: block;
   }
   .footer-brand__tagline {
-    font-family: var(--font-primary--family)
-    , serif;
+    font-family: var(--font-primary--family), serif;
     font-size: clamp(1.05rem, 1.5vw, 1.1rem);
     line-height: 1.5;
     color: #8a7566;
@@ -584,8 +620,7 @@
   }
 
   .footer-newsletter__title {
-    font-family: var(--font-primary--family)
-    , serif;
+    font-family: var(--font-primary--family), serif;
     font-size: clamp(1.2rem, 2vw, 1.35rem);
     font-weight: 500;
     margin: 0;
@@ -632,8 +667,7 @@
     border: 1px solid #e4d3c4;
     border-radius: 50px;
     padding: 4px 4px 4px 18px;
-    transition: border-color 0.3s
-    , box-shadow 0.3s;
+    transition: border-color 0.3s, box-shadow 0.3s;
     width: 100%;
     box-sizing: border-box;
   }
@@ -883,6 +917,32 @@
     flex-shrink: 0;
   }
 
+  .footer-amazon-contact-item {
+    margin-top: 2px;
+  }
+
+  .footer-amazon-contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #6f5f52;
+    text-decoration: none;
+    transition: color 0.25s;
+  }
+
+  .footer-amazon-contact-link:hover {
+    color: #c9855a;
+  }
+
+  .footer-amazon-contact-arrow {
+    flex-shrink: 0;
+    transition: transform 0.25s ease;
+  }
+
+  .footer-amazon-contact-link:hover .footer-amazon-contact-arrow {
+    transform: translate(2px, -2px);
+  }
+
   .footer-info__dot {
     color: #c9855a;
     margin: 0 4px;
@@ -901,17 +961,17 @@
     }
   }
 
-  /* Bottom Section (Socials + Copyright) */
+  /* Bottom Section (Socials, Copyright) */
   .footer-bottom-group {
     background: linear-gradient(180deg, #fbf8f4 0%, #f8f1ea 100%);
-    padding: 12px 20px 18px;
+    padding: 20px 20px 22px;
     position: relative;
     z-index: 2;
   }
 
   @media screen and (min-width: 990px) {
     .footer-bottom-group {
-      padding: 14px 48px 20px;
+      padding: 24px 48px 26px;
     }
   }
 
@@ -922,7 +982,7 @@
     justify-content: center;
     align-items: center;
     gap: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     max-width: 960px;
     margin-inline: auto;
   }
@@ -939,8 +999,7 @@
     align-items: center;
     text-decoration: none;
     color: #6f5f52;
-    transition: transform 0.3s
-    , color 0.3s;
+    transition: transform 0.3s, color 0.3s;
     min-width: 44px;
   }
 
@@ -1049,16 +1108,40 @@
           {
             "value": "page-width",
             "label": "t:options.page"
-          }, {
+          },
+          {
             "value": "full-width",
             "label": "t:options.full"
           }
         ],
         "default": "page-width"
-      }, {
+      },
+      {
         "type": "color",
         "id": "background_color",
         "label": "t:settings.background_color"
+      },
+      {
+        "type": "header",
+        "content": "Amazon Store Link"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_amazon_store",
+        "label": "Show Amazon Store Link in Contact Column",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "amazon_store_text",
+        "label": "Amazon Store Link Text",
+        "default": "Amazon Official Store"
+      },
+      {
+        "type": "text",
+        "id": "amazon_store_url",
+        "label": "Amazon Store URL",
+        "default": "https://www.amazon.com/stores/page/BBF53694-8BD9-4C60-B1CC-FE399C107224?ingress=2&lp_context_asin=B0GDDX9D8Q&lp_context_query=jeminise&visitId=e0824f67-9d6d-496a-bbfe-13c40f0aeb20&store_ref=bl_ast_dp_brandlogo_sto&ref_=ast_bln"
       }
     ]
   }
