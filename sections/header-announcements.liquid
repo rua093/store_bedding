@@ -164,24 +164,27 @@
   }
 
   .announcement-bar__marquee-separator--halloween {
-    font-size: 0.95em;
+    font-size: 0.9em;
     padding: 0 0.15rem;
-    filter: drop-shadow(0 0 4px rgba(255, 122, 0, 0.7));
-    animation: halloween-icon-pulse 2.4s ease-in-out infinite alternate;
+    opacity: 0.8;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.7));
+    transition: opacity 0.3s ease, filter 0.3s ease;
+    animation: halloween-icon-pulse 2.8s ease-in-out infinite alternate;
+  }
+
+  .announcement-bar:hover .announcement-bar__marquee-separator--halloween {
+    opacity: 1;
   }
 
   @keyframes halloween-icon-pulse {
     0% {
-      transform: scale(0.92) rotate(-6deg);
-      filter: drop-shadow(0 0 3px rgba(255, 122, 0, 0.5));
+      transform: scale(0.95) rotate(-5deg);
     }
     50% {
-      transform: scale(1.1) rotate(0deg);
-      filter: drop-shadow(0 0 6px rgba(255, 165, 0, 0.9));
+      transform: scale(1.05) rotate(0deg);
     }
     100% {
-      transform: scale(1) rotate(6deg);
-      filter: drop-shadow(0 0 5px rgba(186, 85, 211, 0.7));
+      transform: scale(1) rotate(5deg);
     }
   }
 
