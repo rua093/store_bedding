@@ -60,6 +60,12 @@
       <div class="collection-hero__placeholder" aria-hidden="true"></div>
     {% endif %}
 
+    {% if has_hero_image or uses_all_collection_fallback_bg %}
+      <h1 id="CollectionHeroTitle-{{ section.id }}" class="visually-hidden">
+        {{ collection.title | escape }}
+      </h1>
+    {% endif %}
+
     <div class="collection-hero__content">
       <div class="collection-hero__content-inner">
         <p class="collection-hero__eyebrow" aria-hidden="true">Jeminise Collection</p>
@@ -78,6 +84,20 @@
 </section>
 
 {% stylesheet %}
+  .collection-hero--has-media .collection-hero__content,
+  .collection-hero--all-fallback-bg .collection-hero__content,
+  .collection-hero--has-media .collection-hero__overlay,
+  .collection-hero--all-fallback-bg .collection-hero__overlay {
+    display: none !important;
+  }
+
+  .collection-hero--has-media,
+  .collection-hero--all-fallback-bg {
+    min-height: clamp(420px, 30vw, 520px) !important;
+    max-height: 560px !important;
+    aspect-ratio: 21 / 9;
+  }
+
   .collection-hero {
     position: relative;
     width: 100%;
@@ -281,7 +301,7 @@
   }
 
   @media screen and (max-width: 989px) {
-    .collection-hero,
+    .collection-hero:not(.collection-hero--has-media):not(.collection-hero--all-fallback-bg),
     .collection-hero__content {
       min-height: 420px;
     }
@@ -292,7 +312,7 @@
   }
 
   @media screen and (max-width: 749px) {
-    .collection-hero,
+    .collection-hero:not(.collection-hero--has-media):not(.collection-hero--all-fallback-bg),
     .collection-hero__content {
       min-height: 340px;
     }
