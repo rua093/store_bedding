@@ -1,7 +1,28 @@
 
 {% liquid
   assign announcement_background_image_url = 'bg-announcement.webp' | asset_url
-  if section.settings.background_image != blank
+
+  assign seasonal_announcement_bg = blank
+  if request.page_type == 'collection' and collection != blank
+    if collection.metafields.custom.announcement_bg != blank
+      assign seasonal_announcement_bg = collection.metafields.custom.announcement_bg | image_url: width: 2400
+    endif
+  elsif request.page_type == 'product' and product != blank
+    if product.metafields.custom.announcement_bg != blank
+      assign seasonal_announcement_bg = product.metafields.custom.announcement_bg | image_url: width: 2400
+    else
+      for col in product.collections
+        if col.metafields.custom.announcement_bg != blank
+          assign seasonal_announcement_bg = col.metafields.custom.announcement_bg | image_url: width: 2400
+          break
+        endif
+      endfor
+    endif
+  endif
+
+  if seasonal_announcement_bg != blank
+    assign announcement_background_image_url = seasonal_announcement_bg
+  elsif section.settings.background_image != blank
     assign announcement_background_image_url = section.settings.background_image | image_url: width: 2400
   endif
 %}
@@ -14,13 +35,13 @@
 
 {%- capture announcement_marquee_items -%}
   <span class="announcement-bar__marquee-item">Free Shipping On All Orders</span>
-  <span class="announcement-bar__marquee-separator announcement-bar__marquee-separator--halloween" aria-hidden="true">🎃</span>
+  <span class="announcement-bar__marquee-separator" aria-hidden="true" data-icon-default="•" data-icon-halloween="🎃"></span>
   <span class="announcement-bar__marquee-item">Made From Your Ideas</span>
-  <span class="announcement-bar__marquee-separator announcement-bar__marquee-separator--halloween" aria-hidden="true">🦇</span>
+  <span class="announcement-bar__marquee-separator" aria-hidden="true" data-icon-default="•" data-icon-halloween="🦇"></span>
   <span class="announcement-bar__marquee-item">Turn Photos, Names &amp; Favorite Memories Into Cozy Bedding</span>
-  <span class="announcement-bar__marquee-separator announcement-bar__marquee-separator--halloween" aria-hidden="true">👻</span>
+  <span class="announcement-bar__marquee-separator" aria-hidden="true" data-icon-default="•" data-icon-halloween="👻"></span>
   <span class="announcement-bar__marquee-item">Exclusive Deals &amp; Offers</span>
-  <span class="announcement-bar__marquee-separator announcement-bar__marquee-separator--halloween" aria-hidden="true">🕷️</span>
+  <span class="announcement-bar__marquee-separator" aria-hidden="true" data-icon-default="•" data-icon-halloween="🕷️"></span>
 {%- endcapture -%}
 <aside
   class="announcement-bar spacing-style section section--{{ section.settings.section_width }}"
@@ -163,16 +184,23 @@
       0 0 10px rgba(255, 122, 0, 0.6);
   }
 
-  .announcement-bar__marquee-separator--halloween {
+  .announcement-bar__marquee-separator::before {
+    content: attr(data-icon-default);
+    color: var(--announcement-text-color);
+  }
+
+  [data-seasonal-theme="halloween"] .announcement-bar__marquee-separator::before {
+    content: attr(data-icon-halloween);
     font-size: 0.9em;
     padding: 0 0.15rem;
     opacity: 0.8;
     filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.7));
     transition: opacity 0.3s ease, filter 0.3s ease;
+    display: inline-block;
     animation: halloween-icon-pulse 2.8s ease-in-out infinite alternate;
   }
 
-  .announcement-bar:hover .announcement-bar__marquee-separator--halloween {
+  [data-seasonal-theme="halloween"] .announcement-bar:hover .announcement-bar__marquee-separator::before {
     opacity: 1;
   }
 

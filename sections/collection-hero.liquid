@@ -30,7 +30,7 @@
   aria-labelledby="CollectionHeroTitle-{{ section.id }}"
 >
   <div
-    class="collection-hero{% if has_hero_image %} collection-hero--has-media{% endif %}{% if has_hero_image == false and uses_all_collection_fallback_bg == false %} collection-hero--no-media{% endif %}{% if uses_all_collection_fallback_bg %} collection-hero--all-fallback-bg{% endif %}"
+    class="collection-hero{% if has_hero_image %} collection-hero--has-media{% endif %}{% if has_hero_image == false and uses_all_collection_fallback_bg == false %} collection-hero--no-media{% endif %}{% if uses_all_collection_fallback_bg %} collection-hero--all-fallback-bg{% endif %}{% if collection.handle == 'all' %} collection-hero--hide-text{% endif %}"
     {% if uses_all_collection_fallback_bg %}
       style="--collection-hero-fallback-bg: url('{{ all_collection_fallback_bg }}');"
     {% endif %}
@@ -60,7 +60,7 @@
       <div class="collection-hero__placeholder" aria-hidden="true"></div>
     {% endif %}
 
-    {% if has_hero_image or uses_all_collection_fallback_bg %}
+    {% if collection.handle == 'all' %}
       <h1 id="CollectionHeroTitle-{{ section.id }}" class="visually-hidden">
         {{ collection.title | escape }}
       </h1>
@@ -84,10 +84,8 @@
 </section>
 
 {% stylesheet %}
-  .collection-hero--has-media .collection-hero__content,
-  .collection-hero--all-fallback-bg .collection-hero__content,
-  .collection-hero--has-media .collection-hero__overlay,
-  .collection-hero--all-fallback-bg .collection-hero__overlay {
+  .collection-hero--hide-text .collection-hero__content,
+  .collection-hero--hide-text .collection-hero__overlay {
     display: none !important;
   }
 
@@ -145,7 +143,15 @@
 
   .collection-hero__overlay {
     z-index: 1;
-    background: linear-gradient(180deg, rgb(0 0 0 / 0.16), rgb(0 0 0 / 0.34));
+    background:
+      radial-gradient(ellipse at center, rgba(0, 0, 0, 0.52) 0%, rgba(0, 0, 0, 0.32) 65%, rgba(0, 0, 0, 0.45) 100%),
+      linear-gradient(180deg, rgba(0, 0, 0, 0.22) 0%, transparent 40%, rgba(0, 0, 0, 0.42) 100%);
+  }
+
+  .collection-hero--has-media .collection-hero__content-inner {
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.38) 0%, rgba(0, 0, 0, 0) 80%);
+    padding: clamp(2rem, 4vw, 3.5rem) clamp(2rem, 6vw, 5rem);
+    border-radius: 24px;
   }
 
   .collection-hero--all-fallback-bg .collection-hero__overlay {
@@ -195,10 +201,10 @@
   line-height: 1;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: rgb(255 239 211 / 0.9);
+  color: rgb(255 239 211 / 0.95);
   text-shadow:
-    0 1px 2px rgb(0 0 0 / 0.45),
-    0 8px 24px rgb(0 0 0 / 0.32);
+    0 2px 4px rgba(0, 0, 0, 0.7),
+    0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
 .collection-hero__title {
@@ -212,12 +218,12 @@
   font-size: clamp(58px, 6.3vw, 96px);
   line-height: 0.94;
   letter-spacing: 0.012em;
-  color: #fff8ec;
-  -webkit-text-stroke: 0.45px rgb(22 14 9 / 0.62);
+  color: #ffffff;
+  -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.4);
   text-shadow:
-    0 1px 0 rgb(42 27 18 / 0.55),
-    0 3px 10px rgb(0 0 0 / 0.42),
-    0 12px 34px rgb(0 0 0 / 0.34);
+    0 2px 6px rgba(0, 0, 0, 0.85),
+    0 6px 20px rgba(0, 0, 0, 0.65),
+    0 16px 40px rgba(0, 0, 0, 0.55);
   text-wrap: balance;
 }
 

@@ -146,7 +146,32 @@
     {{ content_for_header }}
   </head>
 
-  <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
+  {% liquid
+    assign active_seasonal_theme = ''
+    if request.page_type == 'collection' and collection != blank
+      if collection.metafields.custom.seasonal_theme != blank
+        assign active_seasonal_theme = collection.metafields.custom.seasonal_theme.value | downcase | strip
+      elsif collection.handle contains 'halloween'
+        assign active_seasonal_theme = 'halloween'
+      endif
+    elsif request.page_type == 'product' and product != blank
+      if product.metafields.custom.seasonal_theme != blank
+        assign active_seasonal_theme = product.metafields.custom.seasonal_theme.value | downcase | strip
+      else
+        for col in product.collections
+          if col.metafields.custom.seasonal_theme != blank
+            assign active_seasonal_theme = col.metafields.custom.seasonal_theme.value | downcase | strip
+            break
+          elsif col.handle contains 'halloween'
+            assign active_seasonal_theme = 'halloween'
+            break
+          endif
+        endfor
+      endif
+    endif
+  %}
+
+  <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}"{% if active_seasonal_theme != blank %} data-seasonal-theme="{{ active_seasonal_theme }}"{% endif %}>
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
 
     {% if request.page_type == 'index' or template == 'index' %}
