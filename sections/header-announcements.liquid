@@ -14,13 +14,13 @@
 
 {%- capture announcement_marquee_items -%}
   <span class="announcement-bar__marquee-item">Free Shipping On All Orders</span>
-  <span class="announcement-bar__marquee-separator" aria-hidden="true">•</span>
+  <span class="announcement-bar__marquee-separator announcement-bar__marquee-separator--halloween" aria-hidden="true">🎃</span>
   <span class="announcement-bar__marquee-item">Made From Your Ideas</span>
-  <span class="announcement-bar__marquee-separator" aria-hidden="true">•</span>
+  <span class="announcement-bar__marquee-separator announcement-bar__marquee-separator--halloween" aria-hidden="true">🦇</span>
   <span class="announcement-bar__marquee-item">Turn Photos, Names &amp; Favorite Memories Into Cozy Bedding</span>
-  <span class="announcement-bar__marquee-separator" aria-hidden="true">•</span>
+  <span class="announcement-bar__marquee-separator announcement-bar__marquee-separator--halloween" aria-hidden="true">👻</span>
   <span class="announcement-bar__marquee-item">Exclusive Deals &amp; Offers</span>
-  <span class="announcement-bar__marquee-separator" aria-hidden="true">•</span>
+  <span class="announcement-bar__marquee-separator announcement-bar__marquee-separator--halloween" aria-hidden="true">🕷️</span>
 {%- endcapture -%}
 <aside
   class="announcement-bar spacing-style section section--{{ section.settings.section_width }}"
@@ -48,20 +48,20 @@
 
 {% stylesheet %}
   .announcement-bar {
-    --announcement-text-color: #2f2119;
-    --announcement-text-rgb: 47 33 25;
-    --announcement-promo-color: #8f3f24;
+    --announcement-text-color: #ffffff;
+    --announcement-text-rgb: 255 255 255;
+    --announcement-promo-color: #ffaa00;
 
     position: relative;
-    min-height: 32px;
+    min-height: 36px;
     display: flex;
     align-items: center;
     border-block-end: var(--border-bottom-width) solid var(--color-border);
     background:
-      radial-gradient(circle at top center, rgb(255 251 245 / 0.92), transparent 58%),
-      linear-gradient(180deg, #fff7ea 0%, #f7ead9 52%, #efd9c3 100%);
+      radial-gradient(circle at top center, rgba(255, 122, 0, 0.18), transparent 70%),
+      linear-gradient(90deg, #0f0718 0%, #1e0b2e 50%, #0f0718 100%);
     color: var(--announcement-text-color);
-    border-bottom-color: rgb(var(--announcement-text-rgb) / 0.16);
+    border-bottom-color: rgba(255, 122, 0, 0.4);
     overflow: hidden;
     isolation: isolate;
   }
@@ -77,19 +77,20 @@
     inset: 0;
     z-index: 0;
     background-image: var(--announcement-bg-image);
-    background-size: 100% 100%;
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 1;
+    opacity: 0.9;
   }
 
   .announcement-bar::after {
     position: absolute;
     inset-inline: 0;
     bottom: 0;
-    z-index: 0;
-    height: 1px;
-    background: rgb(var(--announcement-text-rgb) / 0.16);
+    z-index: 2;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, #ff7a00 30%, #ffaa00 50%, #ff7a00 70%, transparent 100%);
+    box-shadow: 0 0 10px rgba(255, 122, 0, 0.8);
   }
 
   .announcement-bar__slider {
@@ -133,33 +134,56 @@
     display: inline-flex;
     align-items: center;
     font-family: var(--font-heading--family);
-    font-size: clamp(0.82rem, 0.98vw, 0.98rem);
+    font-size: clamp(0.85rem, 1vw, 1.02rem);
     font-weight: 700;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.03em;
     line-height: 1.2;
     text-transform: none;
-    text-shadow: 0 1px 0 rgb(255 255 255 / 0.45);
   }
 
   .announcement-bar__marquee-item {
     color: var(--announcement-text-color);
+    text-shadow: 0 0 8px rgba(255, 122, 0, 0.7), 0 0 16px rgba(186, 85, 211, 0.5), 0 1px 3px rgba(0, 0, 0, 0.9);
+    transition: text-shadow 0.3s ease, color 0.3s ease;
+  }
+
+  .announcement-bar:hover .announcement-bar__marquee-item {
+    color: #fff4e0;
+    text-shadow: 0 0 12px rgba(255, 165, 0, 0.9), 0 0 22px rgba(186, 85, 211, 0.8), 0 1px 4px rgba(0, 0, 0, 1);
   }
 
   .announcement-bar__marquee-item--promo {
-    color: var(--announcement-promo-color);
+    color: #ffffff;
     font-weight: 800;
-    letter-spacing: 0.018em;
-    padding: 0.08rem 0.4rem;
+    letter-spacing: 0.02em;
+    padding: 0.1rem 0.5rem;
     border-radius: 999px;
-    background: rgb(255 248 239 / 0.72);
+    background: linear-gradient(135deg, rgba(255, 122, 0, 0.85) 0%, rgba(186, 85, 211, 0.85) 100%);
     box-shadow:
-      inset 0 0 0 1px rgb(176 79 47 / 0.18),
-      0 1px 4px rgb(63 34 22 / 0.08);
+      inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+      0 0 10px rgba(255, 122, 0, 0.6);
   }
 
-  .announcement-bar__marquee-separator {
-    color: rgb(var(--announcement-text-rgb) / 0.48);
-    font-size: 0.9em;
+  .announcement-bar__marquee-separator--halloween {
+    font-size: 1.15em;
+    padding: 0 0.15rem;
+    filter: drop-shadow(0 0 6px rgba(255, 122, 0, 0.8));
+    animation: halloween-icon-pulse 2.4s ease-in-out infinite alternate;
+  }
+
+  @keyframes halloween-icon-pulse {
+    0% {
+      transform: scale(0.95) rotate(-6deg);
+      filter: drop-shadow(0 0 4px rgba(255, 122, 0, 0.6));
+    }
+    50% {
+      transform: scale(1.15) rotate(0deg);
+      filter: drop-shadow(0 0 8px rgba(255, 165, 0, 1));
+    }
+    100% {
+      transform: scale(1.05) rotate(6deg);
+      filter: drop-shadow(0 0 6px rgba(186, 85, 211, 0.8));
+    }
   }
 
   .announcement-bar:hover .announcement-bar__marquee-track,
@@ -179,7 +203,7 @@
 
   @media screen and (max-width: 749px) {
     .announcement-bar {
-      min-height: 30px;
+      min-height: 32px;
     }
 
     .announcement-bar__slider {
@@ -197,11 +221,11 @@
 
     .announcement-bar__marquee-item,
     .announcement-bar__marquee-separator {
-      font-size: clamp(0.7rem, 2.45vw, 0.8rem);
+      font-size: clamp(0.75rem, 2.6vw, 0.85rem);
     }
 
     .announcement-bar__marquee-item--promo {
-      padding: 0.06rem 0.3rem;
+      padding: 0.06rem 0.35rem;
     }
   }
 
