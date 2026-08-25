@@ -24,13 +24,76 @@
 
 {% comment %} We always render this full-width, as the child blocks have width: page/full settings {% endcomment %}
 {% liquid
+  assign product_list_background_image = collection.metafields.custom.page_bg.value
+  assign has_product_list_background = false
+  assign product_list_background_tile_width = 1200
+
+  if product_list_background_image != blank
+    assign has_product_list_background = true
+    assign product_list_background_tile_width = product_list_background_image.width | divided_by: 2 | at_most: 1200
+  endif
+
   if section.settings.background_color != blank
     render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
   endif
 %}
 
+{% if product_list_background_image != blank %}
+  {% style %}
+    #shopify-section-{{ section.id }} .main-collection__background {
+      background-image: url('{{ product_list_background_image | image_url: width: 2400 }}');
+      background-repeat: repeat;
+      background-position: top center;
+      background-size: min(100%, {{ product_list_background_tile_width }}px) auto;
+    }
+
+    #shopify-section-{{ section.id }} :is(.facets-block-wrapper--horizontal, .facets-toggle) {
+      position: relative;
+      z-index: var(--layer-heightened);
+      overflow: visible;
+      color: var(--color-foreground);
+      background-color: rgb(var(--color-background-rgb) / 0.9);
+      border: 1px solid rgb(var(--color-foreground-rgb) / 0.12);
+      border-radius: max(var(--style-border-radius-md), 16px);
+      box-shadow: 0 10px 30px rgb(var(--color-foreground-rgb) / 0.08);
+      -webkit-backdrop-filter: blur(12px) saturate(1.08);
+      backdrop-filter: blur(12px) saturate(1.08);
+    }
+
+    #shopify-section-{{ section.id }} .facets-block-wrapper--horizontal {
+      padding-inline: clamp(14px, 2vw, 24px);
+    }
+
+    #shopify-section-{{ section.id }}
+      .facets-block-wrapper--horizontal
+      :is(.facets, .facets__form-wrapper, .facets__label, .products-count-wrapper) {
+      color: var(--color-foreground);
+    }
+
+    #shopify-section-{{ section.id }}
+      .facets-block-wrapper--horizontal
+      :is(.facets__label, .products-count-wrapper) {
+      font-weight: 500;
+    }
+
+    #shopify-section-{{ section.id }}
+      :is(.facets-block-wrapper--horizontal, .facets-toggle)
+      .column-picker {
+      color: rgb(var(--color-foreground-rgb) / 0.78);
+    }
+
+    #shopify-section-{{ section.id }}
+      :is(.facets-block-wrapper--horizontal, .facets-toggle)
+      .column-options__option-input:checked
+      ~ .column-picker {
+      color: var(--color-foreground);
+      background-color: rgb(var(--color-foreground-rgb) / 0.1);
+    }
+  {% endstyle %}
+{% endif %}
+
 <div
-  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  class="section-background main-collection__background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
 ></div>
 {% # theme-check-disable-next-line UnknownFilter %}
 <collection-component view-event-payload="{{ collection | standard_event_data: 'view' | escape }}">
@@ -83,7 +146,8 @@
           children: children,
           products: collection.products,
           paginate: paginate,
-          enable_infinite_scroll: section.settings.enable_infinite_scroll
+          enable_infinite_scroll: section.settings.enable_infinite_scroll,
+          transparent_grid_background: has_product_list_background
         %}
 
         <script type="application/ld+json">

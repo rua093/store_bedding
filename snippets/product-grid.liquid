@@ -7,6 +7,7 @@
   @param {string} [title] - Header of the collection or search results
   @param {string} children - List or grid of product cards
   @param {boolean} [enable_infinite_scroll] - Whether to enable infinite scroll (default: true)
+  @param {boolean} [transparent_grid_background] - Whether the grid should reveal its section background
 {%- enddoc -%}
 
 {%- liquid
@@ -83,7 +84,7 @@
   id="ResultsList"
   class="
     grid main-collection-grid
-    {%- if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}
+    {%- if section.settings.background_color != blank and transparent_grid_background == blank %} color-custom-{{ section.id }}{% endif %}
     {%- if section.settings.product_grid_width == 'full-width' %} collection-wrapper--full-width{% endif %}
     {%- if section.settings.full_width_on_mobile == true %} collection-wrapper--full-width-on-mobile{% endif %}
     spacing-style

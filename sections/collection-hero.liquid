@@ -22,6 +22,11 @@
 
   assign hero_description = collection.description | strip_html | strip
   assign hero_widths = '750, 1100, 1500, 1800, 2100, 2400, 2880, 3200, 3840'
+
+  assign is_halloween_collection = false
+  if collection.handle contains 'halloween' or collection.metafields.custom.seasonal_theme.value == 'halloween'
+    assign is_halloween_collection = true
+  endif
 %}
 
 <section
@@ -30,7 +35,7 @@
   aria-labelledby="CollectionHeroTitle-{{ section.id }}"
 >
   <div
-    class="collection-hero{% if has_hero_image %} collection-hero--has-media{% endif %}{% if has_hero_image == false and uses_all_collection_fallback_bg == false %} collection-hero--no-media{% endif %}{% if uses_all_collection_fallback_bg %} collection-hero--all-fallback-bg{% endif %}{% if collection.handle == 'all' %} collection-hero--hide-text{% endif %}"
+    class="collection-hero{% if has_hero_image %} collection-hero--has-media{% endif %}{% if has_hero_image == false and uses_all_collection_fallback_bg == false %} collection-hero--no-media{% endif %}{% if uses_all_collection_fallback_bg %} collection-hero--all-fallback-bg{% endif %}{% if is_halloween_collection %} collection-hero--hide-text{% endif %}"
     {% if uses_all_collection_fallback_bg %}
       style="--collection-hero-fallback-bg: url('{{ all_collection_fallback_bg }}');"
     {% endif %}
@@ -60,7 +65,7 @@
       <div class="collection-hero__placeholder" aria-hidden="true"></div>
     {% endif %}
 
-    {% if collection.handle == 'all' %}
+    {% if is_halloween_collection %}
       <h1 id="CollectionHeroTitle-{{ section.id }}" class="visually-hidden">
         {{ collection.title | escape }}
       </h1>
