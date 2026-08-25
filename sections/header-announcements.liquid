@@ -69,20 +69,17 @@
 
 {% stylesheet %}
   .announcement-bar {
-    --announcement-text-color: #ffffff;
-    --announcement-text-rgb: 255 255 255;
-    --announcement-promo-color: #ffaa00;
+    --announcement-text-color: #3a281a;
+    --announcement-text-rgb: 58 40 26;
+    --announcement-promo-color: #5c3b24;
 
     position: relative;
     min-height: 36px;
     display: flex;
     align-items: center;
     border-block-end: var(--border-bottom-width) solid var(--color-border);
-    background:
-      radial-gradient(circle at top center, rgba(255, 122, 0, 0.18), transparent 70%),
-      linear-gradient(90deg, #0f0718 0%, #1e0b2e 50%, #0f0718 100%);
+    background: #faebe0;
     color: var(--announcement-text-color);
-    border-bottom-color: rgba(255, 122, 0, 0.4);
     overflow: hidden;
     isolation: isolate;
   }
@@ -101,7 +98,7 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 0.9;
+    opacity: 0.95;
   }
 
   .announcement-bar::after {
@@ -110,7 +107,7 @@
     bottom: 0;
     z-index: 1;
     height: 1px;
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.06);
   }
 
   .announcement-bar__slider {
@@ -163,13 +160,13 @@
 
   .announcement-bar__marquee-item {
     color: var(--announcement-text-color);
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 4px rgba(255, 122, 0, 0.35);
-    transition: text-shadow 0.3s ease, color 0.3s ease;
+    text-shadow: none;
+    transition: color 0.3s ease;
   }
 
   .announcement-bar:hover .announcement-bar__marquee-item {
-    color: #ffffff;
-    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.9), 0 0 6px rgba(255, 122, 0, 0.5);
+    color: #120b06;
+    text-shadow: none;
   }
 
   .announcement-bar__marquee-item--promo {
@@ -186,7 +183,29 @@
 
   .announcement-bar__marquee-separator::before {
     content: attr(data-icon-default);
-    color: var(--announcement-text-color);
+    color: #6e5746;
+    font-size: 1em;
+    opacity: 0.85;
+  }
+
+  /* Halloween Theme Styles Override */
+  [data-seasonal-theme="halloween"] .announcement-bar {
+    --announcement-text-color: #ffffff;
+    --announcement-text-rgb: 255 255 255;
+    background:
+      radial-gradient(circle at top center, rgba(255, 122, 0, 0.18), transparent 70%),
+      linear-gradient(90deg, #0f0718 0%, #1e0b2e 50%, #0f0718 100%);
+    border-bottom-color: rgba(255, 122, 0, 0.4);
+  }
+
+  [data-seasonal-theme="halloween"] .announcement-bar .announcement-bar__marquee-item {
+    color: #ffffff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 4px rgba(255, 122, 0, 0.35);
+  }
+
+  [data-seasonal-theme="halloween"] .announcement-bar:hover .announcement-bar .announcement-bar__marquee-item {
+    color: #ffffff;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.9), 0 0 6px rgba(255, 122, 0, 0.5);
   }
 
   [data-seasonal-theme="halloween"] .announcement-bar__marquee-separator::before {
