@@ -12,7 +12,7 @@
     "section": {
       "type": "collection-hero",
       "settings": {
-        "all_collection_fallback_image": "shopify://shop_images/banerr-product.webp"
+        "all_collection_fallback_image": "shopify://shop_images/bg-product.webp"
       }
     },
     "main": {
