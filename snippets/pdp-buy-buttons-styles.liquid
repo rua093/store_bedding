@@ -410,6 +410,120 @@
     border-color: #d45c38;
   }
 
+  .product-form-customize__seasonal-icon {
+    display: none;
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product.product-details--has-amazon-customizer
+    .buy-buttons-block
+    .product-form-customize__button {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding-inline: 54px;
+    border: 1.5px solid #d65a38;
+    background:
+      radial-gradient(circle at 12% 50%, rgba(255, 224, 176, 0.2), transparent 22%),
+      radial-gradient(circle at 88% 50%, rgba(102, 33, 15, 0.1), transparent 20%),
+      linear-gradient(180deg, #ed7350 0%, #e15f3e 100%);
+    color: #fffaf4;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 235, 210, 0.22),
+      inset 0 -8px 18px rgba(126, 39, 18, 0.08),
+      0 8px 18px rgba(133, 50, 26, 0.14);
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.38);
+    transition:
+      transform 180ms ease,
+      border-color 180ms ease,
+      background 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product.product-details--has-amazon-customizer
+    .buy-buttons-block
+    .product-form-customize__seasonal-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    color: #4a1c10;
+    filter: drop-shadow(0 1px 0 rgba(255, 226, 175, 0.38));
+    transform: translateY(-50%);
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product.product-details--has-amazon-customizer
+    .buy-buttons-block
+    .product-form-customize__seasonal-icon--bat {
+    left: 20px;
+    width: 27px;
+    height: 20px;
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product.product-details--has-amazon-customizer
+    .buy-buttons-block
+    .product-form-customize__seasonal-icon--pumpkin {
+    right: 19px;
+    width: 24px;
+    height: 24px;
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product.product-details--has-amazon-customizer
+    .buy-buttons-block
+    .product-form-customize__seasonal-icon svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product.product-details--has-amazon-customizer
+    .buy-buttons-block
+    .product-form-customize__label {
+    position: relative;
+    z-index: 1;
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product.product-details--has-amazon-customizer
+    .buy-buttons-block
+    .product-form-customize__button:hover:not([disabled]) {
+    border-color: #c94f30;
+    background:
+      radial-gradient(circle at 12% 50%, rgba(255, 229, 187, 0.25), transparent 23%),
+      radial-gradient(circle at 88% 50%, rgba(102, 33, 15, 0.12), transparent 21%),
+      linear-gradient(180deg, #e96c48 0%, #d95737 100%);
+    color: #fffaf4;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 235, 210, 0.26),
+      inset 0 -8px 18px rgba(126, 39, 18, 0.1),
+      0 10px 22px rgba(133, 50, 26, 0.2),
+      0 0 0 3px rgba(229, 106, 69, 0.1);
+    transform: translateY(-1px);
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product.product-details--has-amazon-customizer
+    .buy-buttons-block
+    .product-form-customize__button:active:not([disabled]) {
+    transform: translateY(0);
+  }
+
   @media screen and (min-width: 1151px) {
     .product-information--main-product .product-details--main-product .buy-buttons-block .product-form-buttons {
       grid-template-columns: clamp(124px, 21%, 144px) minmax(0, 1fr) minmax(0, 1fr);

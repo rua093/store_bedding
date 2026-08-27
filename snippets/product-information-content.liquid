@@ -352,9 +352,8 @@
     }
   </style>
 {% endif %}
-
 <div
-  class="section-background{% if settings.background_color != blank %} color-custom-{{ section_id }}{% endif %}"
+  class="section-background product-information__background{% if settings.background_color != blank %} color-custom-{{ section_id }}{% endif %}"
 ></div>
 <div
   class="product-information section section--{{ content_width }} spacing-style{% if settings.background_color != blank %} color-custom-{{ section_id }}{% endif %} relative{% if is_main_product_page %} product-information--main-product{% endif %}"
@@ -448,7 +447,7 @@
   {{ additional_blocks }}
 </div>
 
-{% stylesheet %}
+<style>
   .product-information {
     gap: var(--gap) 0;
   }
@@ -526,32 +525,29 @@
     margin-top: clamp(36px, 4vw, 48px) !important;
     padding-inline: clamp(36px, 6vw, 92px);
     position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(120, 84, 58, 0.16);
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(255, 252, 247, 0.97) 0%, rgba(255, 248, 240, 0.95) 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.62),
+      0 14px 32px rgba(74, 45, 28, 0.08);
   }
 
   .product-information--main-product .product-information__details-below::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: clamp(36px, 6vw, 92px);
-    right: clamp(36px, 6vw, 92px);
-    height: 1px;
-    background: rgba(120, 84, 58, 0.14);
-    pointer-events: none;
+    display: none;
   }
 
   .product-information--main-product .product-information__details-below::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: clamp(36px, 6vw, 92px);
-    right: clamp(36px, 6vw, 92px);
-    height: 1px;
-    background: rgba(120, 84, 58, 0.14);
-    pointer-events: none;
+    display: none;
   }
 
   .product-information--main-product .product-information__details-below > :only-child {
     grid-column: 1 / -1;
+  }
+
+  .product-information--main-product .product-information__details-below > :last-child {
+    border-bottom: 0;
   }
 
   .product-information--main-product .product-information__details-below > .product-description-collapsible,
@@ -2296,4 +2292,4 @@
       inset: 0;
     }
   }
-{% endstylesheet %}
+</style>

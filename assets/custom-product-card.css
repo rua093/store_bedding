@@ -512,3 +512,307 @@
     font-size: 0.78rem;
   }
 }
+
+/* ============================================================
+ * HALLOWEEN SEASONAL TRADING CARD SKIN (DEDICATED ARCHITECTURE)
+ * Three normalized 1024px × 1536px ornamental frame variants.
+ * ============================================================ */
+
+:is(body[data-seasonal-theme='halloween'], [data-seasonal-theme='halloween']) {
+  --halloween-ink-color: #120702;
+  --halloween-price-color: #dc2412;
+  --halloween-star-color: #ff650d;
+  --halloween-star-outline-color: #a83200;
+  --halloween-rating-color: #32170a;
+  --halloween-card-frame-1: url('./ChatGPT-Image-Aug-27_-2026_-03_18_38-PM.svg');
+  --halloween-card-frame-2: url('./ChatGPT-Image-Aug-27_-2026_-03_48_34-PM.svg');
+  --halloween-card-frame-3: url('./ChatGPT-Image-Aug-27_-2026_-03_49_42-PM.svg');
+  --halloween-card-frame: var(--halloween-card-frame-1);
+  --halloween-card-frame-size: 100% 100%;
+  --halloween-media-top: 1.8%;
+  --halloween-media-left: 7%;
+  --halloween-media-width: 86%;
+  /* At a 2:3 card ratio, 57.333333% of height equals 86% of width. */
+  --halloween-media-height: 57.333333%;
+  --halloween-content-top: 63.8%;
+  --halloween-content-left: 17.5%;
+  --halloween-content-width: 65%;
+  --halloween-content-height: 27.5%;
+  --halloween-content-bottom-inset: clamp(0.45rem, 4cqw, 0.8rem);
+}
+
+/* Cycle the three normalized ornamental frames wherever cards render in sequence. */
+:is(
+    .product-grid__item:nth-child(3n + 2),
+    .results-list__item:nth-child(3n + 2),
+    .new-arrivals-strip-item:nth-child(3n + 2)
+  )
+  > .custom-product-card,
+.bestselling-bedding__product-grid > .custom-product-card:nth-child(3n + 2) {
+  --halloween-card-frame: var(--halloween-card-frame-2);
+}
+
+:is(
+    .product-grid__item:nth-child(3n),
+    .results-list__item:nth-child(3n),
+    .new-arrivals-strip-item:nth-child(3n)
+  )
+  > .custom-product-card,
+.bestselling-bedding__product-grid > .custom-product-card:nth-child(3n) {
+  --halloween-card-frame: var(--halloween-card-frame-3);
+}
+
+/* 1. Theme Reset (preserves normal theme grid columns & card sizing) */
+body[data-seasonal-theme='halloween'] .product-grid {
+  row-gap: 24px !important;
+  column-gap: 20px !important;
+}
+
+html body[data-seasonal-theme='halloween'] .product-grid__item,
+html body[data-seasonal-theme='halloween'] .results-list__item {
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+html body[data-seasonal-theme='halloween'] .custom-product-card,
+html body[data-seasonal-theme='halloween'] .custom-product-card__card-link {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* 2. Main card wrapper
+ * - 2:3 matches the normalized SVG frames and makes the media viewport square
+ * - transform: scale(1.04) fills standard grid cell with rich 3D card depth
+ * - container-type: inline-size for smooth responsive scaling */
+[data-seasonal-theme='halloween'] .custom-product-card__card {
+  isolation: isolate !important;
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 2 / 3 !important;
+  container-type: inline-size !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: scale(1.04) !important;
+  transform-origin: center top !important;
+  transition: transform 240ms cubic-bezier(0.2, 0.75, 0.25, 1), filter 240ms ease !important;
+}
+
+[data-seasonal-theme='halloween'] .custom-product-card__card:hover {
+  transform: scale(1.065) translateY(-4px) !important;
+}
+
+/* 3. 3D SVG frame overlay (z-index 3) */
+[data-seasonal-theme='halloween'] .custom-product-card__card::before {
+  content: '' !important;
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 3 !important;
+  background-image: var(--halloween-card-frame) !important;
+  background-position: center center !important;
+  background-size: var(--halloween-card-frame-size) !important;
+  background-repeat: no-repeat !important;
+  filter: drop-shadow(0 10px 20px rgb(20 10 5 / 0.35)) !important;
+  pointer-events: none !important;
+}
+
+[data-seasonal-theme='halloween'] .custom-product-card__card::after {
+  display: none !important;
+}
+
+/* 4. IMAGE WINDOW
+ * Fits accurately inside the gold arch of the SVG frame without overflow. */
+[data-seasonal-theme='halloween'] .custom-product-card__media {
+  position: absolute !important;
+  top: var(--halloween-media-top) !important;
+  left: var(--halloween-media-left) !important;
+  width: var(--halloween-media-width) !important;
+  height: var(--halloween-media-height) !important;
+  z-index: 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 12px 12px 0 0 !important;
+  background: #0d0806 !important;
+  overflow: hidden !important;
+  box-shadow: 0 3px 12px rgb(0 0 0 / 0.6) inset !important;
+}
+
+[data-seasonal-theme='halloween'] .custom-product-card__media img,
+[data-seasonal-theme='halloween'] .custom-product-card__image {
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center top !important;
+  border-radius: inherit !important;
+  background: transparent !important;
+}
+
+[data-seasonal-theme='halloween'] .custom-product-card__media::after {
+  display: none !important;
+}
+
+/* 5. PARCHMENT TEXT CONTENT ZONE
+ * Uses a shared ornament-safe reading column for both frame variants.
+ * The wider side insets keep title, price, and rating clear of vines and props.
+ * Spreads Title, Price, Rating vertically with space-between. */
+[data-seasonal-theme='halloween'] .custom-product-card__content {
+  position: absolute !important;
+  top: var(--halloween-content-top) !important;
+  left: var(--halloween-content-left) !important;
+  width: var(--halloween-content-width) !important;
+  height: var(--halloween-content-height) !important;
+  z-index: 4 !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 0 !important;
+  padding: 0 0 var(--halloween-content-bottom-inset) !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  background: transparent !important;
+  text-align: left !important;
+}
+
+/* Product Title */
+[data-seasonal-theme='halloween'] .custom-product-card__title {
+  color: #100501 !important;
+  font-weight: 800 !important;
+  font-size: clamp(0.92rem, 5.0cqw, 1.14rem) !important;
+  line-height: 1.32 !important;
+  letter-spacing: -0.01em !important;
+  margin: 0 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  text-shadow: 0 1px 0 rgb(255 255 255 / 0.5) !important;
+}
+
+/* Price Row */
+[data-seasonal-theme='halloween'] .custom-product-card__price-row {
+  display: flex !important;
+  align-items: baseline !important;
+  flex-wrap: wrap !important;
+  gap: 0.35rem !important;
+  margin: 0 !important;
+}
+
+[data-seasonal-theme='halloween'] .custom-product-card__price {
+  color: var(--halloween-price-color) !important;
+  font-weight: 900 !important;
+  font-size: clamp(0.94rem, 5.4cqw, 1.16rem) !important;
+  text-shadow:
+    0 1px 0 rgb(255 248 224 / 0.9),
+    0 1px 2px rgb(70 12 4 / 0.22) !important;
+}
+
+[data-seasonal-theme='halloween'] .custom-product-card__compare {
+  color: #634328 !important;
+  font-size: clamp(0.68rem, 3.6cqw, 0.86rem) !important;
+  text-decoration: line-through !important;
+}
+
+/* Rating Stars */
+[data-seasonal-theme='halloween'] .custom-product-card__rating {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.2rem !important;
+  margin: 0 !important;
+}
+
+[data-seasonal-theme='halloween'] .custom-product-card__rating-star {
+  width: clamp(0.70rem, 4.0cqw, 0.88rem) !important;
+  height: clamp(0.70rem, 4.0cqw, 0.88rem) !important;
+}
+
+[data-seasonal-theme='halloween'] .custom-product-card__rating-star.is-filled {
+  fill: var(--halloween-star-color) !important;
+  stroke: var(--halloween-star-outline-color) !important;
+  stroke-width: 0.8px !important;
+  stroke-linejoin: round !important;
+  filter: drop-shadow(0 1px 1px rgb(80 22 2 / 0.36)) !important;
+}
+
+[data-seasonal-theme='halloween'] .custom-product-card__rating-star:not(.is-filled) {
+  fill: #a9744c !important;
+}
+
+[data-seasonal-theme='halloween'] .custom-product-card__rating-count {
+  color: var(--halloween-rating-color) !important;
+  font-size: clamp(0.64rem, 3.4cqw, 0.82rem) !important;
+  font-weight: 800 !important;
+  text-shadow: 0 1px 0 rgb(255 248 224 / 0.8) !important;
+}
+
+/* 6. BADGES - Inset to stay inside frame bounds */
+[data-seasonal-theme='halloween'] .custom-product-card__tag-badge {
+  top: 10px !important;
+  right: 10px !important;
+  z-index: 5 !important;
+}
+
+[data-seasonal-theme='halloween'] .custom-product-card__tag-badge::after {
+  display: none !important;
+}
+
+[data-seasonal-theme='halloween'] .custom-product-card__badge--sale {
+  top: 10px !important;
+  right: 10px !important;
+  color: #ffd38b !important;
+  background: linear-gradient(180deg, #33201a, #130c0a) !important;
+  border-color: rgb(255 157 53 / 0.62) !important;
+  box-shadow:
+    0 0 0 1px rgb(15 8 6 / 0.7),
+    0 7px 16px rgb(29 12 7 / 0.38),
+    0 0 14px rgb(215 90 24 / 0.2) !important;
+}
+
+/* 7. RESPONSIVE CONTAINER QUERIES */
+@container (max-width: 150px) {
+  [data-seasonal-theme='halloween'] .custom-product-card__content {
+    top: 61.5% !important;
+    height: 29.5% !important;
+  }
+  [data-seasonal-theme='halloween'] .custom-product-card__title {
+    -webkit-line-clamp: 1 !important;
+  }
+  [data-seasonal-theme='halloween'] .custom-product-card__compare,
+  [data-seasonal-theme='halloween'] .custom-product-card__rating-count {
+    display: none !important;
+  }
+  [data-seasonal-theme='halloween'] .custom-product-card__tag-badge {
+    top: 6px !important;
+    right: 6px !important;
+  }
+}
+
+@container (min-width: 380px) {
+  [data-seasonal-theme='halloween'] .custom-product-card__tag-badge {
+    top: 14px !important;
+    right: 14px !important;
+  }
+  [data-seasonal-theme='halloween'] .custom-product-card__badge--sale {
+    top: 14px !important;
+    right: 14px !important;
+  }
+}

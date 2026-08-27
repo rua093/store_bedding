@@ -4260,6 +4260,14 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
 [class*="jdgm-carousel"] [class*="arrow"],
 [class*="jdgm-carousel"] button[class*="nav"] {
   width: 48px !important;
+  background-color: #f7eee7 !important;
+}
+
+/* Navigation arrows styling */
+.jdgm-carousel__arrow,
+[class*="jdgm-carousel"] [class*="arrow"],
+[class*="jdgm-carousel"] button[class*="nav"] {
+  width: 48px !important;
   height: 48px !important;
   border-radius: 50% !important;
   background: #ffffff !important;

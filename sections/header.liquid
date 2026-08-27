@@ -370,6 +370,85 @@
   <div
     class="header__underlay header__underlay-open"
   ></div>
+  <style>
+    #header-component {
+      position: relative !important;
+    }
+    .header-halloween-decorations {
+      display: none !important;
+    }
+    body[data-seasonal-theme='halloween'] .header-halloween-decorations {
+      display: block !important;
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      pointer-events: none !important;
+      overflow: hidden !important;
+      z-index: 6 !important;
+    }
+    body[data-seasonal-theme='halloween'] .header-halloween-decor {
+      position: absolute !important;
+      pointer-events: none !important;
+      user-select: none !important;
+    }
+    body[data-seasonal-theme='halloween'] .header-halloween-decor img {
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      height: auto !important;
+      object-fit: contain !important;
+    }
+    body[data-seasonal-theme='halloween'] .header-halloween-decor--moon {
+      top: 2px !important;
+      left: 12px !important;
+      width: clamp(50px, 5vw, 75px) !important;
+      opacity: 0.90 !important;
+      filter: drop-shadow(0 2px 8px rgba(255, 140, 0, 0.28)) !important;
+    }
+    body[data-seasonal-theme='halloween'] .header-halloween-decor--moon img {
+      width: clamp(50px, 5vw, 75px) !important;
+    }
+    body[data-seasonal-theme='halloween'] .header-halloween-decor--web {
+      top: 0 !important;
+      right: 0 !important;
+      width: clamp(60px, 6vw, 90px) !important;
+      opacity: 0.85 !important;
+      transform: scaleX(-1) !important;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3)) !important;
+    }
+    body[data-seasonal-theme='halloween'] .header-halloween-decor--web img {
+      width: clamp(60px, 6vw, 90px) !important;
+    }
+    @media screen and (max-width: 749px) {
+      body[data-seasonal-theme='halloween'] .header-halloween-decorations {
+        display: none !important;
+      }
+    }
+  </style>
+  <div class="header-halloween-decorations" aria-hidden="true">
+    <div class="header-halloween-decor header-halloween-decor--moon">
+      <img
+        src="{{ '01_crescent_moon_and_bats.svg' | asset_url }}"
+        alt=""
+        width="114"
+        height="112"
+        loading="lazy"
+      >
+    </div>
+    <div class="header-halloween-decor header-halloween-decor--web">
+      <img
+        src="{{ '02_spiderweb_corner.svg' | asset_url }}"
+        alt=""
+        width="122"
+        height="125"
+        loading="lazy"
+      >
+    </div>
+  </div>
   {%- if request.page_type == 'index' -%}
     <div class="visually-hidden">{{ shop.name }}</div>
   {%- endif -%}

@@ -165,17 +165,38 @@
     {% render 'product-delivery-estimate', product: product_resource, section_id: section_id %}
     {% render 'exclusive-discount-fomo' %}
     <div class="price-policy-note">
-      <span class="price-policy-note__icon" aria-hidden="true">
+      <span class="price-policy-note__icon price-policy-note__icon--default" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
           <path d="m3.3 7 8.7 5 8.7-5"/>
           <path d="M12 22V12"/>
         </svg>
       </span>
+      <span class="price-policy-note__icon price-policy-note__icon--halloween" aria-hidden="true">
+        🦇
+      </span>
       <span class="price-policy-note__copy">
         <span><strong>Free shipping</strong> on all orders</span>
       </span>
     </div>
+    <style>
+      .price-policy-note__icon--halloween {
+        display: none;
+        font-size: 1.05rem;
+        line-height: 1;
+        filter: drop-shadow(0 1px 2px rgba(255, 122, 0, 0.3));
+      }
+
+      .is-halloween-product .price-policy-note__icon--default,
+      [data-seasonal-theme="halloween"] .price-policy-note__icon--default {
+        display: none !important;
+      }
+
+      .is-halloween-product .price-policy-note__icon--halloween,
+      [data-seasonal-theme="halloween"] .price-policy-note__icon--halloween {
+        display: inline-flex !important;
+      }
+    </style>
   </div>
 {%- endif -%}
 {%- if has_volume_pricing -%}

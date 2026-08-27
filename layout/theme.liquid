@@ -148,13 +148,25 @@
 
   {% liquid
     assign active_seasonal_theme = ''
+    assign page_bg_image = nil
+    assign page_bg_image_url = ''
+    assign page_bg_tile_width = 1200
+
     if request.page_type == 'collection' and collection != blank
       if collection.metafields.custom.seasonal_theme != blank
         assign active_seasonal_theme = collection.metafields.custom.seasonal_theme.value | downcase | strip
       elsif collection.handle contains 'halloween'
         assign active_seasonal_theme = 'halloween'
       endif
+      assign page_bg_image = collection.metafields.custom.page_bg.value
+      if page_bg_image != blank
+        assign page_bg_image_url = page_bg_image | image_url: width: 2400
+        assign page_bg_tile_width = page_bg_image.width | divided_by: 2 | at_most: 1200
+      endif
     elsif request.page_type == 'product' and product != blank
+      assign page_bg_image_url = 'pdp-bg.webp' | asset_url
+      assign page_bg_tile_width = 627
+
       if product.metafields.custom.seasonal_theme != blank
         assign active_seasonal_theme = product.metafields.custom.seasonal_theme.value | downcase | strip
       else
@@ -168,8 +180,59 @@
           endif
         endfor
       endif
+
     endif
   %}
+
+  {% if page_bg_image_url != blank %}
+    <style>
+      #MainContent {
+        background-image: url('{{ page_bg_image_url }}') !important;
+        background-repeat: repeat !important;
+        background-position: top center !important;
+        background-size: min(100%, {{ page_bg_tile_width }}px) auto !important;
+        background-attachment: scroll !important;
+      }
+
+      #MainContent .shopify-section,
+      #MainContent .section-background,
+      #MainContent .product-recommendations--pdp-related-skin {
+        background-color: transparent !important;
+      }
+
+      #MainContent .product-recommendations--pdp-related-skin::before {
+        display: none !important;
+      }
+
+      {% if request.page_type == 'product' %}
+        #MainContent #judgeme_product_reviews {
+          padding: clamp(24px, 4vw, 48px) clamp(16px, 3vw, 36px) !important;
+          border: 1px solid rgba(120, 84, 58, 0.16) !important;
+          border-radius: 18px !important;
+          background: linear-gradient(
+            180deg,
+            rgba(255, 252, 247, 0.97) 0%,
+            rgba(255, 248, 240, 0.95) 100%
+          ) !important;
+          box-shadow:
+            inset 0 0 0 1px rgba(255, 255, 255, 0.62),
+            0 14px 32px rgba(74, 45, 28, 0.08) !important;
+        }
+
+        #MainContent #judgeme_product_reviews .jdgm-review-card,
+        #MainContent #judgeme_product_reviews .jdgm-review-card__content {
+          background: #fffaf4 !important;
+        }
+
+        @media screen and (max-width: 749px) {
+          #MainContent #judgeme_product_reviews {
+            padding: 22px 14px !important;
+            border-radius: 14px !important;
+          }
+        }
+      {% endif %}
+    </style>
+  {% endif %}
 
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}"{% if active_seasonal_theme != blank %} data-seasonal-theme="{{ active_seasonal_theme }}"{% endif %}>
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}

@@ -75,7 +75,7 @@
       aria-label="View delivery timeline"
       aria-expanded="false"
     >
-      <span class="product-delivery-estimate__icon" aria-hidden="true">
+      <span class="product-delivery-estimate__icon product-delivery-estimate__icon--default" aria-hidden="true">
         <svg
           width="18"
           height="18"
@@ -91,6 +91,9 @@
           <circle cx="7.5" cy="17.5" r="1.5" />
           <circle cx="17.5" cy="17.5" r="1.5" />
         </svg>
+      </span>
+      <span class="product-delivery-estimate__icon product-delivery-estimate__icon--halloween" aria-hidden="true">
+        🧹
       </span>
 
       <span class="product-delivery-estimate__copy">
@@ -301,6 +304,23 @@
     flex: 0 0 1.25rem;
     margin-inline-end: 0.4rem;
     color: #000000;
+  }
+
+  .product-delivery-estimate__icon--halloween {
+    display: none;
+    font-size: 1.05rem;
+    line-height: 1;
+    filter: drop-shadow(0 1px 2px rgba(255, 122, 0, 0.3));
+  }
+
+  .is-halloween-product .product-delivery-estimate__icon--default,
+  [data-seasonal-theme="halloween"] .product-delivery-estimate__icon--default {
+    display: none !important;
+  }
+
+  .is-halloween-product .product-delivery-estimate__icon--halloween,
+  [data-seasonal-theme="halloween"] .product-delivery-estimate__icon--halloween {
+    display: inline-flex !important;
   }
 
   .product-delivery-estimate__icon svg {

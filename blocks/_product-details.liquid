@@ -21,7 +21,12 @@
     {% if block_settings.sticky_details_desktop %} sticky-content--desktop{% endif %}
     {% if block_settings.height == 'fill' -%} full-height--desktop{% endif -%}
   "
-  style="--details-position: {{ block_settings.details_position }};"
+  style="
+    --details-position: {{ block_settings.details_position }};
+    --pdp-halloween-web: url('{{ '02_spiderweb_corner.svg' | asset_url }}');
+    --pdp-halloween-moon: url('{{ '01_crescent_moon_and_bats.svg' | asset_url }}');
+    --pdp-halloween-pumpkins: url('{{ '03_pumpkin_harvest.svg' | asset_url }}');
+  "
   data-testid="product-information-details"
   data-has-amazon-customizer="{{ has_amazon_customizer }}"
   {% if settings.transition_to_main_product %}
@@ -1299,6 +1304,149 @@
     margin-bottom: 5px !important;
     font-size: 0.88rem !important;
     font-weight: 600 !important;
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product
+    > .group-block
+    > .group-block-content {
+    position: relative !important;
+    isolation: isolate !important;
+    overflow: hidden !important;
+    padding-block-start: clamp(24px, 2vw, 30px) !important;
+    border: 1px solid rgba(76, 35, 16, 0.58) !important;
+    border-radius: 18px !important;
+    background:
+      radial-gradient(circle at 100% 0%, rgba(235, 99, 28, 0.12), transparent 30%),
+      radial-gradient(circle at 0% 100%, rgba(76, 35, 16, 0.08), transparent 28%),
+      linear-gradient(145deg, #fffdf8 0%, #fff7ea 100%) !important;
+    box-shadow:
+      inset 0 0 0 5px rgba(255, 255, 255, 0.48),
+      inset 0 0 0 6px rgba(218, 91, 27, 0.12),
+      0 14px 34px rgba(46, 21, 10, 0.11) !important;
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product
+    > .group-block
+    > .group-block-content::before {
+    content: '' !important;
+    position: absolute !important;
+    pointer-events: none !important;
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product
+    > .group-block
+    > .group-block-content::before {
+    inset: 0 !important;
+    z-index: 0 !important;
+    background:
+      var(--pdp-halloween-web) top left / 116px 118px no-repeat,
+      var(--pdp-halloween-moon) top right / 104px 102px no-repeat,
+      var(--pdp-halloween-pumpkins) right bottom / 112px 116px no-repeat !important;
+    opacity: 0.2 !important;
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product
+    > .group-block
+    > .group-block-content
+    > * {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product
+    > .group-block
+    > .group-block-content
+    > :is(variant-picker, .variant-picker, .choose-other-styles-block, .buy-buttons-block, rte-formatter, .accordion) {
+    border-top-color: rgba(111, 52, 21, 0.2) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 224, 180, 0.46) !important;
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product
+    > .group-block
+    > .group-block-content
+    > .text-block.h2
+    > h1 {
+    color: #1f0c06 !important;
+    text-shadow: 0 1px 0 rgba(255, 233, 197, 0.92) !important;
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product
+    > .group-block
+    > .group-block-content
+    > .rating-wrapper {
+    width: fit-content !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product
+    product-price {
+    width: fit-content !important;
+    padding: 0 !important;
+    border: 0 !important;
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product
+    .size-guide-trigger {
+    color: rgba(63, 27, 9, 0.72) !important;
+    text-decoration-color: rgba(252, 87, 50, 0.42) !important;
+  }
+
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product
+    variant-picker
+    .variant-option__button-label:has(input:checked),
+  body[data-seasonal-theme='halloween']
+    .product-information--main-product
+    .product-details--main-product
+    variant-picker
+    .variant-option__button-label[aria-checked='true'] {
+    border-color: #2f1409 !important;
+    background: linear-gradient(180deg, #1d0d07 0%, #060302 100%) !important;
+    box-shadow: 0 8px 18px rgba(47, 20, 9, 0.16) !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    body[data-seasonal-theme='halloween']
+      .product-information--main-product
+      .product-details--main-product
+      > .group-block
+      > .group-block-content {
+      padding-block-start: 24px !important;
+      border-radius: 16px !important;
+    }
+
+    body[data-seasonal-theme='halloween']
+      .product-information--main-product
+      .product-details--main-product
+      > .group-block
+      > .group-block-content::before {
+      background:
+        var(--pdp-halloween-web) top left / 88px 90px no-repeat,
+        var(--pdp-halloween-moon) top right / 78px 76px no-repeat,
+        var(--pdp-halloween-pumpkins) right bottom / 86px 90px no-repeat !important;
+    }
+
   }
 {% endstylesheet %}
 

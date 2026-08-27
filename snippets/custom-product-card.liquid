@@ -171,14 +171,27 @@
       assign decimal_rating = 1
     endif
 
-    assign decimal_rounded = decimal_rating | ceil
     assign svg_filled_stars = rating | floor | plus: decimal_rounded
+  endif
+
+  assign card_seasonal_theme = ''
+  if collection != blank
+    if collection.metafields.custom.seasonal_theme != blank
+      assign card_seasonal_theme = collection.metafields.custom.seasonal_theme.value | downcase | strip
+    elsif collection.handle contains 'halloween'
+      assign card_seasonal_theme = 'halloween'
+    endif
+  elsif product != blank and product.metafields.custom.seasonal_theme != blank
+    assign card_seasonal_theme = product.metafields.custom.seasonal_theme.value | downcase | strip
   endif
 %}
 
 <product-card
   class="product-card custom-product-card{% if root_card_class != blank %} {{ root_card_class }}{% endif %}"
   data-product-id="{{ product.id }}"
+  {% if card_seasonal_theme != blank %}
+    data-seasonal-theme="{{ card_seasonal_theme }}"
+  {% endif %}
   {% if onboarding %}
     data-placeholder="true"
   {% endif %}
