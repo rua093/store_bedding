@@ -164,9 +164,6 @@
         assign page_bg_tile_width = page_bg_image.width | divided_by: 2 | at_most: 1200
       endif
     elsif request.page_type == 'product' and product != blank
-      assign page_bg_image_url = 'pdp-bg.webp' | asset_url
-      assign page_bg_tile_width = 627
-
       if product.metafields.custom.seasonal_theme != blank
         assign active_seasonal_theme = product.metafields.custom.seasonal_theme.value | downcase | strip
       else
@@ -179,6 +176,11 @@
             break
           endif
         endfor
+      endif
+
+      if active_seasonal_theme == 'halloween'
+        assign page_bg_image_url = 'pdp-bg.webp' | asset_url
+        assign page_bg_tile_width = 627
       endif
 
     endif
