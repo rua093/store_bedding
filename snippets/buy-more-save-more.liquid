@@ -2,34 +2,7 @@
   Buy More, Save More Volume Discount Tier Rows (Compact Auto-Apply Suffix)
 {% endcomment %}
 
-{% liquid
-  assign is_halloween_item = false
-  if product != blank
-    if product.metafields.custom.seasonal_theme != blank
-      assign theme_val = product.metafields.custom.seasonal_theme.value | downcase | strip
-      if theme_val == 'halloween'
-        assign is_halloween_item = true
-      endif
-    elsif product.handle contains 'halloween' or product.title contains 'Halloween' or product.type contains 'Halloween'
-      assign is_halloween_item = true
-    else
-      for col in product.collections
-        if col.metafields.custom.seasonal_theme != blank
-          assign col_theme_val = col.metafields.custom.seasonal_theme.value | downcase | strip
-          if col_theme_val == 'halloween'
-            assign is_halloween_item = true
-            break
-          endif
-        elsif col.handle contains 'halloween'
-          assign is_halloween_item = true
-          break
-        endif
-      endfor
-    endif
-  endif
-%}
-
-<div class="buy-more-save-more-group{% if is_halloween_item %} is-halloween-product{% endif %}">
+<div class="buy-more-save-more-group">
   <div class="price-discount-tier">
     <span class="price-discount-tier__icon price-discount-tier__icon--default" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
@@ -107,13 +80,11 @@
     filter: drop-shadow(0 1px 2px rgba(255, 122, 0, 0.3));
   }
 
-  /* Halloween product or seasonal theme page icon override */
-  .is-halloween-product .price-discount-tier__icon--default,
+  /* The body seasonal attribute is the single source of truth for PDP theming. */
   [data-seasonal-theme="halloween"] .price-discount-tier__icon--default {
     display: none !important;
   }
 
-  .is-halloween-product .price-discount-tier__icon--halloween,
   [data-seasonal-theme="halloween"] .price-discount-tier__icon--halloween {
     display: inline-flex !important;
   }
