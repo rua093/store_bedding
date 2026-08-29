@@ -12,6 +12,8 @@
     --buy-box-shadow: none;
     --pdp-buy-buttons-gap: clamp(8px, 1.6cqi, 12px);
     --pdp-quantity-column: minmax(116px, 124px);
+    --pdp-buy-control-height: 48px;
+    --shopify-accelerated-checkout-button-block-size: var(--pdp-buy-control-height) !important;
 
     container-type: inline-size;
   }
@@ -127,15 +129,70 @@
     .product-details--main-product
     .buy-buttons-block
     .accelerated-checkout-block
-    :is(.shopify-payment-button, .shopify-payment-button__button, .shopify-payment-button__button--unbranded, .shopify-payment-button__more-options),
+    :is(.shopify-payment-button__button, .shopify-payment-button__button--unbranded),
   .product-information--main-product .product-details--main-product .buy-buttons-block shopify-accelerated-checkout {
     width: 100%;
     min-width: 0;
     max-width: 100%;
-    min-height: 48px;
-    height: 48px;
+    min-height: var(--pdp-buy-control-height) !important;
+    height: var(--pdp-buy-control-height) !important;
     border-radius: 10px;
     box-sizing: border-box;
+  }
+
+  .product-information--main-product .product-details--main-product .buy-buttons-block .accelerated-checkout-block {
+    --shopify-accelerated-checkout-button-block-size: var(--pdp-buy-control-height) !important;
+
+    align-self: start;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .product-information--main-product
+    .product-details--main-product
+    .buy-buttons-block
+    .accelerated-checkout-block
+    .shopify-payment-button {
+    display: block;
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .product-information--main-product
+    .product-details--main-product
+    .buy-buttons-block
+    .accelerated-checkout-block
+    :is(more-payment-options-link, .shopify-payment-button__more-options) {
+    position: static !important;
+    display: block;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 8px 0 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #5f4b3f;
+    font-size: 0.82rem;
+    line-height: 1.3;
+    text-align: center;
+    transform: none !important;
+  }
+
+  .product-information--main-product
+    .product-details--main-product
+    .buy-buttons-block
+    .accelerated-checkout-block
+    more-payment-options-link
+    a {
+    display: inline-block;
+    color: inherit;
+    line-height: inherit;
+    text-underline-offset: 3px;
   }
 
   .product-information--main-product .product-details--main-product .buy-buttons-block .add-to-cart-button {

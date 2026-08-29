@@ -3,6 +3,13 @@
   type="module"
   fetchpriority="low"
 ></script>
+{% unless request.page_type == 'product' %}
+  <script
+    src="{{ 'product-delivery-estimate.js' | asset_url }}"
+    defer
+    fetchpriority="low"
+  ></script>
+{% endunless %}
 <quick-add-dialog id="quick-add-dialog">
   <dialog
     class="quick-add-modal dialog-modal color-custom-popover"

@@ -2,7 +2,7 @@ import { Component } from '@theme/component';
 import { morph } from '@theme/morph';
 import { SlideshowSelectEvent } from '@theme/events';
 import { DialogComponent, DialogCloseEvent } from '@theme/dialog';
-import { mediaQueryLarge, isMobileBreakpoint, getIOSVersion } from '@theme/utilities';
+import { mediaQueryLarge, getIOSVersion } from '@theme/utilities';
 import VariantPicker from '@theme/variant-picker';
 import { StandardEvents, ProductSelectEvent, CartLinesUpdateEvent } from '@shopify/events';
 
@@ -136,6 +136,7 @@ export class QuickAddComponent extends Component {
 
       this.#updateVariantPicker(productGrid);
       this.#setQuickAddReadyState();
+      this.#resetScrollAfterRender();
     } catch (error) {
       if (requestId !== this.#quickAddRequestId || error?.name === 'AbortError') return;
       console.warn('[quick-add] Failed to load quick add product:', error);
@@ -149,8 +150,18 @@ export class QuickAddComponent extends Component {
 
     const productDetails = dialogComponent.querySelector('.product-details');
     const productMedia = dialogComponent.querySelector('.product-information__media');
-    productDetails?.scrollTo({ top: 0, behavior: 'instant' });
-    productMedia?.scrollTo({ top: 0, behavior: 'instant' });
+    const modalMain = dialogComponent.querySelector('.quick-add-modal__main');
+    if (productDetails instanceof HTMLElement) productDetails.scrollTop = 0;
+    if (productMedia instanceof HTMLElement) productMedia.scrollTop = 0;
+    if (modalMain instanceof HTMLElement) modalMain.scrollTop = 0;
+  }
+
+  #resetScrollAfterRender() {
+    this.#resetScroll();
+    requestAnimationFrame(() => {
+      this.#resetScroll();
+      requestAnimationFrame(() => this.#resetScroll());
+    });
   }
 
   /** @param {QuickAddDialog} dialogComponent */
@@ -229,37 +240,8 @@ export class QuickAddComponent extends Component {
 
     if (!productGrid || !modalContent) return;
 
-    if (isMobileBreakpoint()) {
-      const productDetails = productGrid.querySelector('.product-details');
-      const productFormComponent = productGrid.querySelector('product-form-component');
-      const variantPicker = productGrid.querySelector('variant-picker');
-      const productPrice = productGrid.querySelector('product-price');
-      const productTitle = document.createElement('a');
-      productTitle.textContent = this.dataset.productTitle || '';
-
-      // Make product title as a link to the product page
-      productTitle.href = this.productPageUrl;
-
-      const productHeader = document.createElement('div');
-      productHeader.classList.add('product-header');
-
-      productHeader.appendChild(productTitle);
-      if (productPrice) {
-        productHeader.appendChild(productPrice);
-      }
-      productGrid.appendChild(productHeader);
-
-      if (variantPicker) {
-        productGrid.appendChild(variantPicker);
-      }
-      if (productFormComponent) {
-        productGrid.appendChild(productFormComponent);
-      }
-
-      productDetails?.remove();
-    }
-
-    this.#positionQuickAddTrustBadges(productGrid);
+    this.#removeQuickAddProductBadges(productGrid);
+    this.#buildQuickAddMainLayout(productGrid);
 
     // Sync the view-event-payload attribute and morph children into the modal's product-component
     const payload = productGrid.getAttribute('view-event-payload') || '';
@@ -384,11 +366,15 @@ export class QuickAddComponent extends Component {
     modalContent?.removeAttribute('aria-busy');
   }
 
-  /**
-   * Moves trust badges into a full-width rail at the bottom of the quick add modal.
-   * @param {Element} container
-   */
-  #positionQuickAddTrustBadges(container) {
+  /** @param {Element} container */
+  #removeQuickAddProductBadges(container) {
+    if (!(container instanceof HTMLElement)) return;
+
+    container.querySelectorAll('.product-media-gallery__tag-badge').forEach((badge) => badge.remove());
+  }
+
+  /** @param {Element} container */
+  #buildQuickAddMainLayout(container) {
     if (!(container instanceof HTMLElement)) return;
 
     const media = container.querySelector(':scope > .product-information__media, .product-information__media');
@@ -412,10 +398,7 @@ export class QuickAddComponent extends Component {
 
     container.prepend(main);
 
-    if (trustBadges instanceof HTMLElement) {
-      trustBadges.setAttribute('data-quick-add-trust-rail', 'true');
-      container.appendChild(trustBadges);
-    }
+    trustBadges?.remove();
   }
 
   #showQuickAddErrorState() {
@@ -902,7 +885,6 @@ class QuickAddDialog extends DialogComponent {
         const newMediaId = newFirstSlide?.getAttribute('slide-id') || newFirstSlide?.dataset?.mediaId;
         const anchorElement = /** @type {HTMLAnchorElement} */ (html.querySelector('.view-product-title a'));
         const viewMoreDetailsLink = /** @type {HTMLAnchorElement} */ (this.querySelector('.view-product-title a'));
-        const mobileProductTitle = /** @type {HTMLAnchorElement} */ (this.querySelector('.product-header a'));
 
         if (newMediaId) {
           this.#selectQuickAddMedia(newMediaId);
@@ -911,7 +893,6 @@ class QuickAddDialog extends DialogComponent {
         if (!anchorElement) return;
 
         if (viewMoreDetailsLink) viewMoreDetailsLink.href = anchorElement.href;
-        if (mobileProductTitle) mobileProductTitle.href = anchorElement.href;
       })
       .catch((error) => {
         if (error?.name !== 'AbortError') console.warn('[quick-add] Event promise rejected:', error);

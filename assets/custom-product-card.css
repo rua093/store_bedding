@@ -642,7 +642,10 @@ html body[data-seasonal-theme='halloween'] .custom-product-card__card-link {
   left: var(--halloween-media-left) !important;
   width: var(--halloween-media-width) !important;
   height: var(--halloween-media-height) !important;
-  z-index: 1 !important;
+  /* The card wrapper already provides the query container. Keeping this
+   * element out of a stacking context lets its badges sit above the frame. */
+  container-type: normal !important;
+  z-index: auto !important;
   padding: 0 !important;
   margin: 0 !important;
   border-radius: 12px 12px 0 0 !important;
@@ -778,6 +781,8 @@ html body[data-seasonal-theme='halloween'] .custom-product-card__card-link {
 [data-seasonal-theme='halloween'] .custom-product-card__badge--sale {
   top: 10px !important;
   right: 10px !important;
+  left: var(--custom-product-card-badge-inset) !important;
+  z-index: 5 !important;
   color: #ffd38b !important;
   background: linear-gradient(180deg, #33201a, #130c0a) !important;
   border-color: rgb(255 157 53 / 0.62) !important;
@@ -814,5 +819,6 @@ html body[data-seasonal-theme='halloween'] .custom-product-card__card-link {
   [data-seasonal-theme='halloween'] .custom-product-card__badge--sale {
     top: 14px !important;
     right: 14px !important;
+    left: var(--custom-product-card-badge-inset) !important;
   }
 }
