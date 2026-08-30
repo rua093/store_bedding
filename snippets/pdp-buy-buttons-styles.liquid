@@ -129,8 +129,7 @@
     .product-details--main-product
     .buy-buttons-block
     .accelerated-checkout-block
-    :is(.shopify-payment-button__button, .shopify-payment-button__button--unbranded),
-  .product-information--main-product .product-details--main-product .buy-buttons-block shopify-accelerated-checkout {
+    :is(.shopify-payment-button__button, .shopify-payment-button__button--unbranded) {
     width: 100%;
     min-width: 0;
     max-width: 100%;
@@ -142,11 +141,34 @@
 
   .product-information--main-product .product-details--main-product .buy-buttons-block .accelerated-checkout-block {
     --shopify-accelerated-checkout-button-block-size: var(--pdp-buy-control-height) !important;
+    --shopify-accelerated-checkout-row-gap: 6px;
 
+    display: block;
     align-self: start;
     height: auto !important;
     min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
     overflow: visible !important;
+  }
+
+  .product-information--main-product
+    .product-details--main-product
+    .buy-buttons-block
+    shopify-accelerated-checkout {
+    --shopify-accelerated-checkout-button-block-size: var(--pdp-buy-control-height) !important;
+    --shopify-accelerated-checkout-row-gap: 6px;
+
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    vertical-align: top;
   }
 
   .product-information--main-product

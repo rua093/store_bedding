@@ -49,11 +49,15 @@
               {% if link.handle == 'more' or link_title_normalized == 'more' %}
                 {% continue %}
               {% endif %}
+              {% assign is_halloween_link = false %}
+              {% if link.handle == 'halloween' or link_title_normalized == 'halloween' %}
+                {% assign is_halloween_link = true %}
+              {% endif %}
               <li>
                 <a
                   href="{{ link.url }}"
                   id="MenuItem-{{ link.handle }}"
-                  class="menu-list__item"
+                  class="menu-list__item{% if is_halloween_link %} menu-list__item--halloween{% endif %}"
                   {% if link.current %}
                     aria-current="page"
                   {% endif %}
@@ -108,6 +112,10 @@
         {% if link.handle == 'more' or link_title_normalized == 'more' %}
           {% continue %}
         {% endif %}
+        {% assign is_halloween_link = false %}
+        {% if link.handle == 'halloween' or link_title_normalized == 'halloween' %}
+          {% assign is_halloween_link = true %}
+        {% endif %}
         {% assign top_link_url = link.url | strip %}
         {% assign is_locked_top_parent_link = false %}
         {% if link.links != blank and top_link_url == '#' %}
@@ -125,7 +133,7 @@
             <button
               type="button"
               data-skip-node-update="true"
-              class="menu-list__link menu-list__link--locked-top-parent button-unstyled{% if link.active %} menu-list__link--active{% endif %}"
+              class="menu-list__link menu-list__link--locked-top-parent button-unstyled{% if link.active %} menu-list__link--active{% endif %}{% if is_halloween_link %} menu-list__link--halloween{% endif %}"
               aria-controls="submenu-{{ forloop.index }}"
               aria-haspopup="true"
               aria-expanded="false"
@@ -137,7 +145,7 @@
             <a
               href="{{ link.url }}"
               data-skip-node-update="true"
-              class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}"
+              class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}{% if is_halloween_link %} menu-list__link--halloween{% endif %}"
               {%- if link.links != blank -%}
                 aria-controls="submenu-{{ forloop.index }}"
                 aria-haspopup="true"
@@ -823,6 +831,48 @@
       font-weight: 600;
     }
 
+    .menu-list__link--halloween,
+    .menu-list__link--halloween:where(:hover, :focus-visible),
+    .menu-list:where(:has(.menu-list__list-item:hover)) .menu-list__link--halloween,
+    .menu-list:where(:has(.menu-list__list-item:focus-within)) .menu-list__link--halloween {
+      color: #8f3a14;
+      text-shadow:
+        0 0 0.4rem rgb(242 128 46 / 0.42),
+        0 0 0.95rem rgb(242 128 46 / 0.2);
+    }
+
+    .menu-list__link--halloween .menu-list__link-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.34rem;
+      animation: halloween-menu-glow 2.8s ease-in-out infinite;
+    }
+
+    .menu-list__link--halloween .menu-list__link-title::before {
+      content: '';
+      width: 0.38rem;
+      height: 0.38rem;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff1c4 0 24%, #ff9d2e 42%, #6f260f 76%);
+      box-shadow:
+        0 0 0.46rem rgb(255 128 35 / 0.7),
+        0 0 0.95rem rgb(255 128 35 / 0.36);
+      animation: halloween-menu-orb 1.9s ease-in-out infinite;
+      flex: 0 0 auto;
+    }
+
+    .menu-list__link--halloween .menu-list__link-title::after {
+      background: linear-gradient(90deg, #8f3a14 0%, #f26d2d 52%, #8f3a14 100%);
+      opacity: 0.62;
+      transform: scaleX(0.88);
+    }
+
+    .menu-list__link--halloween:where(:hover, :focus-visible) .menu-list__link-title::after,
+    .menu-list__link--halloween.menu-list__link--active .menu-list__link-title::after {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+
     .menu-list__submenu-inner {
       background: #faf8f5;
       border-top: 1px solid rgb(62 51 45 / 0.08);
@@ -872,10 +922,66 @@
     }
   }
 
+  .menu-list__item--halloween {
+    color: #8f3a14;
+    text-shadow:
+      0 0 0.38rem rgb(242 128 46 / 0.38),
+      0 0 0.85rem rgb(242 128 46 / 0.18);
+    animation: halloween-menu-glow 2.8s ease-in-out infinite;
+  }
+
+  .menu-list__item--halloween::before {
+    content: '';
+    display: inline-block;
+    width: 0.34rem;
+    height: 0.34rem;
+    margin-inline-end: 0.32rem;
+    border-radius: 50%;
+    vertical-align: 0.12em;
+    background: radial-gradient(circle at 35% 35%, #fff1c4 0 24%, #ff9d2e 42%, #6f260f 76%);
+    box-shadow:
+      0 0 0.42rem rgb(255 128 35 / 0.66),
+      0 0 0.8rem rgb(255 128 35 / 0.3);
+    animation: halloween-menu-orb 1.9s ease-in-out infinite;
+  }
+
+  @keyframes halloween-menu-glow {
+    0%,
+    100% {
+      text-shadow:
+        0 0 0.32rem rgb(242 128 46 / 0.34),
+        0 0 0.72rem rgb(242 128 46 / 0.16);
+    }
+
+    50% {
+      text-shadow:
+        0 0 0.5rem rgb(255 142 54 / 0.58),
+        0 0 1.15rem rgb(255 142 54 / 0.28);
+    }
+  }
+
+  @keyframes halloween-menu-orb {
+    0%,
+    100% {
+      opacity: 0.78;
+      transform: scale(0.86);
+    }
+
+    50% {
+      opacity: 1;
+      transform: scale(1.12);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .menu-list__link-title::after,
+    .menu-list__link--halloween .menu-list__link-title,
+    .menu-list__link--halloween .menu-list__link-title::before,
+    .menu-list__item--halloween,
+    .menu-list__item--halloween::before,
     .mega-menu__column > div > ul .mega-menu__link {
       transition: none;
+      animation: none;
     }
 
     .mega-menu__column > div > ul .mega-menu__link:where(:hover, :focus-visible) {
