@@ -45,9 +45,24 @@ export default class PaginatedList extends Component {
       });
     }
 
-    this.#fetchPage('next');
-    this.#fetchPage('previous');
     this.#observeViewMore();
+
+    // Warm adjacent pages after the first render has settled. If a visitor reaches
+    // a sentinel first, the observer still fetches immediately, so pagination
+    // behavior remains unchanged.
+    const warmAdjacentPages = () => {
+      requestIdleCallback(() => {
+        if (!this.isConnected) return;
+        this.#fetchPage('next');
+        this.#fetchPage('previous');
+      });
+    };
+
+    if (document.readyState === 'complete') {
+      warmAdjacentPages();
+    } else {
+      window.addEventListener('load', warmAdjacentPages, { once: true });
+    }
 
     // Listen for filter updates to clear cached pages
     document.addEventListener(StandardEvents.searchUpdate, this.#handleFilterUpdate);

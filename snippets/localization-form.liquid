@@ -130,6 +130,7 @@
           id="{{ country_results_id }}"
           ref="countryList"
         >
+          <template data-country-options-template>
           {% if show_popular_countries %}
             <ul
               role="list"
@@ -164,7 +165,9 @@
                   on:click="/selectCountry/{{ country.iso_code }}"
                 >
                   <span class="svg-wrapper icon-checkmark">
-                    {{- 'icon-checkmark.svg' | inline_asset_content -}}
+                    {%- if country.iso_code == localization.country.iso_code -%}
+                      {{- 'icon-checkmark.svg' | inline_asset_content -}}
+                    {%- endif -%}
                   </span>
                   <span class="country">{{- country.name }}</span>
                   <span
@@ -219,7 +222,9 @@
                 on:click="/selectCountry/{{ country.iso_code }}"
               >
                 <span class="svg-wrapper icon-checkmark">
-                  {{- 'icon-checkmark.svg' | inline_asset_content -}}
+                  {%- if country.iso_code == localization.country.iso_code -%}
+                    {{- 'icon-checkmark.svg' | inline_asset_content -}}
+                  {%- endif -%}
                 </span>
                 <span class="country">{{- country.name }}</span>
                 <span
@@ -234,6 +239,7 @@
               </li>
             {%- endfor -%}
           </ul>
+          </template>
         </div>
         <div class="country-selector__overlay"></div>
         <input

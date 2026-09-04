@@ -4,6 +4,8 @@
   @param {product} product
 {% enddoc %}
 
+{{ 'sticky-add-to-cart.css' | asset_url | stylesheet_tag: preload: true }}
+
 <script
   src="{{ 'sticky-add-to-cart.js' | asset_url }}"
   type="module"

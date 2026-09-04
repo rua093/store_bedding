@@ -39,12 +39,25 @@ class LocalizationFormComponent extends Component {
   }
 
   /**
+   * Materializes country options only when their selector is opened. Keeping
+   * hundreds of hidden options in a template removes them from initial style
+   * calculation while preserving the exact markup and synchronous open state.
+   */
+  ensureCountryOptions() {
+    const template = this.querySelector('template[data-country-options-template]');
+    if (!(template instanceof HTMLTemplateElement)) return;
+
+    template.replaceWith(template.content.cloneNode(true));
+  }
+
+  /**
    * Handles the keydown event for the container.
    *
    * @param {KeyboardEvent} event - The event object.
    */
   #onContainerKeyDown = (event) => {
-    const { countryInput, countryListItems, form } = this.refs;
+    const { countryInput, form } = this.refs;
+    const countryListItems = this.#getCountryListItems();
 
     switch (event.key) {
       case 'ArrowUp':
@@ -73,7 +86,7 @@ class LocalizationFormComponent extends Component {
     if (!this.refs.search) return;
 
     setTimeout(() => {
-      const focusableItems = this.refs.countryListItems.filter((item) => !item.hasAttribute('hidden'));
+      const focusableItems = this.#getCountryListItems().filter((item) => !item.hasAttribute('hidden'));
       const focusedItemIndex = focusableItems.findIndex((item) => item === document.activeElement);
       const focusedItem = focusableItems[focusedItemIndex];
 
@@ -256,8 +269,10 @@ class LocalizationFormComponent extends Component {
    * Filters the countries based on the search value.
    */
   filterCountries() {
-    const { countryList, countryListItems, liveRegion, noResultsMessage, popularCountries, resetButton, search } =
-      this.refs;
+    const { countryList, liveRegion, resetButton, search } = this.refs;
+    const countryListItems = this.#getCountryListItems();
+    const noResultsMessage = this.querySelector('[ref="noResultsMessage"]');
+    const popularCountries = this.querySelector('[ref="popularCountries"]');
     const { labelResultsCount } = this.dataset;
     const searchValue = normalizeString(search.value);
     let countVisibleCountries = 0;
@@ -303,7 +318,9 @@ class LocalizationFormComponent extends Component {
       liveRegion.innerText = labelResultsCount.replace('[count]', `${countVisibleCountries}`);
     }
 
-    noResultsMessage.hidden = countVisibleCountries > 0;
+    if (noResultsMessage instanceof HTMLElement) {
+      noResultsMessage.hidden = countVisibleCountries > 0;
+    }
     countryList.scrollTop = 0;
   }
 
@@ -313,7 +330,7 @@ class LocalizationFormComponent extends Component {
    * @param {string} direction - The direction to change the focus.
    */
   #changeCountryFocus(direction) {
-    const { countryListItems } = this.refs;
+    const countryListItems = this.#getCountryListItems();
     const focusableItems = countryListItems.filter((item) => !item.hasAttribute('hidden'));
     const focusedItemIndex = focusableItems.findIndex((item) => item === document.activeElement);
     const focusedItem = focusableItems[focusedItemIndex];
@@ -332,6 +349,13 @@ class LocalizationFormComponent extends Component {
     }
     itemToFocus?.setAttribute('aria-selected', 'true');
     itemToFocus?.focus();
+  }
+
+  /**
+   * @returns {HTMLElement[]}
+   */
+  #getCountryListItems() {
+    return Array.from(this.querySelectorAll('[ref="countryListItems[]"]'));
   }
 
   /**
@@ -431,6 +455,8 @@ class DropdownLocalizationComponent extends Component {
   showPanel() {
     if (!this.isHidden) return;
 
+    this.refs.localizationForm?.ensureCountryOptions();
+
     this.addEventListener('keyup', this.#handleKeyUp);
     document.addEventListener('click', this.#handleClickOutside);
 
@@ -515,6 +541,7 @@ class DrawerLocalizationComponent extends Component {
     const countryList = localizationForm.querySelector('.country-selector-form__wrapper');
 
     if (target.open) {
+      localizationForm.ensureCountryOptions();
       if (countryList) countryList.addEventListener('scroll', this.#onCountryListScroll);
       onAnimationEnd(target, localizationForm.focusSearchInput);
     } else {

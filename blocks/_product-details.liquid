@@ -154,8 +154,11 @@
       ].join(', ');
 
       document.querySelectorAll('.product-details--main-product[data-has-amazon-customizer="true"]').forEach((detailsContainer) => {
+        if (detailsContainer.dataset.customizeProxyInitialized === 'true') return;
+
         const proxyButton = detailsContainer.querySelector('[data-customize-trigger-proxy]');
         if (!proxyButton) return;
+        detailsContainer.dataset.customizeProxyInitialized = 'true';
 
         const enableProxy = (originalTrigger) => {
           if (!originalTrigger) return false;
@@ -192,18 +195,9 @@
 
         if (bindProxy()) return;
 
-        let attempts = 0;
-        const interval = setInterval(() => {
-          attempts++;
-          if (bindProxy() || attempts > 75) {
-            clearInterval(interval);
-          }
-        }, 200);
-
         const observer = new MutationObserver(() => {
           if (bindProxy()) {
             observer.disconnect();
-            clearInterval(interval);
           }
         });
 

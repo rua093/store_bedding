@@ -451,7 +451,14 @@
 
         updateSpotsUI();
         updateCountdown();
-        setInterval(updateCountdown, 1000);
+        const countdownInterval = setInterval(() => {
+          if (!container.isConnected) {
+            clearInterval(countdownInterval);
+            return;
+          }
+
+          if (!document.hidden) updateCountdown();
+        }, 1000);
       });
     };
 

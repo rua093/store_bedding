@@ -423,9 +423,14 @@
     body[data-seasonal-theme='halloween'] .header-halloween-decor--web img {
       width: clamp(60px, 6vw, 90px) !important;
     }
-    @media screen and (max-width: 749px) {
+    @media screen and (max-width: 1359px) {
       body[data-seasonal-theme='halloween'] .header-halloween-decorations {
         display: none !important;
+      }
+    }
+    @media screen and (min-width: 1360px) {
+      body[data-seasonal-theme='halloween'] #header-component .header__columns {
+        padding-inline: clamp(0px, calc(895px - 50vw), 55px);
       }
     }
   </style>
@@ -683,12 +688,6 @@
       font-size: 1.125rem;
       font-weight: 500;
       letter-spacing: 0.01em;
-    }
-
-    #header-component[data-menu-style='menu'] .header__column--left .header-logo,
-    #header-component[data-menu-style='menu'] .header-logo {
-      margin-inline-start: 135px !important;
-      margin-left: 135px !important;
     }
 
     .header-actions__action:not(.account-button) .svg-wrapper,
@@ -1019,6 +1018,12 @@
     grid-gap: var(--gap-xl);
     grid-template-columns: var(--header-template-columns);
     min-height: 72px;
+
+    @media screen and (min-width: 750px) {
+      width: 100%;
+      max-width: 100rem;
+      margin-inline: auto;
+    }
 
     /* If menu is in center column */
     &:has(.header__column--center header-menu) {
@@ -1394,14 +1399,6 @@
   }
 {% endstylesheet %}
 
-{% unless request.design_mode or request.page_type == 'index' %}
-  <script type="module">
-    import { hydrate } from '@theme/section-hydration';
-    const url = new URL(window.location.href);
-    url.searchParams.delete('page');
-    hydrate('{{ section.id }}', url);
-  </script>
-{% endunless %}
 
 {% schema %}
 {

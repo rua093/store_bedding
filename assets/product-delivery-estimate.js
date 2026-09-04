@@ -2,6 +2,7 @@
   const ROOT_SELECTOR = '[data-delivery-estimate]';
   const RANGE_SELECTOR = '[data-delivery-date-range]';
   const TIMELINE_SELECTOR = '[data-delivery-timeline]';
+  const DYNAMIC_RENDER_ROOT_SELECTOR = '#quick-add-modal-content';
   const TIME_ZONE = 'America/New_York';
 
   const nyDateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -191,7 +192,11 @@
   })();
 
   const observeDynamicRenders = () => {
-    if (!document.body || document.body.dataset.deliveryEstimateObserved === 'true') return;
+    // Quick Add is the only storefront region that injects delivery markup after
+    // initial page load. Observing `document.body` also reacts to unrelated app
+    // renders (reviews, chat, personalization) and can trigger costly subtree scans.
+    const dynamicRenderRoot = document.querySelector(DYNAMIC_RENDER_ROOT_SELECTOR);
+    if (!dynamicRenderRoot || dynamicRenderRoot.dataset.deliveryEstimateObserved === 'true') return;
 
     const observer = new MutationObserver((mutations) => {
       let shouldUpdate = false;
@@ -199,7 +204,11 @@
       for (const mutation of mutations) {
         for (const node of mutation.addedNodes) {
           if (!(node instanceof Element)) continue;
-          if (node.matches(ROOT_SELECTOR) || node.querySelector(ROOT_SELECTOR)) {
+          if (
+            node.matches(ROOT_SELECTOR) ||
+            node.closest(ROOT_SELECTOR) ||
+            node.querySelector(ROOT_SELECTOR)
+          ) {
             shouldUpdate = true;
             break;
           }
@@ -208,15 +217,15 @@
         if (shouldUpdate) break;
       }
 
-      if (shouldUpdate) queueUpdate(document);
+      if (shouldUpdate) queueUpdate(dynamicRenderRoot);
     });
 
-    observer.observe(document.body, {
+    observer.observe(dynamicRenderRoot, {
       childList: true,
       subtree: true,
     });
 
-    document.body.dataset.deliveryEstimateObserved = 'true';
+    dynamicRenderRoot.dataset.deliveryEstimateObserved = 'true';
   };
 
   const initializeDeliveryEstimates = (scope = document) => {

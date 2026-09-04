@@ -96,7 +96,10 @@ class HeaderComponent extends Component {
       const { isIntersecting } = entry;
 
       if (alwaysSticky) {
-        this.dataset.stickyState = isIntersecting ? 'inactive' : 'active';
+        const nextStickyState = isIntersecting ? 'inactive' : 'active';
+        if (this.dataset.stickyState !== nextStickyState) {
+          this.dataset.stickyState = nextStickyState;
+        }
         if (this.dataset.themeColor) changeMetaThemeColor(this.dataset.themeColor);
       } else {
         this.#offscreen = !isIntersecting || this.dataset.stickyState === 'active';
@@ -147,7 +150,7 @@ class HeaderComponent extends Component {
     if (this.#scrollContainer) {
       this.#scrollContainer.removeEventListener('scroll', this.#handleWindowScroll);
       this.#scrollContainer = getScrollEventTarget();
-      this.#scrollContainer.addEventListener('scroll', this.#handleWindowScroll);
+      this.#scrollContainer.addEventListener('scroll', this.#handleWindowScroll, { passive: true });
     }
 
     // Recreate IntersectionObserver with the new root
@@ -169,17 +172,19 @@ class HeaderComponent extends Component {
     const stickyMode = this.getAttribute('sticky');
     if (!this.#offscreen && stickyMode !== 'always') return;
 
-    const scrollTop = getScrollTop();
+    const scrollTop =
+      this.#scrollContainer instanceof Element ? this.#scrollContainer.scrollTop : getScrollTop();
+    if (scrollTop === this.#lastScrollTop) return;
+
     const isScrollingUp = scrollTop < this.#lastScrollTop;
     const isAtTop = scrollTop <= 1;
 
     if (stickyMode === 'always') {
-      if (isAtTop) {
-        this.dataset.scrollDirection = 'none';
-      } else if (isScrollingUp) {
-        this.dataset.scrollDirection = 'up';
-      } else {
-        this.dataset.scrollDirection = 'down';
+      const nextDirection = isAtTop ? 'none' : isScrollingUp ? 'up' : 'down';
+      // Rewriting this attribute on every scroll frame invalidates header styles even
+      // while the direction is unchanged.
+      if (this.dataset.scrollDirection !== nextDirection) {
+        this.dataset.scrollDirection = nextDirection;
       }
 
       this.#lastScrollTop = scrollTop;
@@ -190,20 +195,20 @@ class HeaderComponent extends Component {
       if (isAtTop) {
         // reset sticky state when header is scrolled up to natural position
         this.#offscreen = false;
-        this.dataset.stickyState = 'inactive';
-        this.dataset.scrollDirection = 'none';
+        if (this.dataset.stickyState !== 'inactive') this.dataset.stickyState = 'inactive';
+        if (this.dataset.scrollDirection !== 'none') this.dataset.scrollDirection = 'none';
       } else {
         // show sticky header when scrolling up
-        this.dataset.stickyState = 'active';
-        this.dataset.scrollDirection = 'up';
+        if (this.dataset.stickyState !== 'active') this.dataset.stickyState = 'active';
+        if (this.dataset.scrollDirection !== 'up') this.dataset.scrollDirection = 'up';
       }
     } else if (this.dataset.stickyState === 'active') {
-      this.dataset.scrollDirection = 'none';
+      if (this.dataset.scrollDirection !== 'none') this.dataset.scrollDirection = 'none';
 
       this.dataset.stickyState = 'idle';
     } else {
-      this.dataset.scrollDirection = 'none';
-      this.dataset.stickyState = 'idle';
+      if (this.dataset.scrollDirection !== 'none') this.dataset.scrollDirection = 'none';
+      if (this.dataset.stickyState !== 'idle') this.dataset.stickyState = 'idle';
     }
 
     this.#lastScrollTop = scrollTop;
@@ -220,7 +225,7 @@ class HeaderComponent extends Component {
 
       if (stickyMode === 'scroll-up' || stickyMode === 'always') {
         this.#scrollContainer = getScrollEventTarget();
-        this.#scrollContainer.addEventListener('scroll', this.#handleWindowScroll);
+        this.#scrollContainer.addEventListener('scroll', this.#handleWindowScroll, { passive: true });
       }
 
       scrollContainerMediaQuery.addEventListener('change', this.#handleBreakpointChange);

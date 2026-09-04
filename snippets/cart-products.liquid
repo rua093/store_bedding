@@ -1705,8 +1705,16 @@
 {% endstylesheet %}
 <script>
   (() => {
+    const scriptElement = document.currentScript;
+    const cartRoot = scriptElement?.closest('cart-items-component');
+
+    // This snippet can exist in both the live cart and the empty-cart template.
+    // Only initialize executable instances, and never observe unrelated page/app mutations.
+    if (!cartRoot || cartRoot.dataset.customizationTogglesInitialized === 'true') return;
+    cartRoot.dataset.customizationTogglesInitialized = 'true';
+
     const initializeCustomizationPropertyToggles = () => {
-      document.querySelectorAll('[data-cart-properties-wrapper]').forEach((wrapper) => {
+      cartRoot.querySelectorAll('[data-cart-properties-wrapper]').forEach((wrapper) => {
         if (wrapper.dataset.initialized === 'true') return;
         wrapper.dataset.initialized = 'true';
         wrapper.classList.remove('is-expanded');
@@ -1718,8 +1726,8 @@
       });
     };
 
-    document.addEventListener('click', (event) => {
-      const button = event.target.closest('[data-cart-properties-toggle]');
+    cartRoot.addEventListener('click', (event) => {
+      const button = event.target instanceof Element ? event.target.closest('[data-cart-properties-toggle]') : null;
       if (!button) return;
       const wrapper = button.closest('[data-cart-properties-wrapper]');
       if (!wrapper) return;
@@ -1731,6 +1739,6 @@
     });
 
     initializeCustomizationPropertyToggles();
-    new MutationObserver(initializeCustomizationPropertyToggles).observe(document.body, { childList: true, subtree: true });
+    new MutationObserver(initializeCustomizationPropertyToggles).observe(cartRoot, { childList: true, subtree: true });
   })();
 </script>

@@ -188,7 +188,7 @@
 .custom-product-card__tag-shimmer {
   position: absolute;
   top: 0;
-  left: -100%;
+  left: 0;
   width: 60%;
   height: 100%;
   z-index: 3;
@@ -198,7 +198,7 @@
     rgba(255, 255, 255, 0.48) 50%,
     transparent 100%
   );
-  transform: skewX(-22deg);
+  transform: translate3d(-166.667%, 0, 0) skewX(-22deg);
   pointer-events: none;
   animation: tagShimmerSweep 5.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
@@ -209,25 +209,25 @@
 
 @keyframes tagShimmerSweep {
   0%, 75% {
-    left: -100%;
+    transform: translate3d(-166.667%, 0, 0) skewX(-22deg);
     opacity: 0;
   }
   82% {
     opacity: 1;
   }
   95%, 100% {
-    left: 180%;
+    transform: translate3d(300%, 0, 0) skewX(-22deg);
     opacity: 0;
   }
 }
 
 @keyframes tagShimmerSweepFast {
   0% {
-    left: -100%;
+    transform: translate3d(-166.667%, 0, 0) skewX(-22deg);
     opacity: 1;
   }
   100% {
-    left: 180%;
+    transform: translate3d(300%, 0, 0) skewX(-22deg);
     opacity: 0;
   }
 }
