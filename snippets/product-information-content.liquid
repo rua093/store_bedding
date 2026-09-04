@@ -1518,6 +1518,51 @@
     }
   }
 
+  @media screen and (min-width: 1440px) {
+    .product-information--main-product {
+      max-width: min(1680px, calc(100vw - clamp(72px, 8vw, 160px)));
+      padding-inline: clamp(28px, 2.2vw, 44px) !important;
+    }
+
+    .product-information--main-product .product-information__grid.product-information--media-left,
+    .product-information--main-product .product-information__grid.product-information--media-right {
+      gap: clamp(40px, 3vw, 56px) !important;
+      align-items: start;
+    }
+
+    .product-information--main-product .product-information__grid.product-information--media-left {
+      grid-template-columns: minmax(0, 1.08fr) minmax(30rem, 0.84fr);
+    }
+
+    .product-information--main-product .product-information__grid.product-information--media-right {
+      grid-template-columns: minmax(30rem, 0.84fr) minmax(0, 1.08fr);
+    }
+  }
+
+  @media screen and (min-width: 1900px) {
+    .product-information--main-product {
+      max-width: min(1780px, calc(100vw - 180px));
+    }
+
+    .product-information--main-product .product-information__grid.product-information--media-left,
+    .product-information--main-product .product-information__grid.product-information--media-right {
+      gap: clamp(52px, 3vw, 72px) !important;
+      justify-content: center;
+    }
+
+    .product-information--main-product .product-information__grid.product-information--media-left {
+      grid-template-columns: minmax(760px, 900px) minmax(560px, 660px);
+    }
+
+    .product-information--main-product .product-information__grid.product-information--media-right {
+      grid-template-columns: minmax(560px, 660px) minmax(760px, 900px);
+    }
+
+    .product-information--main-product .product-details--main-product > .group-block > .group-block-content {
+      width: min(100%, 41rem);
+    }
+  }
+
   @media screen and (min-width: 801px) and (max-width: 989px) {
     .product-information--main-product .product-information__grid.product-information--media-left,
     .product-information--main-product .product-information__grid.product-information--media-right,
