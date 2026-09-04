@@ -833,13 +833,19 @@
   .product-details--main-product .price-shipping-line__icon,
   .product-details--main-product .price-policy-note__icon,
   .product-details--main-product .product-delivery-estimate__icon--default {
-    display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 1.25rem;
     height: 1.25rem;
     flex: 0 0 1.25rem;
     margin-inline-end: 0.4rem;
+  }
+
+  .product-details--main-product .price-discount-message__icon,
+  .product-details--main-product .price-shipping-line__icon,
+  .product-details--main-product .price-policy-note__icon--default,
+  .product-details--main-product .product-delivery-estimate__icon--default {
+    display: inline-flex;
   }
 
   .product-details--main-product :is(.price-discount-message__icon, .price-shipping-line__icon, .price-policy-note__icon, .product-delivery-estimate__icon) :is(svg, img) {
