@@ -230,8 +230,8 @@
   "order": [
     "section",
     "main",
+    "collection_related_links",
     "collection_seo_content",
-    "collection_faq",
-    "collection_related_links"
+    "collection_faq"
   ]
 }
