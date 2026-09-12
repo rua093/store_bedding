@@ -1,5 +1,6 @@
 {% liquid
   assign seo_content_html = collection.metafields.custom.seo_content.value
+  assign collection_cover = collection.metafields.custom.banner_img.value | default: collection.image
   assign has_content = false
   if seo_content_html != blank
     assign has_content = true
@@ -11,8 +12,11 @@
 
   <section
     id="CollectionSeoContent-{{ section.id }}"
-    class="collection-seo-content"
+    class="collection-seo-content{% if collection_cover != blank %} collection-seo-content--with-cover{% endif %}"
     aria-label="{{ section.settings.section_title | default: 'Collection Guide & Information' | escape }}"
+    {% if collection_cover != blank %}
+      style="--collection-seo-cover-image: url('{{ collection_cover | image_url: width: 1440 }}');"
+    {% endif %}
   >
     <div class="collection-seo-content__inner">
       {% if section.settings.show_section_header and section.settings.section_title != blank %}
