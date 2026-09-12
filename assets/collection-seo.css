@@ -35,6 +35,12 @@
 }
 
 .collection-seo-content__inner {
+  /* Match the collection product grid's responsive content track instead of
+     maintaining a separate hard-coded page width. */
+  width: min(
+    calc(100% - var(--page-margin) * 2),
+    var(--page-content-width)
+  );
   max-width: none;
   margin: 0 auto;
   padding: 0;
