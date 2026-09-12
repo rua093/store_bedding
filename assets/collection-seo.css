@@ -385,9 +385,10 @@
 .collection-related-card__content {
   padding: 10px 4px 0 4px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
   text-align: left;
+  min-height: 2.2em;
 }
 
 .collection-related-card__title {
@@ -400,7 +401,7 @@
   color: #2F261F;
   margin: 0;
   display: -webkit-box;
-  -webkit-line-clamp: 1;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -454,11 +455,14 @@
 
   .collection-related-card__content {
     padding: 8px 3px 0 3px;
+    min-height: 2.5em;
   }
 
   .collection-related-card__title {
     font-size: 0.6875rem;
+    line-height: 1.25;
     letter-spacing: 0.06em;
+    -webkit-line-clamp: 2;
   }
 }
 
