@@ -1,0 +1,236 @@
+{% liquid
+  assign related_meta_collections = collection.metafields.custom.related_collections.value
+  assign has_meta_related = false
+  if related_meta_collections != blank and related_meta_collections.count > 0
+    assign has_meta_related = true
+  elsif related_meta_collections != blank and related_meta_collections.size > 0
+    assign has_meta_related = true
+  endif
+
+  assign has_block_related = false
+  if section.blocks.size > 0
+    assign has_block_related = true
+  endif
+
+  assign has_related = false
+  if has_meta_related or has_block_related
+    assign has_related = true
+  endif
+
+  assign layout_style = section.settings.layout_style | default: 'cards'
+%}
+
+{% if has_related %}
+  {{ 'collection-seo.css' | asset_url | stylesheet_tag }}
+
+  <section
+    id="CollectionRelatedLinks-{{ section.id }}"
+    class="collection-related-links"
+    aria-labelledby="CollectionRelatedTitle-{{ section.id }}"
+  >
+    <div class="collection-related-links__inner">
+      <div class="collection-related-links__header">
+        <h2 id="CollectionRelatedTitle-{{ section.id }}" class="collection-related-links__title">
+          {{ section.settings.heading | default: 'Explore Related Collections' | escape }}
+        </h2>
+        {% if section.settings.subtitle != blank %}
+          <p class="collection-related-links__subtitle">{{ section.settings.subtitle | escape }}</p>
+        {% endif %}
+      </div>
+
+      {% if layout_style == 'cards' %}
+        <div class="collection-related-links__grid">
+          {% if has_meta_related %}
+            {% for item in related_meta_collections %}
+              {% if item != blank and item.url != blank %}
+                {% liquid
+                  assign card_image = item.metafields.custom.banner_img.value
+                  if card_image == blank
+                    assign card_image = item.image
+                  endif
+                  if card_image == blank and item.products.first != blank
+                    assign card_image = item.products.first.featured_image
+                  endif
+                %}
+                <a href="{{ item.url }}" class="collection-related-card">
+                  <div class="collection-related-card__media">
+                    {% if card_image != blank %}
+                      {{
+                        card_image
+                        | image_url: width: 600
+                        | image_tag:
+                          loading: 'lazy',
+                          decoding: 'async',
+                          alt: item.title,
+                          class: 'collection-related-card__image'
+                      }}
+                    {% else %}
+                      <div class="collection-related-card__fallback-media">
+                        <span>{{ item.title | escape }}</span>
+                      </div>
+                    {% endif %}
+                  </div>
+                  <div class="collection-related-card__content">
+                    <h3 class="collection-related-card__title">{{ item.title | escape }}</h3>
+                    <svg class="collection-related-card__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </div>
+                </a>
+              {% endif %}
+            {% endfor %}
+          {% elsif has_block_related %}
+            {% for block in section.blocks %}
+              {% assign item = block.settings.collection %}
+              {% if item != blank and item.url != blank %}
+                {% liquid
+                  assign card_image = block.settings.custom_image
+                  if card_image == blank
+                    assign card_image = item.metafields.custom.banner_img.value
+                  endif
+                  if card_image == blank
+                    assign card_image = item.image
+                  endif
+                  if card_image == blank and item.products.first != blank
+                    assign card_image = item.products.first.featured_image
+                  endif
+                %}
+                <a href="{{ item.url }}" class="collection-related-card" {{ block.shopify_attributes }}>
+                  <div class="collection-related-card__media">
+                    {% if card_image != blank %}
+                      {{
+                        card_image
+                        | image_url: width: 600
+                        | image_tag:
+                          loading: 'lazy',
+                          decoding: 'async',
+                          alt: item.title,
+                          class: 'collection-related-card__image'
+                      }}
+                    {% else %}
+                      <div class="collection-related-card__fallback-media">
+                        <span>{{ item.title | escape }}</span>
+                      </div>
+                    {% endif %}
+                  </div>
+                  <div class="collection-related-card__content">
+                    <h3 class="collection-related-card__title">
+                      {{ block.settings.custom_title | default: item.title | escape }}
+                    </h3>
+                    <svg class="collection-related-card__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </div>
+                </a>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% else %}
+        {% comment %} Pills Navigation Style {% endcomment %}
+        <div class="collection-related-links__pills">
+          {% if has_meta_related %}
+            {% for item in related_meta_collections %}
+              {% if item != blank and item.url != blank %}
+                <a href="{{ item.url }}" class="collection-related-pill">
+                  <span>{{ item.title | escape }}</span>
+                  <svg class="collection-related-pill__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </a>
+              {% endif %}
+            {% endfor %}
+          {% elsif has_block_related %}
+            {% for block in section.blocks %}
+              {% assign item = block.settings.collection %}
+              {% if item != blank and item.url != blank %}
+                <a href="{{ item.url }}" class="collection-related-pill" {{ block.shopify_attributes }}>
+                  <span>{{ block.settings.custom_title | default: item.title | escape }}</span>
+                  <svg class="collection-related-pill__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </a>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </section>
+{% elsif request.design_mode %}
+  <div class="collection-related-links collection-related-links--placeholder" style="padding: 24px; text-align: center; background: #FAF8F5; border: 1px dashed #C9855A; margin: 16px;">
+    <p style="font-family: 'Work Sans', sans-serif; color: #71655E; margin: 0;">
+      <strong>Related Collections:</strong> Chưa có collection liên quan cho trang này. Thêm blocks bên dưới hoặc gán metafield <code>custom.related_collections</code> để hiển thị.
+    </p>
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Related Collections",
+  "tag": "section",
+  "class": "section-collection-related-links",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Explore Related Collections"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle (Optional)",
+      "default": "Discover more personalized bedding styles and curated gift ideas"
+    },
+    {
+      "type": "select",
+      "id": "layout_style",
+      "label": "Display Style",
+      "options": [
+        {
+          "value": "cards",
+          "label": "Cards with Thumbnails"
+        },
+        {
+          "value": "pills",
+          "label": "Pill Buttons"
+        }
+      ],
+      "default": "cards"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "related_item",
+      "name": "Related Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Select Collection"
+        },
+        {
+          "type": "text",
+          "id": "custom_title",
+          "label": "Custom Title (Optional)"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Custom Thumbnail (Optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Related Collections"
+    }
+  ]
+}
+{% endschema %}
