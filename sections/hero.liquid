@@ -13,21 +13,38 @@
   assign mobile_widths_array = mobile_widths | split: ', '
   assign hero_eyebrow = section.settings.eyebrow | strip
   assign hero_heading = section.settings.heading | strip
+  assign hero_tagline = section.settings.tagline | strip
   assign hero_description = section.settings.description | strip
   assign hero_primary_label = section.settings.primary_label | strip
   assign hero_primary_link = section.settings.primary_link
   assign hero_secondary_label = section.settings.secondary_label | strip
   assign hero_secondary_link = section.settings.secondary_link
   assign hero_heading_is_editorial_default = false
-  assign hero_heading_normalized = hero_heading | newline_to_br | strip_newlines | replace: '<br />', '' | replace: '<br/>', '' | replace: '<br>', '' | replace: ' ', '' | downcase
-  assign hero_heading_is_custom_split = false
+  assign hero_heading_lines = null
 
   if hero_heading == 'Sleep Better Every Night'
     assign hero_heading_is_editorial_default = true
-  endif
-
-  if hero_heading_normalized == 'yourideas,madecozy'
-    assign hero_heading_is_custom_split = true
+  else
+    assign hero_heading_with_br = hero_heading | newline_to_br
+    if hero_heading_with_br contains '<br'
+      assign raw_heading_lines = hero_heading_with_br | split: '<br'
+      assign parsed_lines = ''
+      for raw_line in raw_heading_lines
+        assign clean_line = raw_line | replace: '/>', '' | replace: '>', '' | strip
+        if clean_line != blank
+          if parsed_lines == ''
+            assign parsed_lines = clean_line
+          else
+            assign parsed_lines = parsed_lines | append: '|||' | append: clean_line
+          endif
+        endif
+      endfor
+      if parsed_lines contains '|||'
+        assign hero_heading_lines = parsed_lines | split: '|||'
+      endif
+    elsif hero_heading == 'Personalized Bedding Made From Your Ideas'
+      assign hero_heading_lines = 'Personalized Bedding|||Made From Your Ideas' | split: '|||'
+    endif
   endif
 
   if section.settings.image_1 != blank and section.settings.media_type_1 == 'image'
@@ -278,18 +295,16 @@
                 data-reveal-disable-mobile
                 style="--reveal-delay: 450ms;">Every Night</span>
             </h1>
-          {% elsif hero_heading_is_custom_split %}
+          {% elsif hero_heading_lines != blank %}
             <h1 class="hero__heading hero__heading--stacked">
-              <span
-                class="hero__heading-line homepage-reveal amzcustom-count-processed"
-                data-reveal-preset="premium-hero-reveal"
-                data-reveal-disable-mobile
-                style="--reveal-delay: 300ms;">Your Ideas,</span>
-              <span
-                class="hero__heading-line homepage-reveal amzcustom-count-processed"
-                data-reveal-preset="premium-hero-reveal"
-                data-reveal-disable-mobile
-                style="--reveal-delay: 450ms;">Made Cozy</span>
+              {% for line in hero_heading_lines %}
+                {% assign line_delay = forloop.index | times: 150 | plus: 150 %}
+                <span
+                  class="hero__heading-line homepage-reveal amzcustom-count-processed"
+                  data-reveal-preset="premium-hero-reveal"
+                  data-reveal-disable-mobile
+                  style="--reveal-delay: {{ line_delay }}ms;">{{ line | escape }}</span>
+              {% endfor %}
             </h1>
           {% else %}
             <h1
@@ -298,6 +313,13 @@
               data-reveal-disable-mobile
               style="--reveal-delay: 300ms;">{{ hero_heading | escape | newline_to_br }}</h1>
           {% endif %}
+        {% endif %}
+        {% if hero_tagline != blank %}
+          <p
+            class="hero__tagline homepage-reveal"
+            data-reveal-preset="premium-hero-reveal"
+            data-reveal-disable-mobile
+            style="--reveal-delay: 500ms;">{{ hero_tagline | escape }}</p>
         {% endif %}
         {% if hero_description != blank %}
           <p
@@ -419,7 +441,12 @@
         "type": "text",
         "id": "heading",
         "label": "Heading",
-        "default": "Sleep Better Every Night"
+        "default": "Personalized Bedding Made From Your Ideas"
+      }, {
+        "type": "text",
+        "id": "tagline",
+        "label": "Tagline",
+        "default": "Your Ideas, Made Cozy"
       }, {
         "type": "textarea",
         "id": "description",
