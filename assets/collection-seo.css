@@ -288,14 +288,16 @@
 .collection-related-links {
   width: 100%;
   background-color: var(--jem-seo-bg);
-  padding: 48px 0 56px 0;
+  padding-block: 48px 56px;
   border-top: 1px solid var(--jem-seo-border);
 }
 
 .collection-related-links__inner {
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 0 24px;
+  grid-column: 2;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
 }
 
 .collection-related-links__header {
@@ -319,11 +321,21 @@
   margin: 0;
 }
 
-/* Grid Mode: 4 Cards per row on Desktop */
+/* Synchronized Grid: Exactly matches Products Grid layout & scaling */
 .collection-related-links__grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 12px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+@media screen and (min-width: 750px) {
+  .collection-related-links__grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 24px 20px;
+  }
 }
 
 .collection-related-card {
@@ -413,31 +425,14 @@
   color: #9A3F16;
 }
 
-/* Responsive: Tablet (2 columns) */
-@media (min-width: 641px) and (max-width: 1023px) {
-  .collection-related-links__grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-}
-
-/* Responsive: Mobile (2 columns with compact spacing) */
-@media (max-width: 640px) {
+/* Responsive: Mobile styling for compact cards */
+@media (max-width: 749px) {
   .collection-related-links {
-    padding: 36px 0 44px 0;
-  }
-
-  .collection-related-links__inner {
-    padding: 0 16px;
+    padding-block: 36px 44px;
   }
 
   .collection-related-links__header {
-    margin-bottom: 24px;
-  }
-
-  .collection-related-links__grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    margin-bottom: 20px;
   }
 
   .collection-related-card {
