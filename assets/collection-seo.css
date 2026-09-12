@@ -1,0 +1,443 @@
+/* ==========================================================================
+   Jeminise Collection SEO Sections Stylesheet
+   Single Source of Truth: DESIGN.md
+   Warm Neutrals | Lora Headings | Work Sans Body | Pill & Soft Curves | Brown Shadows
+   ========================================================================== */
+
+:root {
+  --jem-seo-bg: #faf8f5;
+  --jem-seo-card-bg: #ffffff;
+  --jem-seo-text-primary: #120b08;
+  --jem-seo-text-body: #3e332d;
+  --jem-seo-text-muted: #71655e;
+  --jem-seo-accent: #9a3f16;
+  --jem-seo-accent-hover: #7a3110;
+  --jem-seo-border: #eadfd6;
+  --jem-seo-border-hover: #c9855a;
+  --jem-seo-font-display: 'Lora', Georgia, serif;
+  --jem-seo-font-body: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --jem-seo-radius-sm: 8px;
+  --jem-seo-radius-md: 12px;
+  --jem-seo-radius-lg: 16px;
+  --jem-seo-radius-pill: 999px;
+  --jem-seo-shadow-subtle: 0 2px 8px rgba(54, 33, 19, 0.05), 0 1px 2px rgba(54, 33, 19, 0.03);
+  --jem-seo-shadow-hover: 0 6px 20px rgba(54, 33, 19, 0.10), 0 2px 4px rgba(54, 33, 19, 0.05);
+}
+
+/* ==========================================================================
+   1. Collection SEO Content (Below Product Grid)
+   ========================================================================== */
+.collection-seo-content {
+  width: 100%;
+  background-color: var(--jem-seo-bg);
+  padding: 56px 0;
+  border-top: 1px solid var(--jem-seo-border);
+}
+
+.collection-seo-content__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.collection-seo-content__header {
+  margin-bottom: 36px;
+}
+
+.collection-seo-content__main-title {
+  font-family: var(--jem-seo-font-display);
+  font-size: clamp(1.6rem, 2.5vw, 2.1rem);
+  font-weight: 600;
+  color: var(--jem-seo-text-primary);
+  line-height: 1.3;
+  margin: 0 0 8px 0;
+}
+
+.collection-seo-content__items {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.collection-seo-item {
+  background: var(--jem-seo-card-bg);
+  border: 1px solid var(--jem-seo-border);
+  border-radius: var(--jem-seo-radius-lg);
+  padding: 32px;
+  box-shadow: var(--jem-seo-shadow-subtle);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.collection-seo-item:hover {
+  border-color: var(--jem-seo-border-hover);
+  box-shadow: var(--jem-seo-shadow-hover);
+}
+
+.collection-seo-item__layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.collection-seo-item__layout--with-image {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .collection-seo-item__layout--with-image {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+  }
+}
+
+.collection-seo-item__heading {
+  font-family: var(--jem-seo-font-display);
+  font-size: clamp(1.3rem, 2vw, 1.6rem);
+  font-weight: 600;
+  color: var(--jem-seo-text-primary);
+  margin: 0 0 16px 0;
+  line-height: 1.35;
+}
+
+.collection-seo-item__body {
+  font-family: var(--jem-seo-font-body);
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--jem-seo-text-body);
+}
+
+.collection-seo-item__body p {
+  margin: 0 0 1rem 0;
+}
+
+.collection-seo-item__body p:last-child {
+  margin-bottom: 0;
+}
+
+.collection-seo-item__body a {
+  color: var(--jem-seo-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.collection-seo-item__body a:hover {
+  color: var(--jem-seo-accent-hover);
+}
+
+.collection-seo-item__body ul,
+.collection-seo-item__body ol {
+  margin: 0.75rem 0 1rem 1.5rem;
+  padding: 0;
+}
+
+.collection-seo-item__body li {
+  margin-bottom: 0.4rem;
+}
+
+.collection-seo-item__media {
+  border-radius: var(--jem-seo-radius-md);
+  overflow: hidden;
+  background-color: var(--jem-seo-bg);
+}
+
+.collection-seo-item__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ==========================================================================
+   2. Collection FAQ (Accordion & Schema JSON-LD)
+   ========================================================================== */
+.collection-faq {
+  width: 100%;
+  background-color: var(--jem-seo-bg);
+  padding: 68px 0 56px 0;
+  border-top: 1px solid var(--jem-seo-border);
+  scroll-margin-top: 110px;
+}
+
+.collection-faq__inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.collection-faq__header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.collection-faq__title {
+  font-family: var(--jem-seo-font-display);
+  font-size: clamp(1.6rem, 2.5vw, 2.1rem);
+  font-weight: 600;
+  color: var(--jem-seo-text-primary);
+  margin: 0 0 10px 0;
+  line-height: 1.3;
+}
+
+.collection-faq__subtitle {
+  font-family: var(--jem-seo-font-body);
+  font-size: 0.95rem;
+  color: var(--jem-seo-text-muted);
+  margin: 0;
+}
+
+.collection-faq__list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.collection-faq__item {
+  background: var(--jem-seo-card-bg);
+  border: 1px solid var(--jem-seo-border);
+  border-radius: var(--jem-seo-radius-md);
+  overflow: hidden;
+  box-shadow: var(--jem-seo-shadow-subtle);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.collection-faq__item:hover {
+  border-color: var(--jem-seo-border-hover);
+}
+
+.collection-faq__item[open] {
+  border-color: var(--jem-seo-accent);
+  box-shadow: var(--jem-seo-shadow-hover);
+}
+
+.collection-faq__summary {
+  font-family: var(--jem-seo-font-body);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--jem-seo-text-primary);
+  padding: 20px 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  list-style: none;
+  user-select: none;
+  min-height: 48px;
+  transition: color 0.2s ease;
+}
+
+.collection-faq__summary::-webkit-details-marker {
+  display: none;
+}
+
+.collection-faq__summary::marker {
+  display: none;
+}
+
+.collection-faq__summary:focus-visible {
+  outline: 2px solid var(--jem-seo-accent);
+  outline-offset: -2px;
+}
+
+.collection-faq__summary:hover {
+  color: var(--jem-seo-accent);
+}
+
+.collection-faq__icon {
+  width: 20px;
+  height: 20px;
+  stroke: var(--jem-seo-accent);
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.collection-faq__item[open] .collection-faq__icon {
+  transform: rotate(180deg);
+}
+
+.collection-faq__answer {
+  padding: 0 24px 22px 24px;
+  font-family: var(--jem-seo-font-body);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--jem-seo-text-body);
+  border-top: 1px solid transparent;
+}
+
+.collection-faq__answer p {
+  margin: 0 0 0.8rem 0;
+}
+
+.collection-faq__answer p:last-child {
+  margin-bottom: 0;
+}
+
+.collection-faq__answer a {
+  color: var(--jem-seo-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   3. Collection Related Links (Internal Linking Hub)
+   ========================================================================== */
+.collection-related-links {
+  width: 100%;
+  background-color: var(--jem-seo-bg);
+  padding: 56px 0 64px 0;
+  border-top: 1px solid var(--jem-seo-border);
+}
+
+.collection-related-links__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.collection-related-links__header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.collection-related-links__title {
+  font-family: var(--jem-seo-font-display);
+  font-size: clamp(1.6rem, 2.5vw, 2.1rem);
+  font-weight: 600;
+  color: var(--jem-seo-text-primary);
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.collection-related-links__subtitle {
+  font-family: var(--jem-seo-font-body);
+  font-size: 0.95rem;
+  color: var(--jem-seo-text-muted);
+  margin: 0;
+}
+
+/* Grid Mode: Cards */
+.collection-related-links__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.collection-related-card {
+  background: var(--jem-seo-card-bg);
+  border: 1px solid var(--jem-seo-border);
+  border-radius: var(--jem-seo-radius-lg);
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--jem-seo-text-primary);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  box-shadow: var(--jem-seo-shadow-subtle);
+}
+
+.collection-related-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--jem-seo-border-hover);
+  box-shadow: var(--jem-seo-shadow-hover);
+}
+
+.collection-related-card__media {
+  aspect-ratio: 16 / 10;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--jem-seo-bg);
+}
+
+.collection-related-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+  display: block;
+}
+
+.collection-related-card:hover .collection-related-card__image {
+  transform: scale(1.05);
+}
+
+.collection-related-card__fallback-media {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #FAF8F5 0%, #EADFD6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--jem-seo-text-muted);
+}
+
+.collection-related-card__content {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.collection-related-card__title {
+  font-family: var(--jem-seo-font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--jem-seo-text-primary);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.collection-related-card__arrow {
+  width: 18px;
+  height: 18px;
+  stroke: var(--jem-seo-accent);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.collection-related-card:hover .collection-related-card__arrow {
+  transform: translateX(4px);
+}
+
+/* Pills Mode: Quick Navigation */
+.collection-related-links__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.collection-related-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: var(--jem-seo-card-bg);
+  border: 1px solid var(--jem-seo-border);
+  border-radius: var(--jem-seo-radius-pill);
+  text-decoration: none;
+  font-family: var(--jem-seo-font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--jem-seo-text-primary);
+  box-shadow: var(--jem-seo-shadow-subtle);
+  transition: all 0.2s ease;
+}
+
+.collection-related-pill:hover {
+  background: var(--jem-seo-bg);
+  border-color: var(--jem-seo-accent);
+  color: var(--jem-seo-accent);
+  transform: translateY(-2px);
+  box-shadow: var(--jem-seo-shadow-hover);
+}
+
+.collection-related-pill__arrow {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+}
