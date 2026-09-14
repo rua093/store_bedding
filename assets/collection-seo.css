@@ -30,14 +30,20 @@
 .collection-seo-content {
   width: 100%;
   background-color: var(--jem-seo-bg);
-  padding: 56px 0;
-  border-top: 1px solid var(--jem-seo-border);
+  padding: 36px 0 40px;
+  border-top: 0;
 }
 
 .collection-seo-content__inner {
-  max-width: 1100px;
+  /* Match the collection product grid's responsive content track instead of
+     maintaining a separate hard-coded page width. */
+  width: min(
+    calc(100% - var(--page-margin) * 2),
+    var(--page-content-width)
+  );
+  max-width: none;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0;
 }
 
 .collection-seo-content__header {
@@ -56,14 +62,14 @@
 .collection-seo-content__items {
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  gap: 12px;
 }
 
 .collection-seo-item {
   background: var(--jem-seo-card-bg);
   border: 1px solid var(--jem-seo-border);
   border-radius: var(--jem-seo-radius-lg);
-  padding: 32px;
+  padding: 32px 52px 28px;
   box-shadow: var(--jem-seo-shadow-subtle);
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
@@ -76,7 +82,7 @@
 .collection-seo-item__layout {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
+  gap: 20px;
   align-items: center;
 }
 
@@ -93,22 +99,22 @@
 
 .collection-seo-item__heading {
   font-family: var(--jem-seo-font-display);
-  font-size: clamp(1.3rem, 2vw, 1.6rem);
+  font-size: clamp(1.75rem, 2.5vw, 2.15rem);
   font-weight: 600;
   color: var(--jem-seo-text-primary);
-  margin: 0 0 16px 0;
-  line-height: 1.35;
+  margin: 0 0 4px;
+  line-height: 1.16;
 }
 
 .collection-seo-item__body {
   font-family: var(--jem-seo-font-body);
   font-size: 1rem;
-  line-height: 1.75;
+  line-height: 1.42;
   color: var(--jem-seo-text-body);
 }
 
 .collection-seo-item__body p {
-  margin: 0 0 1rem 0;
+  margin: 0 0 12px;
 }
 
 .collection-seo-item__body p:last-child {
@@ -141,6 +147,252 @@
   border-radius: var(--jem-seo-radius-md);
   overflow: hidden;
   background-color: var(--jem-seo-bg);
+}
+
+/* The collection cover is intentionally rendered by the theme, not stored in
+   custom.seo_content. It stays current when the collection image changes. */
+.collection-seo-content--with-cover .collection-seo-item:first-child {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+  min-height: 380px;
+  overflow: hidden;
+  padding: 0;
+}
+
+.collection-seo-content--with-cover .collection-seo-item:first-child .collection-seo-item__layout {
+  display: contents;
+}
+
+.collection-seo-content--with-cover .collection-seo-item:first-child .collection-seo-item__content {
+  align-self: center;
+  padding: 40px 52px;
+}
+
+.collection-seo-content--with-cover .collection-seo-item:first-child::after {
+  content: '';
+  grid-column: 2;
+  grid-row: 1;
+  min-height: 100%;
+  background: var(--collection-seo-cover-image) center / cover no-repeat, var(--jem-seo-bg);
+}
+
+.collection-seo-content--with-cover .collection-seo-item:first-child .collection-seo-item__heading {
+  font-size: clamp(2rem, 3vw, 2.55rem);
+  line-height: 1.12;
+  margin-top: 26px;
+}
+
+.collection-seo-item__cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  gap: 12px;
+  margin-top: 8px;
+  padding: 14px 28px;
+  border: 1px solid var(--jem-seo-accent);
+  border-radius: var(--jem-seo-radius-pill);
+  background: var(--jem-seo-accent);
+  box-shadow: 0 14px 30px rgba(58, 39, 29, 0.16);
+  color: #fff;
+  font-family: var(--jem-seo-font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.collection-seo-item__cta:hover {
+  opacity: 0.8;
+  transform: translateY(-1px);
+}
+
+.collection-seo-item__cta:focus-visible {
+  outline: 2px solid var(--jem-seo-accent);
+  outline-offset: 3px;
+}
+
+.collection-seo-content--with-cover .collection-seo-item:first-child .collection-seo-item__content::before,
+.collection-seo-item--styling .collection-seo-item__content::before,
+.collection-seo-item--materials .collection-seo-item__content::before,
+.collection-seo-item--size-guide .collection-seo-item__content::before {
+  display: block;
+  color: var(--jem-seo-accent);
+  font-family: var(--jem-seo-font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.collection-seo-content--with-cover .collection-seo-item:first-child .collection-seo-item__content::before {
+  content: 'Our collection';
+}
+
+.collection-seo-item--styling .collection-seo-item__content::before {
+  content: 'Style your space';
+  margin-bottom: 12px;
+}
+
+.collection-seo-item--materials .collection-seo-item__content::before {
+  content: 'Quality you can feel';
+  margin-bottom: 12px;
+}
+
+.collection-seo-item--size-guide .collection-seo-item__content::before {
+  content: 'Sizes & set details';
+  margin-bottom: 12px;
+}
+
+/* The existing rich text already groups each styling tip in a paragraph. */
+.collection-seo-item--styling .collection-seo-item__body {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 28px;
+  margin-top: 4px;
+}
+
+.collection-seo-item--styling .collection-seo-item__body > p:first-child {
+  grid-column: 1 / -1;
+  margin-bottom: 16px;
+}
+
+.collection-seo-item--styling .collection-seo-item__body > p:not(:first-child) {
+  position: relative;
+  min-height: 76px;
+  margin: 0;
+  padding: 4px 0 4px 92px;
+}
+
+.collection-seo-item--styling .collection-seo-item__body > p:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--jem-seo-bg);
+}
+
+.collection-seo-item--styling .collection-seo-item__body > p:not(:first-child)::after {
+  content: '';
+  position: absolute;
+  top: 22px;
+  left: 32px;
+  width: 20px;
+  height: 20px;
+  background-color: var(--jem-seo-accent);
+  -webkit-mask: url('icon-sparkle.svg') center / contain no-repeat;
+  mask: url('icon-sparkle.svg') center / contain no-repeat;
+}
+
+.collection-seo-item--styling .collection-seo-item__body > p:not(:first-child) + p:not(:first-child) {
+  border-left: 1px solid var(--jem-seo-border);
+  padding-left: 112px;
+}
+
+.collection-seo-item--styling .collection-seo-item__body > p strong {
+  display: block;
+  color: var(--jem-seo-accent);
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 1023px) {
+  .collection-seo-content {
+    padding: 28px 0 36px;
+  }
+
+  .collection-seo-item {
+    padding: 28px 32px 24px;
+  }
+
+  .collection-seo-content--with-cover .collection-seo-item:first-child .collection-seo-item__content {
+    padding: 32px;
+  }
+
+  .collection-seo-item--styling .collection-seo-item__body {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 20px;
+  }
+
+  .collection-seo-item--styling .collection-seo-item__body > p:nth-child(4) {
+    border-left: 0;
+    padding-left: 92px;
+  }
+}
+
+@media (max-width: 749px) {
+  .collection-seo-content {
+    padding: 24px 0 32px;
+  }
+
+  .collection-seo-content__items {
+    gap: 12px;
+  }
+
+  .collection-seo-item {
+    border-radius: 12px;
+    padding: 24px 20px;
+  }
+
+  .collection-seo-item__heading {
+    font-size: 1.65rem;
+  }
+
+  .collection-seo-content--with-cover .collection-seo-item:first-child {
+    grid-template-columns: 1fr;
+    grid-template-rows: 224px auto;
+    min-height: 0;
+  }
+
+  .collection-seo-content--with-cover .collection-seo-item:first-child::after {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .collection-seo-content--with-cover .collection-seo-item:first-child .collection-seo-item__content {
+    grid-column: 1;
+    grid-row: 2;
+    padding: 28px 20px 24px;
+  }
+
+  .collection-seo-content--with-cover .collection-seo-item:first-child .collection-seo-item__heading {
+    font-size: 1.95rem;
+    margin-top: 18px;
+  }
+
+  .collection-seo-item__cta {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .collection-seo-item--styling .collection-seo-item__body {
+    display: block;
+    margin-top: 16px;
+  }
+
+  .collection-seo-item--styling .collection-seo-item__body > p:first-child {
+    margin-bottom: 20px;
+  }
+
+  .collection-seo-item--styling .collection-seo-item__body > p:not(:first-child),
+  .collection-seo-item--styling .collection-seo-item__body > p:not(:first-child) + p:not(:first-child),
+  .collection-seo-item--styling .collection-seo-item__body > p:nth-child(4) {
+    min-height: 64px;
+    margin: 0 0 20px;
+    border-left: 0;
+    padding: 2px 0 2px 76px;
+  }
+
+  .collection-seo-item--styling .collection-seo-item__body > p:not(:first-child)::before {
+    width: 56px;
+    height: 56px;
+    font-size: 1.2rem;
+  }
 }
 
 .collection-seo-item__image {

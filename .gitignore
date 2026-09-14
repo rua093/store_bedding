@@ -34,9 +34,15 @@ external
 jeminise-src.zip
 app-snapshot-for-AI
 PROJECT-CONTEXT.md
+PROJECT_CONTEXT.md
 todo
-dev.cmd
+*.cmd
 admin
 doc
 .agents
 .playwright-cli
+sync-products-to-real-store
+backup-products-data
+auto
+DESIGN.md
+my-tools

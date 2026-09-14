@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-blog",
+      "settings": {
+        "heading": "Jeminise Bedding Guides & Ideas",
+        "intro": "Thoughtful bedding guides, decorating ideas, and inspiration for creating a space that feels personal.",
+        "articles_per_page": 12
+      }
+    }
+  },
+  "order": ["main"]
+}

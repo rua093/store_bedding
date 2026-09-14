@@ -1,0 +1,100 @@
+{{ 'blog-guides.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign intro = section.settings.intro | default: 'Thoughtful bedding guides, decorating ideas, and inspiration for creating a space that feels personal.'
+%}
+
+<section class="jeminise-blog-hub" aria-labelledby="JeminiseBlogHubTitle-{{ section.id }}">
+  <div class="jeminise-blog-hub__shell">
+    <header class="jeminise-blog-hub__intro">
+      <p class="jeminise-blog-hub__eyebrow">JEMINISE JOURNAL</p>
+      <h1 id="JeminiseBlogHubTitle-{{ section.id }}">{{ section.settings.heading | default: blog.title | escape }}</h1>
+      <p class="jeminise-blog-hub__intro-copy">{{ intro | escape }}</p>
+    </header>
+
+    {% paginate blog.articles by section.settings.articles_per_page %}
+      {% if blog.articles_count > 0 %}
+        {% assign featured_article = blog.articles.first %}
+        <article class="jeminise-blog-hub__featured">
+          <a class="jeminise-blog-hub__featured-image-wrap" href="{{ featured_article.url }}" aria-label="{{ featured_article.title | escape }}">
+            {% if featured_article.image %}
+              {{ featured_article.image | image_url: width: 1400 | image_tag: class: 'jeminise-blog-hub__featured-image', loading: 'eager', widths: '480, 720, 960, 1400', alt: featured_article.image.alt | default: featured_article.title }}
+            {% endif %}
+          </a>
+          <div class="jeminise-blog-hub__featured-copy">
+            {% if featured_article.metafields.custom.article_eyebrow.value != blank %}
+              <p class="jeminise-blog-hub__eyebrow">{{ featured_article.metafields.custom.article_eyebrow.value | escape }}</p>
+            {% endif %}
+            <h2 class="jeminise-blog-hub__featured-title">{{ featured_article.title | escape }}</h2>
+            <p class="jeminise-blog-hub__summary">
+              {% if featured_article.metafields.custom.article_subtitle.value != blank %}
+                {{ featured_article.metafields.custom.article_subtitle.value | escape }}
+              {% else %}
+                {{ featured_article.excerpt_or_content | strip_html | truncate: 180 }}
+              {% endif %}
+            </p>
+            <a class="jeminise-blog-hub__link" href="{{ featured_article.url }}">Read the guide</a>
+          </div>
+        </article>
+
+        {% if blog.articles_count > 1 %}
+          <div class="jeminise-blog-hub__grid">
+            {% for article in blog.articles offset: 1 %}
+              <article class="jeminise-blog-card">
+                <a class="jeminise-blog-card__link" href="{{ article.url }}">
+                  {% if article.image %}
+                    <div class="jeminise-blog-card__image-wrap">
+                      {{ article.image | image_url: width: 800 | image_tag: class: 'jeminise-blog-card__image', loading: 'lazy', widths: '320, 480, 640, 800', alt: article.image.alt | default: article.title }}
+                    </div>
+                  {% endif %}
+                  <div class="jeminise-blog-card__copy">
+                    {% if article.metafields.custom.article_eyebrow.value != blank %}
+                      <p class="jeminise-blog-hub__eyebrow">{{ article.metafields.custom.article_eyebrow.value | escape }}</p>
+                    {% endif %}
+                    <h2 class="jeminise-blog-card__title">{{ article.title | escape }}</h2>
+                    <p class="jeminise-blog-card__summary">{{ article.excerpt_or_content | strip_html | truncate: 130 }}</p>
+                  </div>
+                </a>
+              </article>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% else %}
+        <p>New guides are on their way.</p>
+      {% endif %}
+
+      {% if paginate.pages > 1 %}
+        <nav class="pagination" role="navigation" aria-label="Blog pagination">
+          {{ paginate | default_pagination }}
+        </nav>
+      {% endif %}
+    {% endpaginate %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Guides blog",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Introduction"
+    },
+    {
+      "type": "range",
+      "id": "articles_per_page",
+      "label": "Articles per page",
+      "min": 4,
+      "max": 24,
+      "step": 1,
+      "default": 12
+    }
+  ]
+}
+{% endschema %}

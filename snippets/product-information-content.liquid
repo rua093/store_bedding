@@ -395,7 +395,9 @@
   {% liquid
     assign has_support_accordions = false
     assign show_details_below = false
-    if settings.shipping_heading != blank or settings.personalization_heading != blank
+    assign personalization_fields = product.metafields.custom.personalization_fields.value
+
+    if settings.shipping_heading != blank or personalization_fields != blank
       assign has_support_accordions = true
     endif
 
@@ -439,7 +441,7 @@
       {% endif %}
 
       {% if has_support_accordions %}
-        {% render 'product-support-accordions', settings: settings %}
+        {% render 'product-support-accordions', settings: settings, product: product %}
       {% endif %}
     </div>
   {% endif %}

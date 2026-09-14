@@ -1,0 +1,93 @@
+{{ 'blog-guides.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign eyebrow = article.metafields.custom.article_eyebrow.value
+  assign subtitle = article.metafields.custom.article_subtitle.value
+  assign primary_collection = article.metafields.custom.primary_collection.value
+  assign cta_label = article.metafields.custom.article_cta_label.value | default: 'Explore custom bedding'
+%}
+
+<article class="jeminise-article" itemscope itemtype="https://schema.org/Article">
+  <div class="jeminise-article__shell">
+    <nav class="jeminise-article__breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a> / <a href="{{ blog.url }}">{{ blog.title | escape }}</a> / <span aria-current="page">{{ article.title | truncate: 60 | escape }}</span>
+    </nav>
+
+    <header class="jeminise-article__hero">
+      <div class="jeminise-article__hero-media">
+        {% if article.image %}
+          {{ article.image | image_url: width: 1800 | image_tag: class: 'jeminise-article__hero-image', loading: 'eager', fetchpriority: 'high', widths: '480, 720, 960, 1280, 1800', alt: article.image.alt | default: article.title }}
+        {% endif %}
+      </div>
+      <div class="jeminise-article__hero-copy">
+        {% if eyebrow != blank %}
+          <p class="jeminise-article__eyebrow">{{ eyebrow | escape }}</p>
+        {% endif %}
+        <h1 itemprop="headline">{{ article.title | escape }}</h1>
+        {% if subtitle != blank %}
+          <p class="jeminise-article__subtitle" itemprop="description">{{ subtitle | escape }}</p>
+        {% endif %}
+        <div class="jeminise-article__meta">
+          <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}" itemprop="datePublished">{{ article.published_at | date: '%B %-d, %Y' }}</time>
+          {% if article.author != blank %}<span>By {{ article.author | escape }}</span>{% endif %}
+        </div>
+      </div>
+    </header>
+
+    <div class="jeminise-article__content">
+      <div class="jeminise-article__body rte" itemprop="articleBody">
+        {{ article.content }}
+      </div>
+
+      {% if primary_collection != blank %}
+        <aside class="jeminise-article__cta-panel" aria-label="Explore the collection">
+          <h2>Find a starting point for your idea</h2>
+          <p>Browse Jeminise custom bedding to find a design direction that feels right for your space or the person you are celebrating.</p>
+          <a class="jeminise-article__cta" href="{{ primary_collection.url }}">{{ cta_label | escape }}</a>
+        </aside>
+      {% endif %}
+
+      {% if article.tags.size > 0 %}
+        <div class="jeminise-article__tags" aria-label="Article topics">
+          {% for tag in article.tags %}
+            <span class="jeminise-article__tag">{{ tag | escape }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    {% assign related_count = 0 %}
+    {% capture related_articles %}
+      {% for related_article in blog.articles limit: 4 %}
+        {% if related_article.id != article.id and related_count < 3 %}
+          {% assign related_count = related_count | plus: 1 %}
+          <article class="jeminise-blog-card">
+            <a class="jeminise-blog-card__link" href="{{ related_article.url }}">
+              {% if related_article.image %}
+                <div class="jeminise-blog-card__image-wrap">
+                  {{ related_article.image | image_url: width: 800 | image_tag: class: 'jeminise-blog-card__image', loading: 'lazy', widths: '320, 480, 640, 800', alt: related_article.image.alt | default: related_article.title }}
+                </div>
+              {% endif %}
+              <div class="jeminise-blog-card__copy">
+                <h3 class="jeminise-blog-card__title">{{ related_article.title | escape }}</h3>
+              </div>
+            </a>
+          </article>
+        {% endif %}
+      {% endfor %}
+    {% endcapture %}
+    {% if related_count > 0 %}
+      <section class="jeminise-article__related" aria-labelledby="RelatedArticles-{{ section.id }}">
+        <h2 class="jeminise-article__related-title" id="RelatedArticles-{{ section.id }}">Continue reading</h2>
+        <div class="jeminise-blog-hub__grid">{{ related_articles }}</div>
+      </section>
+    {% endif %}
+  </div>
+</article>
+
+{% schema %}
+{
+  "name": "Guides article",
+  "settings": []
+}
+{% endschema %}
