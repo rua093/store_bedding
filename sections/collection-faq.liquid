@@ -1,7 +1,19 @@
 {% liquid
-  assign faq_items_html = collection.metafields.custom.faq_items.value
+  assign faq_meta_items = collection.metafields.custom.faq_items.value
+  assign has_meta_faq = false
+  if faq_meta_items != blank and faq_meta_items.count > 0
+    assign has_meta_faq = true
+  elsif faq_meta_items != blank and faq_meta_items.size > 0
+    assign has_meta_faq = true
+  endif
+
+  assign has_block_faq = false
+  if section.blocks.size > 0
+    assign has_block_faq = true
+  endif
+
   assign has_faq = false
-  if faq_items_html != blank
+  if has_meta_faq or has_block_faq
     assign has_faq = true
   endif
 %}
@@ -25,15 +37,101 @@
       </div>
 
       <div class="collection-faq__list">
-        {{ faq_items_html }}
+        {% if has_meta_faq %}
+          {% for item in faq_meta_items %}
+            {% liquid
+              assign q = item.question.value | default: item.question
+              assign a = item.answer
+            %}
+            {% if q != blank and a != blank %}
+              <details class="collection-faq__item">
+                <summary class="collection-faq__summary">
+                  <span>{{ q | escape }}</span>
+                  <svg class="collection-faq__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </summary>
+                <div class="collection-faq__answer rte">
+                  {{ a | metafield_tag }}
+                </div>
+              </details>
+            {% endif %}
+          {% endfor %}
+        {% elsif has_block_faq %}
+          {% for block in section.blocks %}
+            {% if block.settings.question != blank and block.settings.answer != blank %}
+              <details class="collection-faq__item" {{ block.shopify_attributes }}>
+                <summary class="collection-faq__summary">
+                  <span>{{ block.settings.question | escape }}</span>
+                  <svg class="collection-faq__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </summary>
+                <div class="collection-faq__answer rte">
+                  {{ block.settings.answer }}
+                </div>
+              </details>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
       </div>
     </div>
   </section>
 
+  {% comment %} Structured Data: FAQPage JSON-LD {% endcomment %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {% if has_meta_faq %}
+        {% assign is_first = true %}
+        {% for item in faq_meta_items %}
+          {% liquid
+            assign item_q = item.question.value | default: item.question
+            assign item_a_raw = item.answer | metafield_tag | strip_html | strip
+          %}
+          {% if item_q != blank and item_a_raw != blank %}
+            {% unless is_first %},{% endunless %}
+            {
+              "@type": "Question",
+              "name": {{ item_q | json }},
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": {{ item_a_raw | json }}
+              }
+            }
+            {% assign is_first = false %}
+          {% endif %}
+        {% endfor %}
+      {% elsif has_block_faq %}
+        {% assign is_first = true %}
+        {% for block in section.blocks %}
+          {% liquid
+            assign block_q = block.settings.question
+            assign block_a_raw = block.settings.answer | strip_html | strip
+          %}
+          {% if block_q != blank and block_a_raw != blank %}
+            {% unless is_first %},{% endunless %}
+            {
+              "@type": "Question",
+              "name": {{ block_q | json }},
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": {{ block_a_raw | json }}
+              }
+            }
+            {% assign is_first = false %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    ]
+  }
+  </script>
 {% elsif request.design_mode %}
   <div class="collection-faq collection-faq--placeholder" style="padding: 24px; text-align: center; background: #FAF8F5; border: 1px dashed #C9855A; margin: 16px;">
     <p style="font-family: 'Work Sans', sans-serif; color: #71655E; margin: 0;">
-      <strong>Collection FAQ:</strong> Gán HTML FAQ và FAQPage JSON-LD vào metafield multi-line text <code>custom.faq_items</code> để hiển thị.
+      <strong>Collection FAQ:</strong> Chưa có câu hỏi thường gặp cho collection này. Thêm blocks bên dưới hoặc gán metafield <code>custom.faq_items</code> để hiển thị.
     </p>
   </div>
 {% endif %}
@@ -55,6 +153,26 @@
       "id": "subtitle",
       "label": "Subtitle (Optional)",
       "default": "Everything you need to know about our custom bedding"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Can I personalize my order?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Yes, all of our products can be personalized with custom names, dates, or messages during checkout.</p>"
+        }
+      ]
     }
   ],
   "presets": [

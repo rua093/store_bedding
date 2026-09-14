@@ -23,6 +23,10 @@
   assign hero_description = collection.description | strip_html | strip
   assign hero_widths = '750, 1100, 1500, 1800, 2100, 2400, 2880, 3200, 3840'
 
+  assign is_halloween_collection = false
+  if collection.handle contains 'halloween' or collection.metafields.custom.seasonal_theme.value == 'halloween'
+    assign is_halloween_collection = true
+  endif
 %}
 
 <section
@@ -31,7 +35,7 @@
   aria-labelledby="CollectionHeroTitle-{{ section.id }}"
 >
   <div
-    class="collection-hero{% if has_hero_image %} collection-hero--has-media{% endif %}{% if has_hero_image == false and uses_all_collection_fallback_bg == false %} collection-hero--no-media{% endif %}{% if uses_all_collection_fallback_bg %} collection-hero--all-fallback-bg{% endif %}"
+    class="collection-hero{% if has_hero_image %} collection-hero--has-media{% endif %}{% if has_hero_image == false and uses_all_collection_fallback_bg == false %} collection-hero--no-media{% endif %}{% if uses_all_collection_fallback_bg %} collection-hero--all-fallback-bg{% endif %}{% if is_halloween_collection %} collection-hero--hide-text{% endif %}"
     {% if uses_all_collection_fallback_bg %}
       style="--collection-hero-fallback-bg: url('{{ all_collection_fallback_bg }}');"
     {% endif %}
@@ -61,6 +65,12 @@
       <div class="collection-hero__placeholder" aria-hidden="true"></div>
     {% endif %}
 
+    {% if is_halloween_collection %}
+      <h1 id="CollectionHeroTitle-{{ section.id }}" class="visually-hidden">
+        {{ collection.title | escape }}
+      </h1>
+    {% endif %}
+
     <div class="collection-hero__content">
       <div class="collection-hero__content-inner">
         <p class="collection-hero__eyebrow" aria-hidden="true">Jeminise Collection</p>
@@ -79,6 +89,11 @@
 </section>
 
 {% stylesheet %}
+  .collection-hero--hide-text .collection-hero__content,
+  .collection-hero--hide-text .collection-hero__overlay {
+    display: none !important;
+  }
+
   .collection-hero--has-media,
   .collection-hero--all-fallback-bg {
     min-height: clamp(420px, 30vw, 520px) !important;
@@ -170,11 +185,11 @@
     color: #fff;
   }
 
-.collection-hero__content-inner {
+  .collection-hero__content-inner {
   position: relative;
   isolation: isolate;
-  width: min(100%, 860px);
-  padding: clamp(1.5rem, 2.8vw, 2.5rem) clamp(1.5rem, 5vw, 4rem);
+  width: min(100%, 980px);
+  padding: clamp(1.75rem, 3.2vw, 3rem) clamp(1.5rem, 5vw, 5rem);
   animation: collection-hero-fade-up 450ms ease-out both;
 }
 
@@ -200,14 +215,14 @@
 .collection-hero__title {
   position: relative;
   margin: 0;
-  max-width: min(16ch, 100%);
+  max-width: min(12ch, 100%);
   margin-inline: auto;
   font-family: var(--font-heading--family), Georgia, serif;
   font-style: var(--font-heading--style);
   font-weight: 500;
-  font-size: clamp(42px, 4.8vw, 68px);
-  line-height: 0.98;
-  letter-spacing: 0.005em;
+  font-size: clamp(58px, 6.3vw, 96px);
+  line-height: 0.94;
+  letter-spacing: 0.012em;
   color: #ffffff;
   -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.4);
   text-shadow:
@@ -220,7 +235,7 @@
 .collection-hero__title::after {
   content: '\2726';
   width: min(168px, 86%);
-  margin: 0.9rem auto 0;
+  margin: 1.25rem auto 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -263,12 +278,12 @@
 }
 
 .collection-hero__description {
-  margin-top: 0.85rem;
-  max-width: 640px;
+  margin-top: 1.15rem;
+  max-width: 720px;
   margin-inline: auto;
   font-family: var(--font-body--family);
-  font-size: clamp(14px, 1.25vw, 17px);
-  line-height: 1.48;
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.6;
   color: rgb(255 250 242 / 0.92);
   text-shadow:
     0 1px 2px rgb(0 0 0 / 0.38),
@@ -303,7 +318,7 @@
     }
 
     .collection-hero__title {
-      font-size: clamp(38px, 5.2vw, 52px);
+      font-size: clamp(44px, 5vw, 64px);
     }
   }
 
@@ -314,12 +329,12 @@
     }
 
     .collection-hero__content {
-      padding: 2rem 1.25rem;
+      padding: 3rem 1.25rem;
     }
 
     .collection-hero__content-inner {
       width: min(100%, 92vw);
-      padding: 1.25rem 1.1rem;
+      padding: 1.55rem 1.1rem;
     }
 
     .collection-hero__eyebrow {
@@ -329,20 +344,18 @@
     }
 
     .collection-hero__title {
-      max-width: min(17ch, 100%);
-      font-size: clamp(32px, 8.8vw, 42px);
-      line-height: 1;
+      font-size: clamp(36px, 10vw, 50px);
+      line-height: 0.98;
       -webkit-text-stroke: 0.28px rgb(22 14 9 / 0.58);
     }
 
     .collection-hero__title::after {
-      margin-top: 0.75rem;
+      margin-top: 1.15rem;
     }
 
     .collection-hero__description {
-      margin-top: 0.7rem;
-      font-size: 0.88rem;
-      line-height: 1.45;
+      font-size: 0.95rem;
+      line-height: 1.55;
     }
   }
 {% endstylesheet %}
