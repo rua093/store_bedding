@@ -1,12 +1,68 @@
 <div class="discount-code-daily10">
-  Save 10% with code <code>DAILY10</code>
+  <span class="discount-code-daily10__icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"></path>
+      <circle cx="8" cy="8" r="1.2"></circle>
+    </svg>
+  </span>
+  <span class="discount-code-daily10__copy">
+    <span data-discount-code-label>Save 10% with code</span>
+    <code>DAILY10</code>
+    <button
+      type="button"
+      class="discount-code-daily10__copy-button button-unstyled"
+      data-discount-code-copy
+      data-discount-code="DAILY10"
+      aria-label="Copy discount code DAILY10"
+      title="Copy code"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+    </button>
+  </span>
 </div>
 
 <style>
   .discount-code-daily10 {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    width: fit-content;
+    max-width: 100%;
+    flex-wrap: wrap;
+    padding: 0;
+    border: 0;
+    background: transparent;
     font-size: 0.88rem;
     line-height: 1.4;
     color: #000000;
+    text-align: left;
+  }
+
+  .discount-code-daily10__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: 0 0 1.25rem;
+    margin-inline-end: 0.4rem;
+    color: #FC5732;
+  }
+
+  .discount-code-daily10__icon svg {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  .discount-code-daily10__copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28rem;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .discount-code-daily10 code {
@@ -15,4 +71,80 @@
     color: #FC5732;
     letter-spacing: 0.05em;
   }
+
+  .discount-code-daily10__copy-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.35rem;
+    height: 1.35rem;
+    flex: 0 0 1.35rem;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: #FC5732;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .discount-code-daily10__copy-button:hover {
+    background: rgba(252, 87, 50, 0.1);
+  }
+
+  .discount-code-daily10__copy-button svg {
+    width: 1rem;
+    height: 1rem;
+  }
 </style>
+
+<script>
+  (() => {
+    const copyDiscountCode = async (code) => {
+      if (navigator.clipboard?.writeText && window.isSecureContext) {
+        await navigator.clipboard.writeText(code);
+        return;
+      }
+
+      const input = document.createElement('textarea');
+      input.value = code;
+      input.setAttribute('readonly', '');
+      input.style.position = 'fixed';
+      input.style.top = '-9999px';
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      input.remove();
+    };
+
+    const initDiscountCodeCopy = () => {
+      document.querySelectorAll('[data-discount-code-copy]').forEach((button) => {
+        if (button.dataset.copyInit === 'true') return;
+        button.dataset.copyInit = 'true';
+
+        const label = button.closest('.discount-code-daily10')?.querySelector('[data-discount-code-label]');
+        const defaultText = label?.textContent || 'Save 10% with code';
+
+        button.addEventListener('click', async () => {
+          try {
+            await copyDiscountCode(button.dataset.discountCode || 'DAILY10');
+            if (!label) return;
+            label.textContent = 'Code copied';
+            window.setTimeout(() => {
+              label.textContent = defaultText;
+            }, 1600);
+          } catch (error) {
+            console.warn('[discount-code-daily10] Unable to copy discount code', error);
+          }
+        });
+      });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDiscountCodeCopy);
+    } else {
+      initDiscountCodeCopy();
+    }
+
+    document.addEventListener('shopify:section:load', initDiscountCodeCopy);
+  })();
+</script>
