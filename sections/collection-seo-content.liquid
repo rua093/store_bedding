@@ -1,0 +1,65 @@
+{% liquid
+  assign seo_content_html = collection.metafields.custom.seo_content.value
+  assign collection_cover = collection.metafields.custom.banner_img.value | default: collection.image
+  assign has_content = false
+  if seo_content_html != blank
+    assign has_content = true
+  endif
+%}
+
+{% if has_content %}
+  {{ 'collection-seo.css' | asset_url | stylesheet_tag }}
+
+  <section
+    id="CollectionSeoContent-{{ section.id }}"
+    class="collection-seo-content{% if collection_cover != blank %} collection-seo-content--with-cover{% endif %}"
+    aria-label="{{ section.settings.section_title | default: 'Collection Guide & Information' | escape }}"
+    {% if collection_cover != blank %}
+      style="--collection-seo-cover-image: url('{{ collection_cover | image_url: width: 1440 }}');"
+    {% endif %}
+  >
+    <div class="collection-seo-content__inner">
+      {% if section.settings.show_section_header and section.settings.section_title != blank %}
+        <div class="collection-seo-content__header">
+          <h2 class="collection-seo-content__main-title">{{ section.settings.section_title | escape }}</h2>
+        </div>
+      {% endif %}
+
+      <div class="collection-seo-content__items">
+        {{ seo_content_html }}
+      </div>
+    </div>
+  </section>
+{% elsif request.design_mode %}
+  <div class="collection-seo-content collection-seo-content--placeholder" style="padding: 24px; text-align: center; background: #FAF8F5; border: 1px dashed #C9855A; margin: 16px;">
+    <p style="font-family: 'Work Sans', sans-serif; color: #71655E; margin: 0;">
+      <strong>Collection SEO Content:</strong> Gán HTML vào metafield multi-line text <code>custom.seo_content</code> để hiển thị.
+    </p>
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Collection SEO Content",
+  "tag": "section",
+  "class": "section-collection-seo-content",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_section_header",
+      "label": "Show Section Header",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section Title (Optional)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection SEO Content"
+    }
+  ]
+}
+{% endschema %}

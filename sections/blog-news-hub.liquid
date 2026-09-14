@@ -1,0 +1,61 @@
+<section class="blog-news" aria-labelledby="BlogNewsTitle-{{ section.id }}">
+  <header class="blog-news__hero">
+    {% if section.settings.banner_image_url != blank %}
+      <img src="{{ section.settings.banner_image_url }}" alt="{{ section.settings.banner_alt | escape }}" width="1800" height="900" loading="eager">
+    {% endif %}
+    <div class="blog-news__hero-copy">
+      <p>JEMINISE JOURNAL</p>
+      <h1 id="BlogNewsTitle-{{ section.id }}">{{ section.settings.heading | escape }}</h1>
+      <span>{{ section.settings.intro | escape }}</span>
+    </div>
+  </header>
+  <div class="blog-news__groups">
+    {% for block in section.blocks %}
+      {% assign selected_blog = block.settings.blog %}
+      {% if selected_blog != blank %}
+        <section class="blog-news__group" {{ block.shopify_attributes }} aria-labelledby="BlogGroup-{{ block.id }}">
+          <div class="blog-news__group-head">
+            <div><p>FROM THE JOURNAL</p><h2 id="BlogGroup-{{ block.id }}">{{ selected_blog.title | escape }}</h2></div>
+            <a href="{{ selected_blog.url }}">View all</a>
+          </div>
+          <div class="blog-news__rail-wrap">
+            <button class="blog-news__nav" type="button" data-direction="-1" aria-label="Previous articles"><img src="{{ 'iconify-lucide-chevron-left.svg' | asset_url }}" alt="" width="20" height="20"></button>
+            <div class="blog-news__rail" data-rail>
+              {% for article in selected_blog.articles limit: 5 %}
+                <article class="blog-news__card">
+                  <a href="{{ article.url }}">
+                    <div class="blog-news__image">
+                      {% if article.image %}{{ article.image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '320, 480, 720, 900', alt: article.image.alt | default: article.title }}{% endif %}
+                    </div>
+                    <p>{{ article.published_at | date: '%B %d, %Y' }}</p>
+                    <h3>{{ article.title | escape }}</h3>
+                    <span>{{ article.excerpt_or_content | strip_html | truncate: 110 }}</span>
+                  </a>
+                </article>
+              {% endfor %}
+            </div>
+            <button class="blog-news__nav" type="button" data-direction="1" aria-label="Next articles"><img src="{{ 'iconify-lucide-chevron-right.svg' | asset_url }}" alt="" width="20" height="20"></button>
+          </div>
+        </section>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll('#shopify-section-{{ section.id }} .blog-news__nav').forEach((button) => {
+    button.addEventListener('click', () => {
+      const rail = button.parentElement.querySelector('[data-rail]');
+      rail.scrollBy({ left: rail.clientWidth * Number(button.dataset.direction), behavior: 'smooth' });
+    });
+  });
+</script>
+
+{% stylesheet %}
+  .blog-news{background:#faf6f2;color:#2f261f;padding-bottom:56px}.blog-news__hero{position:relative;min-height:360px;display:grid;place-items:center;overflow:hidden;background:#32251d}.blog-news__hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.62}.blog-news__hero:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(35,25,19,.65),rgba(35,25,19,.18))}.blog-news__hero-copy{position:relative;z-index:1;width:min(1180px,calc(100% - 40px));color:#fffaf4}.blog-news__hero-copy p,.blog-news__group-head p{font-size:.72rem;letter-spacing:.18em;margin:0 0 10px}.blog-news__hero h1{font-family:var(--font-heading--family,serif);font-size:clamp(2.4rem,5vw,4.8rem);margin:0;max-width:700px}.blog-news__hero-copy span{display:block;max-width:570px;font-size:1.05rem;line-height:1.6;margin-top:16px}.blog-news__groups{width:min(1360px,calc(100% - 40px));margin:48px auto 0}.blog-news__group+.blog-news__group{margin-top:58px}.blog-news__group-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:20px}.blog-news__group-head h2{font-family:var(--font-heading--family,serif);font-size:clamp(1.8rem,3vw,2.6rem);margin:0}.blog-news__group-head a{color:#6f5f52;text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:3px}.blog-news__rail-wrap{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center}.blog-news__rail{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 48px)/3);gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}.blog-news__rail::-webkit-scrollbar{display:none}.blog-news__card{scroll-snap-align:start;min-width:0}.blog-news__card a{display:block;color:inherit;text-decoration:none}.blog-news__image{aspect-ratio:1.2;overflow:hidden;border-radius:18px;background:#eee2d8}.blog-news__image img{width:100%;height:100%;display:block;object-fit:cover;transition:transform .3s}.blog-news__card a:hover img{transform:scale(1.03)}.blog-news__card p{font-size:.74rem;letter-spacing:.08em;color:#8a7566;margin:14px 0 7px}.blog-news__card h3{font-family:var(--font-heading--family,serif);font-size:1.35rem;line-height:1.2;margin:0 0 9px}.blog-news__card span{color:#6f5f52;line-height:1.55}.blog-news__nav{border:1px solid #c9855a;background:#fffaf4;color:#5f4436;border-radius:999px;min-height:44px;padding:0 12px;cursor:pointer}@media(max-width:989px){.blog-news__rail{grid-auto-columns:calc((100% - 24px)/2)}}@media(max-width:599px){.blog-news__hero{min-height:420px}.blog-news__groups{width:min(100% - 28px,1360px);margin-top:32px}.blog-news__rail-wrap{grid-template-columns:1fr}.blog-news__rail{grid-auto-columns:84%;order:1}.blog-news__nav{position:absolute;z-index:1;margin-top:120px;opacity:.92}.blog-news__nav[data-direction='-1']{left:16px}.blog-news__nav[data-direction='1']{right:16px}.blog-news__group-head{align-items:start}.blog-news__group-head a{white-space:nowrap}}
+.blog-news__nav{width:44px;height:44px;padding:0;border-radius:50%;display:grid;place-items:center}.blog-news__nav img{width:20px;height:20px}
+{% endstylesheet %}
+
+{% schema %}
+{"name":"Blog news hub","settings":[{"type":"text","id":"heading","label":"Heading","default":"Ideas for a more personal home"},{"type":"textarea","id":"intro","label":"Introduction","default":"Guides, gifting ideas, and inspiration for bedding made personal."},{"type":"text","id":"banner_image_url","label":"Shopify Files banner URL"},{"type":"text","id":"banner_alt","label":"Banner alt text","default":"Warm bedroom with layered bedding and an open journal"}],"blocks":[{"type":"blog","name":"Blog group","settings":[{"type":"blog","id":"blog","label":"Blog"}]}],"max_blocks":10,"presets":[{"name":"Blog news hub"}]}
+{% endschema %}

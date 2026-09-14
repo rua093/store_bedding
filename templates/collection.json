@@ -203,10 +203,35 @@
         "padding-block-start": 32,
         "padding-block-end": 56
       }
+    },
+    "collection_seo_content": {
+      "type": "collection-seo-content",
+      "settings": {
+        "show_section_header": false,
+        "section_title": ""
+      }
+    },
+    "collection_faq": {
+      "type": "collection-faq",
+      "settings": {
+        "heading": "Frequently Asked Questions",
+        "subtitle": "Everything you need to know about our custom bedding"
+      }
+    },
+    "collection_related_links": {
+      "type": "collection-related-links",
+      "settings": {
+        "heading": "Explore Related Collections",
+        "subtitle": "Discover more personalized bedding styles and curated gift ideas",
+        "layout_style": "cards"
+      }
     }
   },
   "order": [
     "section",
-    "main"
+    "main",
+    "collection_related_links",
+    "collection_seo_content",
+    "collection_faq"
   ]
 }

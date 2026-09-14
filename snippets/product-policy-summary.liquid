@@ -1,0 +1,42 @@
+{% comment %}
+  PDP policy summary
+
+  This is the single PDP source for shipping and claim wording. It must mirror
+  the Shopify Shipping and Refund Policy pages that are maintained through
+  admin/sync_store_policies_3_3.py.
+
+  Accepts:
+  - context: "support" (default) or "delivery"
+{% endcomment %}
+
+{% liquid
+  assign policy_context = context | default: 'support'
+  assign shipping_policy_url = shop.shipping_policy.url
+  assign refund_policy_url = shop.refund_policy.url
+%}
+
+{% if policy_context == 'delivery' %}
+  <ul class="product-delivery-estimate__popover-list">
+    <li>Free standard shipping is available for eligible addresses in the 48 contiguous U.S. states and most of Canada.</li>
+    <li>For damaged, defective, incorrectly customized, or missing items, contact us within 7 days of delivery so we can review your claim.</li>
+  </ul>
+{% else %}
+  <div class="product-support-collapsible__details product-support-collapsible__details--shipping rte">
+    <ul class="product-support-collapsible__summary-list" role="list">
+      <li>Free standard shipping is available for eligible addresses in the 48 contiguous U.S. states and most of Canada.</li>
+      <li>Made-to-order bedding typically needs about 3 business days for processing, followed by an estimated 7–14 business days in transit (about 10–17 business days total).</li>
+      <li>For damaged, defective, incorrectly customized, or missing items, contact us within 7 days of delivery so we can review your claim.</li>
+      <li>
+        {% if shipping_policy_url != blank %}
+          <a href="{{ shipping_policy_url }}">Read the Shipping Policy</a>
+        {% endif %}
+        {% if shipping_policy_url != blank and refund_policy_url != blank %}
+          <span aria-hidden="true"> · </span>
+        {% endif %}
+        {% if refund_policy_url != blank %}
+          <a href="{{ refund_policy_url }}">Read the Refund Policy</a>
+        {% endif %}
+      </li>
+    </ul>
+  </div>
+{% endif %}

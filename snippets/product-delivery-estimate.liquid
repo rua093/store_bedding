@@ -155,14 +155,9 @@
         </div>
       </div>
 
-      {% if section.settings.shipping_details != blank %}
-        <div class="product-delivery-estimate__popover-details rte">
-          <ul class="product-delivery-estimate__popover-list">
-            <li>Order cancellations or modifications are not guaranteed once placed, as items quickly enter production.</li>
-            <li>Refund or free replacement requests must be submitted within 7 days of delivery for damaged, defective, incorrectly customized, or missing items.</li>
-          </ul>
-        </div>
-      {% endif %}
+      <div class="product-delivery-estimate__popover-details rte">
+        {% render 'product-policy-summary', context: 'delivery' %}
+      </div>
     </div>
   </div>
 </div>

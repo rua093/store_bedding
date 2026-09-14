@@ -64,28 +64,42 @@
         </div>
       </div>
 
-      {% if settings.shipping_details != blank %}
-        {% assign shipping_lines = settings.shipping_details | strip | newline_to_br | split: '<br />' %}
-        <div class="product-support-collapsible__details product-support-collapsible__details--shipping rte">
-          <ul class="product-support-collapsible__summary-list" role="list">
-            {% for line in shipping_lines %}
-              {% assign clean_line = line | strip %}
-              {% assign first_char = clean_line | slice: 0, 1 %}
-              {% if first_char == '•' or first_char == '*' or first_char == '-' %}
-                {% assign clean_line = clean_line | slice: 1, clean_line.size | strip %}
-              {% endif %}
-              {% if clean_line != blank %}
-                <li>{{ clean_line }}</li>
-              {% endif %}
-            {% endfor %}
-          </ul>
-        </div>
-      {% endif %}
+      {% render 'product-policy-summary', context: 'support' %}
     </div>
   </details>
 {% endif %}
 
-{% if settings.personalization_heading != blank %}
+{% liquid
+  assign personalization_fields = product.metafields.custom.personalization_fields.value
+  assign has_personalization_fields = false
+  assign has_name_field = false
+  assign has_number_field = false
+  assign has_photo_field = false
+  assign has_text_field = false
+  assign has_other_field = false
+
+  if personalization_fields != blank
+    for field in personalization_fields
+      assign has_personalization_fields = true
+      assign field_type = field.type.value | default: field.type | downcase
+      assign field_label = field.label.value | default: field.label | default: field.name.value | default: field.name | downcase
+
+      if field_type == 'image' or field_type == 'file' or field_label contains 'photo' or field_label contains 'image'
+        assign has_photo_field = true
+      elsif field_label contains 'name'
+        assign has_name_field = true
+      elsif field_label contains 'number'
+        assign has_number_field = true
+      elsif field_type == 'text' or field_type == 'textarea'
+        assign has_text_field = true
+      else
+        assign has_other_field = true
+      endif
+    endfor
+  endif
+%}
+
+{% if settings.personalization_heading != blank and has_personalization_fields %}
   <details class="product-support-collapsible">
     <summary class="product-support-collapsible__summary">
       <span class="product-support-collapsible__summary-copy">
@@ -104,40 +118,25 @@
       </span>
     </summary>
     <div class="product-support-collapsible__content">
-      {% if settings.personalization_intro != blank %}
-        <div class="product-support-collapsible__lead rte">{{ settings.personalization_intro | escape | newline_to_br }}</div>
-      {% endif %}
-
-      {% if settings.personalization_details != blank %}
-        {% assign personalization_lines = settings.personalization_details | strip | newline_to_br | split: '<br />' %}
-        <div class="product-support-collapsible__details product-support-collapsible__details--personalization rte">
-          <ul class="product-support-collapsible__checklist" role="list">
-            {% for line in personalization_lines %}
-              {% assign clean_line = line | strip %}
-              {% assign first_char = clean_line | slice: 0, 1 %}
-              {% if first_char == '•' or first_char == '*' or first_char == '-' %}
-                {% assign clean_line = clean_line | slice: 1, clean_line.size | strip %}
-              {% endif %}
-              {% if clean_line != blank %}
-                <li>{{ clean_line }}</li>
-              {% endif %}
-            {% endfor %}
-          </ul>
-        </div>
-      {% endif %}
-
-      {% if settings.personalization_note != blank %}
-        <div class="product-support-collapsible__note">
-          <span class="product-support-collapsible__note-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9"></circle>
-              <path d="M12 8.5h.01"></path>
-              <path d="M11 12h1v4h1"></path>
-            </svg>
-          </span>
-          <div class="rte">{{ settings.personalization_note | escape | newline_to_br }}</div>
-        </div>
-      {% endif %}
+      <div class="product-support-collapsible__details product-support-collapsible__details--personalization rte">
+        <ul class="product-support-collapsible__checklist" role="list">
+          {% if has_name_field %}
+            <li>Enter the name exactly as you want it printed, then double-check spelling and capitalization.</li>
+          {% endif %}
+          {% if has_number_field %}
+            <li>Enter the number exactly as you want it printed.</li>
+          {% endif %}
+          {% if has_text_field %}
+            <li>Enter the exact text you want printed and review spelling before adding to cart.</li>
+          {% endif %}
+          {% if has_photo_field %}
+            <li>Upload a clear, well-lit photo with the subject in focus for the best result.</li>
+          {% endif %}
+          {% if has_other_field %}
+            <li>Complete the available customization fields before adding the item to cart.</li>
+          {% endif %}
+        </ul>
+      </div>
     </div>
   </details>
 {% endif %}

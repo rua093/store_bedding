@@ -1,0 +1,36 @@
+{% if request.page_type == 'article' %}
+  {% liquid
+    assign article_description = article.metafields.custom.article_subtitle.value | default: article.excerpt_or_content | strip_html | truncate: 300
+  %}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": {{ canonical_url | json }}
+      },
+      "headline": {{ article.title | json }},
+      "description": {{ article_description | json }},
+      "datePublished": {{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' | json }},
+      "dateModified": {{ article.updated_at | date: '%Y-%m-%dT%H:%M:%S%z' | json }},
+      "author": {
+        "@type": "Person",
+        "name": {{ article.author | default: shop.name | json }}
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": {{ shop.name | json }}
+        {% if settings.logo != blank %},
+          "logo": {
+            "@type": "ImageObject",
+            "url": {{ settings.logo | image_url: width: 600 | prepend: 'https:' | json }}
+          }
+        {% endif %}
+      }
+      {% if article.image != blank %},
+        "image": {{ article.image | image_url: width: 1800 | prepend: 'https:' | json }}
+      {% endif %}
+    }
+  </script>
+{% endif %}

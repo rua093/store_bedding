@@ -29,3 +29,20 @@ Thumbs.db
 /shopify_tool/
 /shopify-migrations/
 
+# files riêng để phục vụ làm SEO cho jeminise - by LTh Loi
+external
+jeminise-src.zip
+app-snapshot-for-AI
+PROJECT-CONTEXT.md
+PROJECT_CONTEXT.md
+todo
+*.cmd
+admin
+doc
+.agents
+.playwright-cli
+sync-products-to-real-store
+backup-products-data
+auto
+DESIGN.md
+my-tools
