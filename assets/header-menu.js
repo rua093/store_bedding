@@ -307,6 +307,16 @@ class HeaderMenu extends Component {
   }
 
   /**
+   * Compact dropdowns float below a single top-level item, so they should not
+   * expand the full header underlay like the original full-width mega menu.
+   * @param {HTMLElement} submenu
+   * @returns {boolean}
+   */
+  #shouldExpandHeaderForSubmenu(submenu) {
+    return submenu.dataset.submenuLayout !== 'compact';
+  }
+
+  /**
    * Retrieves the submenu height from cache or computes it.
    * @param {HTMLElement} submenu
    * @param {HTMLElement} item
@@ -351,13 +361,14 @@ class HeaderMenu extends Component {
 
     // Read Phase
     const finalHeight = this.#getSubmenuHeightFromCache(submenu, item, isDefaultSlot, hasSubmenu);
+    const headerExpansionHeight = this.#shouldExpandHeaderForSubmenu(submenu) ? finalHeight : 0;
     const headerVisibleHeight = this.#getHeaderVisibleHeight();
 
     // Write Phase (scheduled in rAF to batch updates)
     requestAnimationFrame(() => {
       if (this.#state.activeItem !== item) return;
       this.headerComponent?.style.setProperty('--submenu-height', `${finalHeight}px`);
-      this.#setFullOpenHeaderHeight(finalHeight, headerVisibleHeight);
+      this.#setFullOpenHeaderHeight(headerExpansionHeight, headerVisibleHeight);
     });
   }
 

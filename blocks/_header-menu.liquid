@@ -160,7 +160,11 @@
             </a>
           {% endif %}
           {%- if link.links != blank -%}
-            <div class="menu-list__submenu menu-list__submenu--compact{{ background_color_classes }}" ref="submenu[]">
+            <div
+              class="menu-list__submenu menu-list__submenu--compact{{ background_color_classes }}"
+              ref="submenu[]"
+              data-submenu-layout="compact"
+            >
               <div
                 id="submenu-{{ forloop.index }}"
                 class="menu-list__submenu-inner menu-list__submenu-inner--compact"
@@ -501,30 +505,12 @@
       left: 50%;
       top: calc(100% + 0.35rem);
       padding-inline: 0;
-      clip-path: inset(-16px);
+      clip-path: none;
+      overflow: visible;
       transform: translateX(-50%);
       transition:
         opacity 110ms var(--animation-easing),
         visibility 110ms var(--animation-easing);
-    }
-
-    .menu-list__submenu-inner--compact {
-      display: block;
-      width: 100%;
-      min-width: inherit;
-      max-width: inherit;
-      max-height: min(70vh, 520px);
-      padding: 0.65rem;
-      overflow-y: auto;
-      overflow-x: hidden;
-      border: 1px solid rgb(var(--color-foreground-rgb) / 0.1);
-      border-radius: 8px;
-      background: var(--color-background);
-      box-shadow:
-        0 18px 40px rgb(var(--color-foreground-rgb) / 0.14),
-        0 2px 8px rgb(var(--color-foreground-rgb) / 0.08);
-      opacity: var(--submenu-content-opacity);
-      transform: translateY(0);
     }
 
     .menu-list__compact-submenu {
@@ -638,6 +624,27 @@
     overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: rgb(var(--color-foreground-rgb) / var(--opacity-40)) transparent;
+  }
+
+  @media screen and (min-width: 750px) {
+    .menu-list__submenu-inner.menu-list__submenu-inner--compact {
+      display: block;
+      width: 100%;
+      min-width: inherit;
+      max-width: inherit;
+      max-height: min(70vh, 520px);
+      padding: 0.65rem;
+      overflow-y: auto;
+      overflow-x: hidden;
+      border: 1px solid rgb(var(--color-foreground-rgb) / 0.1);
+      border-radius: 8px;
+      background: var(--color-background);
+      box-shadow:
+        0 18px 40px rgb(var(--color-foreground-rgb) / 0.14),
+        0 2px 8px rgb(var(--color-foreground-rgb) / 0.08);
+      opacity: var(--submenu-content-opacity);
+      transform: translateY(0);
+    }
   }
 
   .mega-menu__link {
