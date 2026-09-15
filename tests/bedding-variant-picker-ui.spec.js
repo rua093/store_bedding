@@ -28,7 +28,7 @@ function fieldset(name, values, checkedValue) {
       ${values
         .map(
           (value, inputIndex) => `
-            <label>
+            <label class="variant-option__button-label">
               <input
                 type="radio"
                 name="${name}"
@@ -89,7 +89,12 @@ async function mountSyntheticBeddingPicker(page) {
 async function visibleValues(page, optionName) {
   return page.$$eval(`input[data-option-name="${optionName}"]`, (inputs) =>
     inputs
-      .filter((input) => !input.closest('label').hidden)
+      .filter((input) => {
+        const label = input.closest('label');
+        if (!label) return false;
+        const style = window.getComputedStyle(label);
+        return style.display !== 'none' && style.visibility !== 'hidden' && label.getClientRects().length > 0;
+      })
       .map((input) => input.value)
   );
 }
@@ -99,7 +104,12 @@ async function checkedValue(page, optionName) {
 }
 
 async function labelHidden(page, value) {
-  return page.$eval(`input[value="${value}"]`, (input) => input.closest('label').hidden);
+  return page.$eval(`input[value="${value}"]`, (input) => {
+    const label = input.closest('label');
+    if (!label) return false;
+    const style = window.getComputedStyle(label);
+    return style.display === 'none' || style.visibility === 'hidden' || label.getClientRects().length === 0;
+  });
 }
 
 async function choose(page, optionName, value) {
