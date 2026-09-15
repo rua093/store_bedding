@@ -73,8 +73,10 @@
     data-product-id="{{ product_resource.id }}"
     data-product-handle="{{ product_resource.handle }}"
     data-product-title="{{ product_display_title | strip }}"
+    data-product-type="{{ product_resource.type | escape }}"
     data-block-id="{{ block.id }}"
     data-product-url="{{ product_resource.url }}"
+    data-option-names="{{ product_resource.options | json | escape }}"
     ref="mainVariantPicker"
     {% if product.id == product_resource.id %}
       data-template-product-match="true"
@@ -361,6 +363,9 @@
 
       <script type="application/json">
         {{ product_resource.selected_or_first_available_variant | json }}
+      </script>
+      <script type="application/json" data-product-variants>
+        {{ product_resource.variants | json }}
       </script>
     </form>
   </variant-picker>

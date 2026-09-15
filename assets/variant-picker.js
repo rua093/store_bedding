@@ -29,24 +29,25 @@ export default class VariantPicker extends Component {
   /** @type {HTMLInputElement[][]} */
   #radios = [];
 
+  /** @type {Array<Record<string, any>>} */
+  #productVariants = [];
+
+  /** @type {string[]} */
+  #optionNames = [];
+
+  /** @type {number} */
+  #beddingTypeOptionIndex = -1;
+
   #resizeObserver = new ResizeNotifier(() => this.updateVariantPickerCss());
 
   connectedCallback() {
     super.connectedCallback();
-    const fieldsets = /** @type {HTMLFieldSetElement[]} */ (this.refs.fieldsets || []);
-
-    fieldsets.forEach((fieldset) => {
-      const radios = Array.from(fieldset?.querySelectorAll('input') ?? []);
-      this.#radios.push(radios);
-
-      const initialCheckedIndex = radios.findIndex((radio) => radio.dataset.currentChecked === 'true');
-      if (initialCheckedIndex !== -1) {
-        this.#checkedIndices.push([initialCheckedIndex]);
-      }
-    });
+    this.#hydrateBeddingVariantData();
+    this.#refreshOptionInputState();
 
     this.addEventListener('change', this.variantChanged.bind(this));
     this.#resizeObserver.observe(this);
+    this.#syncBeddingDependentOptions();
   }
 
   disconnectedCallback() {
@@ -67,6 +68,10 @@ export default class VariantPicker extends Component {
     if (!selectedOption) return;
 
     this.updateSelectedOption(event.target);
+    if (this.#isBeddingDependentPicker()) {
+      this.#resetInvalidBeddingSelections();
+      this.#syncBeddingDependentOptions();
+    }
 
     const isOnProductPage =
       this.dataset.templateProductMatch === 'true' &&
@@ -91,11 +96,16 @@ export default class VariantPicker extends Component {
 
     const url = new URL(window.location.href);
 
-    const variantId = selectedOption.dataset.variantId || null;
+    const selectedVariant = this.#isBeddingDependentPicker() ? this.#getSelectedVariant() : null;
+    const variantId = selectedVariant?.id?.toString() || selectedOption.dataset.variantId || null;
 
     if (isOnProductPage) {
       if (variantId) {
-        url.searchParams.set('variant', variantId);
+        if (selectedVariant) {
+          url.searchParams.set('variant', selectedVariant.id.toString());
+        } else {
+          url.searchParams.set('variant', variantId);
+        }
       } else {
         url.searchParams.delete('variant');
       }
@@ -462,9 +472,216 @@ export default class VariantPicker extends Component {
         return key;
       },
     });
+    this.#refreshOptionInputState();
+    this.#hydrateBeddingVariantData();
+    this.#syncBeddingDependentOptions();
     this.updateVariantPickerCss();
 
     return newProduct;
+  }
+
+  #refreshOptionInputState() {
+    this.#checkedIndices = [];
+    this.#radios = [];
+
+    const fieldsets = /** @type {HTMLFieldSetElement[]} */ (this.refs.fieldsets || []);
+
+    fieldsets.forEach((fieldset) => {
+      const radios = Array.from(fieldset?.querySelectorAll('input') ?? []);
+      this.#radios.push(radios);
+
+      const initialCheckedIndex = radios.findIndex((radio) => radio.dataset.currentChecked === 'true');
+      if (initialCheckedIndex !== -1) {
+        this.#checkedIndices.push([initialCheckedIndex]);
+      } else {
+        this.#checkedIndices.push([]);
+      }
+    });
+  }
+
+  #hydrateBeddingVariantData() {
+    try {
+      this.#optionNames = JSON.parse(this.dataset.optionNames || '[]');
+    } catch {
+      this.#optionNames = [];
+    }
+
+    const variantsScript = this.querySelector('script[data-product-variants]');
+    try {
+      this.#productVariants = JSON.parse(variantsScript?.textContent || '[]');
+    } catch {
+      this.#productVariants = [];
+    }
+
+    this.#beddingTypeOptionIndex = this.#optionNames.findIndex(
+      (name) => name.trim().toLowerCase() === 'bedding type'
+    );
+  }
+
+  #isBeddingDependentPicker() {
+    return (
+      (this.dataset.productType || '').trim().toLowerCase() === 'bedding' &&
+      this.#beddingTypeOptionIndex !== -1 &&
+      this.#productVariants.length > 0
+    );
+  }
+
+  /**
+   * @param {Record<string, any>} variant
+   * @param {number} index
+   * @returns {string}
+   */
+  #getVariantOptionValue(variant, index) {
+    const value = Array.isArray(variant.options) ? variant.options[index] : variant[`option${index + 1}`];
+    return value == null ? '' : value.toString();
+  }
+
+  /**
+   * @returns {string[]}
+   */
+  #getSelectedOptionValuesByIndex() {
+    const values = Array.from({ length: this.#optionNames.length }, () => '');
+
+    for (const select of this.querySelectorAll('select')) {
+      const selected = select.selectedOptions[0];
+      const index = this.#optionNames.findIndex((name) => name === selected?.dataset.optionName);
+      if (index !== -1 && selected) values[index] = selected.value;
+    }
+
+    /** @type {NodeListOf<HTMLInputElement>} */
+    const checkedInputs = this.querySelectorAll('fieldset input:checked');
+    for (const input of checkedInputs) {
+      const index = this.#optionNames.findIndex((name) => name === input.dataset.optionName);
+      if (index !== -1) values[index] = input.value;
+    }
+
+    return values;
+  }
+
+  /**
+   * @param {number} optionIndex
+   * @param {string[]} selectedValues
+   * @returns {Set<string>}
+   */
+  #getValidValuesForOption(optionIndex, selectedValues) {
+    const validValues = new Set();
+
+    for (const variant of this.#productVariants) {
+      let matchesPreviousOptions = true;
+
+      for (let index = 0; index < optionIndex; index += 1) {
+        const selectedValue = selectedValues[index];
+        if (selectedValue && this.#getVariantOptionValue(variant, index) !== selectedValue) {
+          matchesPreviousOptions = false;
+          break;
+        }
+      }
+
+      if (matchesPreviousOptions) {
+        const value = this.#getVariantOptionValue(variant, optionIndex);
+        if (value) validValues.add(value);
+      }
+    }
+
+    return validValues;
+  }
+
+  /**
+   * @param {number} optionIndex
+   * @returns {(HTMLInputElement | HTMLOptionElement)[]}
+   */
+  #getOptionControls(optionIndex) {
+    const optionName = this.#optionNames[optionIndex];
+    if (!optionName) return [];
+
+    return Array.from(this.querySelectorAll('fieldset input, select option')).filter((control) => {
+      return (
+        (control instanceof HTMLInputElement || control instanceof HTMLOptionElement) &&
+        control.dataset.optionName === optionName
+      );
+    });
+  }
+
+  /**
+   * @param {number} optionIndex
+   * @param {Set<string>} validValues
+   * @returns {string}
+   */
+  #getFirstValidControlValue(optionIndex, validValues) {
+    const controls = this.#getOptionControls(optionIndex);
+    const firstControl = controls.find((control) => validValues.has(control.value));
+    return firstControl?.value || '';
+  }
+
+  /**
+   * @param {number} optionIndex
+   * @param {string} value
+   */
+  #selectOptionValue(optionIndex, value) {
+    if (!value) return;
+
+    const controls = this.#getOptionControls(optionIndex);
+    const control = controls.find((candidate) => candidate.value === value);
+    if (!control) return;
+
+    if (control instanceof HTMLInputElement) {
+      this.updateSelectedOption(control);
+      return;
+    }
+
+    const select = control.closest('select');
+    if (select instanceof HTMLSelectElement) {
+      select.value = value;
+      this.updateSelectedOption(select);
+    }
+  }
+
+  #resetInvalidBeddingSelections() {
+    if (!this.#isBeddingDependentPicker()) return;
+
+    for (let optionIndex = this.#beddingTypeOptionIndex + 1; optionIndex < this.#optionNames.length; optionIndex += 1) {
+      const selectedValues = this.#getSelectedOptionValuesByIndex();
+      const validValues = this.#getValidValuesForOption(optionIndex, selectedValues);
+      const selectedValue = selectedValues[optionIndex];
+
+      if (!selectedValue || !validValues.has(selectedValue)) {
+        this.#selectOptionValue(optionIndex, this.#getFirstValidControlValue(optionIndex, validValues));
+      }
+    }
+  }
+
+  #syncBeddingDependentOptions() {
+    if (!this.#isBeddingDependentPicker()) return;
+
+    this.#resetInvalidBeddingSelections();
+
+    for (let optionIndex = this.#beddingTypeOptionIndex + 1; optionIndex < this.#optionNames.length; optionIndex += 1) {
+      const selectedValues = this.#getSelectedOptionValuesByIndex();
+      const validValues = this.#getValidValuesForOption(optionIndex, selectedValues);
+
+      for (const control of this.#getOptionControls(optionIndex)) {
+        const isValid = validValues.has(control.value);
+
+        if (control instanceof HTMLInputElement) {
+          control.disabled = !isValid;
+          control.closest('label')?.toggleAttribute('hidden', !isValid);
+        } else {
+          control.disabled = !isValid;
+          control.hidden = !isValid;
+        }
+      }
+    }
+  }
+
+  #getSelectedVariant() {
+    if (!this.#isBeddingDependentPicker()) return null;
+
+    const selectedValues = this.#getSelectedOptionValuesByIndex();
+    return (
+      this.#productVariants.find((variant) => {
+        return this.#optionNames.every((_, index) => this.#getVariantOptionValue(variant, index) === selectedValues[index]);
+      }) || null
+    );
   }
 
   updateVariantPickerCss() {
