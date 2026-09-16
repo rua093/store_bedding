@@ -390,10 +390,10 @@
       "name": "Collection list",
       "settings": {
         "collection_list": [
-          "cactus",
-          "cardinal",
-          "book-lover-blankets",
-          "baseball"
+          "nature",
+          "animals",
+          "hobbies",
+          "sports"
         ],
         "layout_type": "bento",
         "carousel_on_mobile": true,
