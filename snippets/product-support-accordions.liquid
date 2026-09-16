@@ -70,8 +70,18 @@
 {% endif %}
 
 {% liquid
+  assign amazon_customizer_metafield = product.metafields.custom.amazon_customizer
+  assign has_amazon_customizer = false
+
+  if amazon_customizer_metafield != blank and amazon_customizer_metafield.value != blank
+    assign amazon_customizer_json = amazon_customizer_metafield.value | json
+
+    unless amazon_customizer_json == '{}' or amazon_customizer_json == '[]' or amazon_customizer_json == 'null' or amazon_customizer_json == '""'
+      assign has_amazon_customizer = true
+    endunless
+  endif
+
   assign personalization_fields = product.metafields.custom.personalization_fields.value
-  assign has_personalization_fields = false
   assign has_name_field = false
   assign has_number_field = false
   assign has_photo_field = false
@@ -80,7 +90,6 @@
 
   if personalization_fields != blank
     for field in personalization_fields
-      assign has_personalization_fields = true
       assign field_type = field.type.value | default: field.type | downcase
       assign field_label = field.label.value | default: field.label | default: field.name.value | default: field.name | downcase
 
@@ -99,7 +108,7 @@
   endif
 %}
 
-{% if settings.personalization_heading != blank and has_personalization_fields %}
+{% if settings.personalization_heading != blank and has_amazon_customizer %}
   <details class="product-support-collapsible">
     <summary class="product-support-collapsible__summary">
       <span class="product-support-collapsible__summary-copy">
@@ -135,6 +144,10 @@
           {% if has_other_field %}
             <li>Complete the available customization fields before adding the item to cart.</li>
           {% endif %}
+          {% unless has_name_field or has_number_field or has_text_field or has_photo_field or has_other_field %}
+            <li>Click the "Customize" button to personalize your item with text, photos, or custom options.</li>
+            <li>Review your custom design and preview carefully before adding to cart.</li>
+          {% endunless %}
         </ul>
       </div>
     </div>

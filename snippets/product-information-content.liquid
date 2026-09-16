@@ -395,9 +395,18 @@
   {% liquid
     assign has_support_accordions = false
     assign show_details_below = false
-    assign personalization_fields = product.metafields.custom.personalization_fields.value
+    assign amazon_customizer_metafield = product.metafields.custom.amazon_customizer
+    assign has_amazon_customizer = false
 
-    if settings.shipping_heading != blank or personalization_fields != blank
+    if amazon_customizer_metafield != blank and amazon_customizer_metafield.value != blank
+      assign amazon_customizer_json = amazon_customizer_metafield.value | json
+
+      unless amazon_customizer_json == '{}' or amazon_customizer_json == '[]' or amazon_customizer_json == 'null' or amazon_customizer_json == '""'
+        assign has_amazon_customizer = true
+      endunless
+    endif
+
+    if settings.shipping_heading != blank or has_amazon_customizer
       assign has_support_accordions = true
     endif
 
