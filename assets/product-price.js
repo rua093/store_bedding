@@ -99,6 +99,16 @@ class ProductPrice extends Component {
     if (!(event.target instanceof Element)) return;
     if (event.target.closest('product-card') || event.target.closest('quick-add-dialog')) return;
 
+    const selectedVariant = event.detail?.variant;
+    if (selectedVariant && typeof selectedVariant === 'object') {
+      const price = Number(selectedVariant.price);
+      if (!Number.isFinite(price)) return;
+
+      const compareAtPrice = Number(selectedVariant.compare_at_price);
+      this.#updatePriceDisplay(price, compareAtPrice);
+      return;
+    }
+
     const variantPicker =
       event.target instanceof HTMLElement ? event.target.closest('variant-picker') : null;
 

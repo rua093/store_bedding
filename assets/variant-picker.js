@@ -91,12 +91,12 @@ export default class VariantPicker extends Component {
       ? 'featured-product-information'
       : undefined;
 
+    const selectedVariant = this.#isBeddingDependentPicker() ? this.#getSelectedVariant() : null;
     const optionValueId = selectedOption.dataset.optionValueId ?? '';
-    this.fetchUpdatedSection(this.buildRequestUrl(selectedOption), morphElementSelector, optionValueId);
+    this.fetchUpdatedSection(this.buildRequestUrl(selectedOption), morphElementSelector, optionValueId, selectedVariant);
 
     const url = new URL(window.location.href);
 
-    const selectedVariant = this.#isBeddingDependentPicker() ? this.#getSelectedVariant() : null;
     const variantId = selectedVariant?.id?.toString() || selectedOption.dataset.variantId || null;
 
     if (isOnProductPage) {
@@ -313,8 +313,9 @@ export default class VariantPicker extends Component {
    * @param {string} requestUrl - The request URL.
    * @param {string} [morphElementSelector] - The selector of the element to be morphed. By default, only the variant picker is morphed.
    * @param {string} [optionValueId] - The selected option value ID for event detail.
+   * @param {Record<string, any> | null} [selectedVariant] - The selected variant resolved locally before fetching.
    */
-  fetchUpdatedSection(requestUrl, morphElementSelector, optionValueId = '') {
+  fetchUpdatedSection(requestUrl, morphElementSelector, optionValueId = '', selectedVariant = null) {
     // We use this to abort the previous fetch request if it's still pending.
     this.#abortController?.abort();
     this.#abortController = new AbortController();
@@ -332,6 +333,7 @@ export default class VariantPicker extends Component {
         selectedOptions,
         detail: {
           optionValueId,
+          variant: selectedVariant,
         },
         promise: deferredEventPromise.promise,
       })
@@ -588,6 +590,25 @@ export default class VariantPicker extends Component {
 
   /**
    * @param {number} optionIndex
+   * @param {string} value
+   * @param {string[]} selectedValues
+   * @returns {boolean}
+   */
+  #hasAvailableVariantForOptionValue(optionIndex, value, selectedValues) {
+    return this.#productVariants.some((variant) => {
+      if (this.#getVariantOptionValue(variant, optionIndex) !== value) return false;
+
+      return this.#optionNames.every((_, index) => {
+        if (index === optionIndex) return true;
+
+        const selectedValue = selectedValues[index];
+        return !selectedValue || this.#getVariantOptionValue(variant, index) === selectedValue;
+      }) && variant.available !== false;
+    });
+  }
+
+  /**
+   * @param {number} optionIndex
    * @returns {(HTMLInputElement | HTMLOptionElement)[]}
    */
   #getOptionControls(optionIndex) {
@@ -663,8 +684,20 @@ export default class VariantPicker extends Component {
         const isValid = validValues.has(control.value);
 
         if (control instanceof HTMLInputElement) {
+          const isAvailable = isValid && this.#hasAvailableVariantForOptionValue(
+            optionIndex,
+            control.value,
+            selectedValues
+          );
+          const label = control.closest('label');
+
           control.disabled = !isValid;
-          control.closest('label')?.toggleAttribute('hidden', !isValid);
+          control.dataset.optionAvailable = isAvailable ? 'true' : 'false';
+          control.toggleAttribute('aria-disabled', !isAvailable);
+          label?.toggleAttribute('hidden', !isValid);
+          label?.querySelectorAll('.variant-option__strikethrough').forEach((strikethrough) => {
+            strikethrough.toggleAttribute('hidden', isAvailable);
+          });
         } else {
           control.disabled = !isValid;
           control.hidden = !isValid;

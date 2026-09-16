@@ -2045,6 +2045,10 @@ deferred-media[class] :is(.deferred-media__poster-button img, .deferred-media__p
   display: none;
 }
 
+.variant-option__strikethrough[hidden] {
+  display: none;
+}
+
 /* wrap around only for 3 or more variants in a row */
 
 /* the more complex selector rules here produce the wrap around effect for first/last variants */

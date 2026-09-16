@@ -748,6 +748,8 @@ class ProductFormComponent extends Component {
     const sourceCard = /** @type {Element | null} */ (event.target)?.closest('product-card');
     if (sourceCard && !sourceCard.contains(this)) return;
 
+    this.#optimisticallyUpdateSelectedVariant(event);
+
     // Track generation to prevent a stale (aborted) call from clearing the flag
     // while a newer variant selection is still pending.
     const generation = ++this.#variantChangeGeneration;
@@ -906,6 +908,29 @@ class ProductFormComponent extends Component {
       }
     }
   };
+
+  /**
+   * Updates the submitted variant immediately when the variant picker can resolve
+   * the final variant locally. Server-rendered state still replaces the rest of
+   * the form after the section request resolves.
+   * @param {ProductSelectEvent} event
+   */
+  #optimisticallyUpdateSelectedVariant(event) {
+    const selectedVariant = event.detail?.variant;
+    if (!selectedVariant || typeof selectedVariant !== 'object') return;
+
+    const { variantId, addToCartButtonContainer } = this.refs;
+    const id = selectedVariant.id?.toString();
+    if (id && variantId instanceof HTMLInputElement) {
+      variantId.value = id;
+    }
+
+    if (selectedVariant.available === false) {
+      addToCartButtonContainer?.disable();
+    } else {
+      addToCartButtonContainer?.enable();
+    }
+  }
 }
 
 if (!customElements.get('product-form-component')) {
