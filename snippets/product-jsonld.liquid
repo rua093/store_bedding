@@ -64,13 +64,6 @@
           "name": {{ product_brand | json }}
         },
         "category": {{ product_category | json }},
-        {% if product.options.size > 0 and product.has_only_default_variant == false %}
-          "variesBy": [
-            {% for opt in product.options %}
-              {{ opt | json }}{% unless forloop.last %},{% endunless %}
-            {% endfor %}
-          ],
-        {% endif %}
         {% if rating_val != blank and rating_count > 0 %}
           "aggregateRating": {
             "@type": "AggregateRating",
