@@ -252,60 +252,65 @@ if (!customElements.get('header-component')) {
   customElements.define('header-component', HeaderComponent);
 }
 
+/**
+ * Calculates the full current height of the header group.
+ * ResizeObserver entries only contain elements that changed, so they cannot
+ * be summed to derive this value.
+ * @param {HTMLElement} headerGroup
+ * @returns {number}
+ */
+export function calculateCurrentHeaderGroupHeight(headerGroup) {
+  const header = /** @type {HTMLElement | null} */ (headerGroup.querySelector('header-component'));
+  let totalHeight = 0;
+
+  for (const element of headerGroup.children) {
+    if (!(element instanceof HTMLElement) || element === header) continue;
+    totalHeight += element.offsetHeight;
+  }
+
+  if (header?.hasAttribute('transparent') && header.parentElement?.nextElementSibling) {
+    totalHeight += header.offsetHeight;
+  }
+
+  return totalHeight;
+}
+
 onDocumentLoaded(() => {
-  const header = document.querySelector('header-component');
   const headerGroup = document.querySelector('#header-group');
 
   // Note: Initial header heights are set via inline script in theme.liquid
   // This ResizeObserver handles dynamic updates after page load
+  if (headerGroup instanceof HTMLElement) {
+    const previousCleanup = /** @type {(() => void) | undefined} */ (headerGroup.__headerGroupObserverCleanup);
+    previousCleanup?.();
 
-  // Update header group height on resize of any child
-  if (headerGroup) {
-    const resizeObserver = new ResizeObserver((entries) => {
-      const headerGroupHeight = entries.reduce((totalHeight, entry) => {
-        if (
-          entry.target !== header ||
-          (header.hasAttribute('transparent') && header.parentElement?.nextElementSibling)
-        ) {
-          return totalHeight + (entry.borderBoxSize[0]?.blockSize ?? 0);
-        }
-        return totalHeight;
-      }, 0);
-      // The initial height is calculated using the .offsetHeight property, which returns an integer.
-      // We round to the nearest integer to avoid unnecessaary reflows.
-      const roundedHeaderGroupHeight = Math.round(headerGroupHeight);
+    const updateHeaderGroupHeight = () => {
+      const roundedHeaderGroupHeight = Math.round(calculateCurrentHeaderGroupHeight(headerGroup));
       document.body.style.setProperty('--header-group-height', `${roundedHeaderGroupHeight}px`);
-    });
+    };
 
-    if (header instanceof HTMLElement) {
-      resizeObserver.observe(header);
-    }
+    const resizeObserver = new ResizeObserver(updateHeaderGroupHeight);
+    const observeChildren = () => {
+      resizeObserver.disconnect();
 
-    // Observe all children of the header group
-    const children = headerGroup.children;
-    for (let i = 0; i < children.length; i++) {
-      const element = children[i];
-      if (element instanceof HTMLElement) {
-        resizeObserver.observe(element);
+      for (const element of headerGroup.children) {
+        if (element instanceof HTMLElement) resizeObserver.observe(element);
       }
-    }
+    };
 
-    // Also observe the header group itself for child changes
     const mutationObserver = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        if (mutation.type === 'childList') {
-          // Re-observe all children when the list changes
-          const children = headerGroup.children;
-          for (let i = 0; i < children.length; i++) {
-            const element = children[i];
-            if (element instanceof HTMLElement) {
-              resizeObserver.observe(element);
-            }
-          }
-        }
-      }
+      if (!mutations.some((mutation) => mutation.type === 'childList')) return;
+      observeChildren();
+      updateHeaderGroupHeight();
     });
 
     mutationObserver.observe(headerGroup, { childList: true });
+    observeChildren();
+    updateHeaderGroupHeight();
+    headerGroup.__headerGroupObserverCleanup = () => {
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
+      delete headerGroup.__headerGroupObserverCleanup;
+    };
   }
 });

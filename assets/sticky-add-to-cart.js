@@ -96,6 +96,10 @@ class StickyAddToCartComponent extends Component {
   connectedCallback() {
     super.connectedCallback();
 
+    if (this.#abortController.signal.aborted) {
+      this.#abortController = new AbortController();
+    }
+
     this.#setupIntersectionObserver();
 
     const { signal } = this.#abortController;

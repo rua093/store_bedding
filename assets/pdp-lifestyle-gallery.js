@@ -37,11 +37,30 @@ function loadEmbla() {
     return Promise.resolve(window.EmblaCarousel);
   }
 
-  if (window.__newArrivalsEmblaPromise) {
-    return window.__newArrivalsEmblaPromise;
+  if (window.__pdpLifestyleEmblaPromise) {
+    return window.__pdpLifestyleEmblaPromise;
   }
 
-  window.__newArrivalsEmblaPromise = new Promise((resolve, reject) => {
+  window.__pdpLifestyleEmblaPromise = new Promise((resolve, reject) => {
+    if (window.EmblaCarousel) {
+      resolve(window.EmblaCarousel);
+      return;
+    }
+
+    const existingScript = document.querySelector('script[src*="embla-carousel"]');
+    if (existingScript) {
+      existingScript.addEventListener('load', () => resolve(window.EmblaCarousel), { once: true });
+      existingScript.addEventListener('error', reject, { once: true });
+      const pollTimer = setInterval(() => {
+        if (window.EmblaCarousel) {
+          clearInterval(pollTimer);
+          resolve(window.EmblaCarousel);
+        }
+      }, 30);
+      setTimeout(() => clearInterval(pollTimer), 3000);
+      return;
+    }
+
     const script = document.createElement('script');
     script.src = 'https://unpkg.com/embla-carousel/embla-carousel.umd.js';
     script.async = true;
@@ -50,7 +69,7 @@ function loadEmbla() {
     document.head.appendChild(script);
   });
 
-  return window.__newArrivalsEmblaPromise;
+  return window.__pdpLifestyleEmblaPromise;
 }
 
 function initSection(id, scope) {

@@ -217,9 +217,9 @@
   }
 
   .trust-signals--hero .trust-signals__hero-copy {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+    display: block;
+    visibility: visible;
+    opacity: 1;
     position: relative;
     z-index: 5;
     min-width: 0;
@@ -227,20 +227,20 @@
   }
 
   .trust-signals--hero .trust-signals__hero-title {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+    display: block;
+    visibility: visible;
+    opacity: 1;
     margin: 0;
     font-family: var(--font-heading--family);
     font-size: clamp(1.55rem, 1.8vw, 2rem);
     font-weight: 650;
     line-height: 1.08;
     letter-spacing: -0.025em;
-    color: #2f241d !important;
+    color: #2f241d;
   }
 
   .trust-signals--hero .trust-signals__hero-divider {
-    display: block !important;
+    display: block;
     width: 3.8rem;
     height: 0.23rem;
     margin: 0.5rem auto 0.65rem;
@@ -250,16 +250,16 @@
 
   .trust-signals--hero .trust-signals__hero-divider::before,
   .trust-signals--hero .trust-signals__hero-divider::after {
-    display: none !important;
+    display: none;
   }
 
   .trust-signals--hero .trust-signals__hero-body {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+    display: block;
+    visibility: visible;
+    opacity: 1;
     max-width: 15rem;
     margin: 0 auto;
-    color: #7b6657 !important;
+    color: #7b6657;
     font-size: clamp(1rem, 1.08vw, 1.16rem);
     line-height: 1.48;
     text-wrap: balance;

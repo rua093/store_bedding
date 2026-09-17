@@ -1,4 +1,6 @@
-{{ 'collection-list.css' | asset_url | stylesheet_tag }}
+{% unless template.name == 'index' %}
+  {{ 'collection-list.css' | asset_url | stylesheet_tag }}
+{% endunless %}
 
 {% liquid
   assign is_patchwork_layout = false
@@ -39,8 +41,6 @@
   endif
 
   assign comfort_chips = section.settings.comfort_chips | default: '' | split: ','
-  assign patchwork_heading = section.settings.patchwork_heading | strip
-  assign patchwork_subheading = section.settings.patchwork_subheading | strip
   assign patchwork_count = 0
   assign intro_collection = blank
   assign intro_image = blank

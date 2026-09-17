@@ -58,9 +58,8 @@ function scrollTo(options) {
  * at the moment the user leaves. More accurate than debounced scroll (which can be stale
  * if the user scrolls and immediately clicks a link).
  *
- * Restore: only for back/forward navigation. Reloads intentionally reset to top so a
- * refresh never clamps an old `scrollTop` against an incomplete page height and jumps to
- * the first tall section.
+ * Restore: only for back/forward navigation. Reloads leave the visitor's scroll position
+ * untouched, so a scroll that begins during page load cannot be overwritten later.
  */
 if (SQUEEZE_QUERY.matches) {
   history.scrollRestoration = 'manual';
@@ -123,23 +122,11 @@ function restoreSavedScrollTopWhenReady(savedScrollTop, attempt = 0) {
   requestAnimationFrame(() => restoreSavedScrollTopWhenReady(savedScrollTop, attempt + 1));
 }
 
-/**
- * Scrolls the active page container back to the top.
- */
-function resetScrollTop() {
-  getScrollContainer().scrollTo({ top: 0, behavior: 'instant' });
-}
-
 window.addEventListener('pageshow', (event) => {
   // Let anchor navigation behave natively.
   if (location.hash) return;
 
   const navigationType = getNavigationType();
-
-  if (navigationType === 'reload') {
-    requestAnimationFrame(resetScrollTop);
-    return;
-  }
 
   const shouldRestore = navigationType === 'back_forward' || event.persisted;
   if (!shouldRestore) return;

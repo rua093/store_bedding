@@ -63,6 +63,7 @@ class ProductPrice extends Component {
         const newPrice = newProductPrice.querySelector('[ref="priceContainer"]');
         if (newPrice && priceContainer) {
           priceContainer.replaceWith(newPrice);
+          this.refs.priceContainer = /** @type {HTMLElement} */ (newPrice);
         }
 
         // Update volume pricing note
@@ -150,7 +151,13 @@ class ProductPrice extends Component {
    * @param {number} compareAtPriceCents
    */
   #updatePriceDisplay(priceCents, compareAtPriceCents) {
-    const { priceContainer } = this.refs;
+    let priceContainer = this.refs.priceContainer;
+    if (!(priceContainer instanceof HTMLElement) || !priceContainer.isConnected) {
+      priceContainer = this.querySelector('[ref="priceContainer"]') || undefined;
+      if (priceContainer instanceof HTMLElement) {
+        this.refs.priceContainer = priceContainer;
+      }
+    }
     if (!(priceContainer instanceof HTMLElement)) return;
 
     const formattedPrice = this.#formatPrice(priceCents);

@@ -1,15 +1,7 @@
-.hero-wrapper {
-  --hero-height-offset: 0;
-}
-
-body:has(#header-group > .header-section > #header-component) .hero-wrapper:first-child {
-  --hero-height-offset: var(--header-group-height, 0);
-}
-
 .hero {
   position: relative;
   isolation: isolate;
-  min-height: max(0px, calc(var(--hero-min-height, 0px) - var(--hero-height-offset)));
+  min-height: var(--hero-min-height, 0px);
 }
 
 .hero[data-shopify-visual-preview] {
@@ -159,7 +151,7 @@ body:has(#header-group > .header-section > #header-component) .hero-wrapper:firs
   font-family: var(--font-heading--family);
   font-style: normal;
   font-weight: var(--font-heading--weight);
-  font-size: clamp(2.4rem, 4.2vw, 4.1rem);
+  font-size: clamp(2.2rem, 3.4vw, 3.25rem);
   letter-spacing: -0.045em;
 }
 
@@ -283,28 +275,6 @@ body:has(#header-group > .header-section > #header-component) .hero-wrapper:firs
   pointer-events: none;
 }
 
-.hero__trust-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem 0.8rem;
-  margin: 0.35rem 0 0;
-  padding: 0;
-  list-style: none;
-  color: rgb(255 248 239 / 0.74);
-  font-size: 0.9rem;
-}
-
-.hero__trust-list li {
-  display: inline-flex;
-  align-items: center;
-}
-
-.hero__trust-list li + li::before {
-  content: '•';
-  margin-inline-end: 0.8rem;
-  color: rgb(201 130 93 / 0.9);
-}
-
 .hero--height-auto {
   min-height: 0;
 }
@@ -323,7 +293,7 @@ body:has(#header-group > .header-section > #header-component) .hero-wrapper:firs
   inset: 0;
 }
 
-.hero--height-auto:is(.hero__media, .hero__media-grid > .placeholder-svg) {
+.hero--height-auto :is(.hero__media, .hero__media-grid > .placeholder-svg) {
   aspect-ratio: var(--hero-media-aspect-ratio, 16 / 9);
 }
 
@@ -345,16 +315,6 @@ body:has(#header-group > .header-section > #header-component) .hero-wrapper:firs
 }
 
 @media screen and (max-width: 749px) {
-  main[data-template*='index'].homepage-motion-ready [id^='Hero-'] [data-reveal-disable-mobile],
-  main[data-template*='index'].homepage-motion-ready [id^='Hero-'] [data-reveal-disable-mobile].homepage-reveal--pending,
-  html.homepage-motion-booting main[data-template*='index'] [id^='Hero-'] [data-reveal-disable-mobile] {
-    opacity: 1;
-    translate: 0 0;
-    transform: none;
-    transition: none;
-    transition-delay: 0ms;
-    will-change: auto;
-  }
 
   .hero--readability-scrim .hero__background::after {
     background:
@@ -374,7 +334,7 @@ body:has(#header-group > .header-section > #header-component) .hero-wrapper:firs
   .hero__content-shell {
     padding-block-start: clamp(1rem, 3.5vw, 1.5rem);
     padding-block-end: clamp(3.5rem, 10vw, 5.5rem);
-    padding-inline: clamp(1rem, 4vw, 1.5rem) !important;
+    padding-inline: clamp(1rem, 4vw, 1.5rem);
   }
 
   .hero__content {
@@ -438,14 +398,4 @@ body:has(#header-group > .header-section > #header-component) .hero-wrapper:firs
     gap: 0.75rem;
   }
 
-  .hero__trust-list {
-    gap: 0.35rem 0.7rem;
-    font-size: 0.82rem;
-    max-width: 100%;
-    overflow-wrap: anywhere;
-  }
-
-  .hero__trust-list li {
-    min-width: 0;
-  }
 }

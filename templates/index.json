@@ -213,7 +213,19 @@
         "media_height": "50svh",
         "section_width": "page-width",
         "extend_media": false,
+        "brand_intro_enabled": true,
         "brand_intro_background_image": "shopify://shop_images/media.webp",
+        "brand_intro_eyebrow": "MADE TO BE YOURS",
+        "brand_intro_heading": "What will you find here?",
+        "brand_intro_body": "Discover unique bedding you won’t find everywhere. Customize the details, add your personal touch, or upload your own idea—we’ll help turn it into something made just for you.",
+        "brand_intro_feature_1_label": "UNIQUE DESIGNS",
+        "brand_intro_feature_1_description": "Bedding styles made to stand out.",
+        "brand_intro_feature_2_label": "PERSONALIZED",
+        "brand_intro_feature_2_description": "Customize names, photos, colors and details your way.",
+        "brand_intro_feature_3_label": "YOUR IDEA",
+        "brand_intro_feature_3_description": "Upload your inspiration and bring it to life.",
+        "brand_intro_cta_label": "Customize your bedding",
+        "brand_intro_cta_link": "shopify://collections/all",
         "background_color": "",
         "padding-block-start": 0,
         "padding-block-end": 0
@@ -577,6 +589,7 @@
       ],
       "settings": {
         "background_color": "#f2e5db",
+        "use_hero_layout": true,
         "padding-block-start": 0,
         "padding-block-end": 0,
         "gap_between_items": 20

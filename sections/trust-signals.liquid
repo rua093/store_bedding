@@ -1,11 +1,9 @@
-{{ 'trust-signals.css' | asset_url | stylesheet_tag }}
+{% unless template.name == 'index' %}
+  {{ 'trust-signals.css' | asset_url | stylesheet_tag }}
+{% endunless %}
 
 {% liquid
-  assign is_trust_signals_hero = false
-  assign first_trust_text = section.blocks.first.settings.text | default: ''
-  if section.id == 'trust_signals_P6hero' or section.id contains 'trust_signals_P6hero' or first_trust_text contains 'Soft Comfort'
-    assign is_trust_signals_hero = true
-  endif
+  assign is_trust_signals_hero = section.settings.use_hero_layout
 
   if section.settings.background_color != blank
     render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
@@ -25,26 +23,10 @@
     {% if is_trust_signals_hero %}
       <div class="trust-signals__hero-panel">
     {% endif %}
-    <div
-      class="trust-signals__inner"
-      data-homepage-reveal-children="{% if is_trust_signals_hero %}.trust-signals__hero-grid{% else %}:scope > *{% endif %}"
-      {% unless is_trust_signals_hero %}
-        data-homepage-reveal-preset="card-cascade-reveal"
-        data-homepage-reveal-base-delay="100"
-        data-homepage-reveal-stagger="100"
-      {% else %}
-        data-homepage-reveal-preset="section-soft-reveal"
-      {% endunless %}
-    >
+    <div class="trust-signals__inner">
       {% if is_trust_signals_hero %}
         <h2 class="visually-hidden">Why shop with us</h2>
-        <div
-          class="trust-signals__hero-grid"
-          data-homepage-reveal-children=":scope > *"
-          data-homepage-reveal-preset="card-cascade-reveal"
-          data-homepage-reveal-base-delay="100"
-          data-homepage-reveal-stagger="120"
-        >
+        <div class="trust-signals__hero-grid">
           {% for block in section.blocks limit: 4 %}
             {% liquid
               assign block_html = block.settings.text | default: ''
@@ -139,9 +121,7 @@
     </div>
     {% if is_trust_signals_hero %}
       <div
-        class="trust-signals__hero-signoff homepage-reveal"
-        data-reveal-preset="section-soft-reveal"
-        style="--reveal-delay: 350ms;"
+        class="trust-signals__hero-signoff"
         aria-hidden="true"
       >
         <span>Jeminise — quality you can feel, comfort you can trust.</span>
@@ -167,6 +147,12 @@
     }
   ],
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "use_hero_layout",
+      "label": "Use homepage trust layout",
+      "default": true
+    },
     {
       "type": "color",
       "id": "background_color",

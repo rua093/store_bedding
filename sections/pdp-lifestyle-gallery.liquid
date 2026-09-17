@@ -1,4 +1,5 @@
-{{ 'pdp-lifestyle-gallery.js' | asset_url | script_tag }}
+<script src="{{ 'embla-carousel.umd.js' | asset_url }}" defer></script>
+<script src="{{ 'pdp-lifestyle-gallery.js' | asset_url }}" defer></script>
 
 {% liquid
   if section.settings.background_color != blank

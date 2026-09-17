@@ -1,4 +1,18 @@
 {{ 'overflow-list.css' | asset_url | preload_tag: as: 'style' }}
 {{ 'base.css' | asset_url | stylesheet_tag: preload: true }}
+{% if template.name == 'index' %}
+  {{ 'hero.css' | asset_url | stylesheet_tag: preload: true }}
+  {{ 'media-with-content.css' | asset_url | stylesheet_tag: preload: true }}
+  {{ 'collection-list.css' | asset_url | stylesheet_tag: preload: true }}
+  {{ 'new-arrivals-line-carousel.css' | asset_url | stylesheet_tag: preload: true }}
+  {{ 'trust-signals.css' | asset_url | stylesheet_tag: preload: true }}
+  {{ 'homepage-reviews.css' | asset_url | stylesheet_tag }}
+{% endif %}
+{% if template.name == 'product' %}
+  {{ 'pdp-custom-layout.css' | asset_url | stylesheet_tag }}
+{% endif %}
 {{ 'product-card.css' | asset_url | stylesheet_tag: preload: true }}
 {{ 'custom-product-card.css' | asset_url | stylesheet_tag: preload: true }}
+{% if template.name == 'index' %}
+  {{ 'bestselling-bedding.css' | asset_url | stylesheet_tag: preload: true }}
+{% endif %}

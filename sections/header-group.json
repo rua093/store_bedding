@@ -13,28 +13,15 @@
   "sections": {
     "header_announcements_WbCTVz": {
       "type": "header-announcements",
-      "blocks": {
-        "announcement_mxxhta": {
-          "type": "_announcement",
-          "settings": {
-            "text": "Custom Bedding Made From Your Ideas",
-            "link": "/collections/all",
-            "font": "var(--font-primary--family)",
-            "font_size": "var(--font-size--body-md)",
-            "weight": "",
-            "letter_spacing": "normal",
-            "case": "none",
-            "text_color": ""
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "announcement_mxxhta"
-      ],
+      "blocks": {},
+      "block_order": [],
       "name": "t:names.announcement_bar",
       "settings": {
-        "speed": 5,
+        "speed": 20,
+        "message_1": "Free Shipping On All Orders",
+        "message_2": "Made From Your Ideas",
+        "message_3": "Turn Photos, Names & Favorite Memories Into Cozy Bedding",
+        "message_4": "Exclusive Deals & Offers",
         "section_width": "full-width",
         "background_image": "shopify://shop_images/bg-anoucement.webp",
         "background_color": "#f7c65b",

@@ -670,13 +670,13 @@
 
   /* Brand Intro Section Custom styling */
   .media-with-content--brand-intro {
-    display: block !important;
-    width: 100% !important;
-    max-width: none !important;
-    padding-block: 0 !important;
-    background: transparent !important;
-    overflow: visible !important;
-    margin: 0 !important;
+    display: block;
+    width: 100%;
+    max-width: none;
+    padding-block: 0;
+    background: transparent;
+    overflow: visible;
+    margin: 0;
   }
 
   .media-with-content--brand-intro .brand-intro-card {
@@ -684,6 +684,7 @@
     min-height: clamp(330px, 31vw, 400px);
     overflow: hidden;
     color: #fff8ef;
+    background-color: #3e332d;
     background-image: var(--brand-intro-bg-image, none);
     background-size: cover;
     background-position: center right;
@@ -853,6 +854,11 @@
   .media-with-content--brand-intro .brand-intro-card__cta:hover {
     color: #fff8ef;
     border-bottom-color: rgba(255, 248, 239, 0.8);
+  }
+
+  .media-with-content--brand-intro .brand-intro-card__cta:focus-visible {
+    outline: 2px solid #fff8ef;
+    outline-offset: 4px;
   }
 
   .media-with-content--brand-intro .brand-intro-card__cta-arrow {

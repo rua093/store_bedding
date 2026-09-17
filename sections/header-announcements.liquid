@@ -1,6 +1,11 @@
 
 {% liquid
-  assign announcement_background_image_url = 'bg-announcement.webp' | asset_url
+  assign announcement_background_image_url = blank
+  assign announcement_marquee_duration = section.settings.speed
+  assign announcement_message_1 = section.settings.message_1 | strip
+  assign announcement_message_2 = section.settings.message_2 | strip
+  assign announcement_message_3 = section.settings.message_3 | strip
+  assign announcement_message_4 = section.settings.message_4 | strip
 
   assign seasonal_announcement_bg = blank
   if request.page_type == 'collection' and collection != blank
@@ -27,39 +32,30 @@
   endif
 %}
 
-<link
-  rel="preload"
-  as="image"
-  href="{{ announcement_background_image_url }}"
->
-
 {%- capture announcement_marquee_items -%}
-  <span class="announcement-bar__marquee-item">Free Shipping On All Orders</span>
-  <span class="announcement-bar__marquee-separator" aria-hidden="true" data-icon-default="•" data-icon-halloween="🎃"></span>
-  <span class="announcement-bar__marquee-item">Made From Your Ideas</span>
-  <span class="announcement-bar__marquee-separator" aria-hidden="true" data-icon-default="•" data-icon-halloween="🦇"></span>
-  <span class="announcement-bar__marquee-item">Turn Photos, Names &amp; Favorite Memories Into Cozy Bedding</span>
-  <span class="announcement-bar__marquee-separator" aria-hidden="true" data-icon-default="•" data-icon-halloween="👻"></span>
-  <span class="announcement-bar__marquee-item">Exclusive Deals &amp; Offers</span>
-  <span class="announcement-bar__marquee-separator" aria-hidden="true" data-icon-default="•" data-icon-halloween="🕷️"></span>
+  {% if announcement_message_1 != blank %}<span class="announcement-bar__marquee-item">{{ announcement_message_1 }}</span>{% endif %}
+  {% if announcement_message_2 != blank %}<span class="announcement-bar__marquee-separator" aria-hidden="true" data-icon-default="•" data-icon-halloween="🎃"></span><span class="announcement-bar__marquee-item">{{ announcement_message_2 }}</span>{% endif %}
+  {% if announcement_message_3 != blank %}<span class="announcement-bar__marquee-separator" aria-hidden="true" data-icon-default="•" data-icon-halloween="🦇"></span><span class="announcement-bar__marquee-item">{{ announcement_message_3 }}</span>{% endif %}
+  {% if announcement_message_4 != blank %}<span class="announcement-bar__marquee-separator" aria-hidden="true" data-icon-default="•" data-icon-halloween="👻"></span><span class="announcement-bar__marquee-item">{{ announcement_message_4 }}</span>{% endif %}
 {%- endcapture -%}
 <aside
   class="announcement-bar spacing-style section section--{{ section.settings.section_width }}"
-  style="{% render 'spacing-padding', settings: section.settings %}; --border-bottom-width: {{ section.settings.divider_width }}px; --announcement-bg-image: url('{{ announcement_background_image_url }}');{% if section.settings.divider_color != blank %} --color-border: {{ section.settings.divider_color }};{% endif %}"
+  aria-label="Store announcements"
+  style="{% render 'spacing-padding', settings: section.settings %}; --border-bottom-width: {{ section.settings.divider_width }}px; --announcement-marquee-duration: {{ announcement_marquee_duration }}s;{% if section.settings.background_color != blank %} --announcement-background-color: {{ section.settings.background_color }};{% endif %}{% if announcement_background_image_url != blank %} --announcement-bg-image: url('{{ announcement_background_image_url }}');{% endif %}{% if section.settings.divider_color != blank %} --color-border: {{ section.settings.divider_color }};{% endif %}"
 >
-  <div class="announcement-bar__slider" aria-live="polite">
+  <div class="announcement-bar__slider">
     <div class="announcement-bar__marquee" aria-label="Store announcements">
       <div class="announcement-bar__marquee-track">
         <div class="announcement-bar__marquee-content">
           {{ announcement_marquee_items }}
         </div>
-        <div class="announcement-bar__marquee-content" aria-hidden="true">
+        <div class="announcement-bar__marquee-content" aria-hidden="true" inert>
           {{ announcement_marquee_items }}
         </div>
-        <div class="announcement-bar__marquee-content" aria-hidden="true">
+        <div class="announcement-bar__marquee-content" aria-hidden="true" inert>
           {{ announcement_marquee_items }}
         </div>
-        <div class="announcement-bar__marquee-content" aria-hidden="true">
+        <div class="announcement-bar__marquee-content" aria-hidden="true" inert>
           {{ announcement_marquee_items }}
         </div>
       </div>
@@ -78,7 +74,7 @@
     display: flex;
     align-items: center;
     border-block-end: var(--border-bottom-width) solid var(--color-border);
-    background: #faebe0;
+    background: var(--announcement-background-color, #faebe0);
     color: var(--announcement-text-color);
     overflow: hidden;
     isolation: isolate;
@@ -94,7 +90,7 @@
     position: absolute;
     inset: 0;
     z-index: 0;
-    background-image: var(--announcement-bg-image);
+    background-image: var(--announcement-bg-image, none);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -134,7 +130,7 @@
     align-items: center;
     width: max-content;
     will-change: transform;
-    animation: announcement-marquee 30s linear infinite;
+    animation: announcement-marquee var(--announcement-marquee-duration, 30s) linear infinite;
   }
 
   .announcement-bar__marquee-content {
@@ -161,6 +157,7 @@
   .announcement-bar__marquee-item {
     color: var(--announcement-text-color);
     text-shadow: none;
+    text-decoration: none;
     transition: color 0.3s ease;
   }
 
@@ -203,7 +200,7 @@
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 4px rgba(255, 122, 0, 0.35);
   }
 
-  [data-seasonal-theme="halloween"] .announcement-bar:hover .announcement-bar .announcement-bar__marquee-item {
+  [data-seasonal-theme="halloween"] .announcement-bar:hover .announcement-bar__marquee-item {
     color: #ffffff;
     text-shadow: 0 1px 5px rgba(0, 0, 0, 0.9), 0 0 6px rgba(255, 122, 0, 0.5);
   }
@@ -259,10 +256,6 @@
       min-height: inherit;
     }
 
-    .announcement-bar__marquee-track {
-      animation-duration: 25s;
-    }
-
     .announcement-bar__marquee-content {
       gap: 0.85rem;
       padding-inline-end: 0.85rem;
@@ -279,8 +272,12 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .announcement-bar__marquee-track {
+    .announcement-bar__marquee-track,
+    .announcement-bar__marquee-separator::before {
       animation: none;
+    }
+
+    .announcement-bar__marquee-track {
       transform: none;
     }
   }
@@ -289,11 +286,6 @@
 {% schema %}
 {
   "name": "t:names.announcement_bar",
-  "blocks": [
-    {
-      "type": "_announcement"
-    }
-  ],
   "enabled_on": {
     "groups": ["header"]
   },
@@ -302,10 +294,34 @@
       "type": "range",
       "id": "speed",
       "label": "t:settings.scroll_speed",
-      "min": 2,
-      "max": 10,
-      "default": 5,
+      "min": 10,
+      "max": 40,
+      "default": 20,
       "unit": "sec"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "message_1",
+      "label": "Message 1",
+      "default": "Free Shipping On All Orders"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "message_2",
+      "label": "Message 2",
+      "default": "Made From Your Ideas"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "message_3",
+      "label": "Message 3",
+      "default": "Turn Photos, Names & Favorite Memories Into Cozy Bedding"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "message_4",
+      "label": "Message 4",
+      "default": "Exclusive Deals & Offers"
     },
     {
       "type": "header",
@@ -382,13 +398,7 @@
   ],
   "presets": [
     {
-      "name": "t:names.announcement_bar",
-      "blocks": {
-        "announcement_1": {
-          "type": "_announcement"
-        }
-      },
-      "block_order": ["announcement_1"]
+      "name": "t:names.announcement_bar"
     }
   ]
 }

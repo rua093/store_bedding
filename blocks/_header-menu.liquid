@@ -73,8 +73,6 @@
   {% else %}
     {% liquid
       assign block_settings = block.settings
-      assign menu_content_type = block_settings.menu_style | default: 'text'
-      assign image_border_radius = block_settings.image_border_radius
 
       render 'contrast-override', background_color: block_settings.background_color, text_color: block_settings.text_color, section_id: block.id
 
@@ -92,11 +90,6 @@
         assign background_color_classes = background_color_classes | append: ' background-matches-parent'
       endif
 
-      if block_settings.menu_style == 'featured_collections'
-        assign ratio = block_settings.featured_collections_aspect_ratio
-      elsif block_settings.menu_style == 'featured_products'
-        assign ratio = block_settings.featured_products_aspect_ratio
-      endif
     %}
 
     {% assign visible_menu_item_count = 0 %}

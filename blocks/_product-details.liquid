@@ -63,7 +63,7 @@
 
     const enhanceProductDescriptions = () => {
       document.querySelectorAll('[data-product-details-below] rte-formatter').forEach((description) => {
-        if (description.dataset.enhanced === 'true') return;
+        if (description.dataset.enhanced === 'true' || description.querySelector('.product-description-rich__layout')) return;
 
         const children = Array.from(description.children);
         if (!children.length) return;
@@ -138,7 +138,6 @@
 
     const hydrateProductDetailsBelow = () => {
       enhanceProductDescriptions();
-      syncProductDescriptionAccordions();
     };
 
     const initCustomizeTriggerProxy = () => {
@@ -367,7 +366,7 @@
     width: 100%;
     max-width: none;
     margin: 0;
-    font-size: clamp(32px, 2.6vw, 46px);
+    font-size: 32px;
     line-height: 1.06;
     letter-spacing: -0.03em;
     color: #000000;
@@ -583,24 +582,24 @@
   }
 
   .product-details--main-product variant-picker .variant-option__button-label {
-    min-height: 2.1rem !important;
-    border-radius: 4px !important;
+    min-height: 2.1rem;
+    border-radius: 4px;
     border: 1px solid rgba(0, 0, 0, 0.14) !important;
-    background: #ffffff !important;
-    color: #171717 !important;
-    font-weight: 500 !important;
-    font-size: 0.8rem !important;
-    padding: 0.3rem 0.55rem !important;
-    min-width: 2.1rem !important;
-    width: fit-content !important;
-    height: auto !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    flex: 0 0 auto !important;
-    transition: all 0.15s ease !important;
-    box-shadow: none !important;
-    white-space: nowrap !important;
+    background: #ffffff;
+    color: #171717;
+    font-weight: 500;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.55rem;
+    min-width: 2.1rem;
+    width: fit-content;
+    height: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    transition: all 0.15s ease;
+    box-shadow: none;
+    white-space: nowrap;
   }
 
   .product-details--main-product variant-picker .variant-option__button-label[hidden] {
@@ -744,10 +743,7 @@
   }
 
   .product-details--main-product .compare-at-price {
-    color: #737373 !important;
     font-size: clamp(1.1rem, 1.2vw, 1.35rem);
-    font-family: var(--font-body--family) !important;
-    font-weight: 400 !important;
     line-height: 1;
     letter-spacing: -0.02em;
     text-decoration-line: line-through;
@@ -756,25 +752,13 @@
   }
 
   .product-information--main-product .product-details--main-product .price-sale-badge {
-    align-self: center;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: unset !important;
-    height: auto !important;
-    padding: 0.18rem 0.65rem !important;
     border-radius: 999px;
-    background: #FC5732 !important;
     color: #fffdf9;
     border: 0;
-    box-shadow: none !important;
-    font-size: 0.78rem !important;
-    font-family: var(--font-body--family) !important;
-    font-weight: 400 !important;
-    line-height: 1.2 !important;
-    letter-spacing: 0;
     white-space: nowrap;
-    transform: none !important;
   }
 
   .product-information--main-product .product-details--main-product .price-sale-badge::before {
@@ -1123,33 +1107,12 @@
     }
 
     .product-information--main-product .product-details--main-product .price-sale-badge {
-      min-height: unset !important;
-      height: auto !important;
       padding: 0.15rem 0.6rem !important;
       font-size: 0.75rem !important;
-      transform: none;
-    }
-
-    .product-information--main-product .product-details--main-product .price-sale-badge::before {
-      content: none;
-    }
-
-    .product-details--main-product .price-callouts {
-      gap: 0.38rem;
-      margin-top: 0.38rem;
-    }
-
-    .product-details--main-product .price-discount-message,
-    .product-details--main-product .price-shipping-line,
-    .product-details--main-product .price-policy-note {
-      font-size: 0.88rem;
-      line-height: 1.4;
     }
 
     .product-details--main-product .price-discount-message {
       width: 100%;
-      padding: 0;
-      background: transparent;
     }
 
     .product-details--main-product .gift-card-form-option {
@@ -1168,15 +1131,6 @@
       border-radius: 12px;
     }
 
-  }
-
-  @media screen and (max-width: 360px) {
-  }
-
-  @media screen and (max-width: 989px) {
-  }
-
-  @media screen and (max-width: 749px) {
   }
 
   @media screen and (max-width: 749px) {
@@ -1339,13 +1293,6 @@
     content: '' !important;
     position: absolute !important;
     pointer-events: none !important;
-  }
-
-  body[data-seasonal-theme='halloween']
-    .product-information--main-product
-    .product-details--main-product
-    > .group-block
-    > .group-block-content::before {
     inset: 0 !important;
     z-index: 0 !important;
     background:

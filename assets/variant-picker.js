@@ -40,18 +40,21 @@ export default class VariantPicker extends Component {
 
   #resizeObserver = new ResizeNotifier(() => this.updateVariantPickerCss());
 
+  #handleChange = (event) => this.variantChanged(event);
+
   connectedCallback() {
     super.connectedCallback();
     this.#hydrateBeddingVariantData();
     this.#refreshOptionInputState();
 
-    this.addEventListener('change', this.variantChanged.bind(this));
+    this.addEventListener('change', this.#handleChange);
     this.#resizeObserver.observe(this);
     this.#syncBeddingDependentOptions();
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
+    this.removeEventListener('change', this.#handleChange);
     this.#resizeObserver.disconnect();
   }
 

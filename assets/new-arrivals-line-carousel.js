@@ -39,20 +39,21 @@ function loadEmbla() {
     return Promise.resolve(window.EmblaCarousel);
   }
 
-  if (window.__newArrivalsEmblaPromise) {
-    return window.__newArrivalsEmblaPromise;
+  const script = document.getElementById('new-arrivals-embla');
+  if (!(script instanceof HTMLScriptElement)) {
+    return Promise.reject(new Error('Embla Carousel script is unavailable'));
   }
 
-  window.__newArrivalsEmblaPromise = new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/embla-carousel/embla-carousel.umd.js';
-    script.async = true;
-    script.onload = () => resolve(window.EmblaCarousel);
-    script.onerror = reject;
-    document.head.appendChild(script);
+  return new Promise((resolve, reject) => {
+    script.addEventListener('load', () => {
+      if (window.EmblaCarousel) {
+        resolve(window.EmblaCarousel);
+      } else {
+        reject(new Error('Embla Carousel is unavailable'));
+      }
+    }, { once: true });
+    script.addEventListener('error', () => reject(new Error('Embla Carousel failed to load')), { once: true });
   });
-
-  return window.__newArrivalsEmblaPromise;
 }
 
 function initSection(id, scope) {
@@ -66,8 +67,6 @@ function initSection(id, scope) {
   const items = Array.from(root.querySelectorAll(ITEM_SELECTOR));
   if (!viewport || !track || items.length === 0) return;
 
-  const prevButton = root.querySelector('[data-new-arrivals-line-prev]');
-  const nextButton = root.querySelector('[data-new-arrivals-line-next]');
   const dotsRoot = root.querySelector(DOTS_SELECTOR);
   const controller = new AbortController();
   const { signal } = controller;
@@ -110,9 +109,7 @@ function initSection(id, scope) {
 
   const endPointerDrag = () => {
     isPointerDown = false;
-    window.setTimeout(() => {
-      viewport.classList.remove('is-dragging');
-    }, 0);
+    viewport.classList.remove('is-dragging');
   };
 
   viewport.addEventListener('pointerup', endPointerDrag, { signal });
@@ -125,6 +122,7 @@ function initSection(id, scope) {
       if (!didDrag) return;
       event.preventDefault();
       event.stopPropagation();
+      didDrag = false;
     },
     { signal, capture: true }
   );
@@ -177,38 +175,14 @@ function initSection(id, scope) {
         });
       };
 
-      const updateButtons = () => {
-        if (prevButton) prevButton.disabled = !embla.canScrollPrev();
-        if (nextButton) nextButton.disabled = !embla.canScrollNext();
-      };
-
-      prevButton?.addEventListener(
-        'click',
-        () => {
-          embla?.scrollPrev();
-        },
-        { signal }
-      );
-
-      nextButton?.addEventListener(
-        'click',
-        () => {
-          embla?.scrollNext();
-        },
-        { signal }
-      );
-
       embla.on('select', updateDots);
-      embla.on('select', updateButtons);
       embla.on('reInit', () => {
         renderDots();
         updateDots();
-        updateButtons();
       });
 
       renderDots();
       updateDots();
-      updateButtons();
     })
     .catch(() => {
       viewport.classList.remove('is-dragging');

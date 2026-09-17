@@ -168,7 +168,7 @@
   }
 
   .new-arrivals-strip-section .custom-product-card__media {
-    overflow: visible !important;
+    overflow: visible;
     aspect-ratio: 1 / 1;
     box-shadow:
       inset 0 1px 0 rgb(255 255 255 / 0.42),
@@ -193,7 +193,7 @@
   }
 
   .new-arrivals-strip-section .custom-product-card__price {
-    color: #DB1215 !important;
+    color: #DB1215;
     font-size: clamp(0.96rem, 0.96vw, 1.02rem);
   }
 
@@ -205,14 +205,14 @@
     top: 0.8rem;
     left: 0.8rem;
     border-radius: 999px;
-    background: #FC5732 !important;
-    color: #fff8f1 !important;
+    background: #FC5732;
+    color: #fff8f1;
     box-shadow: 0 6px 14px rgb(117 69 38 / 0.14);
   }
 
   .new-arrivals-strip-section .custom-product-card__tag-badge {
-    top: 0.8rem !important;
-    right: calc(-0.68rem - 6px) !important;
+    top: 0.8rem;
+    right: calc(-0.68rem - 6px);
   }
 
   .new-arrivals-strip-section .custom-product-card__image--hover {

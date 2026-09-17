@@ -741,17 +741,17 @@
   }
 
   .menu-drawer {
-    position: fixed !important;
+    position: fixed;
     transform: translateX(-100%);
     visibility: hidden;
-    height: 100dvh !important;
-    max-height: 100dvh !important;
+    height: 100dvh;
+    max-height: 100dvh;
     width: var(--drawer-width);
     max-width: var(--drawer-max-width);
-    z-index: 100000 !important;
-    left: 0 !important;
-    top: 0 !important;
-    bottom: 0 !important;
+    z-index: var(--layer-menu-drawer);
+    left: 0;
+    top: 0;
+    bottom: 0;
     padding: 0;
     background: linear-gradient(180deg, rgb(var(--color-background-rgb) / 1), rgb(var(--color-background-rgb) / 0.96));
     overflow: auto;
@@ -771,13 +771,13 @@
   }
 
   .menu-drawer__backdrop {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    height: 100dvh !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
     backdrop-filter: blur(3px) brightness(0.82);
-    z-index: 99998 !important;
+    z-index: calc(var(--layer-menu-drawer) - 1);
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--drawer-animation-speed) ease;
@@ -1205,8 +1205,8 @@
     top: 0;
     height: 100dvh;
     left: 0;
-    background: var(--color-background, #FAF7F2) !important;
-    background-color: var(--color-background, #FAF7F2) !important;
+    background: var(--color-background, #FAF7F2);
+    background-color: var(--color-background, #FAF7F2);
     z-index: var(--layer-flat);
     transform: translateX(-5%);
     visibility: hidden;
@@ -1402,7 +1402,7 @@
      Modern Luxury Mobile Drawer (Exact Match & Typography Hierarchy)
      ========================================================================== */
   .menu-drawer {
-    background: #FAF6F0 !important;
+    background: var(--color-background);
   }
 
   .menu-drawer__header {
@@ -1410,8 +1410,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 1.5rem 1.25rem 1rem;
-    background: transparent !important;
-    border: none !important;
+    background: transparent;
+    border: 0;
   }
 
   .menu-drawer__brand {
@@ -1434,12 +1434,12 @@
   }
 
   .menu-drawer__brand-title {
-    font-family: var(--font-heading-family, serif);
+    font-family: var(--font-heading--family, serif);
     font-size: 1.5rem;
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.01em;
-    color: #2F2723;
+    color: var(--color-foreground);
   }
 
   .menu-drawer__close-button {
@@ -1448,9 +1448,9 @@
     min-width: 2.25rem;
     min-height: 2.25rem;
     border-radius: 50%;
-    background: #FAF6F0 !important;
-    border: 1px solid rgba(184, 121, 85, 0.3) !important;
-    color: #7A4B33 !important;
+    background: rgb(var(--color-foreground-rgb) / 0.04);
+    border: 1px solid rgb(var(--color-foreground-rgb) / 0.18);
+    color: var(--color-foreground);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1459,13 +1459,13 @@
   }
 
   .menu-drawer__close-button:hover {
-    background: #F3EAE0 !important;
+    background: rgb(var(--color-foreground-rgb) / 0.08);
     transform: scale(1.05);
   }
 
   .menu-drawer__menu {
-    padding-inline: 1.25rem !important;
-    padding-block: 0.5rem !important;
+    padding-inline: 1.25rem;
+    padding-block: 0.5rem;
   }
 
   /* --------------------------------------------------------------------------
@@ -1475,18 +1475,18 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.5rem 0 !important;
+    padding: 0.5rem 0;
     margin-block-end: 0.85rem;
-    background: transparent !important;
-    border: none !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
     text-decoration: none;
   }
 
   .menu-drawer__menu-item:hover,
   .menu-drawer__menu-item:focus {
-    background: transparent !important;
+    background: transparent;
     transform: translateX(4px);
   }
 
@@ -1503,8 +1503,8 @@
     min-width: 48px;
     min-height: 48px;
     border-radius: 16px;
-    background: #F3EAE0;
-    color: #A26848;
+    background: rgb(var(--color-foreground-rgb) / 0.07);
+    color: var(--color-foreground);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1513,7 +1513,7 @@
   }
 
   .menu-drawer__menu-item:hover .menu-drawer__icon-box {
-    background: #EBDCD0;
+    background: rgb(var(--color-foreground-rgb) / 0.12);
     transform: scale(1.04);
   }
 
@@ -1526,14 +1526,14 @@
   .menu-drawer__menu-item-text {
     font-size: 1.15rem;
     font-weight: 600;
-    color: #2F2723;
+    color: var(--color-foreground);
     letter-spacing: 0.01em;
   }
 
   .menu-drawer__item-arrow {
     display: flex;
     align-items: center;
-    color: #A26848;
+    color: var(--color-foreground);
     margin-inline-start: auto;
     flex-shrink: 0;
   }
@@ -1550,57 +1550,57 @@
   .menu-drawer__menu-item--parent {
     margin-top: 0.75rem;
     margin-bottom: 0.3rem;
-    padding: 0.5rem 0 !important;
+    padding: 0.5rem 0;
   }
 
   .menu-drawer__menu-item--group-heading .menu-drawer__menu-item-text,
   .menu-drawer__menu-item--parent .menu-drawer__menu-item-text {
-    font-size: 0.85rem !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.1em !important;
-    color: #8C593B !important;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
   }
 
   /* Toggle Button (+ / -) for Group Headings: Show ONLY + when closed, ONLY - when open */
   .menu-drawer__group-toggle {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 28px !important;
-    height: 28px !important;
-    border-radius: 50% !important;
-    background: #F3EAE0 !important;
-    color: #8C593B !important;
-    transition: background-color 0.2s ease, transform 0.2s ease !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgb(var(--color-foreground-rgb) / 0.07);
+    color: var(--color-foreground);
+    transition: background-color 0.2s ease, transform 0.2s ease;
     flex-shrink: 0;
   }
 
   .menu-drawer__group-toggle:hover {
-    background: #EBDCD0 !important;
-    transform: scale(1.05) !important;
+    background: rgb(var(--color-foreground-rgb) / 0.12);
+    transform: scale(1.05);
   }
 
   .menu-drawer__group-icon {
-    width: 14px !important;
-    height: 14px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .menu-drawer__group-icon svg {
-    width: 14px !important;
-    height: 14px !important;
+    width: 14px;
+    height: 14px;
   }
 
   /* Toggle visibility logic: Hide minus when closed, hide plus when open */
   details:not([open]) > summary .menu-drawer__group-icon--minus {
-    display: none !important;
+    display: none;
   }
 
   details[open] > summary .menu-drawer__group-icon--plus {
-    display: none !important;
+    display: none;
   }
 
   /* --------------------------------------------------------------------------
@@ -1608,32 +1608,32 @@
      -------------------------------------------------------------------------- */
   .menu-drawer__menu--childlist,
   .menu-drawer__menu--grandchildlist {
-    border-left: none !important;
-    border-right: none !important;
-    margin-left: 0.5rem !important;
-    padding-left: 0.75rem !important;
-    margin-block: 0.2rem 0.8rem !important;
+    border-left: 0;
+    border-right: 0;
+    margin-left: 0.5rem;
+    padding-left: 0.75rem;
+    margin-block: 0.2rem 0.8rem;
   }
 
   .menu-drawer__menu--grandchildlist .menu-drawer__menu-item--child {
-    margin-block-end: 0.35rem !important;
-    padding: 0.35rem 0 !important;
-    border-left: none !important;
+    margin-block-end: 0.35rem;
+    padding: 0.35rem 0;
+    border-left: 0;
   }
 
   .menu-drawer__menu--grandchildlist .menu-drawer__menu-item-text {
-    font-size: 0.98rem !important;
-    font-weight: 400 !important;
-    color: #3E332D !important;
-    text-transform: none !important;
-    letter-spacing: 0 !important;
-    transition: color 0.2s ease, transform 0.2s ease !important;
+    font-size: 0.98rem;
+    font-weight: 400;
+    color: var(--color-foreground);
+    text-transform: none;
+    letter-spacing: 0;
+    transition: color 0.2s ease, transform 0.2s ease;
   }
 
   .menu-drawer__menu--grandchildlist .menu-drawer__menu-item--child:hover .menu-drawer__menu-item-text,
   .menu-drawer__menu--grandchildlist .menu-drawer__menu-item--child:focus .menu-drawer__menu-item-text {
-    color: #8C593B !important;
-    font-weight: 500 !important;
+    color: var(--color-foreground);
+    font-weight: 500;
     transform: translateX(3px);
   }
 
@@ -1641,17 +1641,17 @@
      Submenu Navigation Header Back Button
      -------------------------------------------------------------------------- */
   .menu-drawer__back-button {
-    font-size: 1.1rem !important;
-    font-weight: 600 !important;
-    color: #2F2723 !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
-    padding: 0.75rem 0 !important;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-foreground);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 0;
   }
 
   .menu-drawer__back-button .icon-caret {
-    color: #8C593B !important;
+    color: var(--color-foreground);
   }
 
   .menu-drawer__badge {
@@ -1679,16 +1679,16 @@
   }
 
   .menu-drawer__utility-links {
-    background: #FAF6F0 !important;
+    background: var(--color-background);
     border-top: 1px solid rgba(184, 121, 85, 0.15);
-    padding: 1.25rem 1.25rem 2rem !important;
-    margin-top: auto !important;
+    padding: 1.25rem 1.25rem 2rem;
+    margin-top: auto;
   }
 
-  /* Ensure solid, opaque background for submenu panel to eliminate parent menu ghosting */
+  /* Keep submenu content visually separate from the parent menu. */
   .menu-drawer__submenu,
   .menu-drawer__inner-submenu {
-    background: #FAF7F2 !important;
-    background-color: #FAF7F2 !important;
+    background: var(--color-background);
+    background-color: var(--color-background);
   }
 {% endstylesheet %}

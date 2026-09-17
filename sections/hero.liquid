@@ -1,4 +1,6 @@
-{{ 'hero.css' | asset_url | stylesheet_tag }}
+{% unless template.name == 'index' %}
+  {{ 'hero.css' | asset_url | stylesheet_tag }}
+{% endunless %}
 
 {% liquid
   assign desktop_media = 'none'
@@ -19,31 +21,24 @@
   assign hero_primary_link = section.settings.primary_link
   assign hero_secondary_label = section.settings.secondary_label | strip
   assign hero_secondary_link = section.settings.secondary_link
-  assign hero_heading_is_editorial_default = false
   assign hero_heading_lines = null
 
-  if hero_heading == 'Sleep Better Every Night'
-    assign hero_heading_is_editorial_default = true
-  else
-    assign hero_heading_with_br = hero_heading | newline_to_br
-    if hero_heading_with_br contains '<br'
-      assign raw_heading_lines = hero_heading_with_br | split: '<br'
-      assign parsed_lines = ''
-      for raw_line in raw_heading_lines
-        assign clean_line = raw_line | replace: '/>', '' | replace: '>', '' | strip
-        if clean_line != blank
-          if parsed_lines == ''
-            assign parsed_lines = clean_line
-          else
-            assign parsed_lines = parsed_lines | append: '|||' | append: clean_line
-          endif
+  assign hero_heading_with_br = hero_heading | newline_to_br
+  if hero_heading_with_br contains '<br'
+    assign raw_heading_lines = hero_heading_with_br | split: '<br'
+    assign parsed_lines = ''
+    for raw_line in raw_heading_lines
+      assign clean_line = raw_line | replace: '/>', '' | replace: '>', '' | strip
+      if clean_line != blank
+        if parsed_lines == ''
+          assign parsed_lines = clean_line
+        else
+          assign parsed_lines = parsed_lines | append: '|||' | append: clean_line
         endif
-      endfor
-      if parsed_lines contains '|||'
-        assign hero_heading_lines = parsed_lines | split: '|||'
       endif
-    elsif hero_heading == 'Personalized Bedding Made From Your Ideas'
-      assign hero_heading_lines = 'Personalized Bedding|||Made From Your Ideas' | split: '|||'
+    endfor
+    if parsed_lines contains '|||'
+      assign hero_heading_lines = parsed_lines | split: '|||'
     endif
   endif
 
@@ -98,6 +93,9 @@
       <link
         rel="preload"
         as="image"
+        {% if use_mobile_media and mobile_media == 'image' %}
+          media="(min-width: 750px)"
+        {% endif %}
         href="{{ section.settings.image_1 | image_url: width: 1920 }}"
         imagesrcset="
           {{ section.settings.image_1 | image_url: width: 768 }} 768w,
@@ -275,65 +273,27 @@
     <div class="hero__content-shell hero__content-shell--{{ section.settings.section_width }}">
       <div class="hero__content">
         {% if hero_eyebrow != blank %}
-          <p
-            class="hero__eyebrow homepage-reveal"
-            data-reveal-preset="premium-hero-reveal"
-            data-reveal-disable-mobile
-            style="--reveal-delay: 150ms;">{{ hero_eyebrow | escape }}</p>
+          <p class="hero__eyebrow">{{ hero_eyebrow | escape }}</p>
         {% endif %}
         {% if hero_heading != blank %}
-          {% if hero_heading_is_editorial_default %}
-            <h1 class="hero__heading hero__heading--editorial">
-              <span
-                class="hero__heading-line homepage-reveal amzcustom-count-processed"
-                data-reveal-preset="premium-hero-reveal"
-                data-reveal-disable-mobile
-                style="--reveal-delay: 300ms;">Sleep Better</span>
-              <span
-                class="hero__heading-line hero__heading-line--accent homepage-reveal amzcustom-count-processed"
-                data-reveal-preset="premium-hero-reveal"
-                data-reveal-disable-mobile
-                style="--reveal-delay: 450ms;">Every Night</span>
-            </h1>
-          {% elsif hero_heading_lines != blank %}
+          {% if hero_heading_lines != blank %}
             <h1 class="hero__heading hero__heading--stacked">
               {% for line in hero_heading_lines %}
-                {% assign line_delay = forloop.index | times: 150 | plus: 150 %}
-                <span
-                  class="hero__heading-line homepage-reveal amzcustom-count-processed"
-                  data-reveal-preset="premium-hero-reveal"
-                  data-reveal-disable-mobile
-                  style="--reveal-delay: {{ line_delay }}ms;">{{ line | escape }}</span>
+                <span class="hero__heading-line amzcustom-count-processed">{{ line | escape }}</span>
               {% endfor %}
             </h1>
           {% else %}
-            <h1
-              class="hero__heading homepage-reveal"
-              data-reveal-preset="premium-hero-reveal"
-              data-reveal-disable-mobile
-              style="--reveal-delay: 300ms;">{{ hero_heading | escape | newline_to_br }}</h1>
+            <h1 class="hero__heading">{{ hero_heading | escape | newline_to_br }}</h1>
           {% endif %}
         {% endif %}
         {% if hero_tagline != blank %}
-          <p
-            class="hero__tagline homepage-reveal"
-            data-reveal-preset="premium-hero-reveal"
-            data-reveal-disable-mobile
-            style="--reveal-delay: 500ms;">{{ hero_tagline | escape }}</p>
+          <p class="hero__tagline">{{ hero_tagline | escape }}</p>
         {% endif %}
         {% if hero_description != blank %}
-          <p
-            class="hero__description homepage-reveal"
-            data-reveal-preset="premium-hero-reveal"
-            data-reveal-disable-mobile
-            style="--reveal-delay: 650ms;">{{ hero_description | escape }}</p>
+          <p class="hero__description">{{ hero_description | escape }}</p>
         {% endif %}
-        {% if hero_primary_label != blank %}
-          <div
-            class="hero__actions homepage-reveal"
-            data-reveal-preset="premium-hero-reveal"
-            data-reveal-disable-mobile
-            style="--reveal-delay: 850ms;">
+        {% if hero_primary_label != blank or hero_secondary_label != blank %}
+          <div class="hero__actions">
             {% if hero_primary_label != blank %}
               <a
                 {% if hero_primary_link == blank %}
@@ -344,6 +304,18 @@
                 {% endif %}
                 class="hero__cta hero__cta--primary">
                 {{ hero_primary_label | escape }}
+              </a>
+            {% endif %}
+            {% if hero_secondary_label != blank %}
+              <a
+                {% if hero_secondary_link == blank %}
+                role="link"
+                aria-disabled="true"
+                {% else %}
+                href="{{ hero_secondary_link }}"
+                {% endif %}
+                class="hero__cta hero__cta--secondary">
+                {{ hero_secondary_label | escape }}
               </a>
             {% endif %}
           </div>
