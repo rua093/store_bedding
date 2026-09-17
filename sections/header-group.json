@@ -13,8 +13,6 @@
   "sections": {
     "header_announcements_WbCTVz": {
       "type": "header-announcements",
-      "blocks": {},
-      "block_order": [],
       "name": "t:names.announcement_bar",
       "settings": {
         "speed": 20,

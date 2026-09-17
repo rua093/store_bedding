@@ -3,9 +3,7 @@
   assign product_resource = closest.product
 %}
 
-<script type="application/ld+json">
-  {{ product_resource | structured_data }}
-</script>
+{% render 'product-jsonld', product: product_resource %}
 
 {% capture media_gallery %}
   {%- content_for 'block',
