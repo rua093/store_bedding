@@ -1,0 +1,815 @@
+{%- doc -%}
+  Renders condensed, ultra-clean technical specifications for Bedding and Blanket products.
+  Optimized for maximum readability, fast scanning, and compact layout without redundant repetition.
+
+  @param {product} product - The Shopify product object
+{%- enddoc -%}
+
+{% liquid
+  assign current_variant = product.selected_or_first_available_variant
+
+  assign has_bedding_type_option = false
+  assign selected_bedding_type = ''
+
+  assign has_material_option = false
+  assign selected_material = ''
+
+  for option in product.options_with_values
+    assign opt_name = option.name | downcase | strip
+    if opt_name == 'bedding type'
+      assign has_bedding_type_option = true
+      assign selected_bedding_type = current_variant.options[forloop.index0] | default: option.selected_value | default: option.values[0] | downcase | strip
+    elsif opt_name == 'material'
+      assign has_material_option = true
+      assign selected_material = current_variant.options[forloop.index0] | default: option.selected_value | default: option.values[0] | downcase | strip
+    endif
+  endfor
+
+  assign product_type_lower = product.type | downcase | strip
+  assign product_title_lower = product.title | downcase | strip
+
+  assign is_blanket = false
+  if product_type_lower contains 'blanket' or product_title_lower contains 'blanket' or has_material_option
+    assign is_blanket = true
+  endif
+
+  assign is_bedding = false
+  if has_bedding_type_option or product_type_lower contains 'bedding' or product_title_lower contains 'bedding' or product_title_lower contains 'comforter' or product_title_lower contains 'duvet' or product_title_lower contains 'quilt'
+    assign is_bedding = true
+  endif
+
+  if is_blanket == false and is_bedding == false
+    assign is_bedding = true
+  endif
+
+  assign default_bedding_tab = 'duvet-cover'
+  if selected_bedding_type contains 'quilt'
+    assign default_bedding_tab = 'quilt'
+  elsif selected_bedding_type contains 'comforter'
+    assign default_bedding_tab = 'comforter'
+  elsif selected_bedding_type contains 'duvet'
+    assign default_bedding_tab = 'duvet-cover'
+  elsif product_title_lower contains 'quilt'
+    assign default_bedding_tab = 'quilt'
+  elsif product_title_lower contains 'comforter'
+    assign default_bedding_tab = 'comforter'
+  endif
+%}
+
+<div class="product-tech-specs" data-tech-specs-root>
+  {% style %}
+    .product-tech-specs {
+      margin-top: 1.4rem;
+      padding-top: 1.3rem;
+      border-top: 1px solid rgba(196, 111, 65, 0.16);
+      font-family: inherit;
+      color: #3e332d;
+    }
+
+    .product-tech-specs__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .product-tech-specs__title {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #2f241d;
+      letter-spacing: -0.015em;
+      line-height: 1.3;
+    }
+
+    .product-tech-specs__badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.22rem 0.7rem;
+      font-size: 0.74rem;
+      font-weight: 600;
+      border-radius: 999px;
+      background: rgba(196, 111, 65, 0.08);
+      color: #b85b28;
+      border: 1px solid rgba(196, 111, 65, 0.2);
+    }
+
+    /* Bedding Tabs */
+    .product-tech-specs__tabs {
+      display: flex;
+      gap: 0.35rem;
+      padding: 4px;
+      background: rgba(246, 239, 232, 0.85);
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(120, 84, 58, 0.1);
+    }
+
+    .product-tech-specs__tab-btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      background: transparent;
+      color: #6a5345;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .product-tech-specs__tab-btn:hover {
+      color: #2f241d;
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .product-tech-specs__tab-btn.is-active {
+      background: #ffffff;
+      color: #2f241d;
+      border-color: rgba(196, 111, 65, 0.25);
+      box-shadow: 0 1px 6px rgba(47, 36, 29, 0.06);
+    }
+
+    .product-tech-specs__tab-btn .tab-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #c46f41;
+      opacity: 0;
+      transition: opacity 0.18s ease;
+    }
+
+    .product-tech-specs__tab-btn.is-active .tab-dot {
+      opacity: 1;
+    }
+
+    /* Tab Panels */
+    .product-tech-specs__panel {
+      display: none;
+      animation: ptsFadeIn 0.2s ease-out forwards;
+    }
+
+    .product-tech-specs__panel.is-active {
+      display: block;
+    }
+
+    @keyframes ptsFadeIn {
+      from { opacity: 0; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Intro note */
+    .product-tech-specs__intro-note {
+      padding: 0.65rem 0.95rem;
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255, 250, 246, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+      border: 1px solid rgba(196, 111, 65, 0.14);
+      margin-bottom: 0.9rem;
+      font-size: 0.86rem;
+      line-height: 1.45;
+      color: #4a382c;
+    }
+
+    /* Clean Subheadings */
+    .product-tech-specs__subheading {
+      margin: 1rem 0 0.55rem;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #2f241d;
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    /* Table Container */
+    .product-tech-specs__table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 10px;
+      border: 1px solid rgba(120, 84, 58, 0.12);
+      background: #ffffff;
+      box-shadow: 0 1px 4px rgba(47, 36, 29, 0.02);
+      margin-bottom: 0.65rem;
+    }
+
+    .product-tech-specs__table {
+      width: 100%;
+      min-width: 480px;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      text-align: left;
+    }
+
+    .product-tech-specs__table th {
+      background: rgba(250, 243, 237, 0.95);
+      color: #5d4637;
+      font-weight: 700;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.55rem 0.85rem;
+      border-bottom: 1px solid rgba(120, 84, 58, 0.12);
+      white-space: nowrap;
+    }
+
+    .product-tech-specs__table td {
+      padding: 0.55rem 0.85rem;
+      border-bottom: 1px solid rgba(120, 84, 58, 0.06);
+      color: #433227;
+      line-height: 1.4;
+      vertical-align: middle;
+    }
+
+    .product-tech-specs__table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .product-tech-specs__table tr:hover td {
+      background: rgba(255, 250, 245, 0.4);
+    }
+
+    .product-tech-specs__table td.cell-label {
+      font-weight: 650;
+      color: #2f241d;
+      white-space: nowrap;
+    }
+
+    .product-tech-specs__table--2col td {
+      vertical-align: top;
+    }
+
+    .product-tech-specs__table td.cell-spec-item {
+      font-weight: 650;
+      color: #2f241d;
+      white-space: nowrap;
+      width: 26%;
+      background: rgba(254, 251, 248, 0.7);
+      border-right: 1px solid rgba(120, 84, 58, 0.08);
+      vertical-align: top;
+    }
+
+    .product-tech-specs__table code {
+      background: rgba(196, 111, 65, 0.08);
+      color: #9c4516;
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      font-family: inherit;
+      font-weight: 600;
+    }
+
+    /* Condensed Set Inclusions Bar */
+    .product-tech-specs__set-bar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      padding: 0.55rem 0.85rem;
+      border-radius: 9px;
+      background: rgba(250, 243, 237, 0.65);
+      border: 1px solid rgba(120, 84, 58, 0.1);
+      margin-bottom: 1rem;
+      font-size: 0.82rem;
+      color: #5a4638;
+      line-height: 1.4;
+    }
+
+    .product-tech-specs__set-title {
+      font-weight: 700;
+      color: #2f241d;
+      margin-right: 0.2rem;
+    }
+
+    .product-tech-specs__set-pill {
+      display: inline-block;
+      padding: 0.12rem 0.45rem;
+      border-radius: 5px;
+      background: #ffffff;
+      border: 1px solid rgba(120, 84, 58, 0.12);
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: #3d2e24;
+      white-space: nowrap;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 640px) {
+      .product-tech-specs__tabs {
+        gap: 0.2rem;
+        padding: 3px;
+      }
+
+      .product-tech-specs__tab-btn {
+        font-size: 0.79rem;
+        padding: 0.45rem 0.25rem;
+      }
+
+      .product-tech-specs__care-bar {
+        grid-template-columns: 1fr;
+        gap: 0.45rem;
+      }
+    }
+  {% endstyle %}
+
+  <!-- Header -->
+  <div class="product-tech-specs__header">
+    <h3 class="product-tech-specs__title">Technical Specifications & Sizing</h3>
+    <span class="product-tech-specs__badge">
+      {% if is_blanket %}Blanket Series{% else %}Bedding Collection{% endif %}
+    </span>
+  </div>
+
+  {% if is_bedding %}
+    <!-- BEDDING TYPE SWITCHER TABS -->
+    <div class="product-tech-specs__tabs" role="tablist" aria-label="Bedding Types">
+      <button
+        type="button"
+        class="product-tech-specs__tab-btn{% if default_bedding_tab == 'duvet-cover' %} is-active{% endif %}"
+        data-tech-tab="duvet-cover"
+        role="tab"
+        aria-selected="{% if default_bedding_tab == 'duvet-cover' %}true{% else %}false{% endif %}"
+      >
+        <span class="tab-dot" aria-hidden="true"></span>
+        Duvet Cover
+      </button>
+
+      <button
+        type="button"
+        class="product-tech-specs__tab-btn{% if default_bedding_tab == 'quilt' %} is-active{% endif %}"
+        data-tech-tab="quilt"
+        role="tab"
+        aria-selected="{% if default_bedding_tab == 'quilt' %}true{% else %}false{% endif %}"
+      >
+        <span class="tab-dot" aria-hidden="true"></span>
+        Quilt
+      </button>
+
+      <button
+        type="button"
+        class="product-tech-specs__tab-btn{% if default_bedding_tab == 'comforter' %} is-active{% endif %}"
+        data-tech-tab="comforter"
+        role="tab"
+        aria-selected="{% if default_bedding_tab == 'comforter' %}true{% else %}false{% endif %}"
+      >
+        <span class="tab-dot" aria-hidden="true"></span>
+        Comforter
+      </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 1. DUVET COVER PANEL                       -->
+    <!-- ========================================== -->
+    <div
+      class="product-tech-specs__panel{% if default_bedding_tab == 'duvet-cover' %} is-active{% endif %}"
+      data-tech-panel="duvet-cover"
+      role="tabpanel"
+    >
+      <div class="product-tech-specs__intro-note">
+        <em>Duvet Cover is an outer protective casing with a hidden bottom zipper closure and 4 interior corner ties. (Insert/filler sold separately).</em>
+      </div>
+
+      <!-- Condensed Size Table -->
+      <h4 class="product-tech-specs__subheading">Dimensions</h4>
+      <div class="product-tech-specs__table-wrapper">
+        <table class="product-tech-specs__table">
+          <thead>
+            <tr>
+              <th style="width: 25%;">Size</th>
+              <th style="width: 45%;">Dimensions (Inches & Metric)</th>
+              <th style="width: 30%;">Fits US Bed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cell-label">US Twin</td>
+              <td><code>68" x 88"</code> (173 x 224 cm)</td>
+              <td>Twin / Twin XL</td>
+            </tr>
+            <tr>
+              <td class="cell-label">US Full</td>
+              <td><code>78" x 88"</code> (198 x 224 cm)</td>
+              <td>Full / Double</td>
+            </tr>
+            <tr>
+              <td class="cell-label">US Queen</td>
+              <td><code>88" x 88"</code> (224 x 224 cm)</td>
+              <td>Standard Queen</td>
+            </tr>
+            <tr>
+              <td class="cell-label">US King</td>
+              <td><code>104" x 88"</code> (264 x 224 cm)</td>
+              <td>King / California King</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Condensed Set Options Bar -->
+      <div class="product-tech-specs__set-bar">
+        <span class="product-tech-specs__set-title">Available Set Options:</span>
+        <span class="product-tech-specs__set-pill">Duvet Cover Only</span>
+        <span class="product-tech-specs__set-pill">+1 Pillowcase (20" x 30")</span>
+        <span class="product-tech-specs__set-pill">+2 Pillowcases (20" x 30")</span>
+      </div>
+
+      <!-- Key Specifications Table -->
+      <h4 class="product-tech-specs__subheading">Key Specifications</h4>
+      <div class="product-tech-specs__table-wrapper">
+        <table class="product-tech-specs__table product-tech-specs__table--2col">
+          <tbody>
+            <tr>
+              <td class="cell-spec-item">Fabric Material</td>
+              <td>100% Premium Brushed Microfiber — high-density weave, ultra-soft, breathable, naturally wrinkle &amp; shrink resistant.</td>
+            </tr>
+            <tr>
+              <td class="cell-spec-item">Construction</td>
+              <td>Seamless 2-sided casing (Hollow shell, no internal batting/filling inside).</td>
+            </tr>
+            <tr>
+              <td class="cell-spec-item">Closure Mechanism</td>
+              <td>Hidden Zipper Closure at the bottom hem for sleek aesthetics and safe, snag-free sleep.</td>
+            </tr>
+            <tr>
+              <td class="cell-spec-item">Corner Ties</td>
+              <td>4 interior corner ties sewn in to securely anchor your duvet insert without shifting.</td>
+            </tr>
+            <tr>
+              <td class="cell-spec-item">Pillowcase Specs</td>
+              <td>Standard 20" x 30" (50 x 76 cm), envelope fold closure (no metal zippers).</td>
+            </tr>
+            <tr>
+              <td class="cell-spec-item">Recommended Season</td>
+              <td>All-season versatility (adjust warmth by pairing with lightweight or heavyweight duvet inserts).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. QUILT PANEL                             -->
+    <!-- ========================================== -->
+    <div
+      class="product-tech-specs__panel{% if default_bedding_tab == 'quilt' %} is-active{% endif %}"
+      data-tech-panel="quilt"
+      role="tabpanel"
+    >
+      <div class="product-tech-specs__intro-note">
+        <em>Quilt is a lightweight 3-layer blanket with decorative wave/diamond stitching. Ideal as a summer/fall bedspread or stylish bed coverlet.</em>
+      </div>
+
+      <!-- Condensed Size Table -->
+      <h4 class="product-tech-specs__subheading">Dimensions</h4>
+      <div class="product-tech-specs__table-wrapper">
+        <table class="product-tech-specs__table">
+          <thead>
+            <tr>
+              <th style="width: 25%;">Size</th>
+              <th style="width: 45%;">Dimensions (Inches & Metric)</th>
+              <th style="width: 30%;">Fits US Bed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cell-label">Throw</td>
+              <td><code>60" x 70"</code> (152 x 178 cm)</td>
+              <td>Sofa / Kids / Lap Bed</td>
+            </tr>
+            <tr>
+              <td class="cell-label">Twin</td>
+              <td><code>68" x 86"</code> (173 x 218 cm)</td>
+              <td>Twin / Twin XL</td>
+            </tr>
+            <tr>
+              <td class="cell-label">Full</td>
+              <td><code>80" x 90"</code> (203 x 229 cm)</td>
+              <td>Full Bed</td>
+            </tr>
+            <tr>
+              <td class="cell-label">Queen</td>
+              <td><code>90" x 90"</code> (229 x 229 cm)</td>
+              <td>Standard Queen</td>
+            </tr>
+            <tr>
+              <td class="cell-label">King</td>
+              <td><code>102" x 91"</code> (259 x 231 cm)</td>
+              <td>King Bed</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Condensed Set Options Bar -->
+      <div class="product-tech-specs__set-bar">
+        <span class="product-tech-specs__set-title">Available Set Options:</span>
+        <span class="product-tech-specs__set-pill">Quilt Only</span>
+        <span class="product-tech-specs__set-pill">+1 Pillowcase (20" x 30")</span>
+        <span class="product-tech-specs__set-pill">+2 Pillowcases (20" x 30")</span>
+      </div>
+
+      <!-- Key Specifications Table -->
+      <h4 class="product-tech-specs__subheading">Key Specifications</h4>
+      <div class="product-tech-specs__table-wrapper">
+        <table class="product-tech-specs__table product-tech-specs__table--2col">
+          <tbody>
+            <tr>
+              <td class="cell-spec-item">Layer Construction</td>
+              <td>
+                <strong>3-Layer Quilted Design:</strong><br>
+                1. <em>Face:</em> Soft Polyester Microfiber with vivid, fade-resistant print.<br>
+                2. <em>Core:</em> Lightweight Poly-cotton batting fill (~120 - 150 GSM).<br>
+                3. <em>Backing:</em> Breathable skin-friendly Microfiber lining.
+              </td>
+            </tr>
+            <tr>
+              <td class="cell-spec-item">Quilting Technique</td>
+              <td>Diamond or wave quilting (Diamond / Wave Quilting) across the entire surface prevents batting from shifting or clumping during machine wash.</td>
+            </tr>
+            <tr>
+              <td class="cell-spec-item">Weight &amp; Drape</td>
+              <td>Lightweight with a comfortable body-contouring drape that never feels heavy or suffocating.</td>
+            </tr>
+            <tr>
+              <td class="cell-spec-item">Pillowcase Specs</td>
+              <td>Standard 20" x 30" (50 x 76 cm), envelope closure with coordinated print matching the quilt artwork.</td>
+            </tr>
+            <tr>
+              <td class="cell-spec-item">Recommended Season</td>
+              <td>Ideal for Spring, Summer, Fall, air-conditioned rooms (22°C - 26°C / 72°F - 78°F), or as a stylish decorative winter bed layer.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 3. COMFORTER PANEL                         -->
+    <!-- ========================================== -->
+    <div
+      class="product-tech-specs__panel{% if default_bedding_tab == 'comforter' %} is-active{% endif %}"
+      data-tech-panel="comforter"
+      role="tabpanel"
+    >
+      <div class="product-tech-specs__intro-note">
+        <em>Comforter is a plush all-in-one bed covering filled with thick down-alternative microfiber. Ready to sleep right out of the box with no cover needed.</em>
+      </div>
+
+      <!-- Condensed Size Table -->
+      <h4 class="product-tech-specs__subheading">Dimensions</h4>
+      <div class="product-tech-specs__table-wrapper">
+        <table class="product-tech-specs__table">
+          <thead>
+            <tr>
+              <th style="width: 25%;">Size</th>
+              <th style="width: 45%;">Dimensions (Inches & Metric)</th>
+              <th style="width: 30%;">Fits US Bed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cell-label">Twin</td>
+              <td><code>68" x 86"</code> (173 x 218 cm)</td>
+              <td>Twin Bed</td>
+            </tr>
+            <tr>
+              <td class="cell-label">Full</td>
+              <td><code>79" x 90"</code> (200 x 230 cm)</td>
+              <td>Full Bed</td>
+            </tr>
+            <tr>
+              <td class="cell-label">Queen</td>
+              <td><code>90" x 90"</code> (228 x 228 cm)</td>
+              <td>Standard Queen</td>
+            </tr>
+            <tr>
+              <td class="cell-label">King</td>
+              <td><code>90" x 104"</code> (228 x 264 cm)</td>
+              <td>King Bed</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Condensed Set Options Bar -->
+      <div class="product-tech-specs__set-bar">
+        <span class="product-tech-specs__set-title">Available Set Options:</span>
+        <span class="product-tech-specs__set-pill">Comforter Only</span>
+        <span class="product-tech-specs__set-pill">+1 Pillowcase (20" x 30")</span>
+        <span class="product-tech-specs__set-pill">+2 Pillowcases (20" x 30")</span>
+        <span class="product-tech-specs__set-pill">+2 Pillowcases &amp; 1 Flat Sheet</span>
+        <span class="product-tech-specs__set-pill">+4 Pillowcases (20" x 30")</span>
+      </div>
+
+      <!-- Key Specifications Table -->
+      <h4 class="product-tech-specs__subheading">Key Specifications</h4>
+      <div class="product-tech-specs__table-wrapper">
+        <table class="product-tech-specs__table product-tech-specs__table--2col">
+          <tbody>
+            <tr>
+              <td class="cell-spec-item">Outer Shell</td>
+              <td>100% Breathable Brushed Microfiber — silk-like softness, hypoallergenic, dust-resistant, and pet hair resistant.</td>
+            </tr>
+            <tr>
+              <td class="cell-spec-item">Batting / Fill</td>
+              <td>100% Hypoallergenic Down-Alternative Microfiber Fill, thick and lofty (~250 - 300 GSM).</td>
+            </tr>
+            <tr>
+              <td class="cell-spec-item">Stitching Technique</td>
+              <td>Precision Baffle-Box / Box-Stitch construction locks high-loft filling in place, preventing clumping and cold spots.</td>
+            </tr>
+            <tr>
+              <td class="cell-spec-item">Thickness &amp; Warmth</td>
+              <td>Densely plush, cloud-like high loft with exceptional thermal retention and cozy warmth.</td>
+            </tr>
+            <tr>
+              <td class="cell-spec-item">Sheet Option</td>
+              <td>Extended set options include 1 matching flat bed sheet coordinated with the design.</td>
+            </tr>
+            <tr>
+              <td class="cell-spec-item">Recommended Season</td>
+              <td>Best for Fall &amp; Winter, cooler climates, or air-conditioned bedrooms.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  {% elsif is_blanket %}
+    <!-- ========================================== -->
+    <!-- 4. BLANKET SPECIFICATIONS                  -->
+    <!-- ========================================== -->
+    <div class="product-tech-specs__intro-note">
+      <em>Blanket is a versatile personal throw blanket, lightweight and easy to fold. Available in 2 premium fabrics: Fleece and Sherpa.</em>
+    </div>
+
+    <!-- Condensed Blanket Sizing -->
+    <h4 class="product-tech-specs__subheading">Dimensions &amp; Applications</h4>
+    <div class="product-tech-specs__table-wrapper">
+      <table class="product-tech-specs__table">
+        <thead>
+          <tr>
+            <th style="width: 25%;">Size</th>
+            <th style="width: 35%;">Metric (cm)</th>
+            <th style="width: 40%;">Ideal Uses</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cell-label">40" x 30"</td>
+            <td>102 x 76 cm</td>
+            <td>Baby, crib, stroller, desk lap throw, pet bed</td>
+          </tr>
+          <tr>
+            <td class="cell-label">50" x 40"</td>
+            <td>127 x 102 cm</td>
+            <td>Kids, school naps, travel, airplane, car trips</td>
+          </tr>
+          <tr>
+            <td class="cell-label">60" x 50"</td>
+            <td>152 x 127 cm</td>
+            <td>Standard couch/sofa movie night, reading wrap</td>
+          </tr>
+          <tr>
+            <td class="cell-label">80" x 60"</td>
+            <td>203 x 152 cm</td>
+            <td>Twin / Queen bed cover, 2-person sofa cuddle</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Condensed Material Comparison -->
+    <h4 class="product-tech-specs__subheading">Material Comparison</h4>
+    <div class="product-tech-specs__table-wrapper">
+      <table class="product-tech-specs__table">
+        <thead>
+          <tr>
+            <th style="width: 25%;">Feature</th>
+            <th style="width: 37.5%;">Flannel Fleece</th>
+            <th style="width: 37.5%;">Plush Sherpa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cell-label">Construction</td>
+            <td><strong>Single-layer:</strong> Flannel Fleece smooth on both sides</td>
+            <td><strong>Double-layer:</strong> Printed flannel face + faux sheepskin Sherpa lining</td>
+          </tr>
+          <tr>
+            <td class="cell-label">Weight &amp; Thickness</td>
+            <td>~280 - 300 GSM (Lightweight &amp; silky smooth)</td>
+            <td>~450 - 480 GSM (Heavyweight, warm &amp; fluffy)</td>
+          </tr>
+          <tr>
+            <td class="cell-label">Touch &amp; Feel</td>
+            <td>Silky velvety smooth, breathable and lightweight</td>
+            <td>Instant warmth, ultra-soft and plush like real sheepskin</td>
+          </tr>
+          <tr>
+            <td class="cell-label">Recommended Season</td>
+            <td>All 4 seasons, AC rooms, summer nights</td>
+            <td>Fall &amp; Winter, chilly days, cold climates</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+  <!-- ========================================== -->
+  <!-- CARE & WASHING (TABLE FORMAT)              -->
+  <!-- ========================================== -->
+  <h4 class="product-tech-specs__subheading" style="margin-top: 1.1rem;">Care &amp; Maintenance</h4>
+  <div class="product-tech-specs__table-wrapper">
+    <table class="product-tech-specs__table product-tech-specs__table--2col">
+      <tbody>
+        <tr>
+          <td class="cell-spec-item">Machine Wash</td>
+          <td>Wash in cold water (&le; 30°C / 86°F) on gentle or delicate cycle with like colors. Mesh laundry bag recommended for quilts &amp; comforters.</td>
+        </tr>
+        <tr>
+          <td class="cell-spec-item">Drying</td>
+          <td>Tumble dry on low heat or hang dry in shade (microfiber dries naturally fast in breeze).</td>
+        </tr>
+        <tr>
+          <td class="cell-spec-item">Precautions</td>
+          <td>Never use chlorine bleach. Do not iron on high heat to protect fiber softness and print colors.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const initTechSpecsTabs = () => {
+      document.querySelectorAll('[data-tech-specs-root]').forEach((root) => {
+        if (root.dataset.initialized === 'true') return;
+        root.dataset.initialized = 'true';
+
+        const tabButtons = root.querySelectorAll('[data-tech-tab]');
+        const tabPanels = root.querySelectorAll('[data-tech-panel]');
+
+        const switchTab = (tabName) => {
+          if (!tabName) return;
+          const normalized = tabName.toLowerCase().replace(/\s+/g, '-');
+
+          let matchedKey = null;
+          if (normalized.includes('duvet')) matchedKey = 'duvet-cover';
+          else if (normalized.includes('quilt')) matchedKey = 'quilt';
+          else if (normalized.includes('comforter')) matchedKey = 'comforter';
+          else matchedKey = normalized;
+
+          tabButtons.forEach((btn) => {
+            const isActive = btn.dataset.techTab === matchedKey;
+            btn.classList.toggle('is-active', isActive);
+            btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+          });
+
+          tabPanels.forEach((panel) => {
+            const isActive = panel.dataset.techPanel === matchedKey;
+            panel.classList.toggle('is-active', isActive);
+          });
+        };
+
+        tabButtons.forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchTab(btn.dataset.techTab);
+          });
+        });
+
+        // Auto-sync tab when Bedding Type variant is clicked
+        const handleVariantChange = (event) => {
+          const target = event.target;
+          if (!target) return;
+
+          const optionName = (target.dataset?.optionName || target.name || '').toLowerCase();
+          if (optionName.includes('bedding') || optionName.includes('type')) {
+            const selectedVal = (target.value || '').toLowerCase();
+            switchTab(selectedVal);
+          }
+        };
+
+        document.addEventListener('change', handleVariantChange);
+      });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initTechSpecsTabs);
+    } else {
+      initTechSpecsTabs();
+    }
+
+    document.addEventListener('shopify:section:load', initTechSpecsTabs);
+  })();
+</script>

@@ -558,7 +558,7 @@
         "text_A4": {
           "type": "text",
           "settings": {
-            "text": "<p><strong>Worldwide Shipping</strong>Free shipping to the U.S. & Canada. $5.99 USD to supported international destinations.</p>",
+            "text": "<p><strong>International Shipping</strong>Free shipping to the U.S. & Canada. $5.99 USD to supported international destinations.</p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",

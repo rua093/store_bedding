@@ -22,19 +22,10 @@
     month: 'long',
   });
 
-  const getDeliveryWindow = (countryCode) => {
-    const normalizedCountryCode = String(countryCode || '').toUpperCase();
-
-    if (normalizedCountryCode === 'US' || normalizedCountryCode === 'CA') {
-      return {
-        minimumBusinessDays: 10,
-        maximumBusinessDays: 17,
-      };
-    }
-
+  const getDeliveryWindow = () => {
     return {
-      minimumBusinessDays: 17,
-      maximumBusinessDays: 24,
+      minimumBusinessDays: 10,
+      maximumBusinessDays: 17,
     };
   };
 

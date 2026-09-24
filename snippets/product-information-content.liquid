@@ -148,15 +148,13 @@
     endif
 
     if is_main_product_page
-      if product.description != blank or has_support_accordions
-        assign show_details_below = true
-      endif
+      assign show_details_below = true
     endif
   %}
 
   {% if show_details_below %}
     <div class="product-information__details-below" data-product-details-below>
-      {% if product.description != blank %}
+      {% if product.description != blank or is_main_product_page %}
         <details class="product-description-collapsible">
           <summary class="product-description-collapsible__summary">
             <span class="product-description-collapsible__summary-copy">
@@ -176,12 +174,18 @@
             </span>
           </summary>
           <div class="product-description-collapsible__content">
-            <rte-formatter
-              class="product-description-rich"
-              style="--width: 100%; --max-width: 100%;"
-            >
-              {{ product.description }}
-            </rte-formatter>
+            {% if product.description != blank %}
+              <div class="product-details-design-overview">
+                <rte-formatter
+                  class="product-description-rich"
+                  style="--width: 100%; --max-width: 100%;"
+                >
+                  {{ product.description }}
+                </rte-formatter>
+              </div>
+            {% endif %}
+
+            {% render 'product-technical-specs', product: product %}
           </div>
         </details>
       {% endif %}
