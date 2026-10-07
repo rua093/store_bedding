@@ -75,6 +75,8 @@
     assign primary_image = section.settings.image_1_mobile
   endif
 
+  assign hero_image_alt = section.settings.image_1.alt | default: section.settings.heading | default: shop.name | strip
+
   case section.settings.horizontal_alignment_flex_direction_column
     when 'center'
       assign hero_text_align = 'center'
@@ -151,7 +153,7 @@
           width: section.settings.image_1.width,
           widths: desktop_widths,
           height: section.settings.image_1.height,
-          alt: section.settings.image_1.alt,
+          alt: hero_image_alt,
           class: 'hero__media',
           sizes: '100vw',
           fetchpriority: fetch_priority,
@@ -167,7 +169,7 @@
           width: section.settings.image_1.width,
           widths: desktop_widths,
           height: section.settings.image_1.height,
-          alt: section.settings.image_1.alt,
+          alt: hero_image_alt,
           class: 'hero__media',
           sizes: '100vw',
           fetchpriority: fetch_priority,

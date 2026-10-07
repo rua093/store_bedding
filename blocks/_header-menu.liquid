@@ -115,7 +115,6 @@
           {% assign is_locked_top_parent_link = true %}
         {% endif %}
         <li
-          role="presentation"
           class="menu-list__list-item"
           on:focus="/activate"
           on:blur="/deactivate"
@@ -185,7 +184,6 @@
       {% endfor %}
       <li
         class="menu-list__list-item"
-        role="presentation"
         slot="more"
         hidden
         aria-hidden="true"

@@ -222,15 +222,15 @@
   min-height: max(48px, var(--minimum-touch-target));
   border-radius: 999px;
   padding-inline: 1.8rem;
-  background: #c9825d;
-  border: 1px solid #c9825d;
+  background: #9c5833;
+  border: 1px solid #9c5833;
   color: var(--color-primary-button-text);
   box-shadow: 0 14px 30px rgb(58 39 29 / 0.16);
 }
 
 .hero__cta--primary:hover {
-  background: #b87955;
-  border-color: #b87955;
+  background: #874927;
+  border-color: #874927;
   box-shadow: 0 16px 32px rgb(58 39 29 / 0.2);
 }
 
