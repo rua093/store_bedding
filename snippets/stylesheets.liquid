@@ -12,7 +12,9 @@
   {{ 'pdp-custom-layout.css' | asset_url | stylesheet_tag }}
 {% endif %}
 {{ 'product-card.css' | asset_url | stylesheet_tag: preload: true }}
-{{ 'custom-product-card.css' | asset_url | stylesheet_tag: preload: true }}
 {% if template.name == 'index' %}
-  {{ 'bestselling-bedding.css' | asset_url | stylesheet_tag: preload: true }}
+  {% render 'async-stylesheet', asset: 'custom-product-card.css' %}
+  {% render 'async-stylesheet', asset: 'bestselling-bedding.css' %}
+{% else %}
+  {{ 'custom-product-card.css' | asset_url | stylesheet_tag: preload: true }}
 {% endif %}
