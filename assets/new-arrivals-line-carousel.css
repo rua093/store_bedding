@@ -249,19 +249,34 @@
   }
 
   .new-arrivals-strip-dot {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    display: grid;
+    place-items: center;
+  }
+
+  .new-arrivals-strip-dot::before {
+    content: '';
     width: 0.72rem;
     height: 0.72rem;
     border-radius: 999px;
     border: 2px solid var(--new-arrivals-dot-color, #111);
-    background: transparent;
     opacity: 0.5;
-    cursor: pointer;
-    padding: 0;
   }
 
-  .new-arrivals-strip-dot.is-active {
+  .new-arrivals-strip-dot.is-active::before {
     background: var(--new-arrivals-dot-color, #111);
     opacity: 1;
+  }
+
+  .new-arrivals-strip-dot:focus-visible {
+    outline: 2px solid var(--new-arrivals-dot-color, #111);
+    outline-offset: 2px;
   }
 
   .new-arrivals-strip-placeholder-card {

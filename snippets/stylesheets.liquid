@@ -2,11 +2,11 @@
 {{ 'base.css' | asset_url | stylesheet_tag: preload: true }}
 {% if template.name == 'index' %}
   {{ 'hero.css' | asset_url | stylesheet_tag: preload: true }}
-  {{ 'media-with-content.css' | asset_url | stylesheet_tag: preload: true }}
-  {{ 'collection-list.css' | asset_url | stylesheet_tag: preload: true }}
-  {{ 'new-arrivals-line-carousel.css' | asset_url | stylesheet_tag: preload: true }}
-  {{ 'trust-signals.css' | asset_url | stylesheet_tag: preload: true }}
-  {{ 'homepage-reviews.css' | asset_url | stylesheet_tag }}
+  {% render 'async-stylesheet', asset: 'media-with-content.css' %}
+  {% render 'async-stylesheet', asset: 'collection-list.css' %}
+  {% render 'async-stylesheet', asset: 'new-arrivals-line-carousel.css' %}
+  {% render 'async-stylesheet', asset: 'trust-signals.css' %}
+  {% render 'async-stylesheet', asset: 'homepage-reviews.css' %}
 {% endif %}
 {% if template.name == 'product' %}
   {{ 'pdp-custom-layout.css' | asset_url | stylesheet_tag }}

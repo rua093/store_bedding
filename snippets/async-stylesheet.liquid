@@ -1,0 +1,6 @@
+{% comment %}
+  Load section styles that are not needed for the initial viewport.
+  Keep above-the-fold styles as ordinary render-blocking stylesheets.
+{% endcomment %}
+<link rel="stylesheet" href="{{ asset | asset_url }}" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="{{ asset | asset_url }}"></noscript>
