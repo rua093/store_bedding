@@ -368,7 +368,8 @@ p:empty {
   background: transparent;
 }
 
-.shopify-section:not(.header-section):has(.section) {
+.shopify-section:not(.header-section):has(.section),
+.shopify-section:not(.header-section):has(> .section-background) {
   position: relative;
 }
 
