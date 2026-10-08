@@ -5,6 +5,7 @@ const ITEM_SELECTOR = '[data-new-arrivals-line-item]';
 const DOTS_SELECTOR = '[data-new-arrivals-strip-dots]';
 
 const sectionStore = window.__newArrivalsLineCarouselStore || (window.__newArrivalsLineCarouselStore = new Map());
+let emblaLoadPromise = null;
 
 function getSectionSelectorById(id) {
   return `[data-new-arrivals-line-section="${id}"]`;
@@ -39,21 +40,33 @@ function loadEmbla() {
     return Promise.resolve(window.EmblaCarousel);
   }
 
+  if (emblaLoadPromise) return emblaLoadPromise;
+
   const script = document.getElementById('new-arrivals-embla');
-  if (!(script instanceof HTMLScriptElement)) {
+  if (!(script instanceof HTMLScriptElement) || !script.dataset.src) {
     return Promise.reject(new Error('Embla Carousel script is unavailable'));
   }
 
-  return new Promise((resolve, reject) => {
-    script.addEventListener('load', () => {
+  emblaLoadPromise = new Promise((resolve, reject) => {
+    const onLoad = () => {
+      script.removeEventListener('error', onError);
       if (window.EmblaCarousel) {
         resolve(window.EmblaCarousel);
       } else {
         reject(new Error('Embla Carousel is unavailable'));
       }
-    }, { once: true });
-    script.addEventListener('error', () => reject(new Error('Embla Carousel failed to load')), { once: true });
+    };
+    const onError = () => {
+      script.removeEventListener('load', onLoad);
+      reject(new Error('Embla Carousel failed to load'));
+    };
+
+    script.addEventListener('load', onLoad, { once: true });
+    script.addEventListener('error', onError, { once: true });
+    script.src = script.dataset.src;
   });
+
+  return emblaLoadPromise;
 }
 
 function initSection(id, scope) {
@@ -71,7 +84,9 @@ function initSection(id, scope) {
   const controller = new AbortController();
   const { signal } = controller;
   let embla = null;
+  let observer = null;
   let isDestroyed = false;
+  let hasStarted = false;
   let isPointerDown = false;
   let didDrag = false;
   let pointerDownX = 0;
@@ -129,64 +144,83 @@ function initSection(id, scope) {
 
   sectionStore.set(id, () => {
     isDestroyed = true;
+    observer?.disconnect();
     controller.abort();
     viewport.classList.remove('is-dragging');
     embla?.destroy();
   });
 
-  loadEmbla()
-    .then((EmblaCarousel) => {
-      if (isDestroyed || !EmblaCarousel || !viewport.isConnected) return;
+  const startCarousel = () => {
+    if (isDestroyed || hasStarted) return;
+    hasStarted = true;
+    observer?.disconnect();
 
-      embla = EmblaCarousel(viewport, {
-        align: 'start',
-        loop: false,
-        dragFree: true,
-        containScroll: 'trimSnaps',
-        skipSnaps: false,
-        slidesToScroll: 1,
-      });
+    loadEmbla()
+      .then((EmblaCarousel) => {
+        if (isDestroyed || !EmblaCarousel || !viewport.isConnected) return;
 
-      const renderDots = () => {
-        if (!dotsRoot) return;
-        dotsRoot.innerHTML = '';
-
-        embla.scrollSnapList().forEach((_, index) => {
-          const dot = document.createElement('button');
-          dot.type = 'button';
-          dot.className = 'new-arrivals-strip-dot';
-          dot.setAttribute('aria-label', `Go to slide group ${index + 1}`);
-          dot.addEventListener(
-            'click',
-            () => {
-              embla?.scrollTo(index);
-            },
-            { signal }
-          );
-          dotsRoot.appendChild(dot);
+        embla = EmblaCarousel(viewport, {
+          align: 'start',
+          loop: false,
+          dragFree: true,
+          containScroll: 'trimSnaps',
+          skipSnaps: false,
+          slidesToScroll: 1,
         });
-      };
 
-      const updateDots = () => {
-        if (!dotsRoot) return;
-        const selected = embla.selectedScrollSnap();
-        dotsRoot.querySelectorAll('.new-arrivals-strip-dot').forEach((dot, index) => {
-          dot.classList.toggle('is-active', index === selected);
+        const renderDots = () => {
+          if (!dotsRoot) return;
+          dotsRoot.innerHTML = '';
+
+          embla.scrollSnapList().forEach((_, index) => {
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'new-arrivals-strip-dot';
+            dot.setAttribute('aria-label', `Go to slide group ${index + 1}`);
+            dot.addEventListener(
+              'click',
+              () => {
+                embla?.scrollTo(index);
+              },
+              { signal }
+            );
+            dotsRoot.appendChild(dot);
+          });
+        };
+
+        const updateDots = () => {
+          if (!dotsRoot) return;
+          const selected = embla.selectedScrollSnap();
+          dotsRoot.querySelectorAll('.new-arrivals-strip-dot').forEach((dot, index) => {
+            dot.classList.toggle('is-active', index === selected);
+          });
+        };
+
+        embla.on('select', updateDots);
+        embla.on('reInit', () => {
+          renderDots();
+          updateDots();
         });
-      };
 
-      embla.on('select', updateDots);
-      embla.on('reInit', () => {
         renderDots();
         updateDots();
+      })
+      .catch(() => {
+        viewport.classList.remove('is-dragging');
       });
+  };
 
-      renderDots();
-      updateDots();
-    })
-    .catch(() => {
-      viewport.classList.remove('is-dragging');
-    });
+  root.addEventListener('pointerdown', startCarousel, { signal });
+  root.addEventListener('focusin', startCarousel, { signal });
+
+  if (window.Shopify?.designMode || !('IntersectionObserver' in window)) {
+    startCarousel();
+  } else {
+    observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) startCarousel();
+    }, { rootMargin: '400px 0px' });
+    observer.observe(root);
+  }
 }
 
 function initAllSections(scope = document) {
