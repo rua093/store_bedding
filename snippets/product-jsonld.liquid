@@ -16,6 +16,21 @@
 {% if product != blank %}
   {% liquid
     assign product_desc = product.description | strip_html | strip
+
+    assign aeo_json_value = product.metafields.custom.aeo_json_ld.value
+    assign aeo_graph = aeo_json_value['@graph']
+
+    if aeo_graph != blank
+      for aeo_node in aeo_graph
+        if aeo_node['@type'] == 'Product' and aeo_node.description != blank
+          assign product_desc = aeo_node.description | strip_html | strip
+          break
+        endif
+      endfor
+    elsif aeo_json_value['@type'] == 'Product' and aeo_json_value.description != blank
+      assign product_desc = aeo_json_value.description | strip_html | strip
+    endif
+
     if product_desc == blank
       assign product_desc = product.title | append: ' - Custom bedding from Jeminise'
     endif

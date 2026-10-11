@@ -1,0 +1,35 @@
+{% comment %}
+  Renders the FAQPage node stored in custom.aeo_json_ld.
+
+  The Product node from this metafield is intentionally not rendered here because
+  product-jsonld.liquid already provides the complete commerce schema. Its AEO
+  description is consumed by that snippet instead.
+{% endcomment %}
+
+{% liquid
+  assign aeo_json_value = product.metafields.custom.aeo_json_ld.value
+  assign aeo_graph = aeo_json_value['@graph']
+  assign aeo_faq_node = nil
+
+  if aeo_graph != blank
+    for aeo_node in aeo_graph
+      if aeo_node['@type'] == 'FAQPage'
+        assign aeo_faq_node = aeo_node
+        break
+      endif
+    endfor
+  endif
+%}
+
+{% if aeo_faq_node != blank %}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [{{ aeo_faq_node | json }}]
+    }
+  </script>
+{% elsif aeo_json_value['@type'] == 'FAQPage' %}
+  <script type="application/ld+json">
+    {{ aeo_json_value | json }}
+  </script>
+{% endif %}

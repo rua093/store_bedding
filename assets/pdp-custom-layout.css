@@ -366,6 +366,35 @@
     grid-column: 1 / -1;
   }
 
+  .product-information--main-product .product-aeo-content {
+    width: 100%;
+    max-width: 1100px;
+    margin: clamp(32px, 4vw, 56px) auto 0;
+    padding-inline: clamp(20px, 6vw, 92px);
+    box-sizing: border-box;
+  }
+
+  .product-information--main-product .product-aeo-content > :first-child {
+    margin-top: 0;
+  }
+
+  .product-information--main-product .product-aeo-content > :last-child {
+    margin-bottom: 0;
+  }
+
+  .product-information--main-product .product-aeo-content dl {
+    margin-bottom: 0;
+  }
+
+  .product-information--main-product .product-aeo-content dt {
+    margin-top: 1rem;
+    font-weight: 600;
+  }
+
+  .product-information--main-product .product-aeo-content dd {
+    margin-inline-start: 0;
+  }
+
   .product-information--main-product .product-information__details-below > .product-description-collapsible,
   .product-information--main-product .product-information__details-below > rte-formatter,
   .product-information--main-product .product-information__details-below > .accordion,

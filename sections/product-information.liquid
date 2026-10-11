@@ -4,6 +4,7 @@
 %}
 
 {% render 'product-jsonld', product: product_resource %}
+{% render 'product-aeo-jsonld', product: product_resource %}
 
 {% capture media_gallery %}
   {%- content_for 'block',
