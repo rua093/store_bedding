@@ -9,6 +9,7 @@
   @param {string} [logo] - Captured HTML for the logo element
   @param {string} [menu] - Captured HTML for the menu navigation
   @param {string} [actions] - Captured HTML for header actions (cart, account buttons, etc.)
+  @param {string} [amazon_store] - Captured HTML for the Amazon Store link
   @param {string} [localization] - Captured HTML for language/country selector
   @param {string} [search] - Captured HTML for search input
   @param {string} [drawer_search] - Captured HTML for drawer-based search
@@ -32,6 +33,8 @@
 
     case item
       when 'actions'
+        assign item_column = 'right'
+      when 'amazon_store'
         assign item_column = 'right'
     endcase
 
@@ -86,6 +89,8 @@
               {{ drawer_search }}
             {% when 'actions' %}
               {{ actions }}
+            {% when 'amazon_store' %}
+              {{ amazon_store }}
           {% endcase %}
         {% endunless %}
       {% endfor %}

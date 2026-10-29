@@ -163,6 +163,7 @@
   "content": {
     "cancel": "Cancel",
     "discount": "Discount",
+    "amazon_store": "Amazon Store",
     "account_title": "Account",
     "terms_and_policies": "Terms and Policies",
     "account_title_personalized": "Hi {{ first_name }}",

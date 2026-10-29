@@ -1,0 +1,29 @@
+{% liquid
+  assign aeo_suite_html = product.metafields.custom.aeo_suite_html.value
+  assign aeo_suite_display_html = aeo_suite_html | replace_first: 'AEO Suite (AI Search &amp; Overview Optimization)', 'About the design' | replace_first: 'AEO Suite (AI Search & Overview Optimization)', 'About the design'
+%}
+
+{% if aeo_suite_html != blank %}
+  <section class="section section--page-width product-aeo-section">
+    <div class="product-aeo-section__inner">
+      <div class="product-aeo-content" data-product-aeo-content>
+        {{ aeo_suite_display_html }}
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Product design & FAQ",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [],
+  "presets": [
+    {
+      "name": "Product design & FAQ"
+    }
+  ]
+}
+{% endschema %}

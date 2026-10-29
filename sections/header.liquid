@@ -128,6 +128,11 @@
       endif
     endif
   endif
+
+  if settings.amazon_store_url != blank
+    assign order = order | replace: ',localization', ',amazon_store,localization'
+  endif
+
   capture search
     render 'search', style: search_style, class: search_class, display_style: section.settings.actions_display_style
   endcapture
@@ -215,6 +220,26 @@
     assign background_transparent_color_value = 'bottom'
   endif
 %}
+
+{% capture amazon_store %}
+  {%- if settings.amazon_store_url != blank -%}
+    <a
+      href="{{ settings.amazon_store_url }}"
+      class="header-amazon-store"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <img
+        src="{{ 'amazon-160-svgrepo-com.svg' | asset_url }}"
+        alt=""
+        width="20"
+        height="20"
+        loading="eager"
+      >
+      <span>{{ 'content.amazon_store' | t }}</span>
+    </a>
+  {%- endif -%}
+{% endcapture %}
 
 {% capture localization_markup %}
   {% liquid
@@ -520,6 +545,7 @@
         logo: logo,
         menu: menu,
         actions: actions,
+        amazon_store: amazon_store,
         localization: localization_markup,
         search: search,
         drawer_search: drawer_search
@@ -597,6 +623,101 @@
 
   #header-component[data-menu-style='drawer'] .header__column {
     display: contents;
+  }
+
+  .header-amazon-store {
+    display: none;
+  }
+
+  @media screen and (min-width: 990px) {
+    #header-component[data-menu-style='menu'] .header-amazon-store {
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 38px;
+      padding: 7px 13px;
+      flex-shrink: 0;
+      color: #6f5f52;
+      background-color: #fffaf4;
+      border: 1px solid #d8b294;
+      border-radius: 999px;
+      box-shadow: 0 3px 10px rgb(201 133 90 / 0.12);
+      font-size: 0.78rem;
+      font-weight: 700;
+      line-height: 1;
+      text-decoration: none;
+      white-space: nowrap;
+      transition:
+        color var(--animation-speed) var(--animation-easing),
+        border-color var(--animation-speed) var(--animation-easing),
+        box-shadow var(--animation-speed) var(--animation-easing),
+        transform var(--animation-speed) var(--animation-easing);
+    }
+
+    .header-amazon-store img {
+      display: block;
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+    }
+
+    .header-amazon-store:hover {
+      color: #c9855a;
+      border-color: #c9855a;
+      box-shadow: 0 5px 14px rgb(201 133 90 / 0.18);
+      transform: translateY(-1px);
+    }
+
+    .header-amazon-store:focus-visible {
+      outline: 2px solid #c9855a;
+      outline-offset: 2px;
+    }
+
+    body[data-seasonal-theme='halloween'] .header-amazon-store {
+      color: #f8ead4;
+      background: #211522;
+      border-color: rgb(242 138 42 / 0.48);
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.2);
+    }
+
+    body[data-seasonal-theme='halloween'] .header-amazon-store img {
+      filter: brightness(0) saturate(100%) invert(62%) sepia(83%) saturate(1790%) hue-rotate(338deg) brightness(101%);
+    }
+
+    body[data-seasonal-theme='halloween'] .header-amazon-store:hover {
+      color: #ffd391;
+      border-color: #f28a2a;
+    }
+
+    #header-component.header[transparent]:not([data-sticky-state='active']):not([data-menu-hover])
+      .header-amazon-store {
+      color: #fff8ee;
+      background: transparent;
+      border-color: #fff8ee;
+      border-radius: 999px;
+      box-shadow: none;
+      text-shadow: 0 1px 10px rgb(0 0 0 / 0.25);
+    }
+
+    #header-component.header[transparent]:not([data-sticky-state='active']):not([data-menu-hover])
+      .header-amazon-store img {
+      filter: brightness(0) invert(1);
+    }
+
+    #header-component.header[transparent]:not([data-sticky-state='active']):not([data-menu-hover])
+      .header-amazon-store:hover {
+      color: #ffffff;
+      background: transparent;
+      border-color: #ffffff;
+      box-shadow: none;
+    }
+
+    #header-component.header[transparent]:not([data-sticky-state='active']):not([data-menu-hover])
+      .header-amazon-store:focus-visible {
+      outline-color: #fff8ee;
+    }
   }
 
   @media screen and (min-width: 750px) {
@@ -1145,9 +1266,11 @@
         Multiple selectors for performance: each simple :has() check is faster than one complex selector with multiple conditions */
     .header__column:has(header-menu:hover),
     .header__column:has(.header-actions__action:hover),
+    .header__column:has(.header-amazon-store:hover),
     .header__column:has(.header__icon--menu:hover) {
       header-menu:not(:hover),
       .header-actions__action:not(:hover),
+      .header-amazon-store:not(:hover),
       .header__icon--menu:not(:hover) {
         opacity: var(--opacity-subdued-text);
         transition: opacity var(--animation-speed) var(--animation-easing);
@@ -1158,6 +1281,7 @@
   /* Ensure smooth transitions for all interactive elements */
   header-menu,
   .header-actions__action,
+  .header-amazon-store,
   .header__icon--menu {
     transition: opacity var(--animation-speed) var(--animation-easing);
   }

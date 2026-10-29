@@ -196,13 +196,6 @@
     </div>
   {% endif %}
 
-  {% assign aeo_suite_html = product.metafields.custom.aeo_suite_html.value %}
-  {% if is_main_product_page and aeo_suite_html != blank %}
-    <div class="product-aeo-content rte" data-product-aeo-content>
-      {{ aeo_suite_html }}
-    </div>
-  {% endif %}
-
   {{ additional_blocks }}
 </div>
 

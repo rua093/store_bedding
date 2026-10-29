@@ -2123,6 +2123,17 @@
     ]
   },
   {
+    "name": "Store links",
+    "settings": [
+      {
+        "type": "text",
+        "id": "amazon_store_url",
+        "label": "Amazon Store URL",
+        "default": "https://www.amazon.com/stores/page/BBF53694-8BD9-4C60-B1CC-FE399C107224?ingress=2&lp_context_asin=B0GDDX9D8Q&lp_context_query=jeminise&visitId=e0824f67-9d6d-496a-bbfe-13c40f0aeb20&store_ref=bl_ast_dp_brandlogo_sto&ref_=ast_bln"
+      }
+    ]
+  },
+  {
     "name": "Discount Promotion Popup",
     "settings": [
       {

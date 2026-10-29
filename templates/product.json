@@ -561,12 +561,17 @@
         "padding-block-start": 48,
         "padding-block-end": 48
       }
+    },
+    "product_aeo_content": {
+      "type": "product-aeo-content",
+      "settings": {}
     }
   },
   "order": [
     "main",
     "178358890111e09fab",
     "pdp_lifestyle_gallery_dK9uRr",
-    "product_recommendations_WAUqwA"
+    "product_recommendations_WAUqwA",
+    "product_aeo_content"
   ]
 }
