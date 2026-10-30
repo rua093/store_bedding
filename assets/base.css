@@ -35,19 +35,11 @@ html {
   /* Firefox */
   scrollbar-width: thin;
   scrollbar-color: rgb(var(--color-foreground-rgb) / var(--opacity-40)) var(--color-background);
+  scrollbar-gutter: stable;
   scroll-behavior: smooth;
 }
 
-@media (min-width: 990px) {
-  html:has(.page-wrapper),
-  html:has(.page-wrapper) body {
-    height: 100dvh;
-    overflow: hidden;
-  }
-}
-
-html[scroll-lock],
-html[scroll-lock] .page-wrapper {
+html[scroll-lock] {
   overflow: hidden;
 }
 
@@ -58,18 +50,8 @@ html[scroll-lock] .page-wrapper {
   transition: margin-right var(--animation-speed) var(--animation-timing-fade-out);
 }
 
-@media (min-width: 990px) {
-  .page-wrapper {
-    height: 100dvh;
-    overflow-y: auto;
-    scroll-behavior: smooth;
-    scrollbar-width: thin;
-    scrollbar-color: rgb(var(--color-foreground-rgb) / var(--opacity-40)) var(--color-background);
-  }
-
 .page-wrapper--drawer-open shopify-account::part(dialog) {
-    translate: 0;
-  }
+  translate: 0;
 }
 
 .page-wrapper--drawer-open {

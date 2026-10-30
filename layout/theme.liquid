@@ -472,7 +472,6 @@
     <script>
       (function initBackToTopButton() {
         const button = document.querySelector('[data-back-to-top]');
-        const pageWrapper = document.querySelector('.page-wrapper');
         if (!button) return;
 
         const setVisible = (visible) => {
@@ -483,10 +482,6 @@
         const scrollToTop = () => {
           const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
           const behavior = reduceMotion ? 'auto' : 'smooth';
-
-          if (pageWrapper && pageWrapper.scrollHeight > pageWrapper.clientHeight) {
-            pageWrapper.scrollTo({ top: 0, behavior });
-          }
 
           window.scrollTo({ top: 0, behavior });
         };
@@ -499,40 +494,18 @@
         const sentinel = document.createElement('div');
         sentinel.style.cssText = 'position: absolute; top: 360px; left: 0; width: 1px; height: 1px; visibility: hidden; pointer-events: none; z-index: -999;';
 
-        if (pageWrapper) {
-          pageWrapper.appendChild(sentinel);
-        } else {
-          document.body.appendChild(sentinel);
-        }
+        document.body.appendChild(sentinel);
 
-        let observer = null;
-        const mediaQuery = window.matchMedia('(min-width: 990px)');
-
-        const setupObserver = () => {
-          if (observer) {
-            observer.disconnect();
-          }
-
-          const root = (mediaQuery.matches && pageWrapper) ? pageWrapper : null;
-
-          observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-              setVisible(!entry.isIntersecting);
-            });
-          }, {
-            root: root,
-            threshold: 0
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            setVisible(!entry.isIntersecting);
           });
+        }, {
+          root: null,
+          threshold: 0
+        });
 
-          observer.observe(sentinel);
-        };
-
-        setupObserver();
-        if (typeof mediaQuery.addEventListener === 'function') {
-          mediaQuery.addEventListener('change', setupObserver);
-        } else {
-          mediaQuery.addListener(setupObserver);
-        }
+        observer.observe(sentinel);
       })();
     </script>
   </body>

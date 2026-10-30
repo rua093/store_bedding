@@ -1,6 +1,4 @@
-{% unless template.name == 'index' %}
-  {{ 'media-with-content.css' | asset_url | stylesheet_tag }}
-{% endunless %}
+{{ 'media-with-content.css' | asset_url | stylesheet_tag }}
 
 {% liquid
   assign is_brand_intro = section.settings.brand_intro_enabled

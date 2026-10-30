@@ -917,7 +917,6 @@
     view-transition-name: sticky-header;
     .header__underlay-closed {
       box-shadow: 0 14px 36px rgb(62 51 45 / 0.08);
-      backdrop-filter: blur(14px) saturate(115%);
     }
   }
 
@@ -950,15 +949,6 @@
     pointer-events: auto;
   }
 
-  @media screen and (max-width: 749px) {
-    .header[data-sticky-state='active'] {
-      .header__underlay-closed {
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
-      }
-    }
-  }
-
   /* ================================
      * Underlays
      * ================================ */
@@ -976,8 +966,6 @@
     );
     transition:
       height var(--header-sticky-transition-duration) var(--header-sticky-transition-easing),
-      backdrop-filter var(--header-sticky-transition-duration) var(--header-sticky-transition-easing),
-      -webkit-backdrop-filter var(--header-sticky-transition-duration) var(--header-sticky-transition-easing),
       box-shadow var(--header-sticky-transition-duration) var(--header-sticky-transition-easing);
   }
 

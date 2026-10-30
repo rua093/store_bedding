@@ -653,7 +653,9 @@
     }
   </style>
 
-  <script>
+  <script type="module">
+    import { lockScroll, unlockScroll } from '@theme/utilities';
+
     (function initDiscountPopup() {
       const tag = document.getElementById('discount-tag');
       const tagClose = document.getElementById('discount-tag-close');
@@ -670,7 +672,7 @@
         modal.classList.add('is-active');
         overlay.setAttribute('aria-hidden', 'false');
         tagTrigger?.setAttribute('aria-expanded', 'true');
-        document.body.style.overflow = 'hidden';
+        lockScroll(overlay);
       }
 
       function closeModal() {
@@ -678,7 +680,7 @@
         modal.classList.remove('is-active');
         overlay.setAttribute('aria-hidden', 'true');
         tagTrigger?.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
+        unlockScroll(overlay);
       }
 
       function hideTag() {

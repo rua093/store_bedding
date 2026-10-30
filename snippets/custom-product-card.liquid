@@ -17,6 +17,10 @@
   assign selected_variant = product.selected_or_first_available_variant
   assign product_card_section_id = section_id | default: 'custom-product-card'
   assign product_card_id = 'custom-product-card-link-' | append: product_card_section_id | append: '-' | append: product.id
+  assign product_view_context = product_view_context | default: 'page'
+  unless product_view_context == 'page' or product_view_context == 'search' or product_view_context == 'collection' or product_view_context == 'dialog' or product_view_context == 'recommendation'
+    assign product_view_context = 'page'
+  endunless
   assign current_price = selected_variant.price
   assign compare_price = selected_variant.compare_at_price
   assign max_safe_compare_price = current_price | times: 5

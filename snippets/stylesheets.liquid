@@ -2,19 +2,15 @@
 {{ 'base.css' | asset_url | stylesheet_tag: preload: true }}
 {% if template.name == 'index' %}
   {{ 'hero.css' | asset_url | stylesheet_tag: preload: true }}
-  {% render 'async-stylesheet', asset: 'media-with-content.css' %}
-  {% render 'async-stylesheet', asset: 'collection-list.css' %}
-  {% render 'async-stylesheet', asset: 'new-arrivals-line-carousel.css' %}
-  {% render 'async-stylesheet', asset: 'trust-signals.css' %}
-  {% render 'async-stylesheet', asset: 'homepage-reviews.css' %}
+  {{ 'homepage-reviews.css' | asset_url | stylesheet_tag }}
 {% endif %}
 {% if template.name == 'product' %}
   {{ 'pdp-custom-layout.css' | asset_url | stylesheet_tag }}
 {% endif %}
 {% if template.name == 'index' %}
-  {% render 'async-stylesheet', asset: 'product-card.css' %}
-  {% render 'async-stylesheet', asset: 'custom-product-card.css' %}
-  {% render 'async-stylesheet', asset: 'bestselling-bedding.css' %}
+  {{ 'product-card.css' | asset_url | stylesheet_tag }}
+  {{ 'custom-product-card.css' | asset_url | stylesheet_tag }}
+  {{ 'bestselling-bedding.css' | asset_url | stylesheet_tag }}
 {% else %}
   {{ 'product-card.css' | asset_url | stylesheet_tag: preload: true }}
   {{ 'custom-product-card.css' | asset_url | stylesheet_tag: preload: true }}

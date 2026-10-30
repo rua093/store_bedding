@@ -1,6 +1,4 @@
-{% unless template.name == 'index' %}
-  {{ 'collection-list.css' | asset_url | stylesheet_tag }}
-{% endunless %}
+{{ 'collection-list.css' | asset_url | stylesheet_tag }}
 
 {% liquid
   assign is_patchwork_layout = false

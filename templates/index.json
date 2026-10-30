@@ -402,10 +402,10 @@
       "name": "Collection list",
       "settings": {
         "collection_list": [
-          "nature",
-          "animals",
-          "hobbies",
-          "sports"
+          "nature-botanical",
+          "animals-wildlife",
+          "hobbies-pastimes",
+          "sports-athletics"
         ],
         "layout_type": "bento",
         "carousel_on_mobile": true,

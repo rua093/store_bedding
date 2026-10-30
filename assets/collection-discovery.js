@@ -65,9 +65,11 @@ function initCollectionDiscovery(root = document) {
   root.querySelectorAll(DISCOVERY_SELECTOR).forEach(bindDiscoverySection);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => initCollectionDiscovery(), { once: true });
+} else {
   initCollectionDiscovery();
-});
+}
 
 document.addEventListener('shopify:section:load', (event) => {
   initCollectionDiscovery(event.target instanceof Element ? event.target : document);

@@ -1,6 +1,4 @@
-{% unless template.name == 'index' %}
-  {{ 'trust-signals.css' | asset_url | stylesheet_tag }}
-{% endunless %}
+{{ 'trust-signals.css' | asset_url | stylesheet_tag }}
 
 {% liquid
   assign is_trust_signals_hero = section.settings.use_hero_layout

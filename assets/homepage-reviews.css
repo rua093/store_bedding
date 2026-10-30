@@ -87,7 +87,10 @@
   border: 1px solid rgba(201, 133, 90, 0.14) !important;
   box-shadow: 0 14px 40px rgba(47, 38, 31, 0.06) !important;
   padding: 20px !important;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
   position: relative;
   z-index: 2;
   overflow: hidden !important;
@@ -122,7 +125,12 @@
   border: 1px solid #e4d3c4 !important;
   color: #2f261f !important;
   box-shadow: 0 6px 20px rgba(47, 38, 31, 0.08) !important;
-  transition: all 0.3s ease !important;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;

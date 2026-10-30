@@ -1,3 +1,4 @@
+{{ 'new-arrivals-line-carousel.css' | asset_url | stylesheet_tag }}
 
 {% liquid
   assign selected_collection = section.settings.collection
@@ -141,7 +142,7 @@
                   {% render 'custom-product-card'
                     , product: product
                     , section_id: section.id
-                    , product_view_context: 'new-arrivals-strip-carousel'
+                    , product_view_context: 'page'
                     , show_badge: true
                     , card_tag: 'New'
                     , card_class: 'new-arrivals-strip-product-card'
