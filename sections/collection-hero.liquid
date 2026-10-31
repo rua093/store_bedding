@@ -23,7 +23,16 @@
   assign hero_description = collection.description | strip_html | strip
   assign hero_widths = '750, 1100, 1500, 1800, 2100, 2400, 2880, 3200, 3840'
 
+  assign is_christmas_collection = false
+  if collection.handle contains 'christmas'
+    assign is_christmas_collection = true
+  endif
+
 %}
+
+{% if is_christmas_collection %}
+  {% render 'christmas-entry-snow', section_id: section.id %}
+{% endif %}
 
 <section
   id="CollectionHero-{{ section.id }}"
@@ -136,9 +145,7 @@
   }
 
   .collection-hero--has-media .collection-hero__content-inner {
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.38) 0%, rgba(0, 0, 0, 0) 80%);
     padding: clamp(2rem, 4vw, 3.5rem) clamp(2rem, 6vw, 5rem);
-    border-radius: 24px;
   }
 
   .collection-hero--all-fallback-bg .collection-hero__overlay {

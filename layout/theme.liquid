@@ -146,6 +146,8 @@
         assign active_seasonal_theme = collection.metafields.custom.seasonal_theme.value | downcase | strip
       elsif collection.handle contains 'halloween'
         assign active_seasonal_theme = 'halloween'
+      elsif collection.handle contains 'christmas'
+        assign active_seasonal_theme = 'christmas'
       endif
       assign page_bg_image = collection.metafields.custom.page_bg.value
       if page_bg_image != blank
@@ -162,6 +164,9 @@
             break
           elsif col.handle contains 'halloween'
             assign active_seasonal_theme = 'halloween'
+            break
+          elsif col.handle contains 'christmas'
+            assign active_seasonal_theme = 'christmas'
             break
           endif
         endfor
@@ -330,7 +335,7 @@
       aria-hidden="true"
       style="opacity:0;visibility:hidden;"
     >
-      <span class="back-to-top-button__icon" aria-hidden="true">↑</span>
+      <span class="back-to-top-button__icon" aria-hidden="true">&#8593;</span>
     </button>
 
     {{ 'dialog-modal.css' | asset_url | stylesheet_tag }}

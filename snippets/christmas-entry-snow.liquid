@@ -1,0 +1,105 @@
+{%- comment -%}
+  Continuous, compositor-friendly snow for Christmas collections.
+  It does not intercept input and respects reduced-motion preferences.
+{%- endcomment -%}
+
+{% liquid
+  assign snow_x = '3,8,13,18,23,28,33,38,43,48,53,58,63,68,73,78,83,88,93,97,35,66' | split: ','
+  assign snow_delay = '0.1,0.7,0.25,0.9,0.45,0.05,0.65,0.3,0.8,0.15,0.55,0.95,0.35,0.02,0.75,0.4,0.88,0.2,0.6,0.48,1.05,1.12' | split: ','
+  assign snow_duration = '5.2,5.9,4.8,6.1,5.5,4.9,6.2,5.1,5.8,4.7,6.0,5.3,4.9,5.7,5.0,6.15,5.4,4.85,5.95,5.25,4.75,5.65' | split: ','
+  assign snow_size = '13,9,17,11,15,8,14,10,18,12,9,16,11,14,8,17,10,13,9,16,12,10' | split: ','
+  assign snow_drift = '18,-14,24,-18,12,-22,20,-12,26,-16,14,-24,19,-15,22,-20,13,-17,25,-11,16,-21' | split: ','
+%}
+
+<div id="ChristmasEntrySnow-{{ section_id }}" class="christmas-entry-snow" aria-hidden="true">
+  {% for x in snow_x %}
+    <span
+      class="christmas-entry-snow__flake"
+      style="--snow-x: {{ x }}vw; --snow-delay: {{ snow_delay[forloop.index0] }}s; --snow-duration: {{ snow_duration[forloop.index0] }}s; --snow-size: {{ snow_size[forloop.index0] }}px; --snow-drift: {{ snow_drift[forloop.index0] }}px;"
+    ></span>
+  {% endfor %}
+</div>
+
+<style>
+  .christmas-entry-snow {
+    position: fixed;
+    z-index: 30;
+    inset: 0;
+    overflow: hidden;
+    contain: strict;
+    pointer-events: none;
+  }
+
+  .christmas-entry-snow__flake {
+    position: absolute;
+    top: 0;
+    left: var(--snow-x);
+    width: var(--snow-size);
+    height: var(--snow-size);
+    color: rgb(255 255 255 / 0.96);
+    filter: drop-shadow(0 1px 2px rgb(23 46 43 / 0.28));
+    opacity: 0;
+    will-change: transform, opacity;
+    animation: christmas-snow-fall var(--snow-duration) linear var(--snow-delay) infinite;
+    animation-play-state: paused;
+  }
+
+  .christmas-entry-snow.is-active .christmas-entry-snow__flake {
+    animation-play-state: running;
+  }
+
+  .christmas-entry-snow__flake::before {
+    content: '\2744';
+    display: block;
+    font-size: var(--snow-size);
+    line-height: 1;
+  }
+
+  @keyframes christmas-snow-fall {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, -12vh, 0) rotate(0deg);
+    }
+
+    10% {
+      opacity: 0.94;
+    }
+
+    86% {
+      opacity: 0.88;
+    }
+
+    100% {
+      opacity: 0;
+      transform: translate3d(var(--snow-drift), 112vh, 0) rotate(310deg);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .christmas-entry-snow__flake:nth-child(n + 15) {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .christmas-entry-snow {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const layer = document.getElementById('ChristmasEntrySnow-{{ section_id }}');
+    if (!layer || layer.dataset.snowArmed === 'true') return;
+
+    layer.dataset.snowArmed = 'true';
+    const startSnow = () => requestAnimationFrame(() => layer.classList.add('is-active'));
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', startSnow, { once: true });
+    } else {
+      startSnow();
+    }
+  })();
+</script>

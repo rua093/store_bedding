@@ -350,7 +350,7 @@
                       r="3" />
                   </svg>
                 </span>
-                <span>30 N Gould St Ste R, Sheridan, WY 82801, United States</span>
+                <span>1001 S MAIN ST STE 500, KALISPELL, MT 59901, United States</span>
               </li>
               <li>
                 <span class="contact-icon">
@@ -371,7 +371,7 @@
                     <path d="M9 17v.01" />
                   </svg>
                 </span>
-                <span>JEMINISE is operated by Nexus Ops Solutions LLC.</span>
+                <span>JEMINISE is operated by A TO Z SOLUTION LLC.</span>
               </li>
             </ul>
           </div>
@@ -1875,6 +1875,238 @@
 
     body[data-seasonal-theme='halloween'] .footer-amazon-cta__arrow {
       transition: none;
+    }
+  }
+
+  /* Christmas footer skin
+   * CSS-only so the seasonal treatment remains lightweight and does not
+   * introduce decorative image requests or alter the footer structure.
+   */
+  body[data-seasonal-theme='christmas'] .footer-wrapper {
+    --footer-christmas-pine: #173f35;
+    --footer-christmas-pine-deep: #0e3028;
+    --footer-christmas-pine-soft: #245448;
+    --footer-christmas-wine: #9f2f32;
+    --footer-christmas-wine-hover: #b63a3d;
+    --footer-christmas-gold: #d7b46a;
+    --footer-christmas-cream: #fff8e9;
+    --footer-christmas-muted: #d9d2bf;
+
+    margin-top: 0;
+    color: var(--footer-christmas-cream);
+    background: var(--footer-christmas-pine-deep);
+    isolation: isolate;
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-top-section {
+    color: var(--footer-christmas-cream);
+    background:
+      radial-gradient(circle at 12% 20%, rgb(215 180 106 / 0.1), transparent 22%),
+      radial-gradient(circle at 88% 78%, rgb(159 47 50 / 0.12), transparent 25%),
+      linear-gradient(145deg, var(--footer-christmas-pine-soft), var(--footer-christmas-pine) 52%, var(--footer-christmas-pine-deep));
+    border-top: 1px solid rgb(215 180 106 / 0.72);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-top-section::before {
+    display: none;
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-brand__decor {
+    display: none;
+  }
+
+  body[data-seasonal-theme='christmas']
+    :is(.footer-brand__leaf, .footer-copyright__clover) {
+    filter: brightness(0) saturate(100%) invert(78%) sepia(43%) saturate(552%) hue-rotate(359deg) brightness(91%);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-brand__logo img {
+    filter: brightness(0) saturate(100%) invert(96%) sepia(17%) saturate(467%) hue-rotate(338deg) brightness(106%);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-brand__tagline {
+    color: var(--footer-christmas-muted);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-newsletter {
+    color: var(--footer-christmas-pine-deep);
+    background:
+      radial-gradient(circle at 100% 0, rgb(215 180 106 / 0.14), transparent 30%),
+      var(--footer-christmas-cream);
+    border: 1px solid rgb(215 180 106 / 0.72);
+    box-shadow:
+      0 18px 40px rgb(5 25 21 / 0.2),
+      inset 0 0 0 1px rgb(255 255 255 / 0.72);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-newsletter__icon {
+    color: var(--footer-christmas-pine);
+    background: #edf2e9;
+    border-color: rgb(23 63 53 / 0.16);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-newsletter__title {
+    color: var(--footer-christmas-pine-deep);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-newsletter__subtitle {
+    color: #6d675a;
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-newsletter__input-group {
+    background: #fffdf7;
+    border-color: rgb(23 63 53 / 0.24);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-newsletter__input-group:focus-within {
+    border-color: var(--footer-christmas-gold);
+    box-shadow: 0 0 0 3px rgb(215 180 106 / 0.2);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-newsletter__input {
+    color: var(--footer-christmas-pine-deep);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-newsletter__input::placeholder {
+    color: #766f62;
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-newsletter__submit {
+    color: var(--footer-christmas-cream);
+    background: var(--footer-christmas-wine);
+    border: 1px solid rgb(215 180 106 / 0.68);
+    box-shadow: 0 7px 16px rgb(94 24 27 / 0.22);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-newsletter__submit:hover {
+    background: var(--footer-christmas-wine-hover);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-info-wrapper {
+    color: var(--footer-christmas-cream);
+    background:
+      radial-gradient(circle at 8% 10%, rgb(215 180 106 / 0.06), transparent 24%),
+      linear-gradient(180deg, #14392f, var(--footer-christmas-pine-deep));
+    border-top-color: rgb(215 180 106 / 0.42);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-info-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: min(90%, 1360px);
+    height: 1px;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, transparent, var(--footer-christmas-gold), transparent);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-info__badge {
+    color: var(--footer-christmas-gold);
+    background: rgb(255 248 233 / 0.08);
+    border-color: rgb(215 180 106 / 0.4);
+    box-shadow: 0 6px 18px rgb(4 24 19 / 0.18);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-info__badge .footer-icon {
+    filter: brightness(0) saturate(100%) invert(78%) sepia(43%) saturate(552%) hue-rotate(359deg) brightness(91%);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-info__title {
+    color: var(--footer-christmas-gold);
+  }
+
+  body[data-seasonal-theme='christmas']
+    :is(.footer-info__list li, .footer-info__list a) {
+    color: var(--footer-christmas-muted);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-info__list a:hover,
+  body[data-seasonal-theme='christmas'] :is(.contact-icon, .footer-info__dot) {
+    color: var(--footer-christmas-gold);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-info__divider {
+    background: linear-gradient(180deg, transparent, rgb(215 180 106 / 0.5), transparent);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-info__divider::after {
+    background-color: var(--footer-christmas-wine);
+    box-shadow: 0 0 0 3px rgb(215 180 106 / 0.12);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-divider-line {
+    background: linear-gradient(90deg, transparent, rgb(215 180 106 / 0.58), transparent);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-bottom-group {
+    color: var(--footer-christmas-cream);
+    background:
+      radial-gradient(circle at 50% 0, rgb(215 180 106 / 0.08), transparent 34%),
+      linear-gradient(180deg, #0e3028, #09251f);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-social__item {
+    color: var(--footer-christmas-muted);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-social__icon {
+    color: var(--footer-christmas-gold);
+    background: rgb(255 248 233 / 0.07);
+    border-color: rgb(215 180 106 / 0.4);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-social__icon .footer-icon {
+    filter: brightness(0) saturate(100%) invert(78%) sepia(43%) saturate(552%) hue-rotate(359deg) brightness(91%);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-social__item:hover .footer-social__icon {
+    color: var(--footer-christmas-cream);
+    background: var(--footer-christmas-wine);
+    border-color: var(--footer-christmas-gold);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-social__divider {
+    background: linear-gradient(180deg, transparent, rgb(215 180 106 / 0.48), transparent);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-amazon-cta {
+    color: var(--footer-christmas-pine-deep);
+    background: var(--footer-christmas-cream);
+    border-color: rgb(215 180 106 / 0.66);
+    box-shadow: 0 8px 20px rgb(4 24 19 / 0.18);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-amazon-cta:hover {
+    color: var(--footer-christmas-wine);
+    border-color: var(--footer-christmas-gold);
+    box-shadow: 0 10px 24px rgb(4 24 19 / 0.24);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-copyright__line {
+    background: linear-gradient(90deg, transparent, rgb(215 180 106 / 0.42));
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-copyright__line:last-child {
+    background: linear-gradient(90deg, rgb(215 180 106 / 0.42), transparent);
+  }
+
+  body[data-seasonal-theme='christmas'] .footer-copyright__text {
+    color: var(--footer-christmas-muted);
+  }
+
+  @media screen and (max-width: 749px) {
+    body[data-seasonal-theme='christmas'] .footer-top-section {
+      background:
+        radial-gradient(circle at 50% 0, rgb(215 180 106 / 0.1), transparent 28%),
+        linear-gradient(155deg, var(--footer-christmas-pine-soft), var(--footer-christmas-pine-deep));
+    }
+
+    body[data-seasonal-theme='christmas'] .footer-info__col {
+      padding: 16px;
+      background: rgb(255 248 233 / 0.045);
+      border: 1px solid rgb(215 180 106 / 0.18);
+      border-radius: 18px;
     }
   }
 {% endstylesheet %}
